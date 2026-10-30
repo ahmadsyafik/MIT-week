@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Warna level (lihat docs/frontend/DESIGN_SYSTEM.md). TIDAK ADA hijau untuk level terendah. */
+  --color-lvl-info: #5b7083;
+  --color-lvl-waspada: #b7791f;
+  --color-lvl-tinggi: #c05621;
+  --color-lvl-kritis: #c53030;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+}

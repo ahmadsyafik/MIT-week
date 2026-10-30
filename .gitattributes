@@ -1,0 +1,4 @@
+# Paksa LF supaya script bash & hook tidak rusak di Windows
+* text=auto
+*.sh text eol=lf
+.githooks/* text eol=lf

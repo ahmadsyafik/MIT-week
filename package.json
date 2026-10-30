@@ -1,0 +1,17 @@
+{
+  "name": "jagaruang",
+  "private": true,
+  "version": "0.1.0",
+  "description": "JagaRuang: Cek. Latih. Lindungi. (MIT-Week 2026, The Trust Trap)",
+  "workspaces": ["packages/*", "apps/*"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "npm run dev -w @jagaruang/web",
+    "build": "npm run build -w @jagaruang/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "check": "npm run typecheck && npm run test && npm run build",
+    "scope": "bash scripts/scope-check.sh \"$(git rev-parse --abbrev-ref HEAD)\" origin/development HEAD",
+    "prepare": "git config core.hooksPath .githooks || true"
+  }
+}
