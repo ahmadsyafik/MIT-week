@@ -17,8 +17,8 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - Tetap mempertahankan link permanen Keterbatasan & Privasi serta tombol **Keluar dari Sesi**.
   - `LoginModal`: Modal login cepat dengan nama samaran/tamu ramah privasi (100% on-device).
   - `ProtectedRoute`: Proteksi rute internal aplikasi dengan gerbang ramah jika belum login.
-  - **Redesain Dashboard Pengguna Sesuai Referensi & Palet Warna Modern**:
-    - Penerapan palet warna: `#27374D` (background), `#526D82` (second), `#9DB2BF` (muted), `#DDE6ED` (primary).
+  - **Redesain Dashboard Pengguna Sesuai Referensi & Pembaruan Palet Warna**:
+    - Penyesuaian palet warna: `#DDE6ED` (background utama aplikasi), `#27374D` (font/tipografi utama berkontras tinggi), `#526D82` (background sidebar navigasi), dan `#9DB2BF` (warna kontras tambahan, border, aksen halus).
     - Top bar pencarian modul/istilah terintegrasi, notifikasi, dan status profil pengguna.
     - **1. Banner Welcome Back**: Sambutan personal, indikator progres pembelajaran, dan ilustrasi isometrik edukasi.
     - **2. Kalender & Pintasan Simulator**: Widget kalender interaktif bulanan dengan penanda skenario waspada/selesai serta tombol pintasan ke simulasi aktif.
