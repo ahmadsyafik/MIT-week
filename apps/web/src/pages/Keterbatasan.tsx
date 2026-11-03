@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { ShieldCheck, HardDrive, EyeOff, AlertTriangle, Trash2, CheckCircle2 } from "lucide-react";
 import { storage } from "../lib/coreClient";
+import { useAuth } from "../context/AuthContext";
 import { Button, Card, CardTitle, CardDescription, Disclaimer } from "../components/ui";
 
 export default function Keterbatasan() {
   const [clearedMessage, setClearedMessage] = useState<string | null>(null);
+  const { logout } = useAuth();
 
   const handleClearData = () => {
     if (window.confirm("Apakah kamu yakin ingin menghapus seluruh progres latihan dan data lokal di peramban ini?")) {
       storage.clearAll();
+      logout();
       setClearedMessage("Semua data lokal di perambanmu telah berhasil dibersihkan.");
       setTimeout(() => setClearedMessage(null), 5000);
     }
