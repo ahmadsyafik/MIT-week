@@ -17,4 +17,12 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - Tetap mempertahankan link permanen Keterbatasan & Privasi serta tombol **Keluar dari Sesi**.
   - `LoginModal`: Modal login cepat dengan nama samaran/tamu ramah privasi (100% on-device).
   - `ProtectedRoute`: Proteksi rute internal aplikasi dengan gerbang ramah jika belum login.
-  - Pembaruan `Beranda`: Pengunjung melihat Landing Page pengenalan fitur dan CTA masuk; pengguna terotentikasi disambut dengan dashboard interaktif personal.
+  - **Redesain Dashboard Pengguna Sesuai Referensi & Palet Warna Modern**:
+    - Penerapan palet warna: `#27374D` (background), `#526D82` (second), `#9DB2BF` (muted), `#DDE6ED` (primary).
+    - Top bar pencarian modul/istilah terintegrasi, notifikasi, dan status profil pengguna.
+    - **1. Banner Welcome Back**: Sambutan personal, indikator progres pembelajaran, dan ilustrasi isometrik edukasi.
+    - **2. Kalender & Pintasan Simulator**: Widget kalender interaktif bulanan dengan penanda skenario waspada/selesai serta tombol pintasan ke simulasi aktif.
+    - **3. Kamus & Modus Populer**: Daftar ringkasan istilah/modus siber (Upcoming Task style) terhubung ke `/kamus`.
+    - **4. Grafik Pembelajaran Mingguan**: Kurva gelombang halus (Activities SVG wave chart) dengan titik sorotan hari aktif dan metrik capaian.
+    - **5. Sidebar**: Navigasi vertikal persis referensi dengan kartu info "Tantangan Kilat 120 Detik" di bagian bawah.
+    - **6. Pintasan Menuju Modul**: 3 kartu kursus/studi kasus (Undangan APK, Kurir Paket, Loker WFH) lengkap dengan level, estimasi durasi, dan progres.

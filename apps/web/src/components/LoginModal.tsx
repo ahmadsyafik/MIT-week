@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, ShieldCheck, UserCheck, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { Button } from "./ui";
 
 export default function LoginModal() {
   const { isLoginModalOpen, closeLoginModal, login } = useAuth();
@@ -42,18 +41,18 @@ export default function LoginModal() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="login-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity"
       onClick={closeLoginModal}
     >
       <div
-        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 transition-all sm:p-7"
+        className="relative w-full max-w-md rounded-3xl bg-[#27374D] p-6 shadow-2xl border border-[#526D82]/60 transition-all sm:p-7 text-[#DDE6ED]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Tombol Tutup */}
         <button
           type="button"
           onClick={closeLoginModal}
-          className="absolute right-4 top-4 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+          className="absolute right-4 top-4 rounded-xl p-2 text-[#9DB2BF] hover:bg-[#526D82]/30 hover:text-[#DDE6ED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9DB2BF]"
           aria-label="Tutup jendela login"
         >
           <X className="h-5 w-5" />
@@ -61,25 +60,25 @@ export default function LoginModal() {
 
         {/* Header Modal */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white font-extrabold shadow-xs">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#526D82] text-white font-extrabold shadow-sm border border-[#9DB2BF]/30">
             JR
           </div>
           <div>
-            <h2 id="login-modal-title" className="text-xl font-bold text-slate-900">
+            <h2 id="login-modal-title" className="text-xl font-bold text-[#DDE6ED]">
               Masuk ke JagaRuang
             </h2>
-            <p className="text-xs text-slate-500">Mulai eksplorasi aman tanpa registrasi rumit</p>
+            <p className="text-xs text-[#9DB2BF]">Eksplorasi modul & simulator aman tanpa registrasi rumit</p>
           </div>
         </div>
 
-        <p className="text-sm text-slate-600 leading-relaxed mb-5">
-          Masukkan nama panggilan atau nama samaranmu untuk membuka menu navigasi dan seluruh fitur simulasi digital.
+        <p className="text-sm text-[#9DB2BF] leading-relaxed mb-5">
+          Masukkan nama panggilan atau nama samaranmu untuk membuka dashboard, modul pembelajaran, dan seluruh simulator interaktif.
         </p>
 
         {/* Form Input */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="user-name-input" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+            <label htmlFor="user-name-input" className="block text-xs font-semibold uppercase tracking-wider text-[#9DB2BF] mb-1.5">
               Nama Panggilan / Samaran
             </label>
             <input
@@ -90,37 +89,37 @@ export default function LoginModal() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Contoh: Rian / Kawan Digital"
               maxLength={25}
-              className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
+              className="w-full rounded-xl border border-[#526D82]/60 bg-[#27374D] px-3.5 py-2.5 text-sm text-[#DDE6ED] placeholder:text-[#9DB2BF]/60 focus:border-[#DDE6ED] focus:outline-none focus:ring-2 focus:ring-[#9DB2BF]/30 transition-colors"
             />
           </div>
 
           <div className="flex flex-col gap-2 pt-1">
-            <Button type="submit" variant="primary" size="md" className="w-full justify-center">
+            <button
+              type="submit"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#DDE6ED] px-4 py-2 text-sm font-bold text-[#27374D] hover:bg-white active:scale-98 transition-all shadow-sm cursor-pointer"
+            >
               <span>Masuk Sekarang</span>
               <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button
+            </button>
+            <button
               type="button"
-              variant="outline"
-              size="md"
               onClick={handleGuestLogin}
-              className="w-full justify-center text-slate-700"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[#526D82] bg-[#526D82]/20 px-4 py-2 text-sm font-medium text-[#DDE6ED] hover:bg-[#526D82]/40 transition-colors cursor-pointer"
             >
-              <UserCheck className="h-4 w-4 text-slate-500" />
+              <UserCheck className="h-4 w-4 text-[#9DB2BF]" />
               <span>Masuk Cepat sebagai Tamu</span>
-            </Button>
+            </button>
           </div>
         </form>
 
         {/* Informasi Privasi */}
-        <div className="mt-5 rounded-lg bg-slate-50 border border-slate-200 p-3 text-xs text-slate-600 flex items-start gap-2.5">
-          <ShieldCheck className="h-4 w-4 text-slate-700 shrink-0 mt-0.5" />
+        <div className="mt-5 rounded-2xl bg-[#526D82]/20 border border-[#526D82]/50 p-3 text-xs text-[#9DB2BF] flex items-start gap-2.5">
+          <ShieldCheck className="h-4 w-4 text-teal-300 shrink-0 mt-0.5" />
           <span className="leading-relaxed">
-            <strong>100% On-Device:</strong> Data sesi hanya disimpan di memori peramban lokalmu. Tidak ada server, email, password, ataupun pelacak luar.
+            <strong className="text-[#DDE6ED]">100% On-Device:</strong> Data sesi hanya disimpan di memori peramban lokalmu. Tidak ada server, email, password, ataupun pelacak data.
           </span>
         </div>
       </div>
     </div>
   );
 }
-

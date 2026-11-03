@@ -2,6 +2,12 @@
 
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Palet warna brand: 27374D background, 526D82 second, 9DB2BF muted, DDE6ED primary */
+  --color-brand-bg: #27374d;
+  --color-brand-second: #526d82;
+  --color-brand-muted: #9db2bf;
+  --color-brand-primary: #dde6ed;
+
   /* Token warna level risiko sesuai docs/frontend/DESIGN_SYSTEM.md */
   --color-lvl-info: #5b7083;
   --color-lvl-waspada: #b7791f;
@@ -10,6 +16,10 @@
 }
 
 :root {
+  --color-brand-bg: #27374d;
+  --color-brand-second: #526d82;
+  --color-brand-muted: #9db2bf;
+  --color-brand-primary: #dde6ed;
   --color-lvl-info: #5b7083;
   --color-lvl-waspada: #b7791f;
   --color-lvl-tinggi: #c05621;
