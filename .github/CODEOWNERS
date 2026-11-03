@@ -1,0 +1,19 @@
+# Backend — Raffi
+/packages/core/ @azzakyDp
+/docs/backend/ @azzakyDp
+
+# Frontend — Syifa & Mutiara
+/apps/web/ @syifamojocanggih-hash @mutiaradewanda
+/docs/frontend/ @syifamojocanggih-hash @mutiaradewanda
+
+# Development / Integrasi — Raffi (integrasi) & Syafi (testing)
+/package.json @azzakyDp @ahmadsyafik
+/.github/ @azzakyDp @ahmadsyafik
+/scripts/ @azzakyDp @ahmadsyafik
+/.githooks/ @azzakyDp @ahmadsyafik
+/vercel.json @azzakyDp @ahmadsyafik
+/packages/contracts/ @azzakyDp @ahmadsyafik
+/docs/universal/ @azzakyDp @ahmadsyafik
+/docs/development/ @azzakyDp @ahmadsyafik
+/README.md @azzakyDp @ahmadsyafik
+
