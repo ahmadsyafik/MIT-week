@@ -2,13 +2,36 @@
 
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  /* Warna level (lihat docs/frontend/DESIGN_SYSTEM.md). TIDAK ADA hijau untuk level terendah. */
+  /* Token warna level risiko sesuai docs/frontend/DESIGN_SYSTEM.md */
   --color-lvl-info: #5b7083;
   --color-lvl-waspada: #b7791f;
   --color-lvl-tinggi: #c05621;
   --color-lvl-kritis: #c53030;
 }
 
+:root {
+  --color-lvl-info: #5b7083;
+  --color-lvl-waspada: #b7791f;
+  --color-lvl-tinggi: #c05621;
+  --color-lvl-kritis: #c53030;
+}
+
+html {
+  font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  scroll-behavior: smooth;
+}
+
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Red flag text marker */
+mark.flag-mark {
+  background-color: #fef08a;
+  color: #854d0e;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
 }
