@@ -11,7 +11,6 @@ import type {
   CaseDebrief,
   CaseDefinition,
   CaseSession,
-  LocalProgress,
   MalwareType,
   MaskResult,
   Modus,
@@ -88,14 +87,4 @@ export function buildWarningCard(_result: AnalysisResult): WarningCard {
 }
 
 /* Penyimpanan lokal */
-export const storage = {
-  load(): LocalProgress {
-    return notImplemented("BE-1.3 storage.load");
-  },
-  save(_p: LocalProgress): void {
-    return notImplemented("BE-1.3 storage.save");
-  },
-  clearAll(): void {
-    return notImplemented("BE-1.3 storage.clearAll");
-  },
-};
+export { storage } from "./storage";

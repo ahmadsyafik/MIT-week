@@ -1,0 +1,39 @@
+[
+  {
+    "id": "loker_palsu",
+    "name": "Lowongan Kerja Palsu",
+    "description": "Penawaran pekerjaan paruh waktu atau admin WFH bergaji tinggi yang meminta transfer uang muka atau biaya pendaftaran.",
+    "actionGuideId": "guide_sudah_transfer",
+    "relatedCaseId": "k3"
+  },
+  {
+    "id": "giveaway_palsu",
+    "name": "Undian / Hadiah Palsu",
+    "description": "Pemberitahuan hadiah atau undian palsu yang meminta biaya pajak pemenang atau mengarahkan ke link phishing.",
+    "actionGuideId": "guide_belum_klik"
+  },
+  {
+    "id": "undangan_apk",
+    "name": "Undangan Pernikahan APK",
+    "description": "Pesan berisi file APK berkedok surat undangan digital yang menyusupkan malware penyadap SMS/OTP.",
+    "malwareTypeId": "sms_stealer",
+    "actionGuideId": "guide_sudah_install",
+    "relatedCaseId": "k1"
+  },
+  {
+    "id": "foto_paket_apk",
+    "name": "Foto Paket / Resi APK",
+    "description": "Pesan dari kurir palsu yang mengirimkan file APK bertuliskan foto paket atau resi pengiriman untuk meretas perangkat.",
+    "malwareTypeId": "trojan",
+    "actionGuideId": "guide_sudah_install",
+    "relatedCaseId": "k2"
+  },
+  {
+    "id": "phishing_link",
+    "name": "Tautan Phishing Perbankan",
+    "description": "Tautan palsu yang meniru halaman login resmi untuk mencuri nama akun, PIN, dan kata sandi.",
+    "malwareTypeId": "phishing",
+    "actionGuideId": "guide_belum_klik"
+  }
+]
+

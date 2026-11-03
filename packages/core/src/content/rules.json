@@ -1,0 +1,12 @@
+[
+  {
+    "id": "MSG-PAYMENT-01",
+    "level": "L4",
+    "category": "permintaan_uang",
+    "pattern": "transfer|bayar|biaya admin|dp|uang muka",
+    "why": "Permintaan uang di awal adalah tanda umum penipuan.",
+    "verify": "Lowongan atau hadiah asli tidak pernah meminta biaya dari Anda.",
+    "negationPatterns": []
+  }
+]
+

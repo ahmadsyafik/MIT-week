@@ -1,0 +1,14 @@
+{
+  "id": "k1",
+  "title": "Undangan Pernikahan Digital (.apk)",
+  "modusId": "undangan_apk",
+  "durationMin": 5,
+  "startNodeId": "start",
+  "briefing": [
+    "Sebuah pesan WhatsApp masuk dari nomor yang tidak Anda kenal.",
+    "Pengirim mengaku kerabat dan melampirkan file Surat Undangan Pernikahan.",
+    "File tersebut berekstensi .apk dan meminta izin akses mencurigakan."
+  ],
+  "nodes": []
+}
+

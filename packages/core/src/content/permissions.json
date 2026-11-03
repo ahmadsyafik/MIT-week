@@ -1,0 +1,63 @@
+[
+  {
+    "id": "READ_SMS",
+    "label": "Baca/terima SMS",
+    "level": "L5",
+    "why": "Izin ini memungkinkan aplikasi mencuri kode OTP."
+  },
+  {
+    "id": "ACCESSIBILITY",
+    "label": "Aksesibilitas",
+    "level": "L5",
+    "why": "Dapat mengambil alih layar dan mencuri data."
+  },
+  {
+    "id": "NOTIFICATION_ACCESS",
+    "label": "Akses Notifikasi",
+    "level": "L4",
+    "why": "Dapat membaca notifikasi transaksi perbankan dan kode sandi."
+  },
+  {
+    "id": "OVERLAY",
+    "label": "Tampil di atas aplikasi lain",
+    "level": "L4",
+    "why": "Dapat menampilkan layar palsu untuk menjebak korban."
+  },
+  {
+    "id": "DEVICE_ADMIN",
+    "label": "Administrator perangkat",
+    "level": "L4",
+    "why": "Memberikan hak kontrol penuh dan mempersulit penghapusan aplikasi."
+  },
+  {
+    "id": "INSTALL_UNKNOWN",
+    "label": "Pasang dari sumber tak dikenal",
+    "level": "L4",
+    "why": "Membuka celah pemasangan aplikasi berbahaya tanpa verifikasi toko resmi."
+  },
+  {
+    "id": "CONTACTS",
+    "label": "Kontak",
+    "level": "L3",
+    "why": "Dapat menyedot nomor kerabat untuk sasaran penipuan berikutnya."
+  },
+  {
+    "id": "GALLERY",
+    "label": "Galeri/Foto",
+    "level": "L3",
+    "why": "Dapat mengakses foto pribadi atau dokumen identitas yang tersimpan."
+  },
+  {
+    "id": "LOCATION",
+    "label": "Lokasi",
+    "level": "L3",
+    "why": "Dapat memantau pergerakan fisik korban tanpa alasan yang wajar."
+  },
+  {
+    "id": "MICROPHONE",
+    "label": "Mikrofon",
+    "level": "L3",
+    "why": "Dapat merekam percakapan di sekitar tanpa sepengetahuan pengguna."
+  }
+]
+

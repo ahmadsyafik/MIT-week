@@ -1,0 +1,14 @@
+{
+  "id": "k2",
+  "title": "Lihat Foto Paket",
+  "modusId": "foto_paket_apk",
+  "durationMin": 5,
+  "startNodeId": "start",
+  "briefing": [
+    "Seseorang yang mengaku kurir paket menghubungi Anda melalui chat.",
+    "Kurir menyebutkan alamat tidak jelas dan mengirimkan file Foto_Paket.apk.",
+    "Aplikasi tersebut berupaya membaca SMS dan kode OTP Anda."
+  ],
+  "nodes": []
+}
+

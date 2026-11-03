@@ -1,0 +1,14 @@
+{
+  "id": "k3",
+  "title": "Loker Admin WFH Palsu",
+  "modusId": "loker_palsu",
+  "durationMin": 5,
+  "startNodeId": "start",
+  "briefing": [
+    "Tawaran pekerjaan paruh waktu masuk dengan tawaran upah sangat tinggi.",
+    "Tugas yang diminta hanya menyukai video atau mengisi formulir sederhana.",
+    "Sebelum mulai kerja, pelamar diminta mentransfer biaya pendaftaran awal."
+  ],
+  "nodes": []
+}
+
