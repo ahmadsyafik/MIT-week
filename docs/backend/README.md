@@ -1,6 +1,6 @@
 # DOMAIN BACKEND (Logika & Data): README
 
-> **PENANGGUNG JAWAB:** Raffi Azzaky Ramadhani (`@azzakyDp`)
+> **PENANGGUNG JAWAB:** Ahmad Syifa'ul Falakhul Khayyi (`@ahmadsyafik`)
 > **BRANCH:** `backend`
 > **BOLEH DITULIS (R/W):** `packages/core/`, `docs/backend/`
 

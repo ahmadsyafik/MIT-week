@@ -1,6 +1,6 @@
 # DOMAIN DEVELOPMENT (Integrasi & Deploy): README
 
-> **PENANGGUNG JAWAB:** Raffi Azzaky Ramadhani (@azzakyDp); testing oleh Ahmad Syafi'ul An'am (@ahmadsyafik)
+> **PENANGGUNG JAWAB:** Syifa (`@syifamojocanggih-hash`; ubah bila disepakati)
 > **BRANCH:** `development` (dan `main` untuk rilis)
 > **BOLEH DITULIS (R/W):** `package.json` root, `.github/`, `scripts/`, `.githooks/`, `vercel.json`, `packages/contracts/`, `docs/universal/`, `docs/development/`, `README.md` root
 

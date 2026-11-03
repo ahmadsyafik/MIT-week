@@ -7,8 +7,8 @@
 ## 2. Pertama kali
 
 ```bash
-git clone https://github.com/syifamojocanggih-hash/JagaRuang.git
-cd JagaRuang
+git clone https://github.com/ahmadsyafik/MIT-week.git
+cd MIT-week
 git checkout backend
 npm install            # memasang semua workspace + mengaktifkan hook pre-push
 ```

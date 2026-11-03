@@ -1,0 +1,151 @@
+{
+  "id": "k1",
+  "title": "Undangan Pernikahan Digital",
+  "modusId": "undangan_apk",
+  "durationMin": 3,
+  "startNodeId": "k1-mission",
+  "briefing": [
+    "Modus APK undangan: file berbahaya dikirim lewat WhatsApp menyamar sebagai surat undangan digital.",
+    "Pelaku membajak akun atau memakai nomor asing, lalu menyebarkan file .apk ke seluruh kontak.",
+    "Begitu dipasang, aplikasi meminta izin baca SMS untuk mencuri kode OTP perbankan.",
+    "Tugas kamu: periksa bukti, ambil keputusan tepat, dan lindungi perangkat."
+  ],
+  "nodes": [
+    {
+      "id": "k1-mission",
+      "caseId": "k1",
+      "type": "mission",
+      "screen": "💬 WhatsApp — Kontak tersimpan 'Dina'\n\"Kak, ini undangan pernikahan adek aku. Tolong dibuka ya, pakai HP langsung 🙏\"\n[File: Undangan_Pernikahan_Rina.apk — 6,2 MB]",
+      "text": "Seseorang yang tersimpan sebagai 'Dina' di kontakmu mengirimkan file bernama Undangan_Pernikahan_Rina.apk lewat WhatsApp. Kamu tidak tahu apakah Dina benar-benar menikah. Selidiki bukti sebelum mengambil tindakan.",
+      "nextNodeId": "k1-investigation"
+    },
+    {
+      "id": "k1-investigation",
+      "caseId": "k1",
+      "type": "investigation",
+      "text": "Ketuk setiap bukti untuk memeriksanya. Kumpulkan semua informasi sebelum memutuskan.",
+      "evidence": [
+        {
+          "id": "k1-ev1",
+          "label": "Ekstensi file: .apk",
+          "isRedFlag": true,
+          "why": "Undangan pernikahan asli berbentuk gambar, PDF, atau tautan situs — bukan file .apk yang merupakan format aplikasi Android."
+        },
+        {
+          "id": "k1-ev2",
+          "label": "Ukuran file: 6,2 MB",
+          "isRedFlag": true,
+          "why": "Ukuran ini terlalu besar untuk sekedar gambar undangan, namun terlalu kecil untuk aplikasi resmi. Ukuran aneh ini sering jadi ciri malware yang dikemas ringan."
+        },
+        {
+          "id": "k1-ev3",
+          "label": "Sumber: WhatsApp dari kontak tersimpan",
+          "isRedFlag": false,
+          "why": ""
+        },
+        {
+          "id": "k1-ev4",
+          "label": "Izin yang diminta saat dipasang: Baca SMS, Aksesibilitas",
+          "isRedFlag": true,
+          "why": "Undangan tidak memerlukan izin membaca SMS atau aksesibilitas perangkat. Izin ini digunakan malware untuk mencuri kode OTP perbankan."
+        },
+        {
+          "id": "k1-ev5",
+          "label": "Nomor Dina: terakhir aktif 3 hari lalu",
+          "isRedFlag": false,
+          "why": ""
+        }
+      ],
+      "nextNodeId": "k1-decision-1"
+    },
+    {
+      "id": "k1-decision-1",
+      "caseId": "k1",
+      "type": "decision",
+      "text": "Setelah memeriksa bukti, apa yang kamu lakukan dengan file Undangan_Pernikahan_Rina.apk ini?",
+      "options": [
+        {
+          "id": "k1-opt1a",
+          "label": "Langsung buka dan pasang filenya — mungkin memang undangan asli",
+          "score": 0,
+          "nextNodeId": "k1-consequence-buruk",
+          "actionGuideId": "guide_sudah_install",
+          "feedback": "File .apk bukan format undangan. Memasangnya membuka celah bagi malware untuk mengakses SMS dan saldo rekening kamu."
+        },
+        {
+          "id": "k1-opt1b",
+          "label": "Hubungi Dina lewat telepon atau pesan lain untuk konfirmasi dulu",
+          "score": 25,
+          "nextNodeId": "k1-decision-2",
+          "feedback": "Langkah tepat. Verifikasi ke pengirim lewat kanal berbeda adalah cara paling efektif mendeteksi akun yang dibajak."
+        },
+        {
+          "id": "k1-opt1c",
+          "label": "Abaikan saja tanpa melakukan apa-apa",
+          "score": 10,
+          "nextNodeId": "k1-decision-2",
+          "feedback": "Mengabaikan memang mencegah kerugian pada dirimu, tapi tidak memperingatkan Dina bahwa akunnya mungkin telah dibajak."
+        }
+      ]
+    },
+    {
+      "id": "k1-consequence-buruk",
+      "caseId": "k1",
+      "type": "consequence",
+      "screen": "⚠️ Notifikasi sistem\nAplikasi meminta izin: Baca SMS ✓ Aksesibilitas ✓\n📱 30 menit kemudian...\n🏦 Notifikasi bank: \"Transaksi Rp4.800.000 berhasil\"",
+      "text": "File terpasang dan langsung meminta izin baca SMS serta aksesibilitas. Diam-diam aplikasi mencegat kode OTP yang dikirim bank dan menggunakannya untuk memindahkan saldo. Kamu baru sadar ada yang salah setelah melihat notifikasi transaksi.",
+      "nextNodeId": "k1-debrief-buruk"
+    },
+    {
+      "id": "k1-decision-2",
+      "caseId": "k1",
+      "type": "decision",
+      "screen": "📞 Panggilan ke Dina\n\"Hah? Aku gak kirim apa-apa kak. HP-ku baik-baik saja...\"\n💬 \"Tapi tadi ada notif WhatsApp terkirim ke banyak orang dari akunku\"",
+      "text": "Dina memastikan bukan dia yang mengirim file itu. Akunnya tampaknya telah dipakai untuk menyebarkan malware ke seluruh kontaknya. Apa yang kamu lakukan selanjutnya?",
+      "options": [
+        {
+          "id": "k1-opt2a",
+          "label": "Hapus file, laporkan pesan ke WhatsApp, dan beritahu Dina untuk amankan akunnya",
+          "score": 25,
+          "nextNodeId": "k1-debrief-baik",
+          "feedback": "Sempurna. Kamu melindungi diri dan membantu Dina menghentikan penyebaran lebih lanjut."
+        },
+        {
+          "id": "k1-opt2b",
+          "label": "Hapus file dan beritahu teman-teman lain yang mungkin juga menerima",
+          "score": 15,
+          "nextNodeId": "k1-debrief-sebagian",
+          "feedback": "Baik, tapi kamu melewatkan langkah penting: melaporkan konten berbahaya ke WhatsApp dan mendorong Dina mengamankan akunnya segera."
+        },
+        {
+          "id": "k1-opt2c",
+          "label": "Hapus file dan sudah cukup, urusannya sudah selesai",
+          "score": 5,
+          "nextNodeId": "k1-debrief-sebagian",
+          "feedback": "Kamu sudah melindungi dirimu, tapi kontak lain Dina masih berisiko menerima dan membuka file yang sama."
+        }
+      ]
+    },
+    {
+      "id": "k1-debrief-baik",
+      "caseId": "k1",
+      "type": "debrief",
+      "text": "Hasil: GUARDIAN\n\nKamu berhasil mengidentifikasi semua tanda bahaya dan mengambil tindakan tepat: tidak membuka file, memverifikasi ke pengirim, lalu menghapus file, melaporkan ke platform, dan memperingatkan korban. Ini adalah respons ideal terhadap modus APK undangan.",
+      "screen": "🏆 TRUST{K1-GUARDIAN-VERIFY-REPORT}"
+    },
+    {
+      "id": "k1-debrief-sebagian",
+      "caseId": "k1",
+      "type": "debrief",
+      "text": "Hasil: PENJAGA\n\nKamu tidak terjebak membuka file berbahaya, tapi ada langkah perlindungan yang terlewat. Tanda bahaya utama yang perlu diingat: ekstensi .apk bukan format undangan, dan izin Baca SMS + Aksesibilitas tidak pernah dibutuhkan oleh gambar undangan.",
+      "screen": "🥈 TRUST{K1-PENJAGA-PARTIAL}"
+    },
+    {
+      "id": "k1-debrief-buruk",
+      "caseId": "k1",
+      "type": "debrief",
+      "text": "Hasil: PEMULA\n\nFile berhasil mencuri akses ke rekeningmu. Tanda bahaya yang terlewat: (1) .apk bukan format undangan, (2) ukuran file tidak wajar, (3) izin Baca SMS dan Aksesibilitas diminta oleh 'undangan'. Jika ini terjadi sungguhan, segera hubungi bank dan cabut izin aplikasi.",
+      "screen": "⚠️ TRUST{K1-PEMULA-TRAP}"
+    }
+  ]
+}

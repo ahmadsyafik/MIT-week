@@ -6,8 +6,8 @@
 ## 2. Pertama kali
 
 ```bash
-git clone https://github.com/syifamojocanggih-hash/JagaRuang.git
-cd JagaRuang
+git clone https://github.com/ahmadsyafik/MIT-week.git
+cd MIT-week
 git checkout frontend
 npm install                                   # memasang semua workspace + hook pre-push
 cp apps/web/.env.example apps/web/.env.local  # VITE_USE_MOCK=true (default)

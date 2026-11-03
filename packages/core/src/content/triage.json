@@ -1,0 +1,116 @@
+[
+  {
+    "id": "TR-SCAM-01",
+    "content": "Selamat! Anda terpilih sebagai pemenang undian berhadiah 50 juta rupiah. Klik link untuk klaim: http://hadiah-kupon.test/klaim",
+    "isScam": true,
+    "ruleIds": ["MSG-OFFER-03", "MSG-LINK-04"],
+    "explanation": "Iming-iming hadiah besar disertai tautan mencurigakan adalah ciri penipuan.",
+    "modusId": "giveaway_palsu"
+  },
+  {
+    "id": "TR-SCAM-02",
+    "content": "Lowongan admin data entry WFH gaji 9 juta per minggu. Bayar biaya pendaftaran Rp100.000 ke rekening 0888-0000-1111.",
+    "isScam": true,
+    "ruleIds": ["MSG-PAYMENT-01", "MSG-OFFER-03"],
+    "explanation": "Lowongan pekerjaan yang meminta uang pendaftaran di awal merupakan indikasi penipuan.",
+    "modusId": "loker_palsu"
+  },
+  {
+    "id": "TR-SCAM-03",
+    "content": "Kami dari kurir ekspedisi, paket Anda tertahan di gudang. Silakan unduh file Surat-Jalan.apk berikut untuk melacak status pengiriman.",
+    "isScam": true,
+    "ruleIds": ["FILE-APK-01"],
+    "explanation": "Ekspedisi tidak pernah mengirimkan file aplikasi APK melalui pesan instan untuk melacak paket.",
+    "modusId": "foto_paket_apk"
+  },
+  {
+    "id": "TR-SCAM-04",
+    "content": "Halo kerabat, kami mengundang Anda ke resepsi pernikahan kami. Unduh Surat_Undangan_Digital.apk untuk melihat lokasi acara.",
+    "isScam": true,
+    "ruleIds": ["FILE-APK-01"],
+    "explanation": "Modus pengiriman undangan berekstensi APK bertujuan menyusupkan malware penyadap ke ponsel.",
+    "modusId": "undangan_apk"
+  },
+  {
+    "id": "TR-SCAM-05",
+    "content": "Pemberitahuan perbankan! Rekening Anda terancam dibekukan hari ini jika tidak segera verifikasi di: https://ib-bank.invalid/login",
+    "isScam": true,
+    "ruleIds": ["MSG-PRESSURE-02", "MSG-LINK-04"],
+    "explanation": "Ancaman pemblokiran mendesak dengan link tiruan adalah upaya phishing untuk mencuri kredensial.",
+    "modusId": "phishing_link"
+  },
+  {
+    "id": "TR-SCAM-06",
+    "content": "Selamat! Nomor Anda terpilih menerima pinjaman dana kilat bunga 0%. Hubungi WhatsApp 0812-9999-8888 sekarang juga.",
+    "isScam": true,
+    "ruleIds": ["MSG-OFFER-03", "MSG-PRESSURE-02"],
+    "explanation": "Penawaran pinjaman berbunga nol yang mendesak lewat nomor pribadi patut diwaspadai.",
+    "modusId": "giveaway_palsu"
+  },
+  {
+    "id": "TR-SCAM-07",
+    "content": "Surat tilang elektronik untuk kendaraan Anda. Mohon unduh aplikasi Tilang-ETLE.apk dalam 1x24 jam agar STNK tidak dibekukan.",
+    "isScam": true,
+    "ruleIds": ["FILE-APK-01", "MSG-PRESSURE-02"],
+    "explanation": "Pemberitahuan tilang elektronik resmi dikirim lewat pos atau surat resmi, bukan via file APK di WhatsApp.",
+    "modusId": "foto_paket_apk"
+  },
+  {
+    "id": "TR-SCAM-08",
+    "content": "Tagihan internet jatuh tempo hari ini. Segera transfer ke rekening virtual 0899-7777-6666 untuk menghindari pemutusan jaringan.",
+    "isScam": true,
+    "ruleIds": ["MSG-PAYMENT-01", "MSG-PRESSURE-02"],
+    "explanation": "Penyedia layanan resmi memakai saluran pembayaran korporasi resmi, bukan nomor rekening perorangan.",
+    "modusId": "phishing_link"
+  },
+  {
+    "id": "TR-LEGIT-01",
+    "content": "Jangan berikan kode OTP ini kepada siapa pun termasuk pihak bank. Kode verifikasi login Anda: 482910.",
+    "isScam": false,
+    "ruleIds": [],
+    "explanation": "Pesan OTP standar yang mengingatkan pengguna untuk tidak membagikan kode verifikasi."
+  },
+  {
+    "id": "TR-LEGIT-02",
+    "content": "Paket dengan nomor resi JKT123456 sedang diantar oleh kurir Joko. Pantau status pengiriman di aplikasi resmi kami.",
+    "isScam": false,
+    "ruleIds": [],
+    "explanation": "Notifikasi kurir yang wajar tanpa lampiran file APK atau tautan mencurigakan."
+  },
+  {
+    "id": "TR-LEGIT-03",
+    "content": "Terima kasih telah berbelanja di Toko Kopi Sejahtera. Total transaksi Rp35.000 berhasil dibayar via QRIS.",
+    "isScam": false,
+    "ruleIds": [],
+    "explanation": "Struk konfirmasi transaksi digital standar tanpa permintaan informasi tambahan."
+  },
+  {
+    "id": "TR-LEGIT-04",
+    "content": "Pengingat jadwal konsultasi gigi Anda pada hari Kamis pukul 14.00 di Klinik Medika Sehat. Hubungi 021-0000-1111 jika ingin menjadwalkan ulang.",
+    "isScam": false,
+    "ruleIds": [],
+    "explanation": "Pesan pengingat reservasi dari klinik tanpa tautan berbahaya atau desakan keuangan."
+  },
+  {
+    "id": "TR-LEGIT-05",
+    "content": "Tagihan listrik pascabayar periode bulan ini sebesar Rp275.000 telah terbit. Silakan bayar melalui kanal pembayaran resmi langganan Anda.",
+    "isScam": false,
+    "ruleIds": [],
+    "explanation": "Pemberitahuan tagihan berkala yang mengarahkan pembayaran ke saluran resmi."
+  },
+  {
+    "id": "TR-LEGIT-06",
+    "content": "Pembaruan sistem layanan perbankan akan dilaksanakan pada hari Minggu pukul 01.00-03.00 WIB. Informasi lengkap: https://example.com/info",
+    "isScam": false,
+    "ruleIds": [],
+    "explanation": "Pemberitahuan pemeliharaan sistem terencana dari institusi resmi menggunakan domain contoh."
+  },
+  {
+    "id": "TR-LEGIT-07",
+    "content": "Undangan wawancara kerja posisi desainer grafis di PT Harapan Baru. Jadwal: Senin 10.00 via Google Meet. Surat resmi dikirim ke email terdaftar Anda.",
+    "isScam": false,
+    "ruleIds": [],
+    "explanation": "Undangan wawancara profesional tanpa pungutan biaya dan tanpa permintaan data sensitif."
+  }
+]
+

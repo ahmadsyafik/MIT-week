@@ -1,0 +1,151 @@
+{
+  "id": "k2",
+  "title": "Lihat Foto Paket",
+  "modusId": "foto_paket_apk",
+  "durationMin": 3,
+  "startNodeId": "k2-mission",
+  "briefing": [
+    "Modus foto paket: penipu berpura-pura jadi kurir dan mengirim file .apk berkedok foto atau resi pengiriman.",
+    "Nomor pengirim tidak dikenal dan mengklaim ada paket atas namamu yang perlu dikonfirmasi.",
+    "File yang dipasang mencuri akses SMS dan data perbankan tanpa sepengetahuanmu.",
+    "Tugas kamu: telusuri bukti di setiap langkah dan buat keputusan yang tepat."
+  ],
+  "nodes": [
+    {
+      "id": "k2-mission",
+      "caseId": "k2",
+      "type": "mission",
+      "screen": "💬 WhatsApp — Nomor tidak dikenal (+62 831-XXXX-7723)\n\"Selamat siang, saya kurir dari ekspedisi. Ada paket atas nama Anda yang tidak bisa diantar.\nSilakan lihat foto paket untuk konfirmasi alamat.\"\n[File: Lihat_Foto_Paket.apk — 4,1 MB]",
+      "text": "Nomor tidak dikenal mengaku sebagai kurir dan mengirim file bernama Lihat_Foto_Paket.apk. Kamu tidak sedang menunggu paket apa pun. Periksa semua bukti sebelum bertindak.",
+      "nextNodeId": "k2-investigation"
+    },
+    {
+      "id": "k2-investigation",
+      "caseId": "k2",
+      "type": "investigation",
+      "text": "Ketuk setiap bukti untuk memeriksanya. Kumpulkan informasi sebanyak mungkin.",
+      "evidence": [
+        {
+          "id": "k2-ev1",
+          "label": "Ekstensi file: .apk bukan .jpg atau .pdf",
+          "isRedFlag": true,
+          "why": "Foto paket atau resi pengiriman dikirim dalam format gambar (.jpg/.png) atau dokumen (.pdf), bukan aplikasi Android (.apk)."
+        },
+        {
+          "id": "k2-ev2",
+          "label": "Pengirim: nomor tidak dikenal, tidak tersimpan di kontak",
+          "isRedFlag": true,
+          "why": "Kurir resmi dari ekspedisi terdaftar tidak menghubungi lewat WhatsApp pribadi dengan nomor tidak terdaftar."
+        },
+        {
+          "id": "k2-ev3",
+          "label": "Klaim: ada paket atas namamu",
+          "isRedFlag": false,
+          "why": ""
+        },
+        {
+          "id": "k2-ev4",
+          "label": "Nama file mengandung kata 'Foto' tapi berekstensi .apk",
+          "isRedFlag": true,
+          "why": "Nama file dirancang untuk membuat korban berpikir ini foto biasa. Ekstensi .apk mengungkap bahwa ini adalah aplikasi yang akan dipasang ke perangkat."
+        },
+        {
+          "id": "k2-ev5",
+          "label": "Kamu tidak memesan atau menunggu paket apa pun",
+          "isRedFlag": false,
+          "why": ""
+        }
+      ],
+      "nextNodeId": "k2-decision-1"
+    },
+    {
+      "id": "k2-decision-1",
+      "caseId": "k2",
+      "type": "decision",
+      "text": "Kurir memintamu membuka file itu untuk konfirmasi alamat. Apa yang kamu lakukan?",
+      "options": [
+        {
+          "id": "k2-opt1a",
+          "label": "Buka filenya — mungkin memang ada paket salah antar",
+          "score": 0,
+          "nextNodeId": "k2-consequence-buruk",
+          "actionGuideId": "guide_sudah_install",
+          "feedback": "File .apk bukan foto. Membukanya memasang malware yang akan mencuri data SMS dan saldo rekening."
+        },
+        {
+          "id": "k2-opt1b",
+          "label": "Tanyakan nama ekspedisi dan nomor resi, lalu cek di situs resmi ekspedisi tersebut",
+          "score": 25,
+          "nextNodeId": "k2-decision-2",
+          "feedback": "Tepat. Pelacakan resmi selalu bisa dilakukan di situs ekspedisi dengan nomor resi — tanpa harus mengunduh file apa pun."
+        },
+        {
+          "id": "k2-opt1c",
+          "label": "Blokir nomor dan abaikan",
+          "score": 15,
+          "nextNodeId": "k2-decision-2",
+          "feedback": "Kamu melindungi dirimu, tapi memblokir tanpa melaporkan tidak memperingatkan orang lain yang mungkin mendapat pesan serupa."
+        }
+      ]
+    },
+    {
+      "id": "k2-consequence-buruk",
+      "caseId": "k2",
+      "type": "consequence",
+      "screen": "📱 Sistem meminta izin:\n✓ Baca dan kirim SMS\n✓ Tampil di atas aplikasi lain\n✓ Akses notifikasi\n\n🏦 1 jam kemudian — SMS dari bank:\n\"OTP transfer: 847291. Jangan bagikan.\"\n⚠️ Rekening berkurang Rp7.250.000",
+      "text": "Malware terpasang diam-diam dan langsung mencegat SMS berisi kode OTP. Dalam satu jam, saldo rekeningmu terkuras tanpa kamu menyadarinya. Permintaan izin yang terlihat sepele ternyata membuka akses penuh ke perbankan digitalmu.",
+      "nextNodeId": "k2-debrief-buruk"
+    },
+    {
+      "id": "k2-decision-2",
+      "caseId": "k2",
+      "type": "decision",
+      "screen": "🔍 Kamu mencoba menghubungi kurir:\nTidak ada respons. Nomor tidak bisa dihubungi kembali.\n\nKamu cek situs ekspedisi yang disebutkan:\nTidak ada nama ekspedisi tersebut di direktori resmi.",
+      "text": "Nomor 'kurir' tidak bisa dihubungi balik dan nama ekspedisi tidak ditemukan. Ini jelas penipuan. Apa langkah selanjutnya?",
+      "options": [
+        {
+          "id": "k2-opt2a",
+          "label": "Hapus file, laporkan nomor ke WhatsApp, dan ceritakan ke orang terdekat agar waspada",
+          "score": 25,
+          "nextNodeId": "k2-debrief-baik",
+          "feedback": "Respons lengkap: melindungi diri, melaporkan ke platform, dan mencegah orang lain menjadi korban."
+        },
+        {
+          "id": "k2-opt2b",
+          "label": "Hapus file dan blokir nomornya saja",
+          "score": 15,
+          "nextNodeId": "k2-debrief-sebagian",
+          "feedback": "Sudah baik melindungi diri sendiri, tapi melaporkan ke WhatsApp bisa membantu platform menghapus nomor penipu lebih cepat."
+        },
+        {
+          "id": "k2-opt2c",
+          "label": "Lapor ke kepolisian siber karena sudah hampir jadi korban",
+          "score": 20,
+          "nextNodeId": "k2-debrief-sebagian",
+          "feedback": "Pelaporan ke pihak berwajib sangat dianjurkan jika ada kerugian. Namun jika belum ada kerugian finansial, laporan ke platform dan peringatan ke kerabat lebih mendesak."
+        }
+      ]
+    },
+    {
+      "id": "k2-debrief-baik",
+      "caseId": "k2",
+      "type": "debrief",
+      "text": "Hasil: GUARDIAN\n\nKamu mengenali tiga tanda bahaya utama sekaligus: ekstensi .apk bukan format foto, pengirim nomor tidak dikenal, dan nama ekspedisi tidak terdaftar. Kamu juga mengambil langkah proaktif melaporkan dan memperingatkan orang lain.",
+      "screen": "🏆 TRUST{K2-GUARDIAN-KURIR-PALSU}"
+    },
+    {
+      "id": "k2-debrief-sebagian",
+      "caseId": "k2",
+      "type": "debrief",
+      "text": "Hasil: PENJAGA\n\nKamu berhasil tidak membuka file berbahaya. Untuk menjadi lebih waspada: (1) .apk bukan format foto/resi, (2) kurir resmi tidak meminta unduh aplikasi lewat WhatsApp, (3) laporkan nomor penipuan ke platform agar tidak menjebak orang lain.",
+      "screen": "🥈 TRUST{K2-PENJAGA-PARTIAL}"
+    },
+    {
+      "id": "k2-debrief-buruk",
+      "caseId": "k2",
+      "type": "debrief",
+      "text": "Hasil: PEMULA\n\nMalware berhasil mencuri akses rekeningmu. Tanda bahaya yang terlewat: (1) foto tidak pernah berekstensi .apk, (2) kurir resmi tidak mengirim file instalasi lewat WhatsApp pribadi. Jika ini sungguhan terjadi, segera hubungi bank untuk membekukan rekening dan cabut semua izin aplikasi mencurigakan.",
+      "screen": "⚠️ TRUST{K2-PEMULA-TRAP}"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "id": "guide_belum_klik",
+    "condition": "belum_klik",
+    "title": "Belum klik atau transfer — lakukan ini",
+    "steps": [
+      {
+        "id": "s1",
+        "order": 1,
+        "text": "Jangan klik link atau balas pesan.",
+        "urgency": "segera"
+      },
+      {
+        "id": "s2",
+        "order": 2,
+        "text": "Screenshot dan simpan bukti.",
+        "urgency": "segera"
+      },
+      {
+        "id": "s3",
+        "order": 3,
+        "text": "Laporkan ke IASC di iasc.ojk.go.id atau hubungi 157.",
+        "urgency": "hari_ini",
+        "channelId": "iasc"
+      },
+      {
+        "id": "s4",
+        "order": 4,
+        "text": "Blokir nomor atau akun pengirim.",
+        "urgency": "hari_ini"
+      },
+      {
+        "id": "s5",
+        "order": 5,
+        "text": "Beritahu teman atau keluarga agar tidak terkena modus yang sama.",
+        "urgency": "minggu_ini"
+      }
+    ]
+  },
+  {
+    "id": "guide_sudah_install",
+    "condition": "sudah_install",
+    "title": "Sudah pasang file atau beri izin — lakukan ini",
+    "steps": [
+      {
+        "id": "si1",
+        "order": 1,
+        "text": "Aktifkan mode pesawat (airplane mode) segera untuk memutus koneksi data.",
+        "urgency": "segera"
+      },
+      {
+        "id": "si2",
+        "order": 2,
+        "text": "Cabut izin mencurigakan dan hapus (uninstall) aplikasi tersebut dari pengaturan perangkat.",
+        "urgency": "segera"
+      },
+      {
+        "id": "si3",
+        "order": 3,
+        "text": "Ganti seluruh kata sandi akun penting dan m-banking dari perangkat lain yang terpercaya.",
+        "urgency": "hari_ini"
+      },
+      {
+        "id": "si4",
+        "order": 4,
+        "text": "Hubungi bank atau call center resmi perbankan Anda untuk memantau aktivitas transaksi.",
+        "urgency": "hari_ini"
+      },
+      {
+        "id": "si5",
+        "order": 5,
+        "text": "Laporkan insiden ke IASC di iasc.ojk.go.id atau hubungi 157.",
+        "urgency": "hari_ini",
+        "channelId": "iasc"
+      },
+      {
+        "id": "si6",
+        "order": 6,
+        "text": "Lakukan pemindaian perangkat secara menyeluruh.",
+        "urgency": "minggu_ini"
+      }
+    ]
+  },
+  {
+    "id": "guide_sudah_transfer",
+    "condition": "sudah_transfer",
+    "title": "Sudah transfer atau kirim data — lakukan ini",
+    "steps": [
+      {
+        "id": "st1",
+        "order": 1,
+        "text": "Segera hubungi bank atau e-wallet terkait untuk meminta pembekuan rekening tujuan transfer.",
+        "urgency": "segera"
+      },
+      {
+        "id": "st2",
+        "order": 2,
+        "text": "Blokir kartu debit/kredit dan akses perbankan digital Anda untuk mencegah transaksi lanjutan.",
+        "urgency": "segera"
+      },
+      {
+        "id": "st3",
+        "order": 3,
+        "text": "Kumpulkan dan simpan semua bukti transfer, riwayat chat, dan nomor rekening penerima.",
+        "urgency": "segera"
+      },
+      {
+        "id": "st4",
+        "order": 4,
+        "text": "Laporkan ke IASC di iasc.ojk.go.id atau hubungi 157.",
+        "urgency": "hari_ini",
+        "channelId": "iasc"
+      },
+      {
+        "id": "st5",
+        "order": 5,
+        "text": "Buat laporan resmi ke kepolisian terdekat atau hubungi 110.",
+        "urgency": "hari_ini",
+        "channelId": "polisi"
+      },
+      {
+        "id": "st6",
+        "order": 6,
+        "text": "Periksa dan laporkan rekening penipu di situs cekrekening.id.",
+        "urgency": "minggu_ini",
+        "channelId": "cekrekening"
+      }
+    ]
+  }
+]

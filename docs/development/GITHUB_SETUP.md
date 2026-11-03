@@ -1,6 +1,6 @@
 # GITHUB_SETUP.md: Panduan Lengkap Setup Repo, Branch, Proteksi, dan Deploy
 
-Repo: `https://github.com/syifamojocanggih-hash/JagaRuang.git`
+Repo: `https://github.com/ahmadsyafik/MIT-week.git`
 Branch yang dibuat: **`main`**, **`development`**, **`backend`**, **`frontend`**
 
 > Perintah ditulis untuk **Git Bash** (Windows) atau terminal Linux/macOS. Di Windows, **jangan pakai CMD/PowerShell** untuk script `.sh` dan hook. Buka *Git Bash*.
@@ -25,8 +25,8 @@ Perlu login GitHub di terminal (HTTPS dengan Personal Access Token, atau SSH). B
 
 ```bash
 cd ~/Documents                                     # bebas
-git clone https://github.com/syifamojocanggih-hash/JagaRuang.git
-cd JagaRuang
+git clone https://github.com/ahmadsyafik/MIT-week.git
+cd MIT-week
 git status
 ```
 - Muncul `You appear to have cloned an empty repository`: repo kosong, lanjut.
@@ -92,7 +92,7 @@ git checkout backend
 
 ## 6. Pengaturan GitHub (di browser)
 
-Buka `https://github.com/syifamojocanggih-hash/JagaRuang` -> **Settings**.
+Buka `https://github.com/ahmadsyafik/MIT-week` -> **Settings**.
 
 ### 6.1 Actions
 *Settings -> Actions -> General*
@@ -133,8 +133,8 @@ Biarkan `main` sebagai default. (Bila temanmu bingung branch mana yang harus di-
 
 Kirim ke temanmu:
 ```bash
-git clone https://github.com/syifamojocanggih-hash/JagaRuang.git
-cd JagaRuang
+git clone https://github.com/ahmadsyafik/MIT-week.git
+cd MIT-week
 git checkout frontend
 npm install
 cp apps/web/.env.example apps/web/.env.local
@@ -144,7 +144,7 @@ dan minta ia membaca `docs/frontend/README.md`, `docs/frontend/TASK_GUIDE.md`, `
 
 ## 8. Deploy di Vercel (branch `development`)
 
-1. `vercel.com` -> login dengan GitHub -> **Add New -> Project** -> pilih repo `JagaRuang` (beri akses repo bila diminta) -> **Import**.
+1. `vercel.com` -> login dengan GitHub -> **Add New -> Project** -> pilih repo `MIT-week` (beri akses repo bila diminta) -> **Import**.
 2. *Framework Preset*: **Other**. *Root Directory*: `./` (kosongkan). Build/Install/Output otomatis dari `vercel.json`. -> **Deploy**.
 3. **Production Branch -> `development`** (selama pengembangan): *Project -> Settings -> Environments -> Production -> Branch Tracking* (atau *Settings -> Git -> Production Branch*, tergantung tampilan) -> isi `development`.
 4. **Deployment Protection**: *Settings -> Deployment Protection* -> matikan *Vercel Authentication* untuk **Production** agar tautan terbuka tanpa login. Uji di jendela incognito.

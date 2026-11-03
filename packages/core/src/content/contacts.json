@@ -1,0 +1,38 @@
+{
+  "verifiedAt": "2026-11-03",
+  "note": "Verifikasi ulang di situs resmi sebelum rilis.",
+  "channels": [
+    {
+      "id": "iasc",
+      "name": "IASC - Indonesia Anti-Scam Centre",
+      "url": "https://iasc.ojk.go.id",
+      "contact": "157 / WhatsApp 081-157-157-157"
+    },
+    {
+      "id": "ojk_email",
+      "name": "Email OJK",
+      "contact": "konsumen@ojk.go.id"
+    },
+    {
+      "id": "sipasti",
+      "name": "SiPasti OJK",
+      "url": "https://sipasti.ojk.go.id"
+    },
+    {
+      "id": "cekrekening",
+      "name": "Cek Rekening",
+      "url": "https://cekrekening.id"
+    },
+    {
+      "id": "aduannomor",
+      "name": "Aduan Nomor",
+      "url": "https://aduannomor.id"
+    },
+    {
+      "id": "polisi",
+      "name": "Kepolisian",
+      "contact": "110"
+    }
+  ]
+}
+

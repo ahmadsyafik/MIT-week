@@ -1,0 +1,153 @@
+{
+  "id": "k3",
+  "title": "Loker Admin WFH Palsu",
+  "modusId": "loker_palsu",
+  "durationMin": 3,
+  "startNodeId": "k3-mission",
+  "briefing": [
+    "Modus loker palsu: tawaran kerja paruh waktu bergaji tidak masuk akal dikirim lewat WhatsApp atau grup.",
+    "Penipu membangun kepercayaan dulu, lalu meminta 'biaya admin' atau 'deposit' sebelum kerja dimulai.",
+    "Uang yang ditransfer tidak bisa kembali — penipu langsung menghilang setelah menerima.",
+    "Tugas kamu: periksa setiap detail tawaran dan ambil keputusan sebelum terlambat."
+  ],
+  "nodes": [
+    {
+      "id": "k3-mission",
+      "caseId": "k3",
+      "type": "mission",
+      "screen": "💬 WhatsApp — Nomor tidak dikenal\n\"Halo kak! Kami sedang buka lowongan Admin WFH part-time.\nKerja dari rumah, hanya 2-3 jam/hari.\nGaji Rp8.000.000/minggu + bonus.\nMinat? Balas 'YA' untuk info lebih lanjut 😊\"",
+      "text": "Tawaran kerja admin WFH bergaji 8 juta per minggu masuk dari nomor tidak dikenal. Kamu tertarik karena sedang mencari penghasilan tambahan. Periksa semua detail sebelum merespons.",
+      "nextNodeId": "k3-investigation"
+    },
+    {
+      "id": "k3-investigation",
+      "caseId": "k3",
+      "type": "investigation",
+      "screen": "💬 Setelah kamu membalas 'YA'...\n\"Bagus! Tugasnya mudah: like postingan, isi survei, input data.\nNanti kami kirimkan detail kontrak dan akun kerja.\nTapi sebelumnya, ada biaya admin registrasi Rp150.000 untuk aktivasi akun.\nBisa transfer ke rekening 0878-XXXX-9921 a/n Mitra Digital.\"",
+      "text": "Setelah membalas, pengirim menjelaskan tugas dan meminta biaya admin Rp150.000 sebelum bisa mulai kerja. Ketuk setiap bukti untuk menilai situasi.",
+      "evidence": [
+        {
+          "id": "k3-ev1",
+          "label": "Gaji: Rp8.000.000 per minggu untuk kerja 2-3 jam/hari",
+          "isRedFlag": true,
+          "why": "Gaji Rp8 juta per minggu untuk kerja ringan tidak sesuai dengan standar pasar mana pun. Tawaran berlebihan adalah umpan untuk menarik korban."
+        },
+        {
+          "id": "k3-ev2",
+          "label": "Pengirim: nomor tidak dikenal, tidak ada nama perusahaan resmi",
+          "isRedFlag": true,
+          "why": "Perekrutan kerja resmi dilakukan melalui platform kerja terdaftar atau email perusahaan, bukan nomor WhatsApp pribadi tanpa identitas jelas."
+        },
+        {
+          "id": "k3-ev3",
+          "label": "Tugas: like postingan, isi survei, input data",
+          "isRedFlag": false,
+          "why": ""
+        },
+        {
+          "id": "k3-ev4",
+          "label": "Syarat: transfer biaya admin Rp150.000 sebelum mulai kerja",
+          "isRedFlag": true,
+          "why": "Tidak ada pekerjaan sah yang meminta karyawan membayar biaya sebelum bekerja. Permintaan ini adalah tanda paling jelas penipuan kerja."
+        },
+        {
+          "id": "k3-ev5",
+          "label": "Rekening tujuan: atas nama perseorangan, bukan perusahaan",
+          "isRedFlag": true,
+          "why": "Perusahaan sah membayar dan menerima pembayaran lewat rekening bisnis terdaftar, bukan rekening pribadi atas nama perorangan."
+        }
+      ],
+      "nextNodeId": "k3-decision-1"
+    },
+    {
+      "id": "k3-decision-1",
+      "caseId": "k3",
+      "type": "decision",
+      "text": "Pengirim memintamu transfer Rp150.000 sebagai syarat aktivasi akun kerja. Apa yang kamu lakukan?",
+      "options": [
+        {
+          "id": "k3-opt1a",
+          "label": "Transfer Rp150.000 — gajinya besar, rugi sedikit tidak apa-apa",
+          "score": 0,
+          "nextNodeId": "k3-consequence-buruk",
+          "actionGuideId": "guide_sudah_transfer",
+          "feedback": "Pekerjaan sah tidak pernah meminta biaya di muka. Setelah transfer, penipu biasanya meminta biaya lagi atau langsung menghilang."
+        },
+        {
+          "id": "k3-opt1b",
+          "label": "Tolak membayar dan minta kontrak kerja tertulis serta bukti legalitas perusahaan dulu",
+          "score": 25,
+          "nextNodeId": "k3-decision-2",
+          "feedback": "Tepat. Perusahaan resmi selalu bisa menunjukkan kontrak dan nomor izin usaha. Permintaan ini akan membuat penipu mundur."
+        },
+        {
+          "id": "k3-opt1c",
+          "label": "Cari nama perusahaan atau nomor rekeningnya di internet dulu",
+          "score": 20,
+          "nextNodeId": "k3-decision-2",
+          "feedback": "Langkah verifikasi yang baik. Rekening penipu sering dilaporkan di situs cekrekening.id."
+        }
+      ]
+    },
+    {
+      "id": "k3-consequence-buruk",
+      "caseId": "k3",
+      "type": "consequence",
+      "screen": "💸 Transfer berhasil: Rp150.000\n\n💬 Pengirim: \"Terima kasih! Akun sedang diproses 1x24 jam.\"\n\n⏰ 24 jam kemudian...\n💬 \"Untuk aktivasi penuh, ada biaya verifikasi Rp350.000 lagi kak.\"\n\n⏰ Setelah kamu menolak membayar lagi...\n🚫 Nomor diblokir. Akun kerja tidak pernah ada.",
+      "text": "Setelah transfer pertama, penipu meminta biaya berikutnya dengan alasan 'verifikasi'. Begitu kamu menolak, nomor langsung diblokir. Uang Rp150.000 tidak bisa dikembalikan. Ini pola klasik penipuan biaya bertahap.",
+      "nextNodeId": "k3-debrief-buruk"
+    },
+    {
+      "id": "k3-decision-2",
+      "caseId": "k3",
+      "type": "decision",
+      "screen": "💬 Pengirim semakin mendesak:\n\"Kak ini penawaran terbatas, hari ini saja. Kalau tidak transfer sekarang, slot diberikan ke orang lain.\"\n\"Perusahaan kami sudah terdaftar, ini nomor akta: AK-2026-XXXXX\"\n\n🔍 Kamu cek nomor akta tersebut — tidak ditemukan di database AHU.",
+      "text": "Pengirim mendesak dengan tekanan waktu dan menunjukkan nomor akta palsu yang tidak bisa diverifikasi. Kamu juga tidak menemukan nomor rekening tujuan di situs manapun sebagai rekening perusahaan. Apa langkah terakhirmu?",
+      "options": [
+        {
+          "id": "k3-opt2a",
+          "label": "Putus kontak, blokir nomor, dan laporkan ke IASC atau platform tempat info ini didapat",
+          "score": 25,
+          "nextNodeId": "k3-debrief-baik",
+          "feedback": "Respons ideal. Melaporkan membantu pihak berwenang menghentikan penipu sebelum lebih banyak korban berjatuhan."
+        },
+        {
+          "id": "k3-opt2b",
+          "label": "Abaikan dan blokir nomornya",
+          "score": 15,
+          "nextNodeId": "k3-debrief-sebagian",
+          "feedback": "Kamu sudah selamat, tapi tidak melaporkan berarti penipu bebas mencari korban berikutnya. Laporan ke IASC (iasc.ojk.go.id atau 157) sangat membantu."
+        },
+        {
+          "id": "k3-opt2c",
+          "label": "Tetap transfer karena sudah terlanjur penasaran dan merasa rugi kalau tidak jadi",
+          "score": 0,
+          "nextNodeId": "k3-consequence-buruk",
+          "actionGuideId": "guide_sudah_transfer",
+          "feedback": "Tekanan waktu dan rasa sayang melewatkan peluang adalah taktik manipulasi. Tidak ada peluang sah yang hilang hanya karena kamu menolak membayar di muka."
+        }
+      ]
+    },
+    {
+      "id": "k3-debrief-baik",
+      "caseId": "k3",
+      "type": "debrief",
+      "text": "Hasil: GUARDIAN\n\nKamu mengenali seluruh tanda bahaya: gaji tidak masuk akal, pengirim tanpa identitas resmi, permintaan biaya di muka, rekening perorangan, dokumen palsu, dan tekanan waktu. Melaporkan ke IASC adalah langkah ekstra yang melindungi orang lain.",
+      "screen": "🏆 TRUST{K3-GUARDIAN-LOKER-PALSU}"
+    },
+    {
+      "id": "k3-debrief-sebagian",
+      "caseId": "k3",
+      "type": "debrief",
+      "text": "Hasil: PENJAGA\n\nKamu tidak terjebak, tapi ada tanda bahaya yang belum sepenuhnya ditindaklanjuti. Ingat: (1) pekerjaan sah tidak pernah minta biaya di muka, (2) rekening tujuan atas nama perorangan bukan perusahaan adalah sinyal merah kuat, (3) laporan ke IASC membantu mencegah korban lain.",
+      "screen": "🥈 TRUST{K3-PENJAGA-PARTIAL}"
+    },
+    {
+      "id": "k3-debrief-buruk",
+      "caseId": "k3",
+      "type": "debrief",
+      "text": "Hasil: PEMULA\n\nKamu terjebak modus biaya di muka yang klasik. Tanda bahaya yang harus diingat: (1) gaji Rp8 juta/minggu untuk kerja ringan tidak masuk akal, (2) tidak ada pekerjaan sah yang meminta biaya sebelum mulai, (3) rekening perorangan bukan rekening perusahaan. Jika sudah terlanjur transfer, hubungi bank segera dan laporkan ke IASC di 157.",
+      "screen": "⚠️ TRUST{K3-PEMULA-TRAP}"
+    }
+  ]
+}

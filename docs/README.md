@@ -28,9 +28,9 @@ docs/
 
 | Branch | Penanggung jawab | Boleh ditulis (R/W) | Dilarang keras |
 |---|---|---|---|
-| `backend` | Raffi (`@azzakyDp`) | `packages/core/`, `docs/backend/` | `apps/web/`, `docs/frontend/`, `packages/contracts/`, `docs/universal/`, file root, `.github/`, `scripts/`, `vercel.json` |
-| `frontend` | Syifa dan Mutiara (`@syifamojocanggih-hash` `@mutiaradewanda`) | `apps/web/`, `docs/frontend/` | `packages/core/`, `docs/backend/`, `packages/contracts/`, `docs/universal/`, file root, `.github/`, `scripts/`, `vercel.json` |
-| `development` | Raffi (`@azzakyDp`); testing oleh Syafi (`@ahmadsyafik`) | file root, `.github/`, `scripts/`, `vercel.json`, `packages/contracts/`, `docs/universal/`, `docs/development/` | Menulis kode fitur milik `packages/core/` atau `apps/web/` secara langsung (selain konflik merge) |
+| `backend` | syafi' (`@ahmadsyafik`) | `packages/core/`, `docs/backend/` | `apps/web/`, `docs/frontend/`, `packages/contracts/`, `docs/universal/`, file root, `.github/`, `scripts/`, `vercel.json` |
+| `frontend` | Tiara dan Rapi (`@mutiaradewanda @azzakyDp`) | `apps/web/`, `docs/frontend/` | `packages/core/`, `docs/backend/`, `packages/contracts/`, `docs/universal/`, file root, `.github/`, `scripts/`, `vercel.json` |
+| `development` | Syifa (@syifamojocanggih-hash) | file root, `.github/`, `scripts/`, `vercel.json`, `packages/contracts/`, `docs/universal/`, `docs/development/` | Menulis kode fitur milik `packages/core/` atau `apps/web/` secara langsung (selain konflik merge) |
 | `main` | Integrator | Tidak ada commit langsung. Hanya menerima merge dari `development` | Semua commit langsung |
 
 `package-lock.json` boleh ikut berubah di `backend` dan `frontend` (otomatis saat `npm install <paket>`).

@@ -1,0 +1,192 @@
+[
+  {
+    "id": "MSG-OTP-SHARE-L5",
+    "level": "L5",
+    "category": "otp_berbahaya",
+    "pattern": "bagikan.*kode|kirim.*otp|berikan.*otp|share.*kode",
+    "negationPatterns": [
+      "jangan.*bagikan",
+      "jangan.*kirim",
+      "jangan.*berikan",
+      "jangan.*share",
+      "tidak.*perlu.*bagikan"
+    ],
+    "why": "Permintaan berbagi kode OTP adalah tanda penipuan atau pembajakan akun.",
+    "verify": "Tidak ada layanan resmi yang meminta kode OTP lewat pesan."
+  },
+  {
+    "id": "MSG-PAYMENT-01",
+    "level": "L4",
+    "category": "permintaan_uang",
+    "pattern": "transfer|bayar.*biaya|biaya admin|dp\\b|uang muka|fee registrasi",
+    "why": "Permintaan uang di awal adalah tanda umum penipuan rekrutmen atau hadiah.",
+    "verify": "Lowongan atau hadiah asli tidak pernah meminta biaya dari Anda."
+  },
+  {
+    "id": "MSG-IMPERSONATE-L4",
+    "level": "L4",
+    "category": "penyamaran",
+    "pattern": "dari pihak (bank|ojk|bpjs|kepolisian|pajak|kominfo)|kami dari (bank|ojk|bpjs)",
+    "why": "Penipu sering menyamar sebagai instansi resmi lewat pesan teks.",
+    "verify": "Hubungi instansi tersebut lewat nomor resmi di situs resminya."
+  },
+  {
+    "id": "MSG-ACCOUNT-BLOCK-L4",
+    "level": "L4",
+    "category": "ancaman_akun",
+    "pattern": "akun.*diblokir|rekening.*dibekukan|kartu.*dinonaktifkan|akses.*ditangguhkan",
+    "why": "Ancaman pemblokiran akun adalah teknik tekanan klasik penipu.",
+    "verify": "Cek langsung lewat aplikasi resmi bank atau hubungi call center resmi."
+  },
+  {
+    "id": "MSG-URGENCY-L3",
+    "level": "L3",
+    "category": "tekanan_waktu",
+    "pattern": "segera|sekarang juga|batas waktu|hari ini|dalam.*jam|jangan sampai terlambat",
+    "why": "Tekanan waktu membuat korban tidak sempat berpikir dan memverifikasi.",
+    "verify": "Tenangkan diri. Tawaran asli tidak akan hangus dalam hitungan menit."
+  },
+  {
+    "id": "MSG-KTP-REQUEST-L3",
+    "level": "L3",
+    "category": "permintaan_data",
+    "pattern": "foto ktp|kirim ktp|selfie.*ktp|foto.*identitas|kirim.*nik",
+    "why": "Data KTP dapat disalahgunakan untuk pinjaman online tanpa izin.",
+    "verify": "Hanya berikan KTP ke instansi yang Anda datangi langsung."
+  },
+  {
+    "id": "MSG-PERSONAL-DATA-L3",
+    "level": "L3",
+    "category": "permintaan_data",
+    "pattern": "nomor rekening|nama ibu kandung|pin.*atm|cvv|tanggal lahir.*lengkap",
+    "why": "Data sensitif ini cukup untuk membobol akun perbankan.",
+    "verify": "Bank tidak pernah menanyakan PIN, CVV, atau nama ibu kandung lewat pesan."
+  },
+  {
+    "id": "MSG-WINNING-L3",
+    "level": "L3",
+    "category": "tawaran_berlebihan",
+    "pattern": "selamat.*menang|terpilih.*hadiah|pemenang.*undian|bonus.*gratis.*langsung",
+    "why": "Hadiah yang tidak pernah diikuti adalah umpan klasik penipuan.",
+    "verify": "Cek program hadiah di situs resmi merek yang disebut."
+  },
+  {
+    "id": "MSG-SALARY-UNREALISTIC-L2",
+    "level": "L2",
+    "category": "tawaran_berlebihan",
+    "pattern": "gaji.*juta.*per (hari|minggu)|penghasilan.*juta.*mudah|kerja.*ringan.*gaji.*besar",
+    "why": "Gaji tidak realistis untuk pekerjaan ringan adalah umpan umum.",
+    "verify": "Bandingkan dengan gaji pasaran untuk posisi serupa di jobstreet atau linkedin."
+  },
+  {
+    "id": "MSG-CLICK-LINK-L2",
+    "level": "L2",
+    "category": "tautan",
+    "pattern": "klik.*link|buka.*tautan|akses.*di sini|download.*di sini|unduh.*segera",
+    "why": "Ajakan klik tanpa konteks jelas mengarah ke situs berbahaya.",
+    "verify": "Jangan klik. Cari situs resmi lewat mesin pencari."
+  },
+  {
+    "id": "MSG-WA-ONLY-L2",
+    "level": "L2",
+    "category": "channel_tidak_resmi",
+    "pattern": "hubungi.*whatsapp|konfirmasi.*wa|balas.*wa saja|via wa",
+    "why": "Instansi resmi tidak memindahkan urusan ke WhatsApp pribadi.",
+    "verify": "Gunakan kanal resmi yang tertera di situs resmi."
+  },
+  {
+    "id": "MSG-SECRET-L2",
+    "level": "L2",
+    "category": "kerahasiaan_mencurigakan",
+    "pattern": "jangan.*beritahu|rahasiakan|jangan.*kasih tahu.*siapa",
+    "negationPatterns": [
+      "jangan.*bagikan.*otp",
+      "jangan.*berikan.*kode"
+    ],
+    "why": "Permintaan merahasiakan sesuatu dari orang lain adalah tanda manipulasi.",
+    "verify": "Tanya diri sendiri: kenapa harus dirahasiakan jika ini sah?"
+  },
+  {
+    "id": "MSG-INFORMAL-CHANNEL-L1",
+    "level": "L1",
+    "category": "channel_tidak_resmi",
+    "pattern": "telegram|pesan ini dikirim lewat grup",
+    "why": "Penawaran dari grup tidak resmi perlu diverifikasi lebih lanjut.",
+    "verify": "Cari tahu apakah grup ini dikelola oleh pihak resmi."
+  },
+  {
+    "id": "URL-SHORTENER-L3",
+    "level": "L3",
+    "category": "tautan",
+    "pattern": "bit\\.ly|tinyurl\\.com|s\\.id|rb\\.gy|shorturl\\.at|cutt\\.ly",
+    "why": "Layanan pemendek URL menyembunyikan tujuan sebenarnya.",
+    "verify": "Gunakan layanan ekspansi URL (contoh: unshorten.me) sebelum klik."
+  },
+  {
+    "id": "URL-SUSPICIOUS-TLD-L2",
+    "level": "L2",
+    "category": "tautan",
+    "pattern": "\\.(top|xyz|click|loan|work|online)(/|\\?|#|$)",
+    "why": "Domain ekstensi ini sering disalahgunakan untuk penipuan.",
+    "verify": "Cek apakah ini situs resmi merek yang diklaim."
+  },
+  {
+    "id": "URL-IP-ADDRESS-L4",
+    "level": "L4",
+    "category": "tautan",
+    "pattern": "https?://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+    "why": "Situs resmi tidak menggunakan alamat IP langsung, ini tanda phishing.",
+    "verify": "Jangan buka. Situs asli selalu punya nama domain."
+  },
+  {
+    "id": "URL-TYPOSQUATTING-L4",
+    "level": "L4",
+    "category": "tautan",
+    "pattern": "g0jek|g00gle|b4nk|toko0pedia|shope0|b1|go-j3k|0jk",
+    "why": "Domain yang mirip merek populer dirancang untuk menipu.",
+    "verify": "Ketik alamat situs resmi sendiri, jangan klik dari pesan."
+  },
+  {
+    "id": "FILE-APK-CHAT-L5",
+    "level": "L5",
+    "category": "file_berbahaya",
+    "pattern": "\\.apk$",
+    "context": "source_non_store",
+    "why": "File APK dari chat hampir selalu malware. Aplikasi resmi hanya dari Play Store.",
+    "verify": "Hapus file. Cari aplikasi hanya di Google Play Store resmi."
+  },
+  {
+    "id": "FILE-DOUBLE-EXT-L4",
+    "level": "L4",
+    "category": "file_berbahaya",
+    "pattern": "\\.(pdf|jpg|png|docx?|xlsx?)\\.(exe|apk|bat|cmd|vbs|js|scr)$",
+    "why": "Ekstensi ganda menyamarkan file berbahaya sebagai dokumen biasa.",
+    "verify": "Jangan buka. Ekstensi terakhir adalah tipe file sebenarnya."
+  },
+  {
+    "id": "FILE-EXEC-AS-DOC-L4",
+    "level": "L4",
+    "category": "file_berbahaya",
+    "pattern": "\\.(exe|bat|cmd|vbs|scr|ps1|jar)$",
+    "context": "claimed_as_doc",
+    "why": "File eksekusi yang diklaim sebagai dokumen adalah trojan.",
+    "verify": "Jangan jalankan. Dokumen asli berekstensi .pdf, .docx, .xlsx."
+  },
+  {
+    "id": "FILE-MACRO-DOC-L3",
+    "level": "L3",
+    "category": "file_berbahaya",
+    "pattern": "\\.(xlsm|docm|pptm|xls)$",
+    "why": "Dokumen bermakro bisa menjalankan kode berbahaya saat dibuka.",
+    "verify": "Jangan aktifkan makro. Minta versi PDF saja."
+  },
+  {
+    "id": "FILE-BAIT-NAME-L2",
+    "level": "L2",
+    "category": "file_berbahaya",
+    "pattern": "undangan|resi|tilang|bpjs|slip gaji|bukti transfer",
+    "context": "file_name",
+    "why": "Nama file umpan dirancang agar terlihat penting dan segera dibuka.",
+    "verify": "Konfirmasi ke pengirim lewat kanal lain sebelum membuka."
+  }
+]

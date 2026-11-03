@@ -8,13 +8,7 @@ import type {
   ActionGuide,
   AnalysisResult,
   AnalyzeInput,
-  CaseDebrief,
-  CaseDefinition,
-  CaseSession,
-  LocalProgress,
-  MalwareType,
   MaskResult,
-  Modus,
   ReportChannel,
   TriageChoice,
   TriageMessage,
@@ -27,46 +21,14 @@ function notImplemented(task: string): never {
 }
 
 /* Cek */
-export function maskPii(_text: string): MaskResult {
-  return notImplemented("BE-2.1 maskPii");
-}
-export function analyze(_input: AnalyzeInput): AnalysisResult {
-  return notImplemented("BE-2.2 analyze");
-}
+export { maskPii } from "./analyzer/pii";
+export { analyze } from "./analyzer/index";
 
 /* Konten */
-export function listMalwareTypes(): MalwareType[] {
-  return notImplemented("BE-3.1 listMalwareTypes");
-}
-export function listModus(): Modus[] {
-  return notImplemented("BE-3.1 listModus");
-}
-export function listCases(): CaseDefinition[] {
-  return notImplemented("BE-3.2 listCases");
-}
-export function listActionGuides(): ActionGuide[] {
-  return notImplemented("BE-4.1 listActionGuides");
-}
-export function listReportChannels(): ReportChannel[] {
-  return notImplemented("BE-4.1 listReportChannels");
-}
+export { listMalwareTypes, listModus, loadCases as listCases, loadActionGuides as listActionGuides, loadReportChannels as listReportChannels } from "./content/loader";
 
 /* Latih */
-export function startCase(_caseId: string): CaseSession {
-  return notImplemented("BE-3.3 startCase");
-}
-export function tapEvidence(_s: CaseSession, _evidenceId: string): CaseSession {
-  return notImplemented("BE-3.3 tapEvidence");
-}
-export function useHint(_s: CaseSession): CaseSession {
-  return notImplemented("BE-3.3 useHint");
-}
-export function chooseOption(_s: CaseSession, _optionId: string): CaseSession {
-  return notImplemented("BE-3.3 chooseOption");
-}
-export function getDebrief(_s: CaseSession): CaseDebrief {
-  return notImplemented("BE-3.3 getDebrief");
-}
+export { startCase, tapEvidence, useHint, chooseOption, getDebrief } from "./cases/engine";
 
 /* Kilat 2 Menit */
 export function pickTriageMessages(_count?: number, _seed?: number): TriageMessage[] {
@@ -88,14 +50,4 @@ export function buildWarningCard(_result: AnalysisResult): WarningCard {
 }
 
 /* Penyimpanan lokal */
-export const storage = {
-  load(): LocalProgress {
-    return notImplemented("BE-1.3 storage.load");
-  },
-  save(_p: LocalProgress): void {
-    return notImplemented("BE-1.3 storage.save");
-  },
-  clearAll(): void {
-    return notImplemented("BE-1.3 storage.clearAll");
-  },
-};
+export { storage } from "./storage";

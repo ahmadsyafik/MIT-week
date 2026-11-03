@@ -1,6 +1,6 @@
 # DOMAIN FRONTEND (Tampilan): README
 
-> **PENANGGUNG JAWAB:** Ahmad Syifa'ul Falakhul Khayyi dan Mutiara Dewanda Prisvilla (@syifamojocanggih-hash @mutiaradewanda)
+> **PENANGGUNG JAWAB:** [tiara] (`@mutiaradewanda`)
 > **BRANCH:** `frontend`
 > **BOLEH DITULIS (R/W):** `apps/web/`, `docs/frontend/`
 
