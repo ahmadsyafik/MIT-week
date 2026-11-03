@@ -79,7 +79,7 @@ Prasyarat: Node.js 20+.
 | Backend (logika & data) | Raffi Azzaky Ramadhani (`@azzakyDp`) | `backend` |
 | Frontend (tampilan) | Ahmad Syifa'ul Falakhul Khayyi (`@syifamojocanggih-hash`) dan Mutiara Dewanda Prisvilla (`@mutiaradewanda`) | `frontend` |
 | Integrasi & deploy | Raffi Azzaky Ramadhani (`@azzakyDp`) | `development` -> `main` |
-| Testing | Ahmad Syafi'ul An'am (`@ahmadsyafik`) | `development` (uji sebelum rilis) |
+| Testing | Ahmad Syafi'al Anam (`@ahmadsyafik`) | `development` (uji sebelum rilis) |
 
 ## 8. Dokumentasi
 
