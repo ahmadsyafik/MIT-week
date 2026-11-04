@@ -11,69 +11,29 @@ import {
   X,
   ExternalLink,
 } from "lucide-react";
+import {
+  type AppNotification,
+  getNotifications,
+  NOTIFICATION_EVENT,
+} from "../lib/notificationService";
 
-export interface AppNotification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  type: "kritis" | "waspada" | "sukses" | "info";
-  read: boolean;
-  link?: string;
-}
-
-const INITIAL_NOTIFICATIONS: AppNotification[] = [
-  {
-    id: "notif-1",
-    title: "Peringatan Malware APK",
-    message: "Terdeteksi modus baru manipulasi berkedok file APK surat tilang dan resi paket. Jangan buka berkas .apk di luar Play Store!",
-    time: "10 menit lalu",
-    type: "kritis",
-    read: false,
-    link: "/cek",
-  },
-  {
-    id: "notif-2",
-    title: "Skenario Perlu Dilanjutkan",
-    message: "Skenario 'Kurir Paket & Manipulasi Resi' belum selesai. Lanjutkan pengujian keputusanmu.",
-    time: "2 jam lalu",
-    type: "waspada",
-    read: false,
-    link: "/belajar?tab=simulator",
-  },
-  {
-    id: "notif-3",
-    title: "Simulasi Berhasil",
-    message: "Selamat! Kamu telah menyelesaikan Skenario 'Verifikasi Kontak Resmi' dengan skor sempurna 100.",
-    time: "Kemarin",
-    type: "sukses",
-    read: true,
-    link: "/belajar?tab=simulator",
-  },
-  {
-    id: "notif-4",
-    title: "Inisiasi Sandi Keluarga",
-    message: "Lindungi orang terdekat dari kloning suara AI dengan membuat kata sandi rahasia keluarga sekarang.",
-    time: "2 hari lalu",
-    type: "info",
-    read: true,
-    link: "/sandi",
-  },
-];
+export type { AppNotification };
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<AppNotification[]>(() => {
-    try {
-      const saved = localStorage.getItem("jagaruang_notifications");
-      return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
-    } catch {
-      return INITIAL_NOTIFICATIONS;
-    }
-  });
+  const [notifications, setNotifications] = useState<AppNotification[]>(() => getNotifications());
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // Sinkronisasi bila ada event notifikasi baru secara real-time
+  useEffect(() => {
+    function handleUpdate() {
+      setNotifications(getNotifications());
+    }
+    window.addEventListener(NOTIFICATION_EVENT, handleUpdate);
+    return () => window.removeEventListener(NOTIFICATION_EVENT, handleUpdate);
+  }, []);
 
   // Simpan ke localStorage saat berubah
   useEffect(() => {
@@ -124,7 +84,16 @@ export default function NotificationDropdown() {
     );
     setIsOpen(false);
     if (item.link) {
-      navigate(item.link);
+      if (item.link.includes("#")) {
+        const [path, hash] = item.link.split("#");
+        navigate(path || "/");
+        setTimeout(() => {
+          const el = document.getElementById(hash);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 150);
+      } else {
+        navigate(item.link);
+      }
     }
   };
 
@@ -153,7 +122,7 @@ export default function NotificationDropdown() {
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-600 px-1 text-[9px] font-black text-white ring-2 ring-white">
+          <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-600 px-1 text-[9px] font-black text-white ring-2 ring-white animate-pulse">
             {unreadCount}
           </span>
         )}
@@ -169,7 +138,7 @@ export default function NotificationDropdown() {
           {/* Header Popover */}
           <div className="flex items-center justify-between border-b border-[#9DB2BF]/30 px-4 py-3 bg-slate-50/80 rounded-t-2xl">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-[#27374D]">Notifikasi</span>
+              <span className="text-sm font-bold text-[#27374D]">Notifikasi & Target</span>
               {unreadCount > 0 && (
                 <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
                   {unreadCount} baru
@@ -199,50 +168,55 @@ export default function NotificationDropdown() {
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               )}
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                title="Tutup"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
           </div>
 
-          {/* List Notifikasi */}
-          <div className="max-h-80 overflow-y-auto divide-y divide-[#9DB2BF]/20">
+          {/* List Item Notifikasi */}
+          <div className="max-h-80 overflow-y-auto divide-y divide-[#DDE6ED]">
             {notifications.length === 0 ? (
-              <div className="py-8 text-center text-xs text-[#526D82]">
-                <Bell className="mx-auto h-8 w-8 text-slate-300 mb-2" />
-                <span>Tidak ada notifikasi aktif saat ini.</span>
+              <div className="p-8 text-center text-xs text-[#526D82] space-y-1">
+                <p className="font-semibold text-[#27374D]">Belum ada notifikasi baru</p>
+                <p>Selesaikan skenario atau modul untuk menerima rekomendasi belajar.</p>
               </div>
             ) : (
               notifications.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => handleNotificationClick(item)}
-                  className={`group flex items-start gap-3 p-3.5 transition-colors cursor-pointer ${
-                    item.read
-                      ? "bg-white hover:bg-slate-50 text-slate-700"
-                      : "bg-[#DDE6ED]/30 hover:bg-[#DDE6ED]/60 text-[#27374D]"
+                  className={`flex items-start gap-3 p-3.5 text-left transition-colors cursor-pointer hover:bg-[#DDE6ED]/40 ${
+                    !item.read ? "bg-slate-50/70 font-medium" : "opacity-85"
                   }`}
                 >
                   {getIcon(item.type)}
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1">
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center justify-between gap-2">
                       <h4
-                        className={`text-xs font-bold truncate ${
-                          item.read ? "text-[#27374D]" : "text-[#27374D] font-extrabold"
+                        className={`text-xs truncate ${
+                          !item.read ? "font-bold text-[#27374D]" : "text-[#526D82]"
                         }`}
                       >
                         {item.title}
                       </h4>
-                      <span className="text-[10px] text-slate-400 shrink-0">{item.time}</span>
+                      <span className="text-[10px] text-[#9DB2BF] shrink-0">{item.time}</span>
                     </div>
-                    <p className="mt-0.5 text-[11px] text-[#526D82] line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-[#526D82] leading-relaxed line-clamp-2">
                       {item.message}
                     </p>
                     {item.link && (
-                      <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-[#526D82] group-hover:text-[#27374D] group-hover:underline">
-                        Buka terkait <ExternalLink className="h-2.5 w-2.5" />
-                      </span>
+                      <div className="inline-flex items-center gap-1 text-[10px] font-bold text-[#27374D] hover:underline pt-0.5">
+                        <span>Buka Tindakan</span>
+                        <ExternalLink className="h-2.5 w-2.5" />
+                      </div>
                     )}
                   </div>
-
                   {!item.read && (
                     <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0 mt-1.5" />
                   )}
@@ -252,9 +226,9 @@ export default function NotificationDropdown() {
           </div>
 
           {/* Footer Popover */}
-          <div className="border-t border-[#9DB2BF]/30 p-2.5 bg-slate-50/80 rounded-b-2xl text-center">
+          <div className="border-t border-[#9DB2BF]/30 p-2.5 text-center bg-slate-50/50 rounded-b-2xl">
             <span className="text-[10px] text-[#526D82]">
-              Notifikasi disinkronkan secara lokal di perambanmu (On-Device).
+              Notifikasi privasi disimpan 100% lokal di perangkatmu
             </span>
           </div>
         </div>
@@ -262,4 +236,3 @@ export default function NotificationDropdown() {
     </div>
   );
 }
-

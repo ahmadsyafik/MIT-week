@@ -25,8 +25,14 @@ import {
   Lock,
   Layers,
   HelpCircle,
+  Bell,
 } from "lucide-react";
 import { Card, Button, Disclaimer } from "../components/ui";
+import {
+  addNotification,
+  NOTIFICATION_EVENT,
+  type AppNotification,
+} from "../lib/notificationService";
 
 // =============================================================================
 // TIPE & DATA STATIC UNTUK 4 TAB BELAJAR
@@ -536,6 +542,26 @@ const GLOSSARY_TERMS: GlossaryTerm[] = [
 export default function Belajar() {
   const [searchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState<string>("simulator");
+  const [toastNotif, setToastNotif] = useState<AppNotification | null>(null);
+
+  // Pantau notifikasi baru secara real-time dan tampilkan toast
+  useEffect(() => {
+    const handleNotifUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<AppNotification>;
+      if (customEvent.detail) {
+        setToastNotif(customEvent.detail);
+        const timer = setTimeout(() => {
+          setToastNotif((current) => (current?.id === customEvent.detail.id ? null : current));
+        }, 5000);
+        return () => clearTimeout(timer);
+      }
+    };
+
+    window.addEventListener(NOTIFICATION_EVENT, handleNotifUpdate as EventListener);
+    return () => {
+      window.removeEventListener(NOTIFICATION_EVENT, handleNotifUpdate as EventListener);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -614,18 +640,16 @@ export default function Belajar() {
           <button
             type="button"
             onClick={() => scrollToSection("simulator")}
-            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-              activeSection === "simulator"
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${activeSection === "simulator"
                 ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
                 : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
-            }`}
+              }`}
           >
             <Compass className={`h-4 w-4 ${activeSection === "simulator" ? "text-amber-400" : "text-[#526D82]"}`} />
             <span>1. Simulator</span>
             <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                activeSection === "simulator" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
-              }`}
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${activeSection === "simulator" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
+                }`}
             >
               3 Kasus
             </span>
@@ -635,18 +659,16 @@ export default function Belajar() {
           <button
             type="button"
             onClick={() => scrollToSection("modul")}
-            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-              activeSection === "modul"
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${activeSection === "modul"
                 ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
                 : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
-            }`}
+              }`}
           >
             <BookOpen className={`h-4 w-4 ${activeSection === "modul" ? "text-sky-300" : "text-[#526D82]"}`} />
             <span>2. Modul</span>
             <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                activeSection === "modul" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
-              }`}
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${activeSection === "modul" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
+                }`}
             >
               4 Panduan
             </span>
@@ -656,18 +678,16 @@ export default function Belajar() {
           <button
             type="button"
             onClick={() => scrollToSection("kilat")}
-            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-              activeSection === "kilat"
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${activeSection === "kilat"
                 ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
                 : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
-            }`}
+              }`}
           >
             <Clock className={`h-4 w-4 ${activeSection === "kilat" ? "text-amber-400" : "text-[#526D82]"}`} />
             <span>3. Kilat 2 Menit</span>
             <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                activeSection === "kilat" ? "bg-amber-400 text-[#27374D]" : "bg-amber-100 text-amber-900 border border-amber-300"
-              }`}
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${activeSection === "kilat" ? "bg-amber-400 text-[#27374D]" : "bg-amber-100 text-amber-900 border border-amber-300"
+                }`}
             >
               120 Dtk
             </span>
@@ -677,18 +697,16 @@ export default function Belajar() {
           <button
             type="button"
             onClick={() => scrollToSection("kamus")}
-            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-              activeSection === "kamus"
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${activeSection === "kamus"
                 ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
                 : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
-            }`}
+              }`}
           >
             <Search className={`h-4 w-4 ${activeSection === "kamus" ? "text-emerald-300" : "text-[#526D82]"}`} />
             <span>4. Kamus</span>
             <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                activeSection === "kamus" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
-              }`}
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${activeSection === "kamus" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
+                }`}
             >
               10 Istilah
             </span>
@@ -775,6 +793,49 @@ export default function Belajar() {
 
       {/* Footer Catatan Kepatuhan Desain */}
       <Disclaimer />
+
+      {/* Floating Toast Notifikasi Otomatis Target Progress & Rekomendasi */}
+      {toastNotif && (
+        <aside
+          aria-live="polite"
+          className="fixed bottom-6 right-6 z-50 max-w-sm w-full p-4 rounded-2xl bg-[#27374D] text-white shadow-2xl border border-[#9DB2BF]/40 transition-all animate-in fade-in slide-in-from-bottom-4 duration-300"
+        >
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-xl bg-white/10 text-amber-300 shrink-0">
+              <Bell className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="text-xs font-bold text-white truncate">{toastNotif.title}</h4>
+                <button
+                  type="button"
+                  onClick={() => setToastNotif(null)}
+                  className="text-[#9DB2BF] hover:text-white transition-colors cursor-pointer"
+                  title="Tutup Notifikasi"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <p className="text-[11px] text-[#DDE6ED] mt-1 leading-relaxed">
+                {toastNotif.message}
+              </p>
+              {toastNotif.link && (
+                <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between">
+                  <a
+                    href={toastNotif.link}
+                    onClick={() => setToastNotif(null)}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-300 hover:text-amber-200 hover:underline"
+                  >
+                    <span>Buka Rekomendasi</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                  <span className="text-[10px] text-[#9DB2BF]">Baru saja</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
+      )}
     </div>
   );
 }
@@ -920,23 +981,20 @@ function SimulatorTab() {
             {/* Step Progress Bar */}
             <div className="flex items-center gap-2 py-4">
               <div
-                className={`flex-1 h-2 rounded-full transition-all ${
-                  simStep === "briefing" || simStep === "investigasi" || simStep === "debrief"
+                className={`flex-1 h-2 rounded-full transition-all ${simStep === "briefing" || simStep === "investigasi" || simStep === "debrief"
                     ? "bg-[#526D82]"
                     : "bg-[#DDE6ED]"
-                }`}
+                  }`}
               />
               <div
-                className={`flex-1 h-2 rounded-full transition-all ${
-                  simStep === "investigasi" || simStep === "debrief"
+                className={`flex-1 h-2 rounded-full transition-all ${simStep === "investigasi" || simStep === "debrief"
                     ? "bg-[#526D82]"
                     : "bg-[#DDE6ED]"
-                }`}
+                  }`}
               />
               <div
-                className={`flex-1 h-2 rounded-full transition-all ${
-                  simStep === "debrief" ? "bg-[#526D82]" : "bg-[#DDE6ED]"
-                }`}
+                className={`flex-1 h-2 rounded-full transition-all ${simStep === "debrief" ? "bg-[#526D82]" : "bg-[#DDE6ED]"
+                  }`}
               />
             </div>
 
@@ -1019,18 +1077,16 @@ function SimulatorTab() {
                           key={ev.id}
                           type="button"
                           onClick={() => toggleEvidence(ev.id)}
-                          className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-2.5 ${
-                            isSelected
+                          className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-2.5 ${isSelected
                               ? "border-[#526D82] bg-[#DDE6ED]/60 text-[#27374D] font-medium"
                               : "border-[#9DB2BF]/50 bg-white text-[#526D82] hover:border-[#526D82]"
-                          }`}
+                            }`}
                         >
                           <div
-                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${
-                              isSelected
+                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${isSelected
                                 ? "border-[#526D82] bg-[#526D82] text-white"
                                 : "border-[#9DB2BF]"
-                            }`}
+                              }`}
                           >
                             {isSelected && "✓"}
                           </div>
@@ -1054,6 +1110,14 @@ function SimulatorTab() {
                         onClick={() => {
                           setChosenOption(choice);
                           setSimStep("debrief");
+                          addNotification({
+                            title: `Target Skenario: ${activeCase.title}`,
+                            message: choice.isCorrect
+                              ? `Luar biasa! Kamu berhasil menghindari jebakan ${activeCase.category} dan mengambil keputusan tepat. Rekomendasi: Pelajari langkah mitigasinya di Panduan Lindungi atau lanjutkan ke Skenario berikutnya.`
+                              : `Skenario selesai! Refleks keputusanmu masih berisiko terjebak. Rekomendasi: Buka artikel pembedahan anatomi malware pada bagian Modul Belajar.`,
+                            type: choice.isCorrect ? "sukses" : "waspada",
+                            link: choice.isCorrect ? "/belajar#simulator" : "/belajar#modul",
+                          });
                         }}
                         className="w-full text-left rounded-xl border border-[#9DB2BF]/50 bg-white p-3 text-xs font-semibold text-[#27374D] hover:bg-[#DDE6ED]/50 hover:border-[#526D82] transition-all cursor-pointer flex items-center justify-between group"
                       >
@@ -1071,11 +1135,10 @@ function SimulatorTab() {
               <div className="space-y-5 pt-1">
                 {/* Banner Status Keputusan */}
                 <div
-                  className={`rounded-2xl p-4 border ${
-                    chosenOption.isCorrect
+                  className={`rounded-2xl p-4 border ${chosenOption.isCorrect
                       ? "bg-emerald-50 border-emerald-300 text-emerald-900"
                       : "bg-rose-50 border-rose-300 text-rose-900"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-2 font-bold text-sm">
                     {chosenOption.isCorrect ? (
@@ -1173,14 +1236,36 @@ function ModulTab() {
     }
   });
 
-  const toggleCheck = (key: string) => {
+  const toggleCheck = (modulId: string, itemIdx: number, modulTitle: string, totalItems: number) => {
+    const checkKey = `${modulId}_chk_${itemIdx}`;
     setCheckedItems((prev) => {
-      const next = { ...prev, [key]: !prev[key] };
+      const willBeChecked = !prev[checkKey];
+      const next = { ...prev, [checkKey]: willBeChecked };
       try {
         localStorage.setItem("jagaruang_modul_checks", JSON.stringify(next));
       } catch {
         // no-op
       }
+
+      // Jika item baru saja dicentang, cek apakah seluruh checklist pada modul ini selesai
+      if (willBeChecked) {
+        let allCompleted = true;
+        for (let i = 0; i < totalItems; i++) {
+          if (!next[`${modulId}_chk_${i}`]) {
+            allCompleted = false;
+            break;
+          }
+        }
+        if (allCompleted) {
+          addNotification({
+            title: `Modul Selesai: ${modulTitle}`,
+            message: `Luar biasa! Kamu telah menuntaskan seluruh checklist pencegahan untuk '${modulTitle}'. Rekomendasi: Uji refleksmu di Tantangan Kilat 120 Detik atau buat Sandi Keluarga.`,
+            type: "sukses",
+            link: "/sandi",
+          });
+        }
+      }
+
       return next;
     });
   };
@@ -1250,19 +1335,17 @@ function ModulTab() {
                         <button
                           key={idx}
                           type="button"
-                          onClick={() => toggleCheck(checkKey)}
-                          className={`w-full text-left rounded-xl p-2.5 text-xs border transition-all cursor-pointer flex items-start gap-2.5 ${
-                            isChecked
+                          onClick={() => toggleCheck(modul.id, idx, modul.title, modul.checklistItems.length)}
+                          className={`w-full text-left rounded-xl p-2.5 text-xs border transition-all cursor-pointer flex items-start gap-2.5 ${isChecked
                               ? "bg-emerald-50/70 border-emerald-300 text-emerald-900 line-through opacity-85"
                               : "bg-white border-[#9DB2BF]/50 text-[#27374D] hover:border-[#526D82]"
-                          }`}
+                            }`}
                         >
                           <div
-                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${
-                              isChecked
+                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${isChecked
                                 ? "bg-emerald-600 border-emerald-600 text-white"
                                 : "border-[#9DB2BF]"
-                            }`}
+                              }`}
                           >
                             {isChecked && "✓"}
                           </div>
@@ -1348,6 +1431,24 @@ function KilatTab() {
       percentage: Math.round((correct / TRIAGE_DRILL_ITEMS.length) * 100),
     };
   }, [answers]);
+
+  // Notifikasi hasil & rekomendasi ketika tantangan kilat selesai
+  useEffect(() => {
+    if (isFinished) {
+      const correct = scoreResult.correct;
+      const total = scoreResult.total;
+      const pct = scoreResult.percentage;
+      addNotification({
+        title: `Hasil Tantangan Kilat: Skor ${correct}/${total} (${pct}%)`,
+        message:
+          pct >= 80
+            ? `Refleks keamananmu sangat tanggap! Rekomendasi: Pertahankan kewaspadaan dan uji kasus di Bagian Simulator Kasus Interaktif.`
+            : `Tantangan selesai! Masih ada beberapa pesan manipulasi yang lolos deteksi. Rekomendasi: Buka Kamus Jebakan atau pelajari Modul Edukasi.`,
+        type: pct >= 80 ? "sukses" : "waspada",
+        link: pct >= 80 ? "/belajar#simulator" : "/belajar#kamus",
+      });
+    }
+  }, [isFinished]);
 
   const currentItem = TRIAGE_DRILL_ITEMS[currentIndex];
 
@@ -1510,22 +1611,20 @@ function KilatTab() {
                 return (
                   <div
                     key={item.id}
-                    className={`rounded-2xl p-4 border text-xs space-y-2 ${
-                      isCorrect
+                    className={`rounded-2xl p-4 border text-xs space-y-2 ${isCorrect
                         ? "bg-emerald-50/60 border-emerald-300"
                         : "bg-rose-50/60 border-rose-300"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between font-bold">
                       <span className="text-[#27374D]">
                         #{idx + 1} · {item.source}
                       </span>
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] ${
-                          isCorrect
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] ${isCorrect
                             ? "bg-emerald-100 text-emerald-800"
                             : "bg-rose-100 text-rose-800"
-                        }`}
+                          }`}
                       >
                         {isCorrect ? "✓ Keputusan Tepat" : "✕ Kurang Tepat"}
                       </span>
@@ -1624,11 +1723,10 @@ function KamusTab() {
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all shrink-0 cursor-pointer ${
-                selectedCategory === cat
+              className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all shrink-0 cursor-pointer ${selectedCategory === cat
                   ? "bg-[#27374D] text-white"
                   : "bg-[#DDE6ED]/60 text-[#526D82] hover:bg-[#DDE6ED] hover:text-[#27374D]"
-              }`}
+                }`}
             >
               {cat}
             </button>
