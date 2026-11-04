@@ -5,6 +5,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Beranda from "./pages/Beranda";
 import Belajar from "./pages/Belajar";
 import Cek from "./pages/Cek";
+import Lindungi from "./pages/Lindungi";
+import Sandi from "./pages/Sandi";
 import Keterbatasan from "./pages/Keterbatasan";
 import Placeholder from "./pages/Placeholder";
 
@@ -54,7 +56,7 @@ export default function App() {
             path="lindungi"
             element={
               <ProtectedRoute featureName="Panduan Lindungi Diri & Sekitar">
-                <Placeholder title="Lindungi Diri & Sekitar" task="FE-4.x" />
+                <Lindungi />
               </ProtectedRoute>
             }
           />
@@ -63,7 +65,7 @@ export default function App() {
             path="sandi"
             element={
               <ProtectedRoute featureName="Sandi Verifikasi Keluarga">
-                <Placeholder title="Sandi Keluarga" task="FE-5.x" />
+                <Sandi />
               </ProtectedRoute>
             }
           />

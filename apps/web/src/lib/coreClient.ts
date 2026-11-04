@@ -10,14 +10,39 @@ import {
   type AnalysisResult,
   type AnalyzeInput,
   type LocalProgress,
+  type ActionGuide,
+  type ReportChannel,
+  type WarningCard,
   STORAGE_SCHEMA_VERSION,
 } from "@jagaruang/contracts";
 import { mockAnalyze } from "../mocks/analysis";
+import {
+  mockListActionGuides,
+  mockListReportChannels,
+  mockBuildWarningCard,
+} from "../mocks/actionGuides";
+import { mockGenerateSafeword } from "../mocks/safeword";
 
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK !== "false";
 
 export function analyze(input: AnalyzeInput): AnalysisResult {
   return USE_MOCK ? mockAnalyze(input) : core.analyze(input);
+}
+
+export function listActionGuides(): ActionGuide[] {
+  return USE_MOCK ? mockListActionGuides() : core.listActionGuides();
+}
+
+export function listReportChannels(): ReportChannel[] {
+  return USE_MOCK ? mockListReportChannels() : core.listReportChannels();
+}
+
+export function buildWarningCard(result?: AnalysisResult): WarningCard {
+  return USE_MOCK ? mockBuildWarningCard(result) : core.buildWarningCard(result!);
+}
+
+export function generateSafeword(wordCount: 2 | 3 = 3): string {
+  return USE_MOCK ? mockGenerateSafeword(wordCount) : core.generateSafeword(wordCount);
 }
 
 const STORAGE_KEY = "jagaruang_progress";
