@@ -29,4 +29,11 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
   - **Redesain Landing Page Berbasis Video Referensi & Integrasi Three.js**:
     - Komponen 3D Canvas interaktif (`ThreeHeroCanvas.tsx`): Model smartphone 3D interaktif Three.js dengan pencahayaan dinamis, partikel/cincin pelindung melayang, efek *mouse parallax tilt*, dan simulasi layar aplikasi JagaRuang.
     - Struktur Landing Page lengkap persis alur video: Top Navbar (Home, Tiga Pilar, Modul, Cerita Rekan, FAQ, Login & Register), Hero Section 2 kolom, Metrics Counter Bar (10K+ Skenario, 8K+ Pengguna, 4.9 Rating, 100% On-Device), Kartu Rekomendasi Modul, Testimoni Komunitas, Accordion FAQ, dan Banner Aksi Bawah.
+  - **Restrukturisasi Hub Belajar (/belajar) & Halaman Pembelajaran Khusus (Cover + Page Khusus)**:
+    - **Header & 4 Tab Navigasi Horizontal**: Simulator, Modul, Kilat 2 Menit, dan Kamus dengan alur mandiri (tidak digabung dalam satu alur scroll panjang).
+    - **Bagian 1 (Simulator)**: Cover 3 kartu skenario kasus latih; klik kartu membuka halaman simulasi khusus (Briefing -> Investigasi Bukti -> Debrief & Hasil Evaluasi).
+    - **Bagian 2 (Modul Pembelajaran)**: Tampilan Cover persis referensi visual Figma dengan tombol cepat "Kilat 2 Menit", filter 6 kategori ("Semua", "Dasar Keamanan", "Per Kanal", "Checklist Praktis", "Pola Kejadian Nyata", "Setelah Kejadian"), dan grid 12 kartu modul lengkap dengan badge status "Belum dibaca" / "Sudah dibaca". Klik kartu modul membuka halaman pembelajaran khusus (Konsep Utama, Tahapan Anatomi, Tanda Kejanggalan, Checklist Praktis Interaktif, dan Intisari Perlindungan).
+    - **Bagian 3 (Kilat 2 Menit)**: Cover standby hero 120 detik; klik "Mulai Sekarang" membuka halaman simulasi drill khusus (timer countdown 120s, kartu pesan, tombol "Pesan Biasa" vs "Curiga", dan evaluasi skor refleks).
+    - **Bagian 4 (Kamus Jebakan)**: Cover pencarian istilah dan filter kategori; klik istilah membuka halaman khusus kupas tuntas modus, cara kerja, titik masuk, dan pertolongan pertama.
+    - **Notifikasi & On-Device Storage**: Terintegrasi dengan sistem notifikasi progres target dan persistensi status modul lokal di `localStorage`.
     - Dashboard pengguna login tetap terjaga 100% utuh tanpa perubahan.
