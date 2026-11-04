@@ -40,7 +40,7 @@ packages/core/
     ├── triage/ · safeword/ · warningCard/
     ├── storage/            <- wrapper localStorage
     └── content/            <- JSON + skema Zod (rules, modus, malware, permissions,
-                               cases/, triage, action-guides, contacts)
+                                cases/, triage, action-guides, contacts)
 ```
 
 ## 4. Indeks dokumen
@@ -50,3 +50,11 @@ packages/core/
 3. [`DATA_MODEL.md`](DATA_MODEL.md): model data konten & data lokal
 4. [`CHANGELOG.md`](CHANGELOG.md): catatan perubahan (+ hasil uji analyzer)
 5. Kontrak: [`../universal/INTERFACES.md`](../universal/INTERFACES.md)
+
+## 5. Hasil Uji
+
+- **Total test**: 114 tests (10 test files), 100% pass (Vitest)
+- **Kalimat uji analyzer**: 35 skenario uji (15 pesan/tautan/berkas sah, 20 variasi scam/malware/izin berisiko)
+- **Kasus yang meleset**: 2 kasus (false positive: 1, false negative: 1)
+  - **False Positive (#11)**: Pesan keluarga sah `"Bu, tadi aku sudah transfer uang jajan ke rekening ya."` memicu aturan `MSG-PAYMENT-01` (L4) sehingga terdeteksi sebagai `waspada`. Keterbatasan: regex mencocokkan kata kunci "transfer" tanpa parsing semantik konteks percakapan penuh.
+  - **False Negative (#12)**: Pesan penipuan `"Halo kak, sil4kan cl1ck t4utan ini untuk mengambil kado hadiah"` lolos sebagai `belum_terlihat`. Keterbatasan: kamus regex dasar belum mencakup teknik penyamaran huruf (_leetspeak/obfuscation_) tingkat lanjut.
