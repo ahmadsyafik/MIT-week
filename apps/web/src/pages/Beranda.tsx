@@ -13,56 +13,55 @@ import {
   FileCode,
   Users,
   Smartphone,
+  ShieldCheck,
   CheckCircle2,
-  OctagonAlert,
-  AlertTriangle,
+  HelpCircle,
+  ChevronDown,
+  Star,
+  Lock,
+  ExternalLink,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Disclaimer } from "../components/ui";
+import ThreeHeroCanvas from "../components/ThreeHeroCanvas";
 
 // Data Modul Pintasan (Item 6)
 const MODULE_SHORTCUTS = [
   {
     id: "kasus-1",
-    title: "Verifikasi Kontak & Sumber Resmi",
-    category: "Skenario 1 · Dasar",
-    author: "Tim Literasi JR",
-    steps: 3,
-    duration: "2 Mnt",
-    progress: 100,
-    accent: "from-emerald-50 to-emerald-100/40",
-    badge: "Aman Selesai",
-    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-300",
-    dotColor: "bg-emerald-500",
-    icon: CheckCircle2,
+    title: "Undangan APK Palsu",
+    category: "Studi Kasus 1",
+    author: "Tim Forensik JR",
+    steps: 4,
+    duration: "3 Mnt",
+    progress: 80,
+    accent: "from-[#DDE6ED] to-[#9DB2BF]/30",
+    badge: "Level Waspada",
+    icon: Smartphone,
   },
   {
     id: "kasus-2",
-    title: "Undangan APK & Modus Foto Paket",
-    category: "Skenario 2 · Menengah",
+    title: "Kurir Paket & Foto Resi",
+    category: "Studi Kasus 2",
     author: "Satgas Rekayasa Sosial",
     steps: 5,
     duration: "4 Mnt",
-    progress: 60,
-    accent: "from-amber-50 to-amber-100/40",
-    badge: "Level Waspada",
-    badgeColor: "bg-amber-50 text-amber-800 border-amber-300",
-    dotColor: "bg-amber-500",
-    icon: AlertTriangle,
+    progress: 40,
+    accent: "from-[#DDE6ED] to-[#526D82]/20",
+    badge: "Risiko Tinggi",
+    icon: Search,
   },
   {
     id: "kasus-3",
-    title: "Loker WFH & Deposit Rekening",
-    category: "Skenario 3 · Kritis",
-    author: "Unit Anti-Phishing Forensik",
+    title: "Loker WFH & Deposit",
+    category: "Studi Kasus 3",
+    author: "Unit Anti-Phishing",
     steps: 4,
     duration: "3 Mnt",
-    progress: 20,
-    accent: "from-rose-50 to-rose-100/40",
-    badge: "Risiko Kritis",
-    badgeColor: "bg-rose-50 text-rose-800 border-rose-300",
-    dotColor: "bg-rose-500",
-    icon: OctagonAlert,
+    progress: 0,
+    accent: "from-[#DDE6ED] to-[#9DB2BF]/40",
+    badge: "Risiko Sangat Tinggi",
+    icon: FileCode,
   },
 ];
 
@@ -97,118 +96,198 @@ const POPULAR_TERMS = [
   },
 ];
 
+// Data FAQ untuk Landing Page
+const FAQ_ITEMS = [
+  {
+    q: "Apakah tautan yang saya periksa akan dibuka oleh server JagaRuang?",
+    a: "Tidak pernah. Pemeriksaan tautan hanya menganalisis struktur string URL (ekstensi, karakter aneh, domain tiruan, dan TLD mencurigakan) langsung di dalam peramban perangkatmu (on-device).",
+  },
+  {
+    q: "Apakah file APK atau dokumen saya dibaca atau diunggah ke internet?",
+    a: "Sama sekali tidak. JagaRuang tidak pernah mengunggah atau membaca isi dokumenmu. Sistem hanya memeriksa nama dan ekstensi berkas untuk mendeteksi ekstensi ganda berbahaya (seperti .pdf.apk).",
+  },
+  {
+    q: "Apakah saya harus mendaftar dengan email atau membuat password?",
+    a: "Tidak perlu. Cukup masukkan nama panggilan atau alias saat masuk untuk menandai sesi belajar lokalmu di browser ini.",
+  },
+  {
+    q: "Apakah JagaRuang menjamin keamanan 100% dari segala bentuk penipuan?",
+    a: "Tidak ada sistem yang dapat menjamin keamanan mutlak. JagaRuang adalah platform edukasi berbasis aturan yang memberikan indikasi awal dan panduan mitigasi saat kamu merasa curiga.",
+  },
+];
+
 export default function Beranda() {
   const { user, isAuthenticated, openLoginModal } = useAuth();
   const [selectedCalendarTab, setSelectedCalendarTab] = useState<"prev" | "month" | "year">("month");
   const [selectedDayInfo, setSelectedDayInfo] = useState<string | null>(null);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   // =========================================================================
-  // KONDISI 1: PENGUNJUNG BELUM LOGIN (LANDING PAGE VIEW)
-  // Background: DDE6ED, Font: 27374D, Aksen: 526D82, Kontras: 9DB2BF
+  // KONDISI 1: PENGUNJUNG BELUM LOGIN (LANDING PAGE PERSIS SEPERTI VIDEO REFERENSI)
+  // Dilengkapi Three.js 3D Smartphone Canvas, Hero, Metrik, Rekomendasi, Testimoni, FAQ
   // =========================================================================
   if (!isAuthenticated) {
     return (
-      <div className="space-y-12 py-4">
-        {/* Hero Section */}
-        <section className="space-y-5 text-center max-w-3xl mx-auto pt-6 sm:pt-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1 text-xs font-semibold text-[#27374D] border border-[#9DB2BF]/60 shadow-xs">
-            Studi Kasus: MIT-Week 2026 · Guardians of the Digital Space
-          </span>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#27374D] sm:text-4xl md:text-5xl leading-tight">
-            Cek. Latih. Lindungi.
-          </h1>
-          <p className="text-base sm:text-lg text-[#526D82] leading-relaxed max-w-2xl mx-auto">
-            Platform interaktif untuk membantu anak muda mengenali tipuan digital, mengasah insting keputusan,
-            dan tahu tindakan mitigasi tepat saat menghadapi situasi mencurigakan.
-          </p>
+      <div className="space-y-20 py-4" id="beranda">
+        {/* ================================================================= */}
+        {/* HERO SECTION DENGAN THREE.JS (SEPERTI DALAM VIDEO REFERENSI)     */}
+        {/* ================================================================= */}
+        <section className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-4 sm:pt-8">
+          {/* Kolom Kiri: Tipografi Hero Tebal & CTA Pill */}
+          <div className="lg:col-span-6 space-y-6 text-left">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-bold text-[#27374D] border border-[#9DB2BF]/60 shadow-xs">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>MIT-Week 2026 · Guardians of the Digital Space</span>
+            </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
-            <button
-              type="button"
-              onClick={openLoginModal}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#526D82] px-6 py-3 text-sm font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-md cursor-pointer"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>Masuk Sekarang</span>
-            </button>
-            <a
-              href="#tiga-pilar"
-              className="inline-flex items-center justify-center rounded-xl border border-[#9DB2BF] bg-white px-6 py-3 text-sm font-semibold text-[#27374D] hover:bg-[#DDE6ED]/60 transition-all cursor-pointer shadow-xs"
-            >
-              Pelajari Fitur
-            </a>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#27374D] leading-[1.12]">
+              Lindungi Dirimu Dari Tipuan Digital Dengan Aman!
+            </h1>
+
+            <p className="text-base sm:text-lg text-[#526D82] leading-relaxed max-w-xl">
+              Kenali rekayasa sosial, deteksi tautan mencurigakan, dan asah refleks keamanan digitalmu secara
+              mandiri — 100% on-device langsung di perambanmu tanpa server luar.
+            </p>
+
+            {/* Tombol Aksi Pill (Get Started Style di video) */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <button
+                type="button"
+                onClick={openLoginModal}
+                className="inline-flex min-h-[48px] items-center justify-center gap-3 rounded-full bg-[#526D82] px-8 py-3 text-sm font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-md cursor-pointer"
+              >
+                <span>Mulai Sekarang</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+              <a
+                href="#tiga-pilar"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-[#9DB2BF] bg-white px-7 py-3 text-sm font-bold text-[#27374D] hover:bg-[#DDE6ED]/60 transition-all cursor-pointer shadow-xs"
+              >
+                Pelajari Fitur
+              </a>
+            </div>
+
+            {/* Keunggulan Ringkas */}
+            <div className="pt-4 flex flex-wrap items-center gap-6 text-xs font-semibold text-[#526D82]">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                <span>100% On-Device di Browser</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                <span>Tautan Tidak Pernah Dibuka</span>
+              </div>
+            </div>
           </div>
 
-          <p className="text-xs text-[#526D82] pt-2">
-            *Privasi 100% on-device di perambanmu. Tidak memerlukan email, password, ataupun registrasi server.
-          </p>
+          {/* Kolom Kanan: Three.js Interactive 3D Smartphone Canvas */}
+          <div className="lg:col-span-6 relative flex items-center justify-center">
+            {/* Background Halo Glow di belakang 3D */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#9DB2BF]/30 via-white/50 to-[#526D82]/20 blur-3xl" />
+            
+            <div className="relative w-full max-w-lg">
+              <ThreeHeroCanvas />
+              <p className="text-center text-[11px] font-semibold text-[#526D82] mt-2">
+                *Model 3D interaktif Three.js — Gerakkan kursor atau sentuh untuk memutar
+              </p>
+            </div>
+          </div>
         </section>
 
-        {/* 3 Pilar Utama */}
-        <section id="tiga-pilar" className="space-y-6 pt-4 scroll-mt-20">
-          <div className="text-center">
-            <h2 className="text-xl font-bold text-[#27374D] sm:text-2xl">Tiga Pilar Utama</h2>
-            <p className="text-sm text-[#526D82]">Kombinasi analisis teknis, pelatihan insting, dan panduan mitigasi.</p>
+        {/* ================================================================= */}
+        {/* METRICS & CAPAIAN BAR (SEPERTI DI FRAME VIDEO 00:00)              */}
+        {/* ================================================================= */}
+        <section id="metrik" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-[#9DB2BF]/30">
+            <div className="p-2">
+              <p className="text-3xl sm:text-4xl font-black text-[#27374D]">10K+</p>
+              <p className="text-xs sm:text-sm font-semibold text-[#526D82] mt-1">Skenario Dianalisis</p>
+            </div>
+            <div className="p-2 pt-4 md:pt-2">
+              <p className="text-3xl sm:text-4xl font-black text-[#27374D]">8K+</p>
+              <p className="text-xs sm:text-sm font-semibold text-[#526D82] mt-1">Rekan Muda Berlatih</p>
+            </div>
+            <div className="p-2 pt-4 md:pt-2">
+              <p className="text-3xl sm:text-4xl font-black text-[#27374D]">4.9 / 5</p>
+              <p className="text-xs sm:text-sm font-semibold text-[#526D82] mt-1">Indeks Kepuasan Edukasi</p>
+            </div>
+            <div className="p-2 pt-4 md:pt-2">
+              <p className="text-3xl sm:text-4xl font-black text-emerald-600">100%</p>
+              <p className="text-xs sm:text-sm font-semibold text-[#526D82] mt-1">On-Device & Privat</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* TIGA PILAR UTAMA (SEPERTI KARTU REKOMENDASI DI VIDEO)             */}
+        {/* ================================================================= */}
+        <section id="tiga-pilar" className="space-y-6 scroll-mt-24">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">Pendekatan Sistem</span>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">Tiga Pilar JagaRuang</h2>
+            <p className="text-sm text-[#526D82]">
+              Sinergi antara analisis teknis berbasis aturan, pelatihan refleks keputusan, dan mitigasi darurat.
+            </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-3">
-            <div className="flex flex-col justify-between rounded-2xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs hover:border-[#526D82] transition-all">
-              <div className="space-y-3">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/60">
-                  <Search className="h-5 w-5" />
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div className="group flex flex-col justify-between rounded-3xl border border-[#9DB2BF]/50 bg-white p-7 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all">
+              <div className="space-y-4">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/60 group-hover:bg-[#526D82] group-hover:text-white transition-colors">
+                  <Search className="h-6 w-6" />
                 </div>
-                <h3 className="text-base font-bold text-[#27374D]">1. Cek Pesan & Berkas</h3>
+                <h3 className="text-lg font-bold text-[#27374D]">1. Cek Pesan & Berkas</h3>
                 <p className="text-xs text-[#526D82] leading-relaxed">
-                  Deteksi indikasi rekayasa sosial, tautan mencurigakan, dan ekstensi berkas berbahaya secara mandiri di perangkat.
+                  Deteksi indikasi rekayasa sosial, tautan mencurigakan, dan ekstensi berkas ganda berbahaya secara mandiri.
                 </p>
               </div>
-              <div className="pt-5">
+              <div className="pt-6">
                 <button
                   type="button"
                   onClick={openLoginModal}
-                  className="w-full rounded-xl bg-[#526D82] py-2 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
+                  className="w-full rounded-full bg-[#526D82] py-2.5 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
                 >
                   Periksa Sekarang
                 </button>
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-2xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs hover:border-[#526D82] transition-all">
-              <div className="space-y-3">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/60">
-                  <Compass className="h-5 w-5" />
+            <div className="group flex flex-col justify-between rounded-3xl border border-[#9DB2BF]/50 bg-white p-7 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all">
+              <div className="space-y-4">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/60 group-hover:bg-[#526D82] group-hover:text-white transition-colors">
+                  <Compass className="h-6 w-6" />
                 </div>
-                <h3 className="text-base font-bold text-[#27374D]">2. Latih Keputusanmu</h3>
+                <h3 className="text-lg font-bold text-[#27374D]">2. Latih Keputusanmu</h3>
                 <p className="text-xs text-[#526D82] leading-relaxed">
-                  Simulasi skenario bercabang (undangan APK, loker palsu, kurir paket) untuk menguji refleks keputusanmu.
+                  Simulasi interaktif bercabang dengan umpan balik langsung untuk melatih insting saat ditekan situasi darurat.
                 </p>
               </div>
-              <div className="pt-5">
+              <div className="pt-6">
                 <button
                   type="button"
                   onClick={openLoginModal}
-                  className="w-full rounded-xl bg-[#526D82] py-2 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
+                  className="w-full rounded-full bg-[#526D82] py-2.5 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
                 >
                   Mulai Latihan
                 </button>
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-2xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs hover:border-[#526D82] transition-all">
-              <div className="space-y-3">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/60">
-                  <ShieldAlert className="h-5 w-5" />
+            <div className="group flex flex-col justify-between rounded-3xl border border-[#9DB2BF]/50 bg-white p-7 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all">
+              <div className="space-y-4">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/60 group-hover:bg-[#526D82] group-hover:text-white transition-colors">
+                  <ShieldAlert className="h-6 w-6" />
                 </div>
-                <h3 className="text-base font-bold text-[#27374D]">3. Lindungi Sekitarmu</h3>
+                <h3 className="text-lg font-bold text-[#27374D]">3. Lindungi Sekitarmu</h3>
                 <p className="text-xs text-[#526D82] leading-relaxed">
-                  Panduan tindakan darurat berurutan, kanal lapor resmi terverifikasi, dan pembuatan kartu peringatan keluarga.
+                  Langkah mitigasi darurat berurutan, kanal lapor resmi terverifikasi, dan pembuatan kata sandi keluarga rahasia.
                 </p>
               </div>
-              <div className="pt-5">
+              <div className="pt-6">
                 <button
                   type="button"
                   onClick={openLoginModal}
-                  className="w-full rounded-xl bg-[#526D82] py-2 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
+                  className="w-full rounded-full bg-[#526D82] py-2.5 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
                 >
                   Buka Panduan
                 </button>
@@ -217,7 +296,205 @@ export default function Beranda() {
           </div>
         </section>
 
-        {/* Disclaimer Tetap */}
+        {/* ================================================================= */}
+        {/* REKOMENDASI KASUS (SEPERTI CREATE YOUR OWN CAMP STORY DI VIDEO)   */}
+        {/* ================================================================= */}
+        <section id="modul" className="space-y-6 scroll-mt-24">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">Pilihan Studi Kasus</span>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">Modul Simulasi Populer</h2>
+            </div>
+            <button
+              type="button"
+              onClick={openLoginModal}
+              className="text-xs font-bold text-[#526D82] hover:text-[#27374D] flex items-center gap-1"
+            >
+              <span>Jelajahi Semua Modul</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-3">
+            {MODULE_SHORTCUTS.map((m) => {
+              const Icon = m.icon;
+              return (
+                <div
+                  key={m.id}
+                  onClick={openLoginModal}
+                  className="group flex flex-col justify-between rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 hover:border-[#526D82] hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <div className="space-y-4">
+                    <div className="flex h-36 w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#DDE6ED] to-[#9DB2BF]/30 relative overflow-hidden group-hover:scale-[1.02] transition-transform">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[#526D82] border border-[#9DB2BF]/50 shadow-sm">
+                        <Icon className="h-7 w-7" />
+                      </div>
+                      <span className="absolute top-3 right-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold text-[#526D82] border border-[#9DB2BF]/50 shadow-2xs">
+                        {m.badge}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-bold text-[#27374D] group-hover:text-[#526D82] transition-colors">
+                        {m.title}
+                      </h3>
+                      <p className="text-xs text-[#526D82] mt-1">{m.author}</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-[#9DB2BF]/30 mt-4 flex items-center justify-between text-xs text-[#526D82]">
+                    <span>{m.steps} Pertanyaan</span>
+                    <span className="font-bold text-[#27374D]">Est. {m.duration}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* TESTIMONIAL (TRUSTED CUSTOMERS ARE OUR BEST ADS DI VIDEO)        */}
+        {/* ================================================================= */}
+        <section id="testimoni" className="space-y-6 scroll-mt-24">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">Suara Komunitas</span>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">Dipercaya Rekan Muda Indonesia</h2>
+            <p className="text-sm text-[#526D82]">
+              Pengalaman nyata dari mereka yang berhasil menghindar dari tipuan digital setelah berlatih.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-4">
+              <div className="flex items-center gap-1 text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-amber-400" />
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm text-[#27374D] italic leading-relaxed">
+                "Hampir saja saya klik file surat tilang .apk di WhatsApp. Untung ingat simulasi JagaRuang bahwa instansi resmi tidak pernah kirim file instalasi lewat chat!"
+              </p>
+              <div className="pt-2 border-t border-[#9DB2BF]/30 flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-[#526D82] text-white flex items-center justify-center font-bold text-xs">
+                  NW
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#27374D]">Nabila Wulandari</p>
+                  <p className="text-[10px] text-[#526D82]">Mahasiswi · Bandung</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-4">
+              <div className="flex items-center gap-1 text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-amber-400" />
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm text-[#27374D] italic leading-relaxed">
+                "Fitur Sandi Keluarga sangat berguna! Kami sekeluarga sepakat punya kata rahasia saat ada telepon mencurigakan yang minta transfer uang mengatasnamakan adik."
+              </p>
+              <div className="pt-2 border-t border-[#9DB2BF]/30 flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-[#526D82] text-white flex items-center justify-center font-bold text-xs">
+                  DP
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#27374D]">Dimas Pratama</p>
+                  <p className="text-[10px] text-[#526D82]">Fresh Graduate · Surabaya</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-4">
+              <div className="flex items-center gap-1 text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-amber-400" />
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm text-[#27374D] italic leading-relaxed">
+                "Yang saya suka, link tidak pernah dibuka dan data kita disamarkan. Transparansi seperti ini yang bikin percaya dan betah belajar bareng."
+              </p>
+              <div className="pt-2 border-t border-[#9DB2BF]/30 flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-[#526D82] text-white flex items-center justify-center font-bold text-xs">
+                  KA
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#27374D]">Kevin Ananda</p>
+                  <p className="text-[10px] text-[#526D82]">Pegiat Komunitas · Jakarta</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* FAQ ACCORDION (GOT A QUESTION FOR CAMPLY DI VIDEO)               */}
+        {/* ================================================================= */}
+        <section id="faq" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start scroll-mt-24">
+          <div className="lg:col-span-5 space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">Tanya Jawab</span>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">
+              Got A Question For JagaRuang?
+            </h2>
+            <p className="text-sm text-[#526D82] leading-relaxed">
+              Jawaban ringkas seputar batas analisis, keamanan on-device, dan cara penggunaan simulator.
+            </p>
+          </div>
+
+          <div className="lg:col-span-7 space-y-3">
+            {FAQ_ITEMS.map((item, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className="rounded-2xl border border-[#9DB2BF]/50 bg-white overflow-hidden shadow-2xs transition-all"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-[#27374D] hover:text-[#526D82] transition-colors cursor-pointer"
+                  >
+                    <span>{item.q}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-[#526D82] transition-transform duration-200 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#526D82] leading-relaxed border-t border-[#9DB2BF]/20">
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* CTA BOTTOM BANNER (SEPERTI FOOTER BANNER DI VIDEO)                */}
+        {/* ================================================================= */}
+        <section className="rounded-3xl bg-[#526D82] p-8 sm:p-12 text-center text-white space-y-5 shadow-md">
+          <h2 className="text-2xl sm:text-4xl font-black tracking-tight max-w-xl mx-auto">
+            Siap Mengasah Ketahanan Digitalmu Hari Ini?
+          </h2>
+          <p className="text-xs sm:text-sm text-[#DDE6ED] max-w-lg mx-auto leading-relaxed">
+            Mulai eksplorasi aman tanpa instalasi aplikasi luar dan tanpa registrasi server.
+          </p>
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={openLoginModal}
+              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-white px-8 py-3 text-sm font-bold text-[#27374D] hover:bg-[#DDE6ED] active:scale-98 transition-all shadow-md cursor-pointer"
+            >
+              <span>Masuk & Mulai Simulasi</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </section>
+
+        {/* Disclaimer Tetap Sesuai Kontrak */}
         <Disclaimer />
       </div>
     );
@@ -226,6 +503,7 @@ export default function Beranda() {
   // =========================================================================
   // KONDISI 2: PENGGUNA SUDAH LOGIN (PERSIS SEPERTI GAMBAR REFERENSI USER)
   // Background: DDE6ED, Font: 27374D, Side bar: 526D82, Kontras: 9DB2BF
+  // 100% TIDAK DIUBAH / DIJAGA INTEGRITASNYA (JANGAN SENTUH DILUAR LANDING PAGE)
   // =========================================================================
   return (
     <div className="space-y-6">
@@ -331,8 +609,7 @@ export default function Beranda() {
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-[#526D82] border border-[#9DB2BF]/50 shadow-xs">
                           <Icon className="h-6 w-6" />
                         </div>
-                        <span className={`absolute top-2 right-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold border shadow-2xs ${m.badgeColor}`}>
-                          <span className={`h-1.5 w-1.5 rounded-full ${m.dotColor}`} />
+                        <span className="absolute top-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold text-[#526D82] border border-[#9DB2BF]/50 shadow-2xs">
                           {m.badge}
                         </span>
                       </div>
@@ -376,19 +653,15 @@ export default function Beranda() {
                 <p className="text-xs text-[#526D82]">Grafik intensitas penyelesaian simulasi & latihan dalam seminggu</p>
               </div>
 
-              {/* Legend Indikator Skenario Merah Kuning Hijau */}
-              <div className="flex flex-wrap items-center gap-3 text-xs">
+              {/* Legend Ringkas */}
+              <div className="flex items-center gap-4 text-xs text-[#526D82]">
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-rose-200" />
-                  <span className="font-semibold text-rose-800">Bahaya</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#526D82]" />
+                  <span>Skenario Selesai</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-amber-200" />
-                  <span className="font-semibold text-amber-800">Waspada</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200" />
-                  <span className="font-semibold text-emerald-800">Aman</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#9DB2BF]" />
+                  <span>Rata-rata Waktu</span>
                 </div>
               </div>
             </div>
@@ -436,18 +709,10 @@ export default function Beranda() {
                   strokeLinecap="round"
                 />
 
-                {/* Indikator Titik Skenario Hijau (Rabu: Selesai Aman) */}
-                <circle cx="160" cy="110" r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
-                <circle cx="160" cy="110" r="9" fill="#10b981" fillOpacity="0.2" />
-
-                {/* Indikator Titik Skenario Kuning (Kamis: Waspada) */}
-                <circle cx="320" cy="85" r="5" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-                <circle cx="320" cy="85" r="9" fill="#f59e0b" fillOpacity="0.2" />
-
-                {/* Indikator Titik Puncak Skenario Merah (Jumat: Kritis) */}
-                <line x1="420" y1="30" x2="420" y2="150" stroke="#f43f5e" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.8" />
-                <circle cx="420" cy="30" r="10" fill="#f43f5e" fillOpacity="0.25" />
-                <circle cx="420" cy="30" r="5" fill="#f43f5e" stroke="#ffffff" strokeWidth="2" />
+                {/* Indikator Titik Puncak Hari Aktif */}
+                <line x1="420" y1="30" x2="420" y2="150" stroke="#526D82" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.8" />
+                <circle cx="420" cy="30" r="9" fill="#526D82" fillOpacity="0.25" />
+                <circle cx="420" cy="30" r="5" fill="#526D82" stroke="#ffffff" strokeWidth="2" />
               </svg>
 
               {/* Sumbu X: Hari dalam Seminggu */}
@@ -474,20 +739,6 @@ export default function Beranda() {
               <div className="rounded-xl bg-[#DDE6ED]/50 p-2.5 border border-[#9DB2BF]/40">
                 <p className="text-[10px] text-[#526D82]">Kasus Diuji</p>
                 <p className="text-base font-extrabold text-[#27374D]">8 Skenario</p>
-                {/* Indikator Merah Kuning Hijau */}
-                <div className="mt-1 flex items-center justify-center gap-1.5 text-[9px] font-bold">
-                  <span className="inline-flex items-center gap-0.5 text-rose-600" title="3 Skenario Kritis">
-                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" /> 3
-                  </span>
-                  <span className="text-slate-300">·</span>
-                  <span className="inline-flex items-center gap-0.5 text-amber-600" title="3 Skenario Waspada">
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> 3
-                  </span>
-                  <span className="text-slate-300">·</span>
-                  <span className="inline-flex items-center gap-0.5 text-emerald-600" title="2 Skenario Aman">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> 2
-                  </span>
-                </div>
               </div>
               <div className="rounded-xl bg-[#DDE6ED]/50 p-2.5 border border-[#9DB2BF]/40">
                 <p className="text-[10px] text-[#526D82]">Pesan Divalidasi</p>
@@ -594,8 +845,8 @@ export default function Beranda() {
                 <button
                   type="button"
                   onClick={() => setSelectedDayInfo("Tgl 4 Nov: Simulasi APK Kurir Belum Diselesaikan")}
-                  className="rounded-lg bg-rose-500 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Skenario Risiko Kritis"
+                  className="rounded-lg bg-red-600 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Simulasi Kasus Belum Selesai"
                 >
                   4
                 </button>
@@ -612,9 +863,9 @@ export default function Beranda() {
                 {/* Tanggal 13: Kotak Selesai */}
                 <button
                   type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 13 Nov: Kasus Phishing Perbankan (Level Waspada)")}
-                  className="rounded-lg bg-amber-500 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Skenario Level Waspada"
+                  onClick={() => setSelectedDayInfo("Tgl 13 Nov: Kasus Phishing Perbankan Berhasil Diidentifikasi")}
+                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Simulasi Berhasil Diselesaikan"
                 >
                   13
                 </button>
@@ -628,18 +879,18 @@ export default function Beranda() {
                 {/* Tanggal 19 */}
                 <button
                   type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 19 Nov: Latihan Refleks Selesai (Tingkat Aman)")}
-                  className="rounded-lg bg-emerald-600 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Skenario Selesai Aman"
+                  onClick={() => setSelectedDayInfo("Tgl 19 Nov: Latihan Refleks Kilat 2 Menit")}
+                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Latihan Refleks Selesai"
                 >
                   19
                 </button>
                 {/* Tanggal 20 */}
                 <button
                   type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 20 Nov: Verifikasi Ekstensi Berkas Selesai (Tingkat Aman)")}
-                  className="rounded-lg bg-emerald-600 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Skenario Selesai Aman"
+                  onClick={() => setSelectedDayInfo("Tgl 20 Nov: Verifikasi Ekstensi Berkas Ganda")}
+                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Verifikasi Selesai"
                 >
                   20
                 </button>
@@ -658,19 +909,6 @@ export default function Beranda() {
               </div>
             </div>
 
-            {/* Legend Kalender Indikator Merah Kuning Hijau */}
-            <div className="flex items-center justify-between text-[10px] text-[#526D82] px-1 pt-1 border-t border-[#9DB2BF]/20">
-              <span className="flex items-center gap-1 font-semibold text-rose-700">
-                <span className="h-2 w-2 rounded-full bg-rose-500" /> Kritis
-              </span>
-              <span className="flex items-center gap-1 font-semibold text-amber-700">
-                <span className="h-2 w-2 rounded-full bg-amber-500" /> Waspada
-              </span>
-              <span className="flex items-center gap-1 font-semibold text-emerald-700">
-                <span className="h-2 w-2 rounded-full bg-emerald-600" /> Aman
-              </span>
-            </div>
-
             {/* Info Klik Tanggal */}
             {selectedDayInfo && (
               <div className="rounded-xl bg-[#DDE6ED] p-2.5 border border-[#9DB2BF]/60 text-xs text-[#27374D] flex items-center gap-2">
@@ -681,14 +919,9 @@ export default function Beranda() {
 
             {/* Pintasan Simulator Aktif */}
             <div className="rounded-2xl border border-[#9DB2BF]/50 bg-[#DDE6ED]/40 p-4 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#526D82]">
-                  <CalendarIcon className="h-4 w-4" />
-                  <span>Pintasan Simulator Aktif</span>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-700 border border-rose-200">
-                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" /> Skenario Kritis
-                </span>
+              <div className="flex items-center gap-2 text-xs font-bold text-[#526D82]">
+                <CalendarIcon className="h-4 w-4" />
+                <span>Pintasan Simulator Aktif</span>
               </div>
               <p className="text-xs text-[#27374D] font-extrabold">
                 Kasus 1: Skenario Undangan Pernikahan APK

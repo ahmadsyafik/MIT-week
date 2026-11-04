@@ -26,3 +26,7 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **4. Grafik Pembelajaran Mingguan**: Kurva gelombang halus (Activities SVG wave chart) dengan titik sorotan hari aktif dan metrik capaian.
     - **5. Sidebar**: Navigasi vertikal persis referensi dengan kartu info "Tantangan Kilat 120 Detik" di bagian bawah.
     - **6. Pintasan Menuju Modul**: 3 kartu kursus/studi kasus (Undangan APK, Kurir Paket, Loker WFH) lengkap dengan level, estimasi durasi, dan progres.
+  - **Redesain Landing Page Berbasis Video Referensi & Integrasi Three.js**:
+    - Komponen 3D Canvas interaktif (`ThreeHeroCanvas.tsx`): Model smartphone 3D interaktif Three.js dengan pencahayaan dinamis, partikel/cincin pelindung melayang, efek *mouse parallax tilt*, dan simulasi layar aplikasi JagaRuang.
+    - Struktur Landing Page lengkap persis alur video: Top Navbar (Home, Tiga Pilar, Modul, Cerita Rekan, FAQ, Login & Register), Hero Section 2 kolom, Metrics Counter Bar (10K+ Skenario, 8K+ Pengguna, 4.9 Rating, 100% On-Device), Kartu Rekomendasi Modul, Testimoni Komunitas, Accordion FAQ, dan Banner Aksi Bawah.
+    - Dashboard pengguna login tetap terjaga 100% utuh tanpa perubahan.

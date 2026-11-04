@@ -3,7 +3,6 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Menu,
   X,
-  LogIn,
   LogOut,
   LayoutDashboard,
   Search,
@@ -12,11 +11,13 @@ import {
   KeyRound,
   ShieldCheck,
   ChevronRight,
+  Bell,
+  MessageSquare,
   ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import LoginModal from "./LoginModal";
-import NotificationDropdown from "./NotificationDropdown";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", shortLabel: "Dashboard", icon: LayoutDashboard, end: true },
@@ -53,7 +54,7 @@ export default function Layout() {
   };
 
   // =========================================================================
-  // KONDISI 1: PENGUNJUNG BELUM LOGIN (LANDING PAGE MODE)
+  // KONDISI 1: PENGUNJUNG BELUM LOGIN (LANDING PAGE MODE PERSIS SEPERTI VIDEO)
   // Background: DDE6ED, Font: 27374D, Aksen Kontras: 526D82 & 9DB2BF
   // =========================================================================
   if (!isAuthenticated) {
@@ -67,45 +68,69 @@ export default function Layout() {
           Lewati ke konten utama
         </a>
 
-        {/* Top Header Sederhana untuk Landing Page */}
+        {/* Top Header Navbar untuk Landing Page (Persis seperti di video referensi) */}
         <header className="sticky top-0 z-40 border-b border-[#9DB2BF]/40 bg-white/95 backdrop-blur-md shadow-xs">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
+            {/* Logo Brand Camply / JagaRuang. */}
             <NavLink
               to="/"
               className="flex items-center gap-2.5 font-bold text-[#27374D] text-lg hover:text-[#526D82] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] rounded-md transition-colors"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#526D82] text-white font-extrabold text-sm shadow-sm">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#526D82] text-white font-black text-sm shadow-sm">
                 JR
               </span>
-              <div className="flex flex-col">
-                <span className="leading-tight font-extrabold text-base sm:text-lg tracking-tight text-[#27374D]">
+              <div className="flex items-baseline gap-0.5">
+                <span className="leading-tight font-black text-xl tracking-tight text-[#27374D]">
                   JagaRuang
                 </span>
-                <span className="text-[10px] font-medium text-[#526D82]">Cek. Latih. Lindungi.</span>
+                <span className="font-extrabold text-[#526D82] text-xl">.</span>
               </div>
             </NavLink>
 
-            <div className="flex items-center gap-3">
-              <NavLink
-                to="/keterbatasan"
-                className="hidden sm:inline-block text-xs font-semibold text-[#526D82] hover:text-[#27374D] transition-colors"
-              >
-                Keterbatasan & Privasi
+            {/* Nav Links Tengah (seperti Home, About, Pricing, Contact, Blog di video) */}
+            <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-semibold text-[#526D82]">
+              <a href="#beranda" className="hover:text-[#27374D] transition-colors">
+                Home
+              </a>
+              <a href="#tiga-pilar" className="hover:text-[#27374D] transition-colors">
+                Tiga Pilar
+              </a>
+              <a href="#modul" className="hover:text-[#27374D] transition-colors">
+                Kasus & Modul
+              </a>
+              <a href="#testimoni" className="hover:text-[#27374D] transition-colors">
+                Cerita Rekan
+              </a>
+              <a href="#faq" className="hover:text-[#27374D] transition-colors">
+                FAQ
+              </a>
+              <NavLink to="/keterbatasan" className="hover:text-[#27374D] transition-colors">
+                Keterbatasan
               </NavLink>
+            </nav>
+
+            {/* Tombol Kanan (Login & Register / Mulai Sekarang seperti di video) */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
               <button
                 type="button"
                 onClick={openLoginModal}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#526D82] px-4 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm cursor-pointer"
+                className="inline-flex min-h-[40px] items-center justify-center px-4 py-2 text-xs font-bold text-[#27374D] hover:text-[#526D82] transition-colors cursor-pointer"
               >
-                <LogIn className="h-3.5 w-3.5" />
-                <span>Masuk</span>
+                <span>Login</span>
+              </button>
+              <button
+                type="button"
+                onClick={openLoginModal}
+                className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm cursor-pointer"
+              >
+                <span>Register</span>
               </button>
             </div>
           </div>
         </header>
 
         {/* Konten Landing Page */}
-        <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+        <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <Outlet />
         </main>
 
@@ -113,7 +138,7 @@ export default function Layout() {
 
         {/* Footer Permanen */}
         <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto">
-          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 sm:px-6 sm:flex-row sm:items-center sm:justify-between text-xs text-[#526D82]">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 sm:px-6 sm:flex-row sm:items-center sm:justify-between text-xs text-[#526D82]">
             <p className="max-w-xl leading-relaxed">
               Hasil hanyalah indikasi berbasis aturan dan bisa keliru. Seluruh analisis berjalan langsung di
               perangkatmu (on-device) tanpa server atau pelacak data.
@@ -243,6 +268,27 @@ export default function Layout() {
           {/* Spacer */}
           <div className="flex-1 min-h-4" />
 
+          {/* Kartu Promo / Tantangan di Bawah Sidebar */}
+          <div className="p-3.5 shrink-0">
+            <div className="relative overflow-hidden rounded-2xl bg-[#27374D]/50 p-4 border border-[#9DB2BF]/30 text-center shadow-sm">
+              <div className="mx-auto mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-[#27374D] text-amber-300 border border-[#9DB2BF]/40 shadow-inner">
+                <Sparkles className="h-5 w-5 text-amber-300 animate-pulse" />
+              </div>
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#DDE6ED]/80">Tantangan Kilat</h4>
+              <p className="mt-0.5 text-base font-black text-white">120 Detik</p>
+              <p className="mt-0.5 text-[11px] text-[#DDE6ED]/80 leading-tight">
+                Asah refleks membedakan pesan biasa vs manipulasi!
+              </p>
+              <NavLink
+                to="/kilat"
+                onClick={closeSidebar}
+                className="mt-3 block w-full rounded-xl bg-[#DDE6ED] py-2 text-xs font-bold text-[#27374D] hover:bg-white active:scale-98 transition-all shadow-sm"
+              >
+                Mulai Sekarang
+              </NavLink>
+            </div>
+          </div>
+
           {/* Bagian Footer Sidebar: Keterbatasan & Logout */}
           <div className="p-3 border-t border-[#9DB2BF]/30 space-y-1 shrink-0">
             <NavLink
@@ -311,10 +357,26 @@ export default function Layout() {
             </div>
           </form>
 
-          {/* Right Header Controls (Notifikasi Dropdown, User Profile) */}
+          {/* Right Header Controls (Notifikasi, Pesan, User Profile) */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Notification Interactive Dropdown */}
-            <NotificationDropdown />
+            {/* Notification Bell */}
+            <button
+              type="button"
+              aria-label="Notifikasi modul baru"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#9DB2BF]/50 bg-white text-[#526D82] hover:bg-[#DDE6ED] hover:text-[#27374D] transition-colors shadow-2xs"
+            >
+              <Bell className="h-4 w-4" />
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+            </button>
+
+            {/* Message / Guide Bookmark */}
+            <NavLink
+              to="/lindungi"
+              aria-label="Panduan Lindungi Cepat"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#9DB2BF]/50 bg-white text-[#526D82] hover:bg-[#DDE6ED] hover:text-[#27374D] transition-colors shadow-2xs"
+            >
+              <MessageSquare className="h-4 w-4" />
+            </NavLink>
 
             {/* User Profile Pill Dropdown */}
             <div className="flex items-center gap-2 rounded-full border border-[#9DB2BF]/60 bg-white py-1 pl-1 pr-3 shadow-2xs">
