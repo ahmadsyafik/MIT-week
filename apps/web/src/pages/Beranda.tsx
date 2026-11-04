@@ -181,11 +181,11 @@ export default function Beranda() {
           </div>
 
           {/* Kolom Kanan: Three.js Interactive 3D Smartphone Canvas */}
-          <div className="lg:col-span-6 relative flex items-center justify-center">
+          <div className="lg:col-span-6 relative flex items-center justify-center overflow-visible">
             {/* Background Halo Glow di belakang 3D */}
             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#9DB2BF]/30 via-white/50 to-[#526D82]/20 blur-3xl" />
             
-            <div className="relative w-full max-w-lg">
+            <div className="relative w-full max-w-xl overflow-visible">
               <ThreeHeroCanvas />
               <p className="text-center text-[11px] font-semibold text-[#526D82] mt-2">
                 *Model 3D interaktif Three.js — Gerakkan kursor atau sentuh untuk memutar

@@ -37,3 +37,13 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Bagian 4 (Kamus Jebakan)**: Cover pencarian istilah dan filter kategori; klik istilah membuka halaman khusus kupas tuntas modus, cara kerja, titik masuk, dan pertolongan pertama.
     - **Notifikasi & On-Device Storage**: Terintegrasi dengan sistem notifikasi progres target dan persistensi status modul lokal di `localStorage`.
     - Dashboard pengguna login tetap terjaga 100% utuh tanpa perubahan.
+  - **Redesain Total Komposisi Visual 3D Hero (React Three Fiber & Drei)**:
+    - Konsep tunggal terpadu: **"iPhone sebagai hero, orbit sebagai aksesori halus"**.
+    - **Model Prosedural iPhone 15/16 Pro (`IPhone.tsx`)**: Dibuat 100% secara prosedural dengan material titanium natural (`metalness 0.96`, `roughness 0.26`), layar depan glossy dengan Dynamic Island kapsul, tombol titanium (Action, Volume, Power), kaca frosted belakang, dan modul kamera 3 lensa Pro (outer titanium ring, inner dark bezel, glass lens, True Tone flash, serta LiDAR).
+    - **Layar HTML Ultra-Tajam (`<Html transform>`)**: Tampilan antarmuka tajam dengan kontras tinggi (setara 11-12px final) menampilkan 3 elemen fokus: Header JagaRuang Mobile dengan status bar, Kartu Peringatan Kritis merah (`Undangan_Pernikahan.apk`), dan Kartu Status Hijau terverifikasi (`Tautan Aman`).
+    - **Satu Cincin Orbit Halus (`Orbit.tsx`)**: Satu cincin torus tipis berbagi titik pusat sama `[0, 0, 0]` dengan HP, memotong depan dan belakang dengan *depth buffer* akurat (tanpa *clipping bug*), serta partikel bercahaya emerald yang mengitari cincin.
+    - **Kartu Notifikasi Melayang Berkedalaman (`FloatingCards.tsx`)**: 3 kartu notifikasi melayang dengan parallax multi-layer (Tautan Aman hijau, Peringatan Berkas merah, dan Sandi Keluarga slate).
+    - **Pencahayaan Studio & Efek Refleksi (`HeroScene.tsx`)**: Menggunakan `<Lightformer>` prosedural (100% on-device tanpa unduhan eksternal), directional light dengan bayangan halus, serta `<ContactShadows>` di bawah HP.
+    - **Interaktivitas & Aksesibilitas**: Animasi `Float` halus, tilt kursor responsif (maks ~15 derajat) dengan lerp damping, kepatuhan `prefers-reduced-motion` untuk pose statis, dan `IntersectionObserver` / visibility listener untuk auto-pause saat di luar layar.
+    - **Konfigurasi Terpusat (`hero3d.config.ts`)**: Seluruh parameter visual, kecepatan, dan skala dikumpulkan di satu file konfigurasi.
+    - **Code Splitting & Lazy Loading**: Chunk R3F dimuat secara asinkron dengan skeleton fallback (`Hero3DFallback.tsx`).
