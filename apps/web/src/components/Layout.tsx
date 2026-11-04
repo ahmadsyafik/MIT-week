@@ -168,7 +168,7 @@ export default function Layout() {
       <aside
         id="app-sidebar"
         aria-label="Navigasi sidebar utama"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col justify-between bg-[#526D82] text-white transition-transform duration-200 ease-in-out md:static md:translate-x-0 shadow-lg md:shadow-none border-r border-[#9DB2BF]/30 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col justify-between bg-[#526D82] text-white transition-transform duration-200 ease-in-out md:sticky md:top-0 md:h-screen md:translate-x-0 shadow-lg md:shadow-none border-r border-[#9DB2BF]/30 shrink-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

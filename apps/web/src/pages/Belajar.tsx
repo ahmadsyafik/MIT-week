@@ -534,177 +534,243 @@ const GLOSSARY_TERMS: GlossaryTerm[] = [
 // KOMPONEN UTAMA: HALAMAN BELAJAR
 // =============================================================================
 export default function Belajar() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [activeSection, setActiveSection] = useState<string>("simulator");
 
-  // Tab yang aktif diambil dari query param ?tab=... (default: simulator)
-  const currentTab = (searchParams.get("tab") as TabType) || "simulator";
-  const validTab: TabType = ["simulator", "modul", "kilat", "kamus"].includes(currentTab)
-    ? currentTab
-    : "simulator";
-
-  const handleTabChange = (newTab: TabType) => {
-    setSearchParams((prev) => {
-      const updated = new URLSearchParams(prev);
-      updated.set("tab", newTab);
-      return updated;
-    });
+  const scrollToSection = (sectionId: string) => {
+    setActiveSection(sectionId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
+  // Sinkronisasi bila ada query param ?tab=... (misal dari redirect atau search bar)
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam && ["simulator", "modul", "kilat", "kamus"].includes(tabParam)) {
+      setActiveSection(tabParam);
+      setTimeout(() => {
+        const element = document.getElementById(tabParam);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+    }
+  }, [searchParams]);
+
+  // Observer untuk menandai tombol aktif saat halaman di-scroll
+  useEffect(() => {
+    const sectionIds = ["simulator", "modul", "kilat", "kamus"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-25% 0px -65% 0px" }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* ===================================================================== */}
-      {/* HEADER UTAMA HALAMAN BELAJAR                                          */}
+      {/* HEADER UTAMA HALAMAN BELAJAR (BERSIH TANPA TOMBOL PINTASAN ASING)    */}
       {/* ===================================================================== */}
       <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#DDE6ED] px-3 py-0.5 text-[11px] font-bold text-[#27374D] border border-[#9DB2BF]/60">
-              <BookOpen className="h-3 w-3 text-[#526D82]" />
-              <span>Pusat Literasi & Pelatihan JagaRuang</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">
-              Belajar Interaktif
-            </h1>
-            <p className="text-xs sm:text-sm text-[#526D82] max-w-2xl leading-relaxed">
-              Kuasai insting perlindungan digitalmu melalui simulasi kasus nyata, modul pembelajaran terstruktur,
-              tantangan refleks kilat 120 detik, dan kamus jebakan digital.
-            </p>
+        <div className="space-y-1.5 max-w-3xl">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#DDE6ED] px-3 py-0.5 text-[11px] font-bold text-[#27374D] border border-[#9DB2BF]/60">
+            <BookOpen className="h-3 w-3 text-[#526D82]" />
+            <span>Pusat Literasi & Pelatihan JagaRuang</span>
           </div>
-
-          <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/cek")}
-              className="gap-1.5 text-xs font-bold"
-            >
-              <Search className="h-3.5 w-3.5 text-[#526D82]" />
-              <span>Cek Pesan / File</span>
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => handleTabChange("kilat")}
-              className="gap-1.5 text-xs font-bold"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Kilat 120 Dtk</span>
-            </Button>
-          </div>
-        </div>
-
-        {/* =================================================================== */}
-        {/* TAB HORIZONTAL NAVIGASI (SCROLLABLE DI MOBILE LAYAR SEMPIT)         */}
-        {/* =================================================================== */}
-        <div className="mt-6 pt-5 border-t border-[#9DB2BF]/30">
-          <nav
-            aria-label="Tab Pembelajaran"
-            className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-2 px-2"
-          >
-            {/* Tab 1: Simulator */}
-            <button
-              type="button"
-              onClick={() => handleTabChange("simulator")}
-              className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] ${
-                validTab === "simulator"
-                  ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
-                  : "bg-[#DDE6ED]/60 text-[#526D82] hover:bg-white hover:text-[#27374D] border border-[#9DB2BF]/40"
-              }`}
-            >
-              <Compass className={`h-4 w-4 ${validTab === "simulator" ? "text-amber-400" : "text-[#526D82]"}`} />
-              <span>Simulator</span>
-              <span
-                className={`ml-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                  validTab === "simulator"
-                    ? "bg-white/20 text-white"
-                    : "bg-[#9DB2BF]/30 text-[#27374D]"
-                }`}
-              >
-                3 Kasus
-              </span>
-            </button>
-
-            {/* Tab 2: Modul */}
-            <button
-              type="button"
-              onClick={() => handleTabChange("modul")}
-              className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] ${
-                validTab === "modul"
-                  ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
-                  : "bg-[#DDE6ED]/60 text-[#526D82] hover:bg-white hover:text-[#27374D] border border-[#9DB2BF]/40"
-              }`}
-            >
-              <BookOpen className={`h-4 w-4 ${validTab === "modul" ? "text-sky-300" : "text-[#526D82]"}`} />
-              <span>Modul</span>
-              <span
-                className={`ml-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                  validTab === "modul"
-                    ? "bg-white/20 text-white"
-                    : "bg-[#9DB2BF]/30 text-[#27374D]"
-                }`}
-              >
-                4 Panduan
-              </span>
-            </button>
-
-            {/* Tab 3: Kilat 2 Menit */}
-            <button
-              type="button"
-              onClick={() => handleTabChange("kilat")}
-              className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] ${
-                validTab === "kilat"
-                  ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
-                  : "bg-[#DDE6ED]/60 text-[#526D82] hover:bg-white hover:text-[#27374D] border border-[#9DB2BF]/40"
-              }`}
-            >
-              <Clock className={`h-4 w-4 ${validTab === "kilat" ? "text-amber-400" : "text-[#526D82]"}`} />
-              <span>Kilat 2 Menit</span>
-              <span
-                className={`ml-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                  validTab === "kilat"
-                    ? "bg-amber-400 text-[#27374D]"
-                    : "bg-amber-100 text-amber-900 border border-amber-300"
-                }`}
-              >
-                120 Dtk
-              </span>
-            </button>
-
-            {/* Tab 4: Kamus */}
-            <button
-              type="button"
-              onClick={() => handleTabChange("kamus")}
-              className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] ${
-                validTab === "kamus"
-                  ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
-                  : "bg-[#DDE6ED]/60 text-[#526D82] hover:bg-white hover:text-[#27374D] border border-[#9DB2BF]/40"
-              }`}
-            >
-              <Search className={`h-4 w-4 ${validTab === "kamus" ? "text-emerald-300" : "text-[#526D82]"}`} />
-              <span>Kamus</span>
-              <span
-                className={`ml-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                  validTab === "kamus"
-                    ? "bg-white/20 text-white"
-                    : "bg-[#9DB2BF]/30 text-[#27374D]"
-                }`}
-              >
-                10 Istilah
-              </span>
-            </button>
-          </nav>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">
+            Belajar Interaktif
+          </h1>
+          <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">
+            Kuasai insting perlindungan digitalmu melalui simulasi kasus nyata, modul pembelajaran terstruktur,
+            tantangan refleks kilat 120 detik, dan kamus jebakan digital. Seluruh bagian tersaji langsung dalam satu alur belajar di bawah ini.
+          </p>
         </div>
       </div>
 
       {/* ===================================================================== */}
-      {/* ISI KONTEN BERDASARKAN TAB AKTIF                                      */}
+      {/* NAVIGASI PINDAH CEPAT (STICKY QUICK-SCROLL BAR)                       */}
       {/* ===================================================================== */}
-      <div>
-        {validTab === "simulator" && <SimulatorTab />}
-        {validTab === "modul" && <ModulTab />}
-        {validTab === "kilat" && <KilatTab />}
-        {validTab === "kamus" && <KamusTab />}
+      <div className="sticky top-16 z-20 -mx-1 px-1 py-1 bg-[#DDE6ED]/90 backdrop-blur-md">
+        <nav
+          aria-label="Pintas Navigasi Bagian Belajar"
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar p-1.5 rounded-2xl bg-white border border-[#9DB2BF]/40 shadow-xs"
+        >
+          {/* Tombol Scroll 1: Simulator */}
+          <button
+            type="button"
+            onClick={() => scrollToSection("simulator")}
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+              activeSection === "simulator"
+                ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
+                : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
+            }`}
+          >
+            <Compass className={`h-4 w-4 ${activeSection === "simulator" ? "text-amber-400" : "text-[#526D82]"}`} />
+            <span>1. Simulator</span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                activeSection === "simulator" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
+              }`}
+            >
+              3 Kasus
+            </span>
+          </button>
+
+          {/* Tombol Scroll 2: Modul */}
+          <button
+            type="button"
+            onClick={() => scrollToSection("modul")}
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+              activeSection === "modul"
+                ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
+                : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
+            }`}
+          >
+            <BookOpen className={`h-4 w-4 ${activeSection === "modul" ? "text-sky-300" : "text-[#526D82]"}`} />
+            <span>2. Modul</span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                activeSection === "modul" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
+              }`}
+            >
+              4 Panduan
+            </span>
+          </button>
+
+          {/* Tombol Scroll 3: Kilat 2 Menit */}
+          <button
+            type="button"
+            onClick={() => scrollToSection("kilat")}
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+              activeSection === "kilat"
+                ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
+                : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
+            }`}
+          >
+            <Clock className={`h-4 w-4 ${activeSection === "kilat" ? "text-amber-400" : "text-[#526D82]"}`} />
+            <span>3. Kilat 2 Menit</span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                activeSection === "kilat" ? "bg-amber-400 text-[#27374D]" : "bg-amber-100 text-amber-900 border border-amber-300"
+              }`}
+            >
+              120 Dtk
+            </span>
+          </button>
+
+          {/* Tombol Scroll 4: Kamus */}
+          <button
+            type="button"
+            onClick={() => scrollToSection("kamus")}
+            className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+              activeSection === "kamus"
+                ? "bg-[#27374D] text-white shadow-sm border border-[#27374D]"
+                : "text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
+            }`}
+          >
+            <Search className={`h-4 w-4 ${activeSection === "kamus" ? "text-emerald-300" : "text-[#526D82]"}`} />
+            <span>4. Kamus</span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                activeSection === "kamus" ? "bg-white/20 text-white" : "bg-[#DDE6ED] text-[#27374D]"
+              }`}
+            >
+              10 Istilah
+            </span>
+          </button>
+        </nav>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* SELURUH BAGIAN DITAMPILKAN LANGSUNG DALAM SATU ALUR SCROLL            */}
+      {/* ===================================================================== */}
+      <div className="space-y-12">
+        {/* Bagian 1: Simulator */}
+        <section id="simulator" className="scroll-mt-32 space-y-4">
+          <div className="flex items-center gap-2.5 border-b border-[#9DB2BF]/30 pb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#27374D] text-white">
+              <Compass className="h-4 w-4 text-amber-400" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-[#27374D]">
+                Bagian 1: Simulator Kasus Interaktif
+              </h2>
+              <p className="text-xs text-[#526D82]">
+                Latih insting dan refleks keputusanmu dalam simulasi rekayasa sosial nyata secara aman.
+              </p>
+            </div>
+          </div>
+          <SimulatorTab />
+        </section>
+
+        {/* Bagian 2: Modul */}
+        <section id="modul" className="scroll-mt-32 space-y-4">
+          <div className="flex items-center gap-2.5 border-b border-[#9DB2BF]/30 pb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#27374D] text-white">
+              <BookOpen className="h-4 w-4 text-sky-300" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-[#27374D]">
+                Bagian 2: Modul Pembelajaran Mandiri
+              </h2>
+              <p className="text-xs text-[#526D82]">
+                Artikel mendalam, pembedahan anatomi ancaman, dan checklist verifikasi mandiri.
+              </p>
+            </div>
+          </div>
+          <ModulTab />
+        </section>
+
+        {/* Bagian 3: Kilat 2 Menit */}
+        <section id="kilat" className="scroll-mt-32 space-y-4">
+          <div className="flex items-center gap-2.5 border-b border-[#9DB2BF]/30 pb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#27374D] text-white">
+              <Clock className="h-4 w-4 text-amber-400" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-[#27374D]">
+                Bagian 3: Tantangan Kilat 120 Detik
+              </h2>
+              <p className="text-xs text-[#526D82]">
+                Asah refleks membedakan pesan biasa vs manipulasi dalam 120 detik!
+              </p>
+            </div>
+          </div>
+          <KilatTab />
+        </section>
+
+        {/* Bagian 4: Kamus */}
+        <section id="kamus" className="scroll-mt-32 space-y-4">
+          <div className="flex items-center gap-2.5 border-b border-[#9DB2BF]/30 pb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#27374D] text-white">
+              <Search className="h-4 w-4 text-emerald-300" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-[#27374D]">
+                Bagian 4: Kamus Istilah Jebakan & Modus Digital
+              </h2>
+              <p className="text-xs text-[#526D82]">
+                Pahami istilah ancaman, cara kerja modus, dan respons pertolongan pertama.
+              </p>
+            </div>
+          </div>
+          <KamusTab />
+        </section>
       </div>
 
       {/* Footer Catatan Kepatuhan Desain */}
