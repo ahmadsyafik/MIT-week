@@ -7,10 +7,8 @@ import {
   LogOut,
   LayoutDashboard,
   Search,
-  Compass,
   ShieldAlert,
   BookOpen,
-  Clock,
   KeyRound,
   ShieldCheck,
   ChevronRight,
@@ -21,13 +19,11 @@ import LoginModal from "./LoginModal";
 import NotificationDropdown from "./NotificationDropdown";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/latih", label: "Modul Kasus", icon: Compass },
-  { to: "/cek", label: "Cek Pesan & File", icon: Search },
-  { to: "/lindungi", label: "Panduan Lindungi", icon: ShieldAlert },
-  { to: "/kamus", label: "Kamus Jebakan", icon: BookOpen },
-  { to: "/kilat", label: "Kilat 2 Menit", icon: Clock },
-  { to: "/sandi", label: "Sandi Keluarga", icon: KeyRound },
+  { to: "/", label: "Dashboard", shortLabel: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/belajar", label: "Belajar", shortLabel: "Belajar", icon: BookOpen },
+  { to: "/cek", label: "Cek Pesan & File", shortLabel: "Cek", icon: Search },
+  { to: "/lindungi", label: "Panduan Lindungi", shortLabel: "Lindungi", icon: ShieldAlert },
+  { to: "/sandi", label: "Sandi Keluarga", shortLabel: "Sandi", icon: KeyRound },
 ];
 
 export default function Layout() {
@@ -52,7 +48,7 @@ export default function Layout() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/kamus?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/belajar?tab=kamus&q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -337,14 +333,15 @@ export default function Layout() {
         </header>
 
         {/* Konten Dashboard Utama (Background: DDE6ED, Font: 27374D) */}
-        <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-7">
+        {/* pb-24 di mobile agar konten tidak tertutup bottom bar navigasi */}
+        <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 pb-24 md:pb-7">
           <Outlet />
         </main>
 
         <LoginModal />
 
-        {/* Footer Permanen */}
-        <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto">
+        {/* Footer Permanen (diberi margin bawah di mobile agar tidak terpotong bottom nav) */}
+        <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto mb-16 md:mb-0">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 sm:px-6 sm:flex-row sm:items-center sm:justify-between text-xs text-[#526D82]">
             <p className="max-w-xl leading-relaxed">
               Hasil hanyalah indikasi berbasis aturan dan bisa keliru. Seluruh analisis berjalan langsung di
@@ -362,6 +359,50 @@ export default function Layout() {
             </div>
           </div>
         </footer>
+
+        {/* =================================================================== */}
+        {/* BOTTOM NAVIGATION BAR UNTUK MOBILE (MD:HIDDEN)                      */}
+        {/* 5 ITEM: DASHBOARD, BELAJAR, CEK, LINDUNGI, SANDI                    */}
+        {/* =================================================================== */}
+        <nav
+          aria-label="Navigasi Bawah Mobile"
+          className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-[#9DB2BF]/40 bg-white/95 px-1 backdrop-blur-md shadow-[0_-2px_12px_rgba(0,0,0,0.08)] md:hidden"
+        >
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `flex flex-1 flex-col items-center justify-center py-1 min-h-[44px] transition-all ${
+                    isActive
+                      ? "text-[#27374D] font-extrabold"
+                      : "text-[#526D82] hover:text-[#27374D] font-medium"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all ${
+                        isActive
+                          ? "bg-[#DDE6ED] text-[#27374D] shadow-2xs"
+                          : "text-[#526D82]"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <span className="text-[10px] leading-tight mt-0.5 tracking-tight truncate max-w-[62px]">
+                      {item.shortLabel}
+                    </span>
+                  </>
+                )}
+              </NavLink>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );

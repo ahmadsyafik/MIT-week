@@ -311,7 +311,7 @@ export default function Beranda() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-base sm:text-lg font-bold text-[#27374D]">Modul Pembelajaran</h2>
-              <Link to="/latih" className="text-xs font-bold text-[#526D82] hover:text-[#27374D] transition-colors">
+              <Link to="/belajar?tab=simulator" className="text-xs font-bold text-[#526D82] hover:text-[#27374D] transition-colors">
                 Lihat Semua Kasus →
               </Link>
             </div>
@@ -322,7 +322,7 @@ export default function Beranda() {
                 return (
                   <Link
                     key={m.id}
-                    to="/latih"
+                    to="/belajar?tab=simulator"
                     className="group flex flex-col justify-between rounded-2xl border border-[#9DB2BF]/50 bg-white p-4 hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="space-y-3">
@@ -696,7 +696,7 @@ export default function Beranda() {
               <p className="text-[11px] text-[#526D82] leading-tight">
                 Simulasi keputusan saat menerima pesan berformat .apk dari nomor tak dikenal.
               </p>
-              <Link to="/latih" className="block pt-1">
+              <Link to="/belajar?tab=simulator" className="block pt-1">
                 <button
                   type="button"
                   className="w-full rounded-xl bg-[#526D82] py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-xs"
@@ -723,7 +723,7 @@ export default function Beranda() {
                 return (
                   <Link
                     key={term.id}
-                    to="/kamus"
+                    to="/belajar?tab=kamus"
                     className="group flex items-center justify-between rounded-2xl border border-[#9DB2BF]/40 bg-white p-3 hover:border-[#526D82] hover:bg-[#DDE6ED]/30 transition-all shadow-2xs"
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -750,7 +750,7 @@ export default function Beranda() {
             {/* Tombol See All (Lihat Semua Kamus) */}
             <div className="pt-1">
               <Link
-                to="/kamus"
+                to="/belajar?tab=kamus"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526D82] hover:text-[#27374D] transition-colors"
               >
                 <span>Lihat Semua Istilah & Modus (10)</span>

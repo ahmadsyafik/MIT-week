@@ -1,11 +1,25 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Beranda from "./pages/Beranda";
+import Belajar from "./pages/Belajar";
 import Cek from "./pages/Cek";
 import Keterbatasan from "./pages/Keterbatasan";
 import Placeholder from "./pages/Placeholder";
+
+/**
+ * Komponen pembantu untuk mengarahkan (redirect) rute lama ke /belajar
+ * dengan mempertahankan query parameter (seperti ?q=...) dan menyematkan parameter tab.
+ */
+function RedirectToBelajar({ defaultTab }: { defaultTab: string }) {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  if (!searchParams.has("tab")) {
+    searchParams.set("tab", defaultTab);
+  }
+  return <Navigate to={`/belajar?${searchParams.toString()}`} replace />;
+}
 
 export default function App() {
   return (
@@ -25,14 +39,17 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Rute Baru Belajar Interaktif (Menggabungkan Simulator Kasus, Modul, Kilat 2 Menit, Kamus) */}
           <Route
-            path="latih"
+            path="belajar"
             element={
-              <ProtectedRoute featureName="Latih Kasus Interaktif">
-                <Placeholder title="Latih Kasus Interaktif" task="FE-3.x" />
+              <ProtectedRoute featureName="Belajar Interaktif">
+                <Belajar />
               </ProtectedRoute>
             }
           />
+
           <Route
             path="lindungi"
             element={
@@ -41,22 +58,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="kamus"
-            element={
-              <ProtectedRoute featureName="Kamus Jebakan Digital">
-                <Placeholder title="Kamus Jebakan Digital" task="FE-3.x" />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="kilat"
-            element={
-              <ProtectedRoute featureName="Refleks Kilat 2 Menit">
-                <Placeholder title="Kilat 2 Menit" task="FE-5.x" />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="sandi"
             element={
@@ -65,6 +67,15 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Redirect Otomatis Rute Lama ke /belajar dengan Query Param Tab yang Sesuai */}
+          <Route path="modul-kasus" element={<RedirectToBelajar defaultTab="simulator" />} />
+          <Route path="latih" element={<RedirectToBelajar defaultTab="simulator" />} />
+          <Route path="modul" element={<RedirectToBelajar defaultTab="modul" />} />
+          <Route path="kilat-2-menit" element={<RedirectToBelajar defaultTab="kilat" />} />
+          <Route path="kilat" element={<RedirectToBelajar defaultTab="kilat" />} />
+          <Route path="kamus-jebakan" element={<RedirectToBelajar defaultTab="kamus" />} />
+          <Route path="kamus" element={<RedirectToBelajar defaultTab="kamus" />} />
 
           {/* Rute 404 */}
           <Route path="*" element={<Placeholder title="Halaman Tidak Ditemukan" task="404" />} />

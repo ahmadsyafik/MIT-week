@@ -39,7 +39,7 @@ const INITIAL_NOTIFICATIONS: AppNotification[] = [
     time: "2 jam lalu",
     type: "waspada",
     read: false,
-    link: "/latih",
+    link: "/belajar?tab=simulator",
   },
   {
     id: "notif-3",
@@ -48,7 +48,7 @@ const INITIAL_NOTIFICATIONS: AppNotification[] = [
     time: "Kemarin",
     type: "sukses",
     read: true,
-    link: "/latih",
+    link: "/belajar?tab=simulator",
   },
   {
     id: "notif-4",
