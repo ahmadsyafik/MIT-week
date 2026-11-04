@@ -13,6 +13,9 @@ import {
   FileCode,
   Users,
   Smartphone,
+  CheckCircle2,
+  OctagonAlert,
+  AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Disclaimer } from "../components/ui";
@@ -21,39 +24,45 @@ import { Disclaimer } from "../components/ui";
 const MODULE_SHORTCUTS = [
   {
     id: "kasus-1",
-    title: "Undangan APK Palsu",
-    category: "Studi Kasus 1",
-    author: "Tim Forensik JR",
-    steps: 4,
-    duration: "3 Mnt",
-    progress: 80,
-    accent: "from-[#DDE6ED] to-[#9DB2BF]/30",
-    badge: "Level Waspada",
-    icon: Smartphone,
+    title: "Verifikasi Kontak & Sumber Resmi",
+    category: "Skenario 1 · Dasar",
+    author: "Tim Literasi JR",
+    steps: 3,
+    duration: "2 Mnt",
+    progress: 100,
+    accent: "from-emerald-50 to-emerald-100/40",
+    badge: "Aman Selesai",
+    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-300",
+    dotColor: "bg-emerald-500",
+    icon: CheckCircle2,
   },
   {
     id: "kasus-2",
-    title: "Kurir Paket & Foto Resi",
-    category: "Studi Kasus 2",
+    title: "Undangan APK & Modus Foto Paket",
+    category: "Skenario 2 · Menengah",
     author: "Satgas Rekayasa Sosial",
     steps: 5,
     duration: "4 Mnt",
-    progress: 40,
-    accent: "from-[#DDE6ED] to-[#526D82]/20",
-    badge: "Risiko Tinggi",
-    icon: Search,
+    progress: 60,
+    accent: "from-amber-50 to-amber-100/40",
+    badge: "Level Waspada",
+    badgeColor: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    icon: AlertTriangle,
   },
   {
     id: "kasus-3",
-    title: "Loker WFH & Deposit",
-    category: "Studi Kasus 3",
-    author: "Unit Anti-Phishing",
+    title: "Loker WFH & Deposit Rekening",
+    category: "Skenario 3 · Kritis",
+    author: "Unit Anti-Phishing Forensik",
     steps: 4,
     duration: "3 Mnt",
-    progress: 0,
-    accent: "from-[#DDE6ED] to-[#9DB2BF]/40",
-    badge: "Risiko Sangat Tinggi",
-    icon: FileCode,
+    progress: 20,
+    accent: "from-rose-50 to-rose-100/40",
+    badge: "Risiko Kritis",
+    badgeColor: "bg-rose-50 text-rose-800 border-rose-300",
+    dotColor: "bg-rose-500",
+    icon: OctagonAlert,
   },
 ];
 
@@ -322,7 +331,8 @@ export default function Beranda() {
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-[#526D82] border border-[#9DB2BF]/50 shadow-xs">
                           <Icon className="h-6 w-6" />
                         </div>
-                        <span className="absolute top-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold text-[#526D82] border border-[#9DB2BF]/50 shadow-2xs">
+                        <span className={`absolute top-2 right-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold border shadow-2xs ${m.badgeColor}`}>
+                          <span className={`h-1.5 w-1.5 rounded-full ${m.dotColor}`} />
                           {m.badge}
                         </span>
                       </div>
@@ -366,15 +376,19 @@ export default function Beranda() {
                 <p className="text-xs text-[#526D82]">Grafik intensitas penyelesaian simulasi & latihan dalam seminggu</p>
               </div>
 
-              {/* Legend Ringkas */}
-              <div className="flex items-center gap-4 text-xs text-[#526D82]">
+              {/* Legend Indikator Skenario Merah Kuning Hijau */}
+              <div className="flex flex-wrap items-center gap-3 text-xs">
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#526D82]" />
-                  <span>Skenario Selesai</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-rose-200" />
+                  <span className="font-semibold text-rose-800">Bahaya</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#9DB2BF]" />
-                  <span>Rata-rata Waktu</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-amber-200" />
+                  <span className="font-semibold text-amber-800">Waspada</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200" />
+                  <span className="font-semibold text-emerald-800">Aman</span>
                 </div>
               </div>
             </div>
@@ -422,10 +436,18 @@ export default function Beranda() {
                   strokeLinecap="round"
                 />
 
-                {/* Indikator Titik Puncak Hari Aktif */}
-                <line x1="420" y1="30" x2="420" y2="150" stroke="#526D82" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.8" />
-                <circle cx="420" cy="30" r="9" fill="#526D82" fillOpacity="0.25" />
-                <circle cx="420" cy="30" r="5" fill="#526D82" stroke="#ffffff" strokeWidth="2" />
+                {/* Indikator Titik Skenario Hijau (Rabu: Selesai Aman) */}
+                <circle cx="160" cy="110" r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                <circle cx="160" cy="110" r="9" fill="#10b981" fillOpacity="0.2" />
+
+                {/* Indikator Titik Skenario Kuning (Kamis: Waspada) */}
+                <circle cx="320" cy="85" r="5" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+                <circle cx="320" cy="85" r="9" fill="#f59e0b" fillOpacity="0.2" />
+
+                {/* Indikator Titik Puncak Skenario Merah (Jumat: Kritis) */}
+                <line x1="420" y1="30" x2="420" y2="150" stroke="#f43f5e" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.8" />
+                <circle cx="420" cy="30" r="10" fill="#f43f5e" fillOpacity="0.25" />
+                <circle cx="420" cy="30" r="5" fill="#f43f5e" stroke="#ffffff" strokeWidth="2" />
               </svg>
 
               {/* Sumbu X: Hari dalam Seminggu */}
@@ -452,6 +474,20 @@ export default function Beranda() {
               <div className="rounded-xl bg-[#DDE6ED]/50 p-2.5 border border-[#9DB2BF]/40">
                 <p className="text-[10px] text-[#526D82]">Kasus Diuji</p>
                 <p className="text-base font-extrabold text-[#27374D]">8 Skenario</p>
+                {/* Indikator Merah Kuning Hijau */}
+                <div className="mt-1 flex items-center justify-center gap-1.5 text-[9px] font-bold">
+                  <span className="inline-flex items-center gap-0.5 text-rose-600" title="3 Skenario Kritis">
+                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" /> 3
+                  </span>
+                  <span className="text-slate-300">·</span>
+                  <span className="inline-flex items-center gap-0.5 text-amber-600" title="3 Skenario Waspada">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> 3
+                  </span>
+                  <span className="text-slate-300">·</span>
+                  <span className="inline-flex items-center gap-0.5 text-emerald-600" title="2 Skenario Aman">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> 2
+                  </span>
+                </div>
               </div>
               <div className="rounded-xl bg-[#DDE6ED]/50 p-2.5 border border-[#9DB2BF]/40">
                 <p className="text-[10px] text-[#526D82]">Pesan Divalidasi</p>
@@ -558,8 +594,8 @@ export default function Beranda() {
                 <button
                   type="button"
                   onClick={() => setSelectedDayInfo("Tgl 4 Nov: Simulasi APK Kurir Belum Diselesaikan")}
-                  className="rounded-lg bg-red-600 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Simulasi Kasus Belum Selesai"
+                  className="rounded-lg bg-rose-500 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Skenario Risiko Kritis"
                 >
                   4
                 </button>
@@ -576,9 +612,9 @@ export default function Beranda() {
                 {/* Tanggal 13: Kotak Selesai */}
                 <button
                   type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 13 Nov: Kasus Phishing Perbankan Berhasil Diidentifikasi")}
-                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Simulasi Berhasil Diselesaikan"
+                  onClick={() => setSelectedDayInfo("Tgl 13 Nov: Kasus Phishing Perbankan (Level Waspada)")}
+                  className="rounded-lg bg-amber-500 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Skenario Level Waspada"
                 >
                   13
                 </button>
@@ -592,18 +628,18 @@ export default function Beranda() {
                 {/* Tanggal 19 */}
                 <button
                   type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 19 Nov: Latihan Refleks Kilat 2 Menit")}
-                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Latihan Refleks Selesai"
+                  onClick={() => setSelectedDayInfo("Tgl 19 Nov: Latihan Refleks Selesai (Tingkat Aman)")}
+                  className="rounded-lg bg-emerald-600 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Skenario Selesai Aman"
                 >
                   19
                 </button>
                 {/* Tanggal 20 */}
                 <button
                   type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 20 Nov: Verifikasi Ekstensi Berkas Ganda")}
-                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Verifikasi Selesai"
+                  onClick={() => setSelectedDayInfo("Tgl 20 Nov: Verifikasi Ekstensi Berkas Selesai (Tingkat Aman)")}
+                  className="rounded-lg bg-emerald-600 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
+                  title="Skenario Selesai Aman"
                 >
                   20
                 </button>
@@ -622,6 +658,19 @@ export default function Beranda() {
               </div>
             </div>
 
+            {/* Legend Kalender Indikator Merah Kuning Hijau */}
+            <div className="flex items-center justify-between text-[10px] text-[#526D82] px-1 pt-1 border-t border-[#9DB2BF]/20">
+              <span className="flex items-center gap-1 font-semibold text-rose-700">
+                <span className="h-2 w-2 rounded-full bg-rose-500" /> Kritis
+              </span>
+              <span className="flex items-center gap-1 font-semibold text-amber-700">
+                <span className="h-2 w-2 rounded-full bg-amber-500" /> Waspada
+              </span>
+              <span className="flex items-center gap-1 font-semibold text-emerald-700">
+                <span className="h-2 w-2 rounded-full bg-emerald-600" /> Aman
+              </span>
+            </div>
+
             {/* Info Klik Tanggal */}
             {selectedDayInfo && (
               <div className="rounded-xl bg-[#DDE6ED] p-2.5 border border-[#9DB2BF]/60 text-xs text-[#27374D] flex items-center gap-2">
@@ -632,9 +681,14 @@ export default function Beranda() {
 
             {/* Pintasan Simulator Aktif */}
             <div className="rounded-2xl border border-[#9DB2BF]/50 bg-[#DDE6ED]/40 p-4 space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#526D82]">
-                <CalendarIcon className="h-4 w-4" />
-                <span>Pintasan Simulator Aktif</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#526D82]">
+                  <CalendarIcon className="h-4 w-4" />
+                  <span>Pintasan Simulator Aktif</span>
+                </div>
+                <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-700 border border-rose-200">
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" /> Skenario Kritis
+                </span>
               </div>
               <p className="text-xs text-[#27374D] font-extrabold">
                 Kasus 1: Skenario Undangan Pernikahan APK
