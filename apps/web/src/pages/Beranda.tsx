@@ -184,7 +184,7 @@ export default function Beranda() {
           <div className="lg:col-span-6 relative flex items-center justify-center overflow-visible">
             {/* Background Halo Glow di belakang 3D */}
             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#9DB2BF]/30 via-white/50 to-[#526D82]/20 blur-3xl" />
-            
+
             <div className="relative w-full max-w-xl overflow-visible">
               <ThreeHeroCanvas />
               <p className="text-center text-[11px] font-semibold text-[#526D82] mt-2">
@@ -456,9 +456,8 @@ export default function Beranda() {
                   >
                     <span>{item.q}</span>
                     <ChevronDown
-                      className={`h-4 w-4 shrink-0 text-[#526D82] transition-transform duration-200 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`h-4 w-4 shrink-0 text-[#526D82] transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
                   {isOpen && (
@@ -519,10 +518,7 @@ export default function Beranda() {
           <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div className="space-y-2 max-w-md z-10">
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-[#DDE6ED] px-3 py-0.5 text-[11px] font-bold text-[#27374D] border border-[#9DB2BF]/60">
-                  <Sparkles className="h-3 w-3 text-amber-500" />
-                  <span>Sesi Aktif Digital Guardian</span>
-                </div>
+
                 <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">
                   Welcome Back !
                 </h1>
@@ -784,33 +780,30 @@ export default function Beranda() {
               <button
                 type="button"
                 onClick={() => setSelectedCalendarTab("prev")}
-                className={`py-1.5 rounded-lg transition-colors ${
-                  selectedCalendarTab === "prev"
+                className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "prev"
                     ? "bg-[#526D82] text-white shadow-xs"
                     : "text-[#526D82] hover:text-[#27374D]"
-                }`}
+                  }`}
               >
                 3 Hari Lalu
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedCalendarTab("month")}
-                className={`py-1.5 rounded-lg transition-colors ${
-                  selectedCalendarTab === "month"
+                className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "month"
                     ? "bg-[#526D82] text-white shadow-xs"
                     : "text-[#526D82] hover:text-[#27374D]"
-                }`}
+                  }`}
               >
                 Bulan Ini
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedCalendarTab("year")}
-                className={`py-1.5 rounded-lg transition-colors ${
-                  selectedCalendarTab === "year"
+                className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "year"
                     ? "bg-[#526D82] text-white shadow-xs"
                     : "text-[#526D82] hover:text-[#27374D]"
-                }`}
+                  }`}
               >
                 1 Tahun
               </button>

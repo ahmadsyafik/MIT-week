@@ -2,89 +2,103 @@
 // All visual parameters, speeds, dimensions, and colors are gathered here for easy tuning.
 
 export const HERO_3D_CONFIG = {
-  // 1. PALET WARNA (Sesuai Design System JagaRuang: Slate, Emerald, Red)
+  // 1. FEATURE TOGGLES
+  features: {
+    enableFloatingCards: true, // Toggle 2 kartu notifikasi melayang
+    enableParticle: true,      // Toggle SATU partikel emerald glow pada cincin
+  },
+
+  // 2. PALET WARNA (Titanium Natural, Slate-50 / DDE6ED Screen, Emerald & Red Accents)
   colors: {
-    // Titanium natural frame (iPhone 15/16 Pro style)
-    titaniumFrame: "#8D96A0",
-    titaniumDark: "#475569",
-    // Screen glass
-    screenGlass: "#0A0D14",
-    screenBezel: "#07090E",
-    // Back matte frosted glass
-    backGlass: "#27374D",
-    cameraPlateau: "#1E293B",
-    cameraLensRing: "#94A3B8",
-    cameraLensGlass: "#0F172A",
-    // Orbit ring
-    orbitRing: "#9DB2BF",
-    orbitEmissive: "#526D82",
-    orbitParticle: "#DDE6ED",
-    orbitParticleGlow: "#10B981", // Emerald accent
+    // Titanium Natural (iPhone 15/16 Pro - abu hangat titanium)
+    titaniumFrame: "#969087",      // Warm natural titanium
+    titaniumHighlight: "#C7C4BF",
+    titaniumDark: "#4D4943",
+    // Screen (DDE6ED latar dashboard JagaRuang)
+    screenBg: "#DDE6ED",
+    screenBezel: "#0F172A",
+    // Back matte frosted glass (Titanium Slate)
+    backGlass: "#2A3644",
+    cameraPlateau: "#1E2733",
+    cameraLensRing: "#A8A49E",
+    cameraLensGlass: "#0B111D",
+    // Orbit ring (Slate kebiruan berdimensi 3D)
+    orbitRing: "#7E92A2",
+    orbitEmissive: "#3B4E5E",
+    orbitParticle: "#D1FAE5",
+    orbitParticleGlow: "#10B981",  // Emerald Glow
     // UI Accents
     accentEmerald: "#059669",
     accentEmeraldBg: "#ECFDF5",
+    accentEmeraldBorder: "#A7F3D0",
     accentRed: "#DC2626",
     accentRedBg: "#FEF2F2",
+    accentRedBorder: "#FECACA",
     slateFont: "#27374D",
     slateSubtext: "#526D82",
+    slateBorder: "#9DB2BF",
   },
 
-  // 2. DIMENSI MODEL (Procedural iPhone Pro 3D Units)
+  // 3. DIMENSI MODEL (Rasio 1:2.164 Presisi Sesuai Screenshot HD 1170x2532)
   dimensions: {
-    phoneWidth: 2.2,
-    phoneHeight: 4.4,
-    phoneDepth: 0.22,
-    cornerRadius: 0.24,
-    screenWidth: 2.06,
-    screenHeight: 4.26,
-    screenRadius: 0.2,
-    orbitRadius: 2.7,
-    orbitTubeRadius: 0.016,
-    particleRadius: 0.065,
+    phoneWidth: 2.18,  // Skala relatif
+    phoneHeight: 4.58,
+    phoneDepth: 0.24,
+    cornerRadius: 0.44, // Radius besar (~0.2 dari lebar) untuk sudut sangat bulat
+    screenWidth: 2.06,  // Bezel simetris tipis (0.06 di semua sisi)
+    screenHeight: 4.46, // Rasio 2.06 x 4.46 = 1 : 2.165 (pas persis 1170 x 2532)
+    screenRadius: 0.38, // Mengikuti kelengkungan body
+    // Cincin Orbit: Jarak 15-20% dari lebar body HP
+    orbitRadius: 1.68,
+    orbitTubeRadius: 0.022, // Tebal dengan volume 3D nyata
+    particleRadius: 0.055,
   },
 
-  // 3. ANIMASI & INTERAKSI
+  // 4. ANIMASI & GERAK TENANG
   animation: {
-    // Drei Float parameters
-    floatSpeed: 1.6, // Kecepatan osilasi vertikal
-    floatIntensity: 0.45, // Jarak ayunan mengambang
-    rotationIntensity: 0.2, // Ayunan rotasi mengambang
-    floatingRange: [-0.08, 0.08] as [number, number],
-    // Cursor Tilt (Maksimal ~12-15 derajat = 0.22 - 0.26 radian)
-    maxTiltX: 0.22,
-    maxTiltY: 0.26,
-    tiltDamping: 0.08, // Kehalusan transisi kursor (lerp)
-    // Orbit speed
-    ringRotationSpeed: 0.06, // Rotasi pelan cincin
-    particleSpeed: 0.85, // Kecepatan partikel melintasi cincin
+    floatSpeed: 1.2,
+    floatIntensity: 0.35,
+    rotationIntensity: 0.12,
+    floatingRange: [-0.06, 0.06] as [number, number],
+    // Pose awal (HP miring ~ -8 derajat di sumbu Y)
+    initialRotationY: -0.14,
+    initialRotationX: 0.04,
+    maxTiltX: 0.22, // Maks ~12-15 derajat
+    maxTiltY: 0.25,
+    tiltDamping: 0.07, // Kehalusan lerp kursor
+    ringRotationSpeed: 0.13, // ~48 detik per putaran penuh
+    particleSpeed: 0.75,
+    entranceInitialScale: 0.92,
   },
 
-  // 4. PENCAHAYAAN (LIGHTING & SHADOWS)
+  // 5. PENCAHAYAAN & SHADOWS
   lighting: {
-    ambientIntensity: 0.7,
-    directionalIntensity: 1.8,
+    ambientIntensity: 0.85,
+    directionalIntensity: 1.9,
     directionalPos: [4, 6, 4] as [number, number, number],
     fillLightIntensity: 0.6,
     fillLightPos: [-4, 2, 2] as [number, number, number],
-    contactShadowOpacity: 0.45,
-    contactShadowBlur: 2.4,
+    rimLightIntensity: 1.6, // Rim light dingin dari kanan atas
+    rimLightPos: [5, 5, -3] as [number, number, number],
+    rimLightColor: "#C5D3E0",
+    contactShadowOpacity: 0.35,
+    contactShadowBlur: 2.2,
   },
 
-  // 5. KAMERA & PERSPEKTIF
+  // 6. KAMERA & PERSPEKTIF
   camera: {
-    fov: 38, // FOV lebih kecil untuk look profesional tanpa distorsi fish-eye
-    position: [0, 0, 8.4] as [number, number, number],
+    fov: 38,
+    position: [0, 0, 8.0] as [number, number, number],
     near: 0.1,
     far: 50,
   },
 
-  // 6. RESPONSIVE SCALE
+  // 7. RESPONSIVE SCALE
   responsive: {
     desktopScale: 1.0,
     tabletScale: 0.88,
-    mobileScale: 0.74,
+    mobileScale: 0.75,
   },
 } as const;
 
 export type Hero3DConfig = typeof HERO_3D_CONFIG;
-

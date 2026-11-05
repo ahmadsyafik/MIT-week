@@ -47,3 +47,8 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Interaktivitas & Aksesibilitas**: Animasi `Float` halus, tilt kursor responsif (maks ~15 derajat) dengan lerp damping, kepatuhan `prefers-reduced-motion` untuk pose statis, dan `IntersectionObserver` / visibility listener untuk auto-pause saat di luar layar.
     - **Konfigurasi Terpusat (`hero3d.config.ts`)**: Seluruh parameter visual, kecepatan, dan skala dikumpulkan di satu file konfigurasi.
     - **Code Splitting & Lazy Loading**: Chunk R3F dimuat secara asinkron dengan skeleton fallback (`Hero3DFallback.tsx`).
+  - **Penyempurnaan Layar 3D iPhone & Integrasi Screenshot Beranda HD**:
+    - **Penghapusan Badge**: Menghapus pill badge `✨ Sesi Aktif Digital Guardian` pada banner Welcome Back di `Beranda.tsx` sesuai permintaan antarmuka yang lebih bersih.
+    - **Integrasi Screenshot Beranda HD (1170x2532)**: Layar 3D iPhone kini menampilkan tangkapan layar tampilan mobile Beranda JagaRuang secara proporsional presisi (rasio 1:2.165, pas dengan dimensi layar iPhone 2.06 x 4.46 tanpa distorsi/stretching).
+    - **Ketajaman & Rendering Bebas Layar Hitam**: Menggunakan `useTexture` dengan 16x *Anisotropic Filtering*, *Linear Mipmapping*, serta material *emissive map* pendaran OLED terang sehingga layar tidak pernah hitam, tidak blur, dan tetap terbaca jernih di semua sudut rotasi Three.js.
+    - **Penempatan Dynamic Island Presisi**: Kapsul Dynamic Island ditempatkan presisi di status bar atas (di antara jam 09:41 dan ikon baterai/wifi) sehingga tidak menutupi logo atau teks header aplikasi.
