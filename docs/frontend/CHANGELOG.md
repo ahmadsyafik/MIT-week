@@ -95,3 +95,17 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - Menghilangkan kalkulasi berat *Environment Lightformer FBO* pada scene 3D yang sebelumnya membebani CPU main-thread, digantikan dengan pencahayaan direksional efisien.
     - Menambah ketebalan z-axis pada bodi smartphone agar tampil solid dan berisi (`phoneDepth: 0.30`).
     - Merotasi Dynamic Island ke posisi horizontal `[0, 0, Math.PI / 2]` di status bar atas.
+  - **Penyederhanaan Dashboard & Redesain Kartu Pintasan Simulator (`Beranda.tsx`)**:
+    - **Penghapusan Widget Kalender**: Menghapus kalender bulanan statis berserta kode/state penanganannya (`selectedCalendarTab`, `selectedDayInfo`) untuk merampingkan antarmuka dan mengurangi kepadatan visual.
+    - **Penyelarasan Kartu Pintasan Simulator Aktif ke Baris Atas**: Menarik kotak pintasan simulator ke bagian atas kolom kanan dan mengubahnya menjadi *static card* mandiri yang selaras dengan banner "Welcome Back !" di sebelahnya (`rounded-3xl`, `border border-[#9DB2BF]/50`, `bg-white`, `p-6 sm:p-7`, `shadow-xs`).
+    - **Detail Kartu Pintasan**: Menampilkan ikon smartphone, label badge "Kasus K1 · Wajib", judul "Undangan Pernikahan APK", deskripsi skenario, indikator durasi & tingkat dasar, serta tombol CTA "Lanjutkan Simulasi" yang terhubung langsung ke skenario interaktif (`/belajar?tab=simulator&scenario=k1`).
+  - **Pembaruan Alur Simulasi K1–K8 (Fake Chat Bercabang 5 Titik Keputusan & 5 Ending)**:
+    - **Dataset Komprehensif Skenario (`fiveStepScenarios.ts`)**: Menerapkan struktur state machine 5 titik keputusan berurutan (Keputusan 1 s.d 5) untuk seluruh skenario K1 hingga K8 (K1: Undangan APK, K2: Foto Paket, K3: Loker WFH, K4: Telepon Bank, K5: Kenalan Investasi, K6: Email Phishing, K7: Giveaway Palsu, K8: Toko Fiktif).
+    - **Logika Alur 5 Keputusan**:
+      - Keputusan 1: Aman -> lanjut ke Keputusan 2; Berisiko -> melompat ke Keputusan 3.
+      - Keputusan 2: Aman -> **Ending A** (Jalur Aman Penuh, Skor 100 Guardian); Berisiko -> lanjut ke Keputusan 3.
+      - Keputusan 3: Aman -> **Ending B** (Batal Instalasi / Berhenti Sebelum Berlanjut, Skor 85 Guardian); Berisiko -> lanjut ke Keputusan 4.
+      - Keputusan 4: Aman -> **Ending C** (Tolak Izin SMS / Berhenti Sebelum Dampak Utama, Skor 60 Penjaga); Berisiko -> lanjut ke Keputusan 5.
+      - Keputusan 5: Aman -> **Ending D** (Lapor Bank Cepat / Terlambat Sadar Tetap Bertindak, Skor 35 Pemula); Berisiko -> **Ending E** (Kerugian Penuh, Skor 10 Pemula).
+    - **Investigasi 4 Bukti Red Flags**: Tombol inspeksi 4 tanda bahaya di top bar chat yang memberikan pemahaman awal (+40 poin).
+    - **Debrief Lengkap & Nasihat Mentor Jaga**: Setiap ending memuat tabel rincian skor, narasi keputusan pemain, evaluasi red flags yang dipelajari, quote nasihat ideal dari mentor Jaga, dan tombol salin kode flag penyelesaian (`TRUST{...}`).

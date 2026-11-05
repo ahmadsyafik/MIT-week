@@ -121,8 +121,8 @@ const FAQ_ITEMS = [
 
 export default function Beranda() {
   const { user, isAuthenticated, openLoginModal } = useAuth();
-  const [selectedCalendarTab, setSelectedCalendarTab] = useState<"prev" | "month" | "year">("month");
-  const [selectedDayInfo, setSelectedDayInfo] = useState<string | null>(null);
+
+
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   // =========================================================================
@@ -751,184 +751,56 @@ export default function Beranda() {
         {/* =================================================================== */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-6">
           {/* --------------------------------------------------------------- */}
-          {/* 2. RINGKASAN ATAU PINTASAN SIMULATOR (KALENDER AKTIVITAS)       */}
+          {/* 2. PINTASAN SIMULATOR AKTIF (SELARAS DENGAN WELCOME BACK)        */}
           {/* --------------------------------------------------------------- */}
-          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs space-y-4">
-            {/* Header Bulan & Tombol Navigasi */}
+          <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs flex flex-col justify-between space-y-4">
+            {/* Header Pintasan & Badge Kasus */}
             <div className="flex items-center justify-between">
-              <button
-                type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#9DB2BF]/50 text-[#526D82] hover:bg-[#DDE6ED] hover:text-[#27374D] transition-colors"
-                aria-label="Bulan sebelumnya"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <h3 className="text-sm sm:text-base font-bold text-[#27374D]">November 2026</h3>
-              <button
-                type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#9DB2BF]/50 text-[#526D82] hover:bg-[#DDE6ED] hover:text-[#27374D] transition-colors"
-                aria-label="Bulan berikutnya"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50 shadow-xs">
+                  <Smartphone className="h-4 w-4" />
+                </span>
+                <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
+                  Pintasan Simulator
+                </span>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 text-[10px] font-bold">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Kasus K1 · Wajib
+              </span>
             </div>
 
-            {/* Quick Filter Tabs */}
-            <div className="grid grid-cols-3 gap-1 rounded-xl bg-[#DDE6ED]/60 p-1 border border-[#9DB2BF]/50 text-[10px] font-bold text-center">
-              <button
-                type="button"
-                onClick={() => setSelectedCalendarTab("prev")}
-                className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "prev"
-                  ? "bg-[#526D82] text-white shadow-xs"
-                  : "text-[#526D82] hover:text-[#27374D]"
-                  }`}
-              >
-                3 Hari Lalu
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedCalendarTab("month")}
-                className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "month"
-                  ? "bg-[#526D82] text-white shadow-xs"
-                  : "text-[#526D82] hover:text-[#27374D]"
-                  }`}
-              >
-                Bulan Ini
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedCalendarTab("year")}
-                className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "year"
-                  ? "bg-[#526D82] text-white shadow-xs"
-                  : "text-[#526D82] hover:text-[#27374D]"
-                  }`}
-              >
-                1 Tahun
-              </button>
-            </div>
-
-            {/* Grid Kalender Hari */}
-            <div className="space-y-1">
-              <div className="grid grid-cols-7 text-center text-[11px] font-bold text-[#526D82] pb-1">
-                <span>Su</span>
-                <span>Mo</span>
-                <span>Tu</span>
-                <span>We</span>
-                <span>Th</span>
-                <span>Fr</span>
-                <span>Sa</span>
-              </div>
-
-              {/* Tanggal */}
-              <div className="grid grid-cols-7 gap-1.5 text-center text-xs font-semibold">
-                {/* Baris 1: 27-30 (bulan lalu), 1, 2 */}
-                <span className="py-1.5 text-[#9DB2BF] opacity-50">27</span>
-                <span className="py-1.5 text-[#9DB2BF] opacity-50">28</span>
-                <span className="py-1.5 text-[#9DB2BF] opacity-50">29</span>
-                <span className="py-1.5 text-[#9DB2BF] opacity-50">30</span>
-                <span className="py-1.5 text-[#9DB2BF] opacity-50">31</span>
-                <span className="py-1.5 text-[#27374D]">1</span>
-                <span className="py-1.5 text-[#27374D]">2</span>
-
-                {/* Baris 2: 3, 4 (Merah Waspada), 5, 6, 7, 8, 9 */}
-                <span className="py-1.5 text-[#27374D]">3</span>
-                {/* Tanggal 4: Kotak Merah Simulasi Belum Selesai */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 4 Nov: Simulasi APK Kurir Belum Diselesaikan")}
-                  className="rounded-lg bg-red-600 font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Simulasi Kasus Belum Selesai"
-                >
-                  4
-                </button>
-                <span className="py-1.5 text-[#27374D]">5</span>
-                <span className="py-1.5 text-[#27374D]">6</span>
-                <span className="py-1.5 text-[#27374D]">7</span>
-                <span className="py-1.5 text-[#27374D]">8</span>
-                <span className="py-1.5 text-[#27374D]">9</span>
-
-                {/* Baris 3: 10, 11, 12, 13 (Selesai), 14, 15, 16 */}
-                <span className="py-1.5 text-[#27374D]">10</span>
-                <span className="py-1.5 text-[#27374D]">11</span>
-                <span className="py-1.5 text-[#27374D]">12</span>
-                {/* Tanggal 13: Kotak Selesai */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 13 Nov: Kasus Phishing Perbankan Berhasil Diidentifikasi")}
-                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Simulasi Berhasil Diselesaikan"
-                >
-                  13
-                </button>
-                <span className="py-1.5 text-[#27374D]">14</span>
-                <span className="py-1.5 text-[#27374D]">15</span>
-                <span className="py-1.5 text-[#27374D]">16</span>
-
-                {/* Baris 4: 17, 18, 19, 20, 21, 22, 23 */}
-                <span className="py-1.5 text-[#27374D]">17</span>
-                <span className="py-1.5 text-[#27374D]">18</span>
-                {/* Tanggal 19 */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 19 Nov: Latihan Refleks Kilat 2 Menit")}
-                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Latihan Refleks Selesai"
-                >
-                  19
-                </button>
-                {/* Tanggal 20 */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedDayInfo("Tgl 20 Nov: Verifikasi Ekstensi Berkas Ganda")}
-                  className="rounded-lg bg-[#526D82] font-bold text-white shadow-xs hover:scale-105 transition-transform flex items-center justify-center py-1.5"
-                  title="Verifikasi Selesai"
-                >
-                  20
-                </button>
-                <span className="py-1.5 text-[#27374D]">21</span>
-                <span className="py-1.5 text-[#27374D]">22</span>
-                <span className="py-1.5 text-[#27374D]">23</span>
-
-                {/* Baris 5: 24 s.d 30 */}
-                <span className="py-1.5 text-[#27374D]">24</span>
-                <span className="py-1.5 text-[#27374D]">25</span>
-                <span className="py-1.5 text-[#27374D]">26</span>
-                <span className="py-1.5 text-[#27374D]">27</span>
-                <span className="py-1.5 text-[#27374D]">28</span>
-                <span className="py-1.5 text-[#27374D]">29</span>
-                <span className="py-1.5 text-[#27374D]">30</span>
-              </div>
-            </div>
-
-            {/* Info Klik Tanggal */}
-            {selectedDayInfo && (
-              <div className="rounded-xl bg-[#DDE6ED] p-2.5 border border-[#9DB2BF]/60 text-xs text-[#27374D] flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
-                <span className="leading-snug">{selectedDayInfo}</span>
-              </div>
-            )}
-
-            {/* Pintasan Simulator Aktif */}
-            <div className="rounded-2xl border border-[#9DB2BF]/50 bg-[#DDE6ED]/40 p-4 space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#526D82]">
-                <CalendarIcon className="h-4 w-4" />
-                <span>Pintasan Simulator Aktif</span>
-              </div>
-              <p className="text-xs text-[#27374D] font-extrabold">
-                Kasus 1: Skenario Undangan Pernikahan APK
-              </p>
-              <p className="text-[11px] text-[#526D82] leading-tight">
+            {/* Judul & Keterangan Skenario */}
+            <div className="space-y-1.5">
+              <h3 className="text-lg sm:text-xl font-black text-[#27374D] tracking-tight">
+                Undangan Pernikahan APK
+              </h3>
+              <p className="text-xs text-[#526D82] leading-relaxed">
                 Simulasi keputusan saat menerima pesan berformat .apk dari nomor tak dikenal.
               </p>
-              <Link to="/belajar?tab=simulator&scenario=k1" className="block pt-1">
-                <button
-                  type="button"
-                  className="w-full rounded-xl bg-[#526D82] py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-xs"
-                >
-                  Lanjutkan Simulasi
-                </button>
-              </Link>
             </div>
+
+            {/* Info Status / Metadata Bar */}
+            <div className="pt-3 border-t border-[#9DB2BF]/30 flex items-center justify-between text-xs text-[#526D82]">
+              <div className="flex items-center gap-1.5">
+                <Compass className="h-3.5 w-3.5 text-[#9DB2BF]" />
+                <span className="text-[11px] font-medium">Durasi: ~2 Menit</span>
+              </div>
+              <span className="rounded-full bg-[#DDE6ED] px-2.5 py-0.5 text-[10px] font-bold text-[#27374D] border border-[#9DB2BF]/50">
+                Tingkat Dasar
+              </span>
+            </div>
+
+            {/* Tombol Aksi Menuju Simulator */}
+            <Link to="/belajar?tab=simulator&scenario=k1" className="block pt-1">
+              <button
+                type="button"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#27374D] hover:bg-[#1e2b3d] text-white py-2.5 px-4 text-xs font-bold transition-all shadow-md active:scale-[0.99] cursor-pointer"
+              >
+                <span>Lanjutkan Simulasi</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </Link>
           </div>
 
           {/* --------------------------------------------------------------- */}

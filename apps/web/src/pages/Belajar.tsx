@@ -2027,7 +2027,7 @@ function SimulatorPage({
   const sc = SCENARIOS.find((s) => s.id === scenarioId) || SCENARIOS[0];
 
   // Skenario K1 (Undangan Pernikahan Digital APK) menggunakan Fake Chat Simulator Interaktif
-  if (sc.id === "k1") {
+  if (["k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8"].includes(sc.id.toLowerCase())) {
     return (
       <FakeChatSimulator
         scenario={sc}
