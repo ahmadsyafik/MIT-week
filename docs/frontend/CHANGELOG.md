@@ -47,6 +47,33 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Interaktivitas & Aksesibilitas**: Animasi `Float` halus, tilt kursor responsif (maks ~15 derajat) dengan lerp damping, kepatuhan `prefers-reduced-motion` untuk pose statis, dan `IntersectionObserver` / visibility listener untuk auto-pause saat di luar layar.
     - **Konfigurasi Terpusat (`hero3d.config.ts`)**: Seluruh parameter visual, kecepatan, dan skala dikumpulkan di satu file konfigurasi.
     - **Code Splitting & Lazy Loading**: Chunk R3F dimuat secara asinkron dengan skeleton fallback (`Hero3DFallback.tsx`).
+    - **Pembaruan 8 Skenario Simulator Latih (K1 - K8) & Desain Kartu Gambar**:
+      - Mengintegrasikan seluruh 8 kasus dari dokumen `Rangkaian_Simulator_Latih_JagaRuang.docx`:
+        - K1: Undangan Pernikahan Digital.apk (WhatsApp · Wajib)
+        - K2: Lihat Foto Paket (WhatsApp · Wajib)
+        - K3: Loker Admin WFH Palsu (Media Sosial / DM · Wajib)
+        - K4: Telepon Palsu Petugas Bank (Panggilan Suara / Vishing)
+        - K5: Kenalan Online → Investasi Bodong (Dating App / Pig Butchering)
+        - K6: Email Akun Akan Ditangguhkan (Email · Phishing)
+        - K7: Giveaway Palsu (Media Sosial · Iming-iming Hadiah)
+        - K8: Toko Online Fiktif (Marketplace / Belanja Palsu)
+      - **Desain Kartu Showcase Minimalis (Cover)**: Grid 8 kartu (4 kolom desktop) dengan layout gambar:
+        - Layer background: disiapkan untuk file `bg.png`/`bg.jpg` dengan efek sedikit blur (`blur-[2px]`) dan penurunan kecerahan (`brightness-75`).
+        - Bagian tengah: slot gambar tengah (`k1.png` - `k8.png`) dengan placeholder ikon dan judul skenario sementara menunggu unggahan aset.
+        - Setiap kartu tetap interaktif dan langsung membuka halaman simulasi khusus (`SimulatorPage`) dengan briefing, investigasi bukti, keputusan, debrief, dan kode penyelesaian `TRUST{...}`.
+  - **Simulator Cerita Interaktif Meja Kerja (Visual Novel K1)**:
+    - **Aset & Background Meja Kerja Cozy**: Menggunakan template latar meja kerja (`desk-template.jpg`) dengan cangkir kopi, laptop, tanaman sukulen, dan alat tulis sesuai referensi visual.
+    - **Alur Rute 41 Kartu K1 (`DeskStorybookSimulator`)**: Memuat dan merender secara sekuensial 41 kartu cerita naratif (`1.jpg` hingga `40.jpg`, termasuk `22.2.jpg`) di atas buku catatan panggung tengah meja dengan rasio presisi (`aspect-[1696/2528]`, `h-[91%]`).
+    - **Interaktivitas & Animasi Menarik**:
+      - Transisi halaman buku halus dengan bayangan realistis (`shadow-[0_25px_50px_rgba(0,0,0,0.65)]`).
+      - Hotspot interaktif tombol keemasan di atas teks "Lanjut →" dengan cincin pendar animasi pulsasi dan kilau bintang.
+      - Zona klik sisi kiri/kanan kartu untuk navigasi cepat sebelumnya/selanjutnya.
+      - Dukungan navigasi keyboard: panah kanan/spasi/enter (lanjut), panah kiri (kembali), 'f' (layar penuh), Esc (keluar).
+      - Bilah kontrol atas mengambang: tombol kembali, info skenario, counter kartu, toggle putar otomatis (slideshow), reset, dan fullscreen.
+      - Bilah kontrol bawah mengambang: tombol navigasi dan slider scrubber untuk melompat langsung ke kartu mana saja (1 - 41).
+      - Preloading gambar pintar di latar belakang untuk pengalaman perpindahan halaman instan tanpa jeda.
+    - **Perayaan Misi Selesai**: Modal popup piala kemenangan saat kartu ke-41 tercapai, tombol salin kode `TRUST{APK-UNDANGAN}`, dan pemicu notifikasi target capaian otomatis.
+    - **Pratinjau Cover K1**: Kartu cover K1 menampilkan miniatur kartu buku catatan asli di atas meja kerja yang diburamkan halus.
   - **Penyempurnaan Layar 3D iPhone & Integrasi Screenshot Beranda HD**:
     - **Penghapusan Badge**: Menghapus pill badge `✨ Sesi Aktif Digital Guardian` pada banner Welcome Back di `Beranda.tsx` sesuai permintaan antarmuka yang lebih bersih.
     - **Integrasi Screenshot Beranda HD (1170x2532)**: Layar 3D iPhone kini menampilkan tangkapan layar tampilan mobile Beranda JagaRuang secara proporsional presisi (rasio 1:2.165, pas dengan dimensi layar iPhone 2.06 x 4.46 tanpa distorsi/stretching).

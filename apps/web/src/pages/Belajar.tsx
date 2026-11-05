@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   Compass,
@@ -15,7 +15,9 @@ import {
   ArrowLeft,
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
   RefreshCw,
+  RotateCcw,
   Award,
   X,
   FileCode,
@@ -36,6 +38,11 @@ import {
   Heart,
   Share2,
   Check,
+  Copy,
+  Play,
+  Pause,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { Card, Button, Disclaimer } from "../components/ui";
 import {
@@ -72,12 +79,17 @@ interface ScenarioCase {
   id: string;
   title: string;
   category: string;
+  channel: string;
   levelLabel: string;
   levelBadge: string;
   dotColor: string;
   duration: string;
   stepsCount: number;
   description: string;
+  icon: typeof FileCode;
+  bgImage?: string;
+  centerImage?: string;
+  storyCards?: string[];
   senderName: string;
   senderAddress: string;
   messageText: string;
@@ -90,179 +102,591 @@ interface ScenarioCase {
   learningPoint: string;
 }
 
+const K1_STORY_CARDS: string[] = [
+  "/simulator/k1/1.jpg",
+  "/simulator/k1/2.jpg",
+  "/simulator/k1/3.jpg",
+  "/simulator/k1/4.jpg",
+  "/simulator/k1/5.jpg",
+  "/simulator/k1/6.jpg",
+  "/simulator/k1/7.jpg",
+  "/simulator/k1/8.jpg",
+  "/simulator/k1/9.jpg",
+  "/simulator/k1/10.jpg",
+  "/simulator/k1/11.jpg",
+  "/simulator/k1/12.jpg",
+  "/simulator/k1/13.jpg",
+  "/simulator/k1/14.jpg",
+  "/simulator/k1/15.jpg",
+  "/simulator/k1/16.jpg",
+  "/simulator/k1/17.jpg",
+  "/simulator/k1/18.jpg",
+  "/simulator/k1/19.jpg",
+  "/simulator/k1/20.jpg",
+  "/simulator/k1/21.jpg",
+  "/simulator/k1/22.jpg",
+  "/simulator/k1/22.2.jpg",
+  "/simulator/k1/23.jpg",
+  "/simulator/k1/24.jpg",
+  "/simulator/k1/25.jpg",
+  "/simulator/k1/26.jpg",
+  "/simulator/k1/27.jpg",
+  "/simulator/k1/28.jpg",
+  "/simulator/k1/29.jpg",
+  "/simulator/k1/30.jpg",
+  "/simulator/k1/31.jpg",
+  "/simulator/k1/32.jpg",
+  "/simulator/k1/33.jpg",
+  "/simulator/k1/34.jpg",
+  "/simulator/k1/35.jpg",
+  "/simulator/k1/36.jpg",
+  "/simulator/k1/37.jpg",
+  "/simulator/k1/38.jpg",
+  "/simulator/k1/39.jpg",
+  "/simulator/k1/40.jpg",
+];
+
 const SCENARIOS: ScenarioCase[] = [
   {
     id: "k1",
-    title: "Verifikasi Kontak & Sumber Resmi",
-    category: "Skenario 1 · Dasar",
+    title: "Undangan Pernikahan Digital.apk",
+    category: "Skenario 1 · Wajib",
+    channel: "WhatsApp",
     levelLabel: "Tingkat Dasar",
     levelBadge: "bg-emerald-50 text-emerald-800 border-emerald-300",
     dotColor: "bg-emerald-500",
     duration: "2 Mnt",
-    stepsCount: 3,
-    description: "Pesan WhatsApp dari nomor seluler pribadi mengaku staf bank resmi meminta klarifikasi transaksi kartu debit.",
-    senderName: "BCA Call Center Official",
-    senderAddress: "+62 813-8921-9901",
-    messageText: "Yth. Nasabah BCA, terdeteksi transaksi mencurigakan senilai Rp 4.750.000 di akun Anda pada 04/11/2026 09:15 WIB. Jika ini bukan Anda, SEGERA batalkan dalam 15 menit melalui konfirmasi ke nomor ini atau saldo Anda akan terdebet otomatis.",
+    stepsCount: 41,
+    icon: Mail,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/k1/1.jpg",
+    storyCards: K1_STORY_CARDS,
+    description: "File .apk menyamar sebagai undangan pernikahan digital yang dikirimkan melalui ruang obrolan WhatsApp.",
+    senderName: "Admin Undangan Palsu",
+    senderAddress: "+62 812-7788-9901",
+    messageText: "Kak, kami mengundang ke pernikahan kami, buka undangan digital di aplikasi ini ya 🙏 Mohon hadir dan doanya.",
+    attachmentName: "Undangan_Pernikahan_Digital.apk",
+    attachmentSize: "7.8 MB",
     briefing: [
-      "Kamu menerima pesan WhatsApp bernada sangat mendesak dari nomor seluler biasa yang mengaku bank.",
-      "Pemberitahuan ancaman pendebetan dana dalam 15 menit bertujuan membuat kamu panik dan gegabah.",
-      "Misi: Temukan tanda kejanggalan pada pesan, lalu tentukan keputusan paling tepat dan aman.",
+      "Pemain menerima chat dari nomor tak dikenal yang mengirimkan undangan pernikahan.",
+      "Pesan disertai lampiran berkas bernama 'Undangan_Pernikahan_Digital.apk'.",
+      "Misi: Temukan tanda kejanggalan pada file dan pengirim, lalu ambil keputusan yang tepat.",
     ],
     evidences: [
       {
         id: "e1",
-        label: "Nomor pengirim adalah nomor seluler biasa (+62 813...), bukan nomor resmi WhatsApp Bank verified centang hijau",
+        label: "Ekstensi file .apk dikirim langsung lewat chat (bukan dari toko aplikasi resmi Play Store)",
         isRedFlag: true,
-        explanation: "Bank resmi tidak pernah menghubungi nasabah perihal transaksi darurat menggunakan nomor seluler prabayar pribadi.",
+        explanation: "Berkas .apk adalah installer aplikasi mentah Android yang sangat berbahaya jika dipasang di luar Google Play Store.",
       },
       {
         id: "e2",
-        label: "Urgensi batas waktu panik: 'Batalkan dalam 15 menit atau saldo terdebet otomatis'",
+        label: "Nama file memakai kata umpan 'Undangan' untuk memancing rasa penasaran dan sungkan",
         isRedFlag: true,
-        explanation: "Penciptaan urgensi palsu adalah teknik manipulasi psikologis agar korban tidak sempat berpikir jernih.",
+        explanation: "Pelaku memanfaatkan rasa sungkan sosial agar korban segera mengklik tanpa sempat memeriksa ekstensi berkas.",
       },
       {
         id: "e3",
-        label: "Penyebutan nama bank dan format waktu transaksi",
-        isRedFlag: false,
-        explanation: "Penyebutan nama bank adalah taktik penyamaran umum; format tanggal tidak membuktikan keaslian pesan.",
+        label: "Pengirim adalah nomor baru yang tidak tersimpan di daftar kontak",
+        isRedFlag: true,
+        explanation: "Undangan pernikahan dari orang dekat semestinya berasal dari kontak yang sudah kamu kenal sebelumnya.",
+      },
+      {
+        id: "e4",
+        label: "Setelah dibuka, aplikasi meminta izin Baca/Terima SMS (READ_SMS)",
+        isRedFlag: true,
+        explanation: "Aplikasi undangan tidak membutuhkan akses SMS; izin ini disalahgunakan untuk menyadap kode OTP perbankan.",
       },
     ],
     choices: [
       {
         id: "c1",
-        label: "Balas pesan WA tersebut untuk minta rincian transaksi dan nomor rekening tujuan",
-        score: 10,
-        feedback: "Pilihan berisiko tinggi! Membalas nomor penipu memastikan nomormu aktif dan membuka celah manipulasi lebih lanjut.",
+        label: "Langsung pasang aplikasi undangan tersebut karena penasaran siapa yang menikah",
+        score: 0,
+        feedback: "Berisiko tinggi! Aplikasi terpasang dan meminta izin Baca SMS — ini jalan masuk pencurian kode OTP perbankan.",
         isCorrect: false,
       },
       {
         id: "c2",
-        label: "Abaikan pesan, blokir nomor, dan hubungi call center resmi bank dari nomor di balik kartu debit fisik",
+        label: "Tolak pasang aplikasi, verifikasi ke kontak yang bersangkutan atau hubungi via telepon",
         score: 50,
-        feedback: "Refleks Tepat! Selalu gunakan kanal resmi mandiri yang kamu inisiasi sendiri, jangan pernah membalas kontak yang datang mendadak.",
+        feedback: "Keputusan tepat! File .apk dari chat tidak boleh dipasang. Undangan digital asli berupa web, bukan aplikasi instalasi.",
         isCorrect: true,
       },
     ],
-    flagCode: "TRUST{K1_VERIFIED_CLEAN}",
-    learningPoint: "Kanal verifikasi bank resmi selalu diinisiasi dari nomor resmi terdaftar (Halo BCA 1500888 atau akun WhatsApp centang hijau resmi Meta).",
+    flagCode: "TRUST{APK-UNDANGAN}",
+    learningPoint: "File .apk dikirim langsung lewat chat adalah jalur paling umum penyebaran malware pencuri OTP di Indonesia. Undangan digital asli biasanya berupa halaman web, bukan aplikasi.",
   },
   {
     id: "k2",
-    title: "Undangan APK & Modus Foto Paket",
-    category: "Skenario 2 · Menengah",
+    title: "Lihat Foto Paket",
+    category: "Skenario 2 · Wajib",
+    channel: "WhatsApp",
     levelLabel: "Level Waspada",
     levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
     dotColor: "bg-amber-500",
-    duration: "4 Mnt",
-    stepsCount: 5,
-    description: "Pengirim mengaku kurir ekspedisi mengirim file berformat .apk yang disamarkan sebagai foto dokumen resi.",
-    senderName: "Kurir J&T Express",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: FileCode,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: undefined,
+    description: "File berkedok foto bukti paket dari kurir ekspedisi dengan ekstensi ganda berbahaya.",
+    senderName: "Kurir Ekspedisi Paket",
     senderAddress: "+62 877-4409-1234",
-    messageText: "Selamat siang kak, paket Anda tertahan di gudang sortir karena alamat tidak terbaca jelas. Mohon cek foto paket terlampir dan konfirmasi posisi rumah sekarang.",
-    attachmentName: "Lihat_Foto_Paket.apk",
-    attachmentSize: "7.2 MB",
+    messageText: "Paket Anda tertahan di gudang sortir karena alamat kurang jelas. Mohon cek foto buktinya di sini ya kak: Foto_Resi_Paket.jpg.apk",
+    attachmentName: "Foto_Resi_Paket.jpg.apk",
+    attachmentSize: "6.4 MB",
     briefing: [
-      "Sebuah pesan masuk dari pengirim yang mengaku kurir ekspedisi terkenal.",
-      "File terlampir tampak seperti berkas gambar dengan nama 'Lihat_Foto_Paket.apk'.",
-      "Misi: Deteksi manipulasi ekstensi berkas Android berbahaya dan ambil langkah mitigasi.",
+      "Chat masuk dari pengirim yang mengaku kurir ekspedisi pengiriman paket.",
+      "Mengabarkan paket tertahan dan meminta melihat foto resi terlampir.",
+      "Misi: Kenali trik ekstensi ganda (.jpg.apk) dan ambil tindakan pengamanan mandiri.",
     ],
     evidences: [
       {
         id: "e1",
-        label: "Ekstensi berkas berakhiran '.apk', bukan format gambar seperti .jpg atau .png",
+        label: "Ekstensi file ganda (.jpg.apk) — menyamarkan file installer aplikasi sebagai foto biasa",
         isRedFlag: true,
-        explanation: "Berkas .apk adalah aplikasi installer Android, bukan gambar atau dokumen resi.",
+        explanation: "Sistem Android membaca ekstensi paling belakang (.apk), sehingga file ini adalah aplikasi, bukan foto dokumen.",
       },
       {
         id: "e2",
-        label: "Ukuran berkas 7.2 MB untuk sekadar foto resi",
+        label: "Tautan atau file dikirim dari nomor seluler pribadi, bukan akun resmi ekspedisi centang hijau",
         isRedFlag: true,
-        explanation: "Aplikasi malware pencuri SMS OTP umumnya berukuran 5 - 15 MB dan dibungkus paket installer.",
+        explanation: "Ekspedisi resmi menghubungi pelanggan menggunakan akun bisnis terverifikasi centang hijau.",
       },
       {
         id: "e3",
-        label: "Kurir meminta konfirmasi alamat penerima",
-        isRedFlag: false,
-        explanation: "Kurir memang sering konfirmasi alamat, tapi kurir resmi tidak pernah mengirimkan berkas installer aplikasi untuk konfirmasi.",
+        label: "Pemain tidak sedang menunggu kiriman paket dari kurir tersebut",
+        isRedFlag: true,
+        explanation: "Penipu menyebar pesan acak memanfaatkan tingginya frekuensi belanja online masyarakat.",
+      },
+      {
+        id: "e4",
+        label: "Ukuran file 6.4 MB terlalu besar untuk sekadar foto resi pengiriman",
+        isRedFlag: true,
+        explanation: "Foto resi biasanya berukuran di bawah 1 MB; ukuran di atas 5 MB mengindikasikan paket aplikasi malware lengkap.",
       },
     ],
     choices: [
       {
         id: "c1",
-        label: "Unduh dan pasang berkas .apk karena khawatir paket penting tertahan di gudang",
+        label: "Buka dan unduh file Foto_Resi_Paket.jpg.apk untuk memastikan isi paket",
         score: 0,
-        feedback: "Bahaya Kritis! Berkas ini memasang malware perayap SMS (Sniffer) yang akan membaca SMS OTP bank dan saldo dompet digitalmu seketika.",
+        feedback: "Pilihan berisiko! Ekstensi sebenarnya adalah .apk yang menyusupkan spyware sniffer SMS perbankan.",
         isCorrect: false,
       },
       {
         id: "c2",
-        label: "Tolak unduh berkas, laporkan kontak spam, lalu cek nomor resi paket hanya di aplikasi atau situs web resmi ekspedisi",
+        label: "Abaikan dan cek nomor resi secara mandiri langsung di aplikasi resmi ekspedisi",
         score: 50,
-        feedback: "Langkah Tepat! Lacak paket hanya lewat aplikasi resmi atau situs resmi ekspedisi tanpa memasang aplikasi eksternal dari obrolan chat.",
+        feedback: "Langkah tepat! Jangan pernah membuka file kiriman kurir; selalu lacak nomor resi di aplikasi resmi ekspedisi.",
         isCorrect: true,
       },
     ],
-    flagCode: "TRUST{APK_SNIFFER_CONTAINED}",
-    learningPoint: "Jangan pernah menginstal file .apk dari chat WhatsApp, Telegram, atau email. Foto dokumen asli selalu berekstensi .jpg, .png, atau .pdf.",
+    flagCode: "TRUST{FOTO-PAKET}",
+    learningPoint: "Ekstensi file ganda (.jpg.apk) adalah trik menyamarkan file aplikasi sebagai foto biasa. Selalu cek status pengiriman langsung lewat aplikasi resmi ekspedisi menggunakan nomor resi sendiri.",
   },
   {
     id: "k3",
-    title: "Loker WFH & Deposit Rekening",
-    category: "Skenario 3 · Kritis",
+    title: "Loker Admin WFH Palsu",
+    category: "Skenario 3 · Wajib",
+    channel: "Media Sosial",
     levelLabel: "Risiko Kritis",
     levelBadge: "bg-rose-50 text-rose-800 border-rose-300",
     dotColor: "bg-rose-500",
     duration: "3 Mnt",
     stepsCount: 4,
-    description: "Tawaran kerja paruh waktu dengan komisi instan yang kemudian meminta setoran dana deposit ke rekening pribadi.",
+    icon: Users,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: undefined,
+    description: "Tawaran kerja admin work-from-home yang meminta transfer deposit/biaya di muka.",
     senderName: "HR Global Media Partner",
-    senderAddress: "Telegram: @hr_recruitment_id",
-    messageText: "Selamat! Anda terpilih menjadi mitra reviewer video online. Tugas mudah hanya like 3 video YouTube dibayar Rp 30.000. Setelah tugas pertama berhasil dibayar, silakan ambil 'Misi VIP Deposit Rp 250.000' untuk menarik reward Rp 450.000 dalam 30 menit ke rekening pribadi Bendahara.",
+    senderAddress: "DM Instagram / Telegram: @hr_recruitment_id",
+    messageText: "Selamat, Anda lolos seleksi sebagai Admin WFH paruh waktu, gaji Rp 5.000.000/bulan, langsung kerja besok. Mohon transfer Rp 150.000 dulu untuk biaya administrasi ID card dan pelatihan.",
     briefing: [
-      "Kamu diundang ke channel kerja freelance tanpa proses seleksi formal.",
-      "Tugas pertama membayar uang kecil untuk membangun kepercayaan semu korban (pancingan/Pig Butchering).",
-      "Misi: Identifikasi skema manipulasi deposit berbayar dan putus interaksi sebelum terjadi kerugian.",
+      "Pemain mendapat DM tawaran kerja freelance dengan iming-iming gaji fantastis.",
+      "Dinyatakan langsung diterima tanpa wawancara, namun diminta transfer biaya administrasi di muka.",
+      "Misi: Identifikasi skema rekrutmen palsu berbayar sebelum mentransfer uang.",
     ],
     evidences: [
       {
         id: "e1",
-        label: "Pemberian komisi kecil awal sebagai taktik 'umpan pancingan' kepercayaan korban",
+        label: "Diterima kerja langsung tanpa ada proses wawancara atau uji kompetensi sebelumnya",
         isRedFlag: true,
-        explanation: "Penipu rela membayar Rp 15.000 - Rp 50.000 di awal agar korban yakin sistem mereka 'terbukti membayar'.",
+        explanation: "Perekrutan kerja yang sah selalu melalui tahapan verifikasi identitas, wawancara, atau tes keterampilan.",
       },
       {
         id: "e2",
-        label: "Syarat mentransfer uang deposit ke rekening perorangan pribadi untuk melanjutkan pekerjaan",
+        label: "Gaji yang ditawarkan (Rp 5 juta) tidak realistis untuk pekerjaan lepas pemula tanpa syarat",
         isRedFlag: true,
-        explanation: "Pekerjaan legal tidak pernah menuntut pencari kerja mentransfer uang deposit atau modal tugas.",
+        explanation: "Gaji tinggi tanpa syarat kualifikasi adalah umpan psikologis agar korban terburu-buru mengambil keputusan.",
       },
       {
         id: "e3",
-        label: "Platform komunikasi anonim lewat grup Telegram tanpa alamat kantor jelas",
+        label: "Permintaan transfer uang di muka untuk 'biaya administrasi dan pelatihan'",
         isRedFlag: true,
-        explanation: "Penipu memanfaatkan anonimitas Telegram dan rekening perantara bodong (nominee account).",
+        explanation: "Pemberi kerja yang sah tidak pernah membebankan biaya administrasi atau meminta uang dari pelamar.",
+      },
+      {
+        id: "e4",
+        label: "Akun perekrut baru dibuat dan tidak memiliki informasi perusahaan resmi yang kredibel",
+        isRedFlag: true,
+        explanation: "Akun anonim di media sosial tanpa alamat kantor fisik jelas menandakan operasi rekrutmen bodong.",
       },
     ],
     choices: [
       {
         id: "c1",
-        label: "Transfer deposit Rp 250.000 karena sudah terbukti menerima komisi di tugas sebelumnya",
+        label: "Transfer biaya administrasi Rp 150.000 karena takut kehilangan kesempatan kerja bagus",
         score: 0,
-        feedback: "Terjebak penipuan! Begitu dana ditransfer, pelaku akan meminta deposit tambahan lebih besar dengan alasan akun terkunci atau tugas belum lengkap.",
+        feedback: "Terjebak penipuan! Begitu uang ditransfer, pelaku akan meminta biaya tambahan lain dan akhirnya memblokir kontak.",
         isCorrect: false,
       },
       {
         id: "c2",
-        label: "Segera tinggalkan grup, jangan transfer dana sepeser pun, lalu laporkan nomor rekening pelaku ke CekRekening.id",
+        label: "Tolak tawaran, jangan transfer uang sepeser pun, lalu laporkan akun tersebut",
         score: 50,
-        feedback: "Keputusan Tepat! Menghentikan interaksi segera mencegah kerugian finansial berantai yang sering kali mencapai jutaan rupiah.",
+        feedback: "Keputusan tepat! Pemberi kerja sah tidak pernah memungut biaya apapun dari calon karyawannya.",
         isCorrect: true,
       },
     ],
-    flagCode: "TRUST{DEPOSIT_SCAM_BLOCKED}",
-    learningPoint: "Rumus baku digital: Lowongan kerja legal tidak pernah meminta deposit uang sepeser pun dari calon pekerjanya.",
+    flagCode: "TRUST{LOKER-WFH}",
+    learningPoint: "Pekerjaan sah tidak pernah meminta bayaran di muka dalam bentuk apa pun. Curigai proses rekrutmen yang terlalu instan dengan janji gaji tinggi tanpa seleksi.",
+  },
+  {
+    id: "k4",
+    title: "Telepon Palsu Petugas Bank",
+    category: "Skenario 4 · Usulan",
+    channel: "Panggilan Telepon",
+    levelLabel: "Risiko Kritis",
+    levelBadge: "bg-rose-50 text-rose-800 border-rose-300",
+    dotColor: "bg-rose-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: PhoneCall,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: undefined,
+    description: "Panggilan telepon mengaku staf keamanan bank meminta kode OTP dengan dalih pembatalan transaksi.",
+    senderName: "Fraud Unit Bank (Palsu)",
+    senderAddress: "Panggilan Suara: +62 21-1500888 (Spoofing)",
+    messageText: "[Panggilan Telepon] Selamat siang, saya dari Divisi Keamanan Bank Anda. Terdeteksi transaksi mencurigakan Rp 12.500.000 di luar negeri. Untuk membatalkannya sekarang, mohon sebutkan 6 digit kode OTP yang baru kami kirimkan ke SMS Anda.",
+    briefing: [
+      "HP pemain berdering mendesak dari orang yang mengaku staf keamanan bank resmi.",
+      "Penipu menakut-nakuti adanya transaksi luar negeri dan meminta kode OTP untuk membatalkan.",
+      "Misi: Hadapi manipulasi tekanan suara (vishing) dan pertahankan kerahasiaan OTP.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Penelepon meminta 6 digit kode OTP yang masuk via SMS",
+        isRedFlag: true,
+        explanation: "Kode OTP adalah kunci otorisasi transaksi. Bank resmi tidak pernah meminta kode OTP nasabah.",
+      },
+      {
+        id: "e2",
+        label: "Penelepon memakai nada mendesak dan menekan agar pemain panik dan tidak sempat berpikir logis",
+        isRedFlag: true,
+        explanation: "Tekanan psikologis sengaja diciptakan agar korban bertindak impulsif sebelum sadar sedang ditipu.",
+      },
+      {
+        id: "e3",
+        label: "Nomor panggilan bukan nomor resmi yang tertera di kartu ATM (memakai VoIP caller ID spoofing)",
+        isRedFlag: true,
+        explanation: "Teknologi telepon internet memungkinkan pelaku menampilkan nomor seolah-olah berasal dari kantor bank.",
+      },
+      {
+        id: "e4",
+        label: "Pesan SMS OTP dengan jelas menyatakan: 'JANGAN BERIKAN KODE INI KEPADA SIAPAPUN TERMASUK PIHAK BANK'",
+        isRedFlag: true,
+        explanation: "Setiap SMS resmi bank selalu mencantumkan peringatan tegas tentang kerahasiaan kode verifikasi.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Sebutkan kode OTP ke penelepon agar transaksi Rp 12.500.000 segera dibatalkan",
+        score: 0,
+        feedback: "Bahaya kritis! Menyebutkan kode OTP membuat penipu langsung berhasil membobol akun m-Banking Anda.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tutup panggilan segera, jangan beri OTP, dan hubungi nomor resmi bank dari balik kartu fisik",
+        score: 50,
+        feedback: "Langkah penyelamat! Bank resmi tidak pernah meminta kode OTP lewat telepon dengan alasan apapun.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{TELEPON-BANK}",
+    learningPoint: "Jangan pernah memberikan kode OTP kepada siapa pun lewat telepon, apa pun alasannya — termasuk yang mengaku pihak bank. Kalau ragu, tutup telepon dan hubungi balik nomor resmi di kartu fisik.",
+  },
+  {
+    id: "k5",
+    title: "Kenalan Online → Investasi Bodong",
+    category: "Skenario 5 · Usulan",
+    channel: "Dating App / Sosmed",
+    levelLabel: "Level Waspada",
+    levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    duration: "4 Mnt",
+    stepsCount: 4,
+    icon: Heart,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: undefined,
+    description: "Membangun kedekatan emosional bertahap, lalu mengajak investasi bersama di platform trading fiktif.",
+    senderName: "Kenalan Online (Amanda / Kevin)",
+    senderAddress: "Tinder / Bumble / Instagram DM",
+    messageText: "Halo sayang, hari ini aku profit lagi 25% dari trading crypto di platform ini. Kamu mau aku ajarin pelan-pelan? Coba deposit kecil dulu Rp 500 ribu, nanti aku bimbing sampai bisa ditarik hasilnya.",
+    briefing: [
+      "Selama beberapa minggu, kenalan online bersikap sangat ramah, hangat, dan perhatian.",
+      "Setelah rasa percaya terbangun, ia mulai membujuk untuk ikut berinvestasi di platform trading khusus.",
+      "Misi: Kenali pola manipulasi emosional (Pig Butchering) sebelum dana disetorkan ke platform fiktif.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Platform investasi tidak terdaftar dalam daftar izin resmi Otoritas Jasa Keuangan (OJK)",
+        isRedFlag: true,
+        explanation: "Setiap platform keuangan dan investasi yang beroperasi di Indonesia wajib memiliki izin resmi dari OJK/Bappebti.",
+      },
+      {
+        id: "e2",
+        label: "Menjanjikan keuntungan tetap yang tinggi tanpa risiko rugi sama sekali",
+        isRedFlag: true,
+        explanation: "Tidak ada instrumen investasi legal yang menjamin profit pasti tanpa adanya risiko fluktuasi pasar.",
+      },
+      {
+        id: "e3",
+        label: "Kenalan menolak bertemu langsung atau video call dengan alasan selalu berubah-ubah",
+        isRedFlag: true,
+        explanation: "Pelaku menggunakan foto profil curian dan menghindari panggilan video agar identitas aslinya tidak terbongkar.",
+      },
+      {
+        id: "e4",
+        label: "Alamat website platform trading menggunakan domain baru dan tidak jelas legalitas pengembangnya",
+        isRedFlag: true,
+        explanation: "Situs trading palsu dibuat dengan template web instan untuk memanipulasi tampilan angka saldo keuntungan semu.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Transfer modal awal Rp 500.000 ke platform trading yang direkomendasikan kenalan",
+        score: 0,
+        feedback: "Terjebak Pig Butchering! Tampilan keuntungan di layar hanya angka palsu. Begitu modal ditambah, uang tidak akan pernah bisa ditarik.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tolak tawaran investasi, cek legalitas platform di situs resmi OJK, dan batasi komunikasi finansial",
+        score: 50,
+        feedback: "Pilihan bijak! Selalu verifikasi izin penyelenggara investasi ke OJK dan waspadai ajakan finansial dari kenalan daring.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{KENALAN-INVESTASI}",
+    learningPoint: "Investasi sah selalu memiliki risiko dan diawasi OJK. Janji profit pasti dari kenalan online yang belum pernah ditemui adalah ciri khas penipuan investasi (Pig Butchering).",
+  },
+  {
+    id: "k6",
+    title: "Email Akun Akan Ditangguhkan",
+    category: "Skenario 6 · Phishing",
+    channel: "Email",
+    levelLabel: "Level Waspada",
+    levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: Mail,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: undefined,
+    description: "Email phishing mengaku penyedia layanan resmi, meminta klik tautan verifikasi kata sandi darurat.",
+    senderName: "Pusat Keamanan Akun Google",
+    senderAddress: "security@g00gle-accounts.verify-user.id",
+    messageText: "Pemberitahuan Mendesak: Aktivitas tidak wajar terdeteksi pada akun Anda. Akun akan ditangguhkan permanen dalam 24 jam. Klik tautan berikut untuk memverifikasi kata sandi Anda: http://login-security-service.net/verify",
+    briefing: [
+      "Pemain menerima email berjudul mendesak: 'Akun Anda akan ditangguhkan dalam 24 jam'.",
+      "Pengirim meminta klik tautan verifikasi kata sandi darurat.",
+      "Misi: Telusuri domain pengirim dan tautan tersembunyi sebelum memasukkan kredensial login.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Alamat domain pengirim mirip merek resmi (typosquatting: g00gle-accounts...) bukan domain resmi google.com",
+        isRedFlag: true,
+        explanation: "Pelaku mendaftarkan domain tiruan dengan sedikit salah eja untuk mengelabui pembaca yang terburu-buru.",
+      },
+      {
+        id: "e2",
+        label: "Tautan di dalam email mengarah ke domain pihak ketiga yang tidak berhubungan dengan layanan resmi",
+        isRedFlag: true,
+        explanation: "Tautan asli mengarah ke server peretas untuk mencuri kredensial akun pengguna.",
+      },
+      {
+        id: "e3",
+        label: "Penggunaan nada mendesak dengan tenggat waktu singkat (24 jam) agar korban panik",
+        isRedFlag: true,
+        explanation: "Ancaman pemblokiran akun adalah pemicu emosional agar korban bertindak tanpa berpikir logis.",
+      },
+      {
+        id: "e4",
+        label: "Permintaan memasukkan password melalui link di dalam email",
+        isRedFlag: true,
+        explanation: "Penyedia layanan resmi tidak pernah meminta pembaruan kata sandi secara mendadak lewat tautan email eksternal.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Klik tautan dan segera masukkan password karena takut akun ditangguhkan",
+        score: 0,
+        feedback: "Kredensial dicuri! Halaman tersebut adalah situs tiruan phishing yang langsung merekam kata sandi akun asli Anda.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Jangan klik link, laporkan email sebagai phishing, dan buka situs resmi langsung dari peramban",
+        score: 50,
+        feedback: "Tindakan tepat! Jangan login dari tautan email yang mencurigakan. Selalu ketik sendiri alamat resmi di browser.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{EMAIL-SUSPEND}",
+    learningPoint: "Jangan pernah klik tautan dari email yang terasa mendesak. Buka situs resmi dengan mengetik alamatnya sendiri di browser, lalu login dari sana untuk memeriksa status akun.",
+  },
+  {
+    id: "k7",
+    title: "Giveaway Palsu",
+    category: "Skenario 7 · Hadiah",
+    channel: "Media Sosial",
+    levelLabel: "Tingkat Dasar",
+    levelBadge: "bg-emerald-50 text-emerald-800 border-emerald-300",
+    dotColor: "bg-emerald-500",
+    duration: "2 Mnt",
+    stepsCount: 3,
+    icon: Sparkles,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: undefined,
+    description: "Mengaku brand ternama mengumumkan pemenang giveaway, meminta biaya pajak hadiah di muka.",
+    senderName: "Akun Giveaway Resmi Brand (Palsu)",
+    senderAddress: "Instagram DM: @official_giveaway_brand2026",
+    messageText: "Selamat! Akun Anda terpilih sebagai pemenang ke-1 Giveaway iPhone 15 Pro Max. Untuk klaim pengiriman unit, silakan transfer biaya pajak hadiah sebesar Rp 350.000 ke rekening Bendahara kami.",
+    briefing: [
+      "Pemain menerima DM dari akun yang memakai nama dan logo mirip brand ternama.",
+      "Mengabarkan memenangkan hadiah smartphone, tapi meminta transfer uang pajak hadiah ke rekening pribadi.",
+      "Misi: Verifikasi keabsahan undian dan tolak pungutan liar berkedok hadiah gratis.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Diminta membayar biaya terlebih dulu untuk menerima 'hadiah gratis'",
+        isRedFlag: true,
+        explanation: "Hadiah atau giveaway yang sah tidak pernah memungut biaya transfer dari pemenang.",
+      },
+      {
+        id: "e2",
+        label: "Pemain sama sekali tidak pernah mendaftar atau mengikuti undian dari brand tersebut",
+        isRedFlag: true,
+        explanation: "Undian resmi hanya mengundi pihak yang benar-benar terdaftar sebagai peserta kompetisi.",
+      },
+      {
+        id: "e3",
+        label: "Akun baru dibuat dengan sedikit pengikut dan tidak memiliki lencana centang verifikasi resmi",
+        isRedFlag: true,
+        explanation: "Brand besar selalu menggunakan akun resmi bercentang verifikasi biru dengan riwayat postingan panjang.",
+      },
+      {
+        id: "e4",
+        label: "Rekening tujuan transfer adalah rekening perorangan pribadi, bukan rekening perusahaan berbadan hukum",
+        isRedFlag: true,
+        explanation: "Penyelenggara resmi tidak pernah menampung dana administrasi di rekening bank atas nama individu perorangan.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Langsung transfer biaya pajak hadiah Rp 350.000 agar hadiah smartphone segera dikirim",
+        score: 0,
+        feedback: "Tertipu iming-iming! Hadiah tidak akan pernah dikirim, dan pelaku akan terus meminta biaya tambahan asuransi.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Abaikan pesan, cek akun resmi brand yang terverifikasi, dan laporkan akun palsu tersebut",
+        score: 50,
+        feedback: "Keputusan tepat! Hadiah/giveaway yang sah tidak pernah memungut biaya apapun dari pemenang.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{GIVEAWAY-PALSU}",
+    learningPoint: "Hadiah asli tidak pernah meminta kamu membayar lebih dulu. Selalu cek pengumuman pemenang di akun resmi brand yang terverifikasi, bukan dari DM pihak yang mengaku-aku.",
+  },
+  {
+    id: "k8",
+    title: "Toko Online Fiktif",
+    category: "Skenario 8 · Belanja",
+    channel: "Marketplace / Iklan",
+    levelLabel: "Level Waspada",
+    levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: CreditCard,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: undefined,
+    description: "Toko fiktif menjual barang elektronik murah jauh di bawah pasar, menolak rekber dan memaksa transfer langsung.",
+    senderName: "Toko Elektronik Cuci Gudang",
+    senderAddress: "WhatsApp / Chat Marketplace",
+    messageText: "Promo Cuci Gudang! iPhone 15 baru garansi resmi cuma Rp 4.500.000 (harga normal Rp 14 jt). Khusus hari ini karena stok sisa 2 unit. Tidak bisa lewat rekber Shopee/Tokped karena dana tertahan lama, wajib transfer langsung ke rekening toko ya kak.",
+    briefing: [
+      "Pemain melihat iklan promosi ponsel keluaran terbaru dijual dengan harga separuh harga pasar.",
+      "Penjual menolak sistem pembayaran resmi marketplace dan memaksa transfer langsung ke rekening pribadi.",
+      "Misi: Hindari jeratan harga murah fiktif dan pertahankan transaksi di kanal pembayaran resmi.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Harga barang jauh di bawah harga pasar wajar untuk barang sejenis (diskon tidak masuk akal)",
+        isRedFlag: true,
+        explanation: "Harga tidak wajar adalah pancingan utama penipu untuk menarik calon korban yang mencari barang murah.",
+      },
+      {
+        id: "e2",
+        label: "Penjual meminta pembayaran transfer langsung dan menghindari sistem rekening bersama (escrow) resmi",
+        isRedFlag: true,
+        explanation: "Transaksi langsung di luar platform marketplace menghilangkan perlindungan jaminan uang kembali bagi pembeli.",
+      },
+      {
+        id: "e3",
+        label: "Toko/akun penjual baru dibuat, tanpa ulasan riwayat transaksi nyata dari pembeli sebelumnya",
+        isRedFlag: true,
+        explanation: "Toko fiktif biasanya berumur singkat karena akun akan segera dibuang begitu berhasil menipu korban.",
+      },
+      {
+        id: "e4",
+        label: "Penjual mendesak transaksi cepat dengan dalih 'stok terbatas sisa 2 unit'",
+        isRedFlag: true,
+        explanation: "Menciptakan kelangkaan semu agar pembeli takut kehabisan dan mentransfer tanpa memverifikasi rekening.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Langsung transfer Rp 4.500.000 ke rekening penjual karena takut kehabisan barang murah",
+        score: 0,
+        feedback: "Uang melayang! Begitu dana diterima, penjual langsung memblokir nomor dan barang tidak pernah dikirim.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tolak transfer langsung dan hanya mau bertransaksi lewat sistem resmi rekening bersama marketplace",
+        score: 50,
+        feedback: "Langkah cerdas! Sistem pembayaran resmi marketplace menahan dana sampai barang benar-benar diterima pembeli.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{BELANJA-PALSU}",
+    learningPoint: "Selalu bertransaksi lewat sistem pembayaran resmi marketplace yang menahan dana sampai barang diterima (rekening bersama), bukan transfer langsung ke rekening pribadi.",
   },
 ];
 
@@ -1121,75 +1545,471 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
     <div className="space-y-6">
       {/* Header Cover Simulator */}
       <div className="bg-white p-5 rounded-2xl border border-[#9DB2BF]/40 space-y-1">
-        <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
-          Simulator Skenario Kasus Interaktif
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
+            Simulator Skenario Kasus Interaktif
+          </h2>
+          <span className="rounded-full bg-[#DDE6ED] px-3 py-0.5 text-xs font-bold text-[#27374D] border border-[#9DB2BF]/60">
+            8 Skenario (K1 - K8)
+          </span>
+        </div>
         <p className="text-xs text-[#526D82]">
-          Latih insting dan refleks keputusanmu dalam simulasi rekayasa sosial nyata secara aman tanpa risiko.
+          Latih insting dan refleks keputusanmu dalam 8 skenario rekayasa sosial nyata dari data IASC & OJK secara aman tanpa risiko.
         </p>
       </div>
 
-      {/* Grid 3 Kartu Skenario */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {SCENARIOS.map((sc) => (
-          <div
-            key={sc.id}
-            onClick={() => onSelectScenario(sc.id)}
-            className="flex flex-col justify-between rounded-2xl border border-[#9DB2BF]/50 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer group"
-          >
-            <div className="space-y-3.5">
-              {/* Header Badge */}
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#526D82]">{sc.category}</span>
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${sc.levelBadge}`}
-                >
-                  <span className={`h-1.5 w-1.5 rounded-full ${sc.dotColor}`} />
-                  {sc.levelLabel}
+      {/* Grid 8 Kartu Skenario (K1 - K8) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {SCENARIOS.map((sc) => {
+          const Icon = sc.icon;
+          return (
+            <div
+              key={sc.id}
+              onClick={() => onSelectScenario(sc.id)}
+              className="relative overflow-hidden rounded-2xl border border-[#9DB2BF]/50 bg-[#27374D] shadow-xs hover:border-[#526D82] hover:shadow-xl transition-all cursor-pointer group h-72 flex flex-col justify-between"
+            >
+              {/* Layer 1: Background Image (dengan efek sedikit blur & kecerahan diturunkan) */}
+              <div className="absolute inset-0 overflow-hidden">
+                {sc.bgImage ? (
+                  <img
+                    src={sc.bgImage}
+                    alt={`Background ${sc.title}`}
+                    onError={(e) => {
+                      // Sembunyikan jika file bg belum ada di folder public
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                    className="h-full w-full object-cover filter blur-[2px] brightness-75 scale-105 transition-transform duration-500 group-hover:scale-110"
+                  />
+                ) : null}
+                {/* Fallback styling background layer dengan efek blur & kecerahan diturunkan */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center filter blur-[2px] brightness-75 scale-105 transition-transform duration-500 group-hover:scale-110"
+                  style={{
+                    backgroundImage: `url('/images/simulator/bg.png'), url('/images/simulator/bg.jpg'), linear-gradient(135deg, #27374D 0%, #1e2b3d 60%, #111a24 100%)`,
+                  }}
+                />
+                {/* Overlay gelap halus */}
+                <div className="absolute inset-0 bg-black/25" />
+              </div>
+
+              {/* Layer 2: Bagian Atas Minimalis (Badge ID Skenario K1-K8) */}
+              <div className="relative z-10 p-3.5 flex items-center justify-between">
+                <span className="rounded-full bg-black/40 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-black text-amber-300 border border-white/10 uppercase tracking-widest shadow-xs">
+                  {sc.id.toUpperCase()}
+                </span>
+                <span className="rounded-full bg-black/40 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-[#DDE6ED] border border-white/10 shadow-xs">
+                  {sc.channel}
                 </span>
               </div>
 
-              {/* Title & Description */}
-              <div className="space-y-1.5">
-                <h3 className="text-base font-bold text-[#27374D] leading-snug group-hover:text-blue-900 transition-colors">
-                  {sc.title}
-                </h3>
-                <p className="text-xs text-[#526D82] leading-relaxed line-clamp-3">
-                  {sc.description}
-                </p>
+              {/* Layer 3: Gambar di Tengah (Center Image - disiapkan untuk gambar yang akan diunggah) */}
+              <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-3 text-center">
+                {sc.centerImage ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="relative max-h-32 aspect-[1696/2528] overflow-hidden rounded-md shadow-2xl border border-white/20 transition-transform duration-300 group-hover:scale-105 bg-[#2b1f1d]">
+                      <img
+                        src={sc.centerImage}
+                        alt={sc.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-xs sm:text-sm font-bold text-white drop-shadow-md leading-tight line-clamp-1 px-2 mt-2">
+                      {sc.title}
+                    </h3>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:bg-white/20">
+                      <Icon className="h-8 w-8 text-white/90 drop-shadow-md" />
+                    </div>
+                    {/* Judul Skenario */}
+                    <h3 className="text-xs sm:text-sm font-bold text-white drop-shadow-md leading-tight line-clamp-2 px-2">
+                      {sc.title}
+                    </h3>
+                  </div>
+                )}
               </div>
 
-              {/* Metadata Stats */}
-              <div className="flex items-center gap-4 text-[11px] font-medium text-[#526D82] pt-1 border-t border-[#DDE6ED]">
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-[#526D82]" />
-                  {sc.duration}
+              {/* Layer 4: Footer Aksi Bawah */}
+              <div className="relative z-10 p-3 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-center justify-between text-white/90">
+                <span className="text-[11px] font-medium text-[#DDE6ED] truncate flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-amber-300" />
+                  <span>{sc.duration}</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <Layers className="h-3.5 w-3.5 text-[#526D82]" />
-                  {sc.stepsCount} Langkah
+                <span className="text-[11px] font-bold text-white group-hover:underline flex items-center gap-0.5">
+                  Mulai Simulasi <ChevronRight className="h-3 w-3" />
                 </span>
               </div>
             </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
-            {/* Action Button */}
-            <div className="pt-5">
-              <Button
-                variant="primary"
-                size="sm"
-                className="w-full justify-center gap-1.5 text-xs font-bold"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectScenario(sc.id);
-                }}
-              >
-                <span>Mulai Simulasi</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
+// =============================================================================
+// SUB-KOMPONEN SIMULATOR VISUAL NOVEL / BUKU CERITA MEJA KERJA INTERAKTIF (K1)
+// =============================================================================
+
+function DeskStorybookSimulator({
+  scenario,
+  onBack,
+  onNavigateTab,
+}: {
+  scenario: ScenarioCase;
+  onBack: () => void;
+  onNavigateTab: (tab: TabType) => void;
+}) {
+  const cards = scenario.storyCards || [];
+  const totalCards = cards.length;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlay, setIsAutoPlay] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [copiedFlag, setCopiedFlag] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const currentCardUrl = cards[currentIndex] || scenario.centerImage || "/simulator/k1/1.jpg";
+
+  // Preload gambar berikutnya agar perpindahan kartu instan tanpa kedip putih
+  useEffect(() => {
+    if (!cards.length) return;
+    const toPreload = [
+      cards[currentIndex + 1],
+      cards[currentIndex + 2],
+      cards[currentIndex - 1],
+    ].filter(Boolean);
+    toPreload.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [currentIndex, cards]);
+
+  // Catat target progress & kirim notifikasi saat kartu terakhir tercapai
+  useEffect(() => {
+    if (totalCards > 0 && currentIndex === totalCards - 1 && !isCompleted) {
+      setIsCompleted(true);
+      addNotification({
+        title: `Misi Selesai: ${scenario.title}`,
+        message: `Hebat! Kamu telah menuntaskan seluruh ${totalCards} kartu rute investigasi ${scenario.category} dan membongkar modus berkas ${scenario.attachmentName || "malware"}.`,
+        type: "sukses",
+        link: "/belajar?tab=simulator",
+      });
+    }
+  }, [currentIndex, totalCards, isCompleted, scenario]);
+
+  // Slideshow otomatis
+  useEffect(() => {
+    if (!isAutoPlay || isCompleted) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => {
+        if (prev < totalCards - 1) {
+          return prev + 1;
+        }
+        setIsAutoPlay(false);
+        return prev;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isAutoPlay, totalCards, isCompleted]);
+
+  const handleNext = () => {
+    if (currentIndex < totalCards - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      setIsCompleted(true);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleJump = (index: number) => {
+    setCurrentIndex(Math.max(0, Math.min(totalCards - 1, index)));
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen((prev) => !prev);
+  };
+
+  const handleCopyFlag = () => {
+    if (scenario.flagCode) {
+      navigator.clipboard?.writeText(scenario.flagCode);
+      setCopiedFlag(true);
+      setTimeout(() => setCopiedFlag(false), 2000);
+    }
+  };
+
+  // Navigasi keyboard (Panah Kanan/Kiri, Spasi, Enter, F, Esc)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrev();
+      } else if (e.key === "Escape") {
+        if (isFullscreen) setIsFullscreen(false);
+      } else if (e.key === "f" || e.key === "F") {
+        toggleFullscreen();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex, totalCards, isFullscreen]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative overflow-hidden select-none transition-all duration-300 ${
+        isFullscreen
+          ? "fixed inset-0 z-50 bg-[#1e1514] flex flex-col justify-between"
+          : "w-full rounded-3xl border border-[#9DB2BF]/50 bg-[#1e1514] shadow-2xl aspect-[16/9] min-h-[520px] sm:min-h-[620px] flex flex-col justify-between"
+      }`}
+    >
+      {/* Layer 1: Background Meja Kerja Cozy (desk-template.jpg) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <img
+          src={scenario.bgImage || "/simulator/desk-template.jpg"}
+          alt="Desk Background"
+          className="w-full h-full object-cover"
+        />
+        {/* Vignette bayangan hangat */}
+        <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+      </div>
+
+      {/* Layer 2: Floating Top Bar Controls */}
+      <div className="relative z-20 p-3 sm:p-4 flex items-center justify-between gap-2 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+        {/* Sisi Kiri: Tombol Kembali & Info Skenario */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white/90 text-xs font-bold border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Kembali</span>
+          </button>
+
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white shadow-lg">
+            <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+            <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
+              {scenario.id.toUpperCase()}
+            </span>
+            <span className="hidden md:inline text-xs font-medium text-white/90 truncate max-w-[200px]">
+              · {scenario.title}
+            </span>
+          </div>
+        </div>
+
+        {/* Tengah: Badge Counter Kartu */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-lg">
+          <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+          <span className="text-xs font-extrabold tracking-wide">
+            Kartu {currentIndex + 1}{" "}
+            <span className="text-white/60 font-medium">/ {totalCards}</span>
+          </span>
+        </div>
+
+        {/* Sisi Kanan: Putar Otomatis, Layar Penuh, Ulangi */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <button
+            type="button"
+            onClick={() => setIsAutoPlay((prev) => !prev)}
+            title={isAutoPlay ? "Jeda tayangan otomatis" : "Mulai tayangan otomatis"}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border backdrop-blur-md transition-all cursor-pointer shadow-lg ${
+              isAutoPlay
+                ? "bg-amber-500 text-white border-amber-300 animate-pulse"
+                : "bg-black/60 hover:bg-black/80 text-white/90 border-white/20"
+            }`}
+          >
+            {isAutoPlay ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+            <span className="hidden lg:inline">{isAutoPlay ? "Otomatis" : "Putar"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleJump(0)}
+            title="Ulangi dari kartu pertama"
+            className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white/90 hover:text-white border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Keluar layar penuh" : "Layar penuh (F)"}
+            className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white/90 hover:text-white border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Layer 3: Panggung Tengah - Kartu Buku Catatan di Atas Meja */}
+      <div className="relative z-10 flex-1 flex items-center justify-center p-2 overflow-hidden">
+        <div
+          className="relative h-[91%] max-h-[92%] aspect-[1696/2528] rounded-[6px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.65)] border border-[#8a5d3b]/50 group transition-all duration-300"
+          style={{
+            boxShadow: "0 20px 45px -10px rgba(0,0,0,0.8), 0 0 20px rgba(217, 119, 6, 0.2)",
+          }}
+        >
+          {/* Gambar Kartu Aktif */}
+          <img
+            key={currentCardUrl}
+            src={currentCardUrl}
+            alt={`Kartu ${currentIndex + 1}`}
+            className="w-full h-full object-cover transition-all duration-300"
+          />
+
+          {/* Zona Klik Sisi Kiri (Kembali ke Kartu Sebelumnya) */}
+          <div
+            onClick={handlePrev}
+            title="Klik sisi kiri untuk ke kartu sebelumnya (←)"
+            className="absolute inset-y-0 left-0 w-1/4 cursor-w-resize z-20 group/left hover:bg-black/5 transition-colors flex items-center justify-start pl-2"
+          >
+            <div className="opacity-0 group-hover/left:opacity-75 transition-opacity rounded-full bg-black/40 backdrop-blur-sm p-1.5 text-white">
+              <ChevronLeft className="h-5 w-5" />
             </div>
           </div>
-        ))}
+
+          {/* Zona Klik Sisi Kanan (Lanjut ke Kartu Berikutnya) */}
+          <div
+            onClick={handleNext}
+            title="Klik sisi kanan untuk lanjut (→)"
+            className="absolute inset-y-0 right-0 w-1/4 cursor-e-resize z-20 group/right hover:bg-black/5 transition-colors flex items-center justify-end pr-2"
+          >
+            <div className="opacity-0 group-hover/right:opacity-75 transition-opacity rounded-full bg-black/40 backdrop-blur-sm p-1.5 text-white">
+              <ChevronRight className="h-5 w-5" />
+            </div>
+          </div>
+
+          {/* Hotspot Tombol Emas Interaktif di Atas "Lanjut →" */}
+          <div
+            onClick={handleNext}
+            className="absolute bottom-[4.2%] left-1/2 -translate-x-1/2 w-[48%] h-[8%] rounded-full cursor-pointer z-30 group/btn transition-transform active:scale-95"
+            title="Klik Lanjut untuk melanjutkan simulasi"
+          >
+            {/* Efek cincin pendar keemasan */}
+            <div className="absolute inset-0 rounded-full border-2 border-amber-400/50 group-hover/btn:border-amber-300 group-hover/btn:bg-amber-400/15 animate-pulse transition-all" />
+            {/* Ikon kilau */}
+            <div className="absolute -top-1.5 -right-1 text-amber-300 animate-bounce">
+              <Sparkles className="h-4 w-4 drop-shadow" />
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Layer 4: Bilah Kontrol & Scrubber Bawah */}
+      <div className="relative z-20 p-3 sm:p-4 bg-gradient-to-t from-black/85 via-black/50 to-transparent flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-3">
+          {/* Tombol Sebelumnya */}
+          <button
+            type="button"
+            disabled={currentIndex === 0}
+            onClick={handlePrev}
+            className="flex items-center gap-1 px-3 sm:px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur-md text-white text-xs font-bold border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Sebelumnya</span>
+          </button>
+
+          {/* Slider Scrubber Interaktif */}
+          <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/15 shadow-lg">
+            <span className="text-[10px] text-white/70 font-mono">1</span>
+            <input
+              type="range"
+              min={0}
+              max={totalCards - 1}
+              value={currentIndex}
+              onChange={(e) => handleJump(Number(e.target.value))}
+              className="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-amber-400"
+            />
+            <span className="text-[10px] text-white/70 font-mono">{totalCards}</span>
+          </div>
+
+          {/* Tombol Lanjut */}
+          <button
+            type="button"
+            onClick={handleNext}
+            className="flex items-center gap-1.5 px-4 sm:px-6 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-xs font-black border border-amber-300/40 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-lg shadow-amber-500/30"
+          >
+            <span>{currentIndex === totalCards - 1 ? "Selesai" : "Lanjut"}</span>
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Layer 5: Modal Perayaan Misi Selesai */}
+      {isCompleted && (
+        <div className="absolute inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md rounded-3xl bg-[#27374D] border-2 border-amber-400/50 p-6 text-white text-center shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-400/20 text-amber-300 border border-amber-400/40 shadow-lg mx-auto">
+              <Award className="h-9 w-9 drop-shadow" />
+            </div>
+
+            <div className="space-y-1">
+              <span className="rounded-full bg-amber-400/20 px-3 py-0.5 text-[10px] font-black text-amber-300 border border-amber-400/30 uppercase tracking-widest">
+                MISI SELESAI
+              </span>
+              <h3 className="text-lg font-black text-white">{scenario.title}</h3>
+              <p className="text-xs text-[#DDE6ED] leading-relaxed">
+                Selamat! Kamu telah menyelesaikan seluruh 41 kartu rute pembelajaran dan berhasil mengungkap seluruh anatomi rekayasa sosial APK palsu.
+              </p>
+            </div>
+
+            {/* Kartu Trust Flag */}
+            <div className="rounded-2xl bg-black/40 border border-amber-400/30 p-3.5 space-y-2 text-left">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Kode Pelindung (Trust Flag)
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyFlag}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 hover:text-amber-200 bg-amber-400/10 hover:bg-amber-400/20 px-2 py-0.5 rounded-md border border-amber-400/30 transition-all cursor-pointer"
+                >
+                  {copiedFlag ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                  <span>{copiedFlag ? "Tersalin!" : "Salin Flag"}</span>
+                </button>
+              </div>
+              <div className="font-mono text-xs font-black text-white bg-black/50 p-2 rounded-lg border border-white/10 tracking-widest text-center">
+                {scenario.flagCode}
+              </div>
+            </div>
+
+            {/* Tombol Aksi */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleJump(0);
+                  setIsCompleted(false);
+                }}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Ulangi Kasus</span>
+              </button>
+              <button
+                type="button"
+                onClick={onBack}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-xs font-black border border-amber-300/40 transition-all cursor-pointer shadow-lg shadow-orange-500/30"
+              >
+                <span>Daftar Skenario</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1204,6 +2024,18 @@ function SimulatorPage({
   onNavigateTab: (tab: TabType) => void;
 }) {
   const sc = SCENARIOS.find((s) => s.id === scenarioId) || SCENARIOS[0];
+
+  // Jika skenario memiliki deretan kartu visual novel (seperti K1), render DeskStorybookSimulator
+  if (sc.storyCards && sc.storyCards.length > 0) {
+    return (
+      <DeskStorybookSimulator
+        scenario={sc}
+        onBack={onBack}
+        onNavigateTab={onNavigateTab}
+      />
+    );
+  }
+
   const [step, setStep] = useState<"briefing" | "investigasi" | "debrief">("briefing");
   const [selectedEvidences, setSelectedEvidences] = useState<string[]>([]);
   const [chosenOption, setChosenOption] = useState<ScenarioChoice | null>(null);
