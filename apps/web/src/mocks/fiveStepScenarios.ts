@@ -2066,3 +2066,4 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       "Selalu bertransaksi lewat sistem pembayaran resmi marketplace yang menahan dana sampai barang diterima (rekening bersama), bukan transfer langsung ke rekening pribadi. Cek dulu nomor rekening penjual di cekrekening.id kalau ragu. Hentikan di titik mana pun kamu baru sadar — setiap langkah mundur masih menyelamatkan sesuatu.",
   },
 };
+
