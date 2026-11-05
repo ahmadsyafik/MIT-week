@@ -1335,7 +1335,6 @@ export default function Belajar() {
       {/* HEADER UTAMA HALAMAN BELAJAR (SESUAI DOKUMEN & REFERENSI VISUAL)      */}
       {/* ===================================================================== */}
       <div className="space-y-2">
-        <div className="text-xs font-semibold text-[#526D82]">Belajar</div>
         <h1 className="text-3xl font-black text-[#27374D] tracking-tight">Belajar</h1>
         <p className="text-xs sm:text-sm text-[#526D82] max-w-2xl leading-relaxed">
           Gabungan Modul, Kilat 2 Menit, dan Kamus dalam satu tempat — supaya navigasinya ringkas di layar kecil.
@@ -1546,14 +1545,9 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
     <div className="space-y-6">
       {/* Header Cover Simulator */}
       <div className="bg-white p-5 rounded-2xl border border-[#9DB2BF]/40 space-y-1">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
-            Simulator Skenario Kasus Interaktif
-          </h2>
-          <span className="rounded-full bg-[#DDE6ED] px-3 py-0.5 text-xs font-bold text-[#27374D] border border-[#9DB2BF]/60">
-            8 Skenario (K1 - K8)
-          </span>
-        </div>
+        <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
+          Simulator Skenario Kasus Interaktif
+        </h2>
         <p className="text-xs text-[#526D82]">
           Latih insting dan refleks keputusanmu dalam 8 skenario rekayasa sosial nyata dari data IASC & OJK secara aman tanpa risiko.
         </p>

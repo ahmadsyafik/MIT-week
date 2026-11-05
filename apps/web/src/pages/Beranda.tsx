@@ -754,19 +754,13 @@ export default function Beranda() {
           {/* 2. PINTASAN SIMULATOR AKTIF (SELARAS DENGAN WELCOME BACK)        */}
           {/* --------------------------------------------------------------- */}
           <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs flex flex-col justify-between space-y-4">
-            {/* Header Pintasan & Badge Kasus */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50 shadow-xs">
-                  <Smartphone className="h-4 w-4" />
-                </span>
-                <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                  Pintasan Simulator
-                </span>
-              </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 text-[10px] font-bold">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Kasus K1 · Wajib
+            {/* Header Pintasan */}
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50 shadow-xs">
+                <Smartphone className="h-4 w-4" />
+              </span>
+              <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
+                Pintasan Simulator
               </span>
             </div>
 

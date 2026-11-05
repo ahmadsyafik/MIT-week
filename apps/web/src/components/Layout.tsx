@@ -148,8 +148,6 @@ export default function Layout() {
               >
                 Keterbatasan dan Privasi
               </NavLink>
-              <span aria-hidden="true" className="text-[#9DB2BF]">·</span>
-              <span>MIT-Week 2026</span>
             </div>
           </div>
         </footer>
@@ -377,8 +375,6 @@ export default function Layout() {
               >
                 Keterbatasan dan Privasi
               </NavLink>
-              <span aria-hidden="true" className="text-[#9DB2BF]">·</span>
-              <span>MIT-Week 2026</span>
             </div>
           </div>
         </footer>
