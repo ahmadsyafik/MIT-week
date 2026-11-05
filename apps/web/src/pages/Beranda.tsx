@@ -29,6 +29,7 @@ import ThreeHeroCanvas from "../components/ThreeHeroCanvas";
 const MODULE_SHORTCUTS = [
   {
     id: "kasus-1",
+    scenarioId: "k1",
     title: "Undangan APK Palsu",
     category: "Studi Kasus 1",
     author: "Tim Forensik JR",
@@ -41,6 +42,7 @@ const MODULE_SHORTCUTS = [
   },
   {
     id: "kasus-2",
+    scenarioId: "k2",
     title: "Kurir Paket & Foto Resi",
     category: "Studi Kasus 2",
     author: "Satgas Rekayasa Sosial",
@@ -53,6 +55,7 @@ const MODULE_SHORTCUTS = [
   },
   {
     id: "kasus-3",
+    scenarioId: "k3",
     title: "Loker WFH & Deposit",
     category: "Studi Kasus 3",
     author: "Unit Anti-Phishing",
@@ -135,11 +138,6 @@ export default function Beranda() {
         <section className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-4 sm:pt-8">
           {/* Kolom Kiri: Tipografi Hero Tebal & CTA Pill */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-bold text-[#27374D] border border-[#9DB2BF]/60 shadow-xs">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>MIT-Week 2026 · Guardians of the Digital Space</span>
-            </div>
-
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#27374D] leading-[1.12]">
               Lindungi Dirimu Dari Tipuan Digital Dengan Aman!
             </h1>
@@ -596,7 +594,7 @@ export default function Beranda() {
                 return (
                   <Link
                     key={m.id}
-                    to="/belajar?tab=simulator"
+                    to={m.scenarioId ? `/belajar?tab=simulator&scenario=${m.scenarioId}` : `/belajar?tab=simulator`}
                     className="group flex flex-col justify-between rounded-2xl border border-[#9DB2BF]/50 bg-white p-4 hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="space-y-3">
@@ -781,8 +779,8 @@ export default function Beranda() {
                 type="button"
                 onClick={() => setSelectedCalendarTab("prev")}
                 className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "prev"
-                    ? "bg-[#526D82] text-white shadow-xs"
-                    : "text-[#526D82] hover:text-[#27374D]"
+                  ? "bg-[#526D82] text-white shadow-xs"
+                  : "text-[#526D82] hover:text-[#27374D]"
                   }`}
               >
                 3 Hari Lalu
@@ -791,8 +789,8 @@ export default function Beranda() {
                 type="button"
                 onClick={() => setSelectedCalendarTab("month")}
                 className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "month"
-                    ? "bg-[#526D82] text-white shadow-xs"
-                    : "text-[#526D82] hover:text-[#27374D]"
+                  ? "bg-[#526D82] text-white shadow-xs"
+                  : "text-[#526D82] hover:text-[#27374D]"
                   }`}
               >
                 Bulan Ini
@@ -801,8 +799,8 @@ export default function Beranda() {
                 type="button"
                 onClick={() => setSelectedCalendarTab("year")}
                 className={`py-1.5 rounded-lg transition-colors ${selectedCalendarTab === "year"
-                    ? "bg-[#526D82] text-white shadow-xs"
-                    : "text-[#526D82] hover:text-[#27374D]"
+                  ? "bg-[#526D82] text-white shadow-xs"
+                  : "text-[#526D82] hover:text-[#27374D]"
                   }`}
               >
                 1 Tahun
@@ -922,7 +920,7 @@ export default function Beranda() {
               <p className="text-[11px] text-[#526D82] leading-tight">
                 Simulasi keputusan saat menerima pesan berformat .apk dari nomor tak dikenal.
               </p>
-              <Link to="/belajar?tab=simulator" className="block pt-1">
+              <Link to="/belajar?tab=simulator&scenario=k1" className="block pt-1">
                 <button
                   type="button"
                   className="w-full rounded-xl bg-[#526D82] py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-xs"

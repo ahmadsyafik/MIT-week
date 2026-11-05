@@ -107,7 +107,7 @@ export default function Hero3DCanvas() {
             alpha: true,
             powerPreference: "high-performance",
             toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.05,
+            toneMappingExposure: 1.18,
           }}
           className="!w-full !h-full !overflow-visible"
           style={{ background: "transparent" }}

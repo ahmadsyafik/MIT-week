@@ -79,3 +79,19 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Integrasi Screenshot Beranda HD (1170x2532)**: Layar 3D iPhone kini menampilkan tangkapan layar tampilan mobile Beranda JagaRuang secara proporsional presisi (rasio 1:2.165, pas dengan dimensi layar iPhone 2.06 x 4.46 tanpa distorsi/stretching).
     - **Ketajaman & Rendering Bebas Layar Hitam**: Menggunakan `useTexture` dengan 16x *Anisotropic Filtering*, *Linear Mipmapping*, serta material *emissive map* pendaran OLED terang sehingga layar tidak pernah hitam, tidak blur, dan tetap terbaca jernih di semua sudut rotasi Three.js.
     - **Penempatan Dynamic Island Presisi**: Kapsul Dynamic Island ditempatkan presisi di status bar atas (di antara jam 09:41 dan ikon baterai/wifi) sehingga tidak menutupi logo atau teks header aplikasi.
+  - **Simulator Interaktif Fake Chat (Undangan Pernikahan Digital.apk - K1)**:
+    - **Komponen Interaktif Baru (`FakeChatSimulator.tsx`)**: Mengubah skenario Undangan Pernikahan Digital APK menjadi simulasi percakapan chat interaktif sekuensial (gaya WhatsApp / visual novel messenger) lengkap dengan avatar lawan bicara, avatar pengguna, gelembung obrolan, kartu lampiran berkas APK asli, dan indikator mengetik.
+    - **Alur Percabangan Ketat (Strict Branching Logic A, B, C)**:
+      - **Pilihan A (Gegabah/Langsung Buka)**: Pengguna memasang berkas APK -> Pelaku mengarahkan untuk memberikan izin berbahaya -> Muncul kartu peringatan sistem Android (READ_SMS) -> Aplikasi mengalami force close -> Notifikasi SMS perbankan disadap dan saldo tersedot -> Debrief & Solusi Darurat A (Mode pesawat, blokir rekening bank, cabut SIM, factory reset).
+      - **Pilihan B (Ragu/Minta Format Biasa)**: Pengguna menanyakan ekstensi .apk dan meminta foto/web -> Pelaku melancarkan manipulasi emosional (guilt-tripping) -> Sub-pilihan B1 (tetap menolak tegas -> pelaku memblokir) atau B2 (goyah -> infeksi) -> Debrief & Solusi B (Nol toleransi APK pernikahan, abaikan rasa sungkan, laporkan nomor).
+      - **Pilihan C (Waspada Penuh/Verifikasi Mandiri)**: Pengguna menolak membuka berkas dan memverifikasi langsung -> Pelaku panik dan pesan centang satu -> Panggilan verifikasi mandiri (out-of-band) mengonfirmasi pencatutan nama -> Pengguna memblokir nomor -> Debrief & Solusi Sempurna C (Zero-Trust, verifikasi out-of-band, lapor ke aduannomor.id).
+    - **Pengalaman Obrolan Utuh (Single Scrollable Chat)**:
+      - Seluruh jalannya simulasi berada dalam 1 thread chat yang mengalir ke bawah seperti percakapan nyata.
+      - Pengguna dapat melakukan scroll ke atas kapan saja untuk memeriksa pesan sebelumnya maupun pilihan yang telah diambil.
+      - Tombol melayang cerdas "Pesan Terbaru" muncul otomatis saat pengguna menggulir ke atas untuk memudahkan kembali ke pesan paling akhir.
+      - Tombol "Coba Pilihan Lain" memungkinkan pengguna mengulang dan bereksplorasi dengan alur pilihan lainnya tanpa harus keluar dari halaman.
+    - **Responsif & Aksesibel di Mobile & Desktop**: Tata letak beradaptasi sempurna di layar ponsel (target sentuh >= 48px, padding fleksibel, tanpa overflow) maupun layar desktop (kontainer terpusat elegan dengan elevated shadow dan micro-interaction halus).
+  - **Optimasi Performa 3D Scene (INP Reduksi dari 336 ms)**:
+    - Menghilangkan kalkulasi berat *Environment Lightformer FBO* pada scene 3D yang sebelumnya membebani CPU main-thread, digantikan dengan pencahayaan direksional efisien.
+    - Menambah ketebalan z-axis pada bodi smartphone agar tampil solid dan berisi (`phoneDepth: 0.30`).
+    - Merotasi Dynamic Island ke posisi horizontal `[0, 0, Math.PI / 2]` di status bar atas.

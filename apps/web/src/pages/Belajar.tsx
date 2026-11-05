@@ -45,6 +45,7 @@ import {
   Minimize2,
 } from "lucide-react";
 import { Card, Button, Disclaimer } from "../components/ui";
+import { FakeChatSimulator } from "../components/simulator/FakeChatSimulator";
 import {
   addNotification,
   NOTIFICATION_EVENT,
@@ -156,7 +157,7 @@ const SCENARIOS: ScenarioCase[] = [
     levelBadge: "bg-emerald-50 text-emerald-800 border-emerald-300",
     dotColor: "bg-emerald-500",
     duration: "2 Mnt",
-    stepsCount: 41,
+    stepsCount: 3,
     icon: Mail,
     bgImage: "/simulator/desk-template.jpg",
     centerImage: "/simulator/k1/1.jpg",
@@ -1255,7 +1256,7 @@ export default function Belajar() {
   });
 
   // State tampilan subhalaman khusus (null = cover)
-  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
+  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(() => searchParams.get("scenario") || null);
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [kilatMode, setKilatMode] = useState<"cover" | "drill">("cover");
   const [activeGlossaryId, setActiveGlossaryId] = useState<string | null>(null);
@@ -2024,6 +2025,17 @@ function SimulatorPage({
   onNavigateTab: (tab: TabType) => void;
 }) {
   const sc = SCENARIOS.find((s) => s.id === scenarioId) || SCENARIOS[0];
+
+  // Skenario K1 (Undangan Pernikahan Digital APK) menggunakan Fake Chat Simulator Interaktif
+  if (sc.id === "k1") {
+    return (
+      <FakeChatSimulator
+        scenario={sc}
+        onBack={onBack}
+        onNavigateTab={onNavigateTab}
+      />
+    );
+  }
 
   // Jika skenario memiliki deretan kartu visual novel (seperti K1), render DeskStorybookSimulator
   if (sc.storyCards && sc.storyCards.length > 0) {

@@ -39,18 +39,18 @@ export const HERO_3D_CONFIG = {
     slateBorder: "#9DB2BF",
   },
 
-  // 3. DIMENSI MODEL (Rasio 1:2.164 Presisi Sesuai Screenshot HD 1170x2532)
+  // 3. DIMENSI MODEL (Ketebalan Z Ditingkatkan 0.30 & Lebar Layar Maksimal)
   dimensions: {
     phoneWidth: 2.18,  // Skala relatif
     phoneHeight: 4.58,
-    phoneDepth: 0.24,
-    cornerRadius: 0.44, // Radius besar (~0.2 dari lebar) untuk sudut sangat bulat
-    screenWidth: 2.06,  // Bezel simetris tipis (0.06 di semua sisi)
-    screenHeight: 4.46, // Rasio 2.06 x 4.46 = 1 : 2.165 (pas persis 1170 x 2532)
-    screenRadius: 0.38, // Mengikuti kelengkungan body
-    // Cincin Orbit: Jarak 15-20% dari lebar body HP
+    phoneDepth: 0.30,  // Dimajukan Z-depth agar tampak lebih tebal dan berisi
+    cornerRadius: 0.44, // Radius besar untuk sudut membulat iPhone
+    screenWidth: 2.10,  // Lebar maksimal rata layar HP
+    screenHeight: 4.50, // Tinggi proporsional rata layar HP
+    screenRadius: 0.40, // Mengikuti kelengkungan body
+    // Cincin Orbit
     orbitRadius: 1.68,
-    orbitTubeRadius: 0.022, // Tebal dengan volume 3D nyata
+    orbitTubeRadius: 0.022,
     particleRadius: 0.055,
   },
 
@@ -63,10 +63,10 @@ export const HERO_3D_CONFIG = {
     // Pose awal (HP miring ~ -8 derajat di sumbu Y)
     initialRotationY: -0.14,
     initialRotationX: 0.04,
-    maxTiltX: 0.22, // Maks ~12-15 derajat
+    maxTiltX: 0.22,
     maxTiltY: 0.25,
-    tiltDamping: 0.07, // Kehalusan lerp kursor
-    ringRotationSpeed: 0.13, // ~48 detik per putaran penuh
+    tiltDamping: 0.07,
+    ringRotationSpeed: 0.13,
     particleSpeed: 0.75,
     entranceInitialScale: 0.92,
   },
@@ -78,7 +78,7 @@ export const HERO_3D_CONFIG = {
     directionalPos: [4, 6, 4] as [number, number, number],
     fillLightIntensity: 0.6,
     fillLightPos: [-4, 2, 2] as [number, number, number],
-    rimLightIntensity: 1.6, // Rim light dingin dari kanan atas
+    rimLightIntensity: 1.6,
     rimLightPos: [5, 5, -3] as [number, number, number],
     rimLightColor: "#C5D3E0",
     contactShadowOpacity: 0.35,
