@@ -13,6 +13,7 @@ import {
   Lock,
   HelpCircle,
   ArrowRight,
+  ChevronRight,
 } from "lucide-react";
 import { Button, Disclaimer } from "../components/ui";
 import { generateSafeword, storage } from "../lib/coreClient";
@@ -74,6 +75,24 @@ function generateMixedRecommendations(): MixedSafewordRec[] {
   ];
 }
 
+const SOP_STEPS = [
+  {
+    step: 1,
+    title: "Jangan Langsung Panik",
+    desc: "Penipu sengaja membuat situasi terdengar genting (menangis, suara sirine, atau panik) agar korban tidak sempat berpikir jernih. Tarik napas dan tetap tenang.",
+  },
+  {
+    step: 2,
+    title: "Tanyakan Sandi Rahasia",
+    desc: 'Ajukan pertanyaan sederhana: "Sebelum kita bicara lebih lanjut, apa kata sandi rahasia keluarga kita?". Penipu AI tidak akan pernah mengetahui kata ini.',
+  },
+  {
+    step: 3,
+    title: "Tolak & Verifikasi Mandiri",
+    desc: "Jika penelepon mengelak, marah, atau beralasan tidak ingat, segera matikan telepon. Hubungi nomor asli kerabat yang bersangkutan lewat panggilan biasa.",
+  },
+];
+
 export default function Sandi() {
   const [wordCount, setWordCount] = useState<2 | 3>(3);
   const [recommendations, setRecommendations] = useState<MixedSafewordRec[]>(() =>
@@ -84,6 +103,13 @@ export default function Sandi() {
   const [allowSaveLocal, setAllowSaveLocal] = useState<boolean>(false); // DEFAULT MATI sesuai kontrak FE-5.2
   const [copyFeedback, setCopyFeedback] = useState(false);
   const [saveStatusMessage, setSaveStatusMessage] = useState<string | null>(null);
+  const [openSteps, setOpenSteps] = useState<number[]>([0]);
+
+  const toggleStep = (idx: number) => {
+    setOpenSteps((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
+  };
 
   // Load safeword yang pernah disimpan di storage lokal
   useEffect(() => {
@@ -453,7 +479,7 @@ export default function Sandi() {
       {/* ===================================================================== */}
       {/* PANDUAN PRAKTIS SAAT MENGHADAPI TELEPON DARURAT                       */}
       {/* ===================================================================== */}
-      <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-5">
+      <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
         <div className="space-y-1 border-b border-[#9DB2BF]/30 pb-3">
           <h3 className="text-base sm:text-lg font-bold text-[#27374D]">
             SOP Tindakan 3 Langkah Saat Menerima Telepon Darurat
@@ -463,51 +489,37 @@ export default function Sandi() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Langkah 1 */}
-          <div className="rounded-2xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/30 p-5 space-y-2.5 flex flex-col justify-between">
-            <div className="space-y-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#27374D] text-white font-extrabold text-xs shadow-xs">
-                01
+        <div className="space-y-2.5">
+          {SOP_STEPS.map((item, idx) => {
+            const isOpen = openSteps.includes(idx);
+            return (
+              <div
+                key={item.step}
+                className="rounded-2xl border border-[#9DB2BF]/40 bg-white overflow-hidden shadow-2xs transition-all"
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleStep(idx)}
+                  className="w-full p-4 sm:px-5 sm:py-3.5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-[#27374D] hover:text-[#526D82] hover:bg-[#DDE6ED]/20 transition-all cursor-pointer"
+                >
+                  <span className="flex items-center gap-1.5 font-bold">
+                    <span className="text-[#27374D] font-extrabold">{item.step}.</span>
+                    <span>{item.title}</span>
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 text-[#526D82] shrink-0 transition-transform duration-200 ${
+                      isOpen ? "rotate-90" : ""
+                    }`}
+                  />
+                </button>
+                {isOpen && (
+                  <div className="px-5 pb-4 pt-1 text-xs text-[#526D82] leading-relaxed border-t border-[#9DB2BF]/20 bg-[#DDE6ED]/15">
+                    <p>{item.desc}</p>
+                  </div>
+                )}
               </div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#27374D]">
-                Jangan Langsung Panik
-              </h4>
-              <p className="text-xs text-[#526D82] leading-relaxed">
-                Penipu sengaja membuat situasi terdengar genting (menangis, suara sirine, atau panik) agar korban tidak sempat berpikir jernih. Tarik napas dan tetap tenang.
-              </p>
-            </div>
-          </div>
-
-          {/* Langkah 2 */}
-          <div className="rounded-2xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/30 p-5 space-y-2.5 flex flex-col justify-between">
-            <div className="space-y-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#27374D] text-white font-extrabold text-xs shadow-xs">
-                02
-              </div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#27374D]">
-                Tanyakan Sandi Rahasia
-              </h4>
-              <p className="text-xs text-[#526D82] leading-relaxed">
-                Ajukan pertanyaan sederhana: <em>"Sebelum kita bicara lebih lanjut, apa kata sandi rahasia keluarga kita?"</em>. Penipu AI tidak akan pernah mengetahui kata ini.
-              </p>
-            </div>
-          </div>
-
-          {/* Langkah 3 */}
-          <div className="rounded-2xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/30 p-5 space-y-2.5 flex flex-col justify-between">
-            <div className="space-y-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#27374D] text-white font-extrabold text-xs shadow-xs">
-                03
-              </div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#27374D]">
-                Tolak & Verifikasi Mandiri
-              </h4>
-              <p className="text-xs text-[#526D82] leading-relaxed">
-                Jika penelepon mengelak, marah, atau beralasan tidak ingat, segera matikan telepon. Hubungi nomor asli kerabat yang bersangkutan lewat panggilan biasa.
-              </p>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
 

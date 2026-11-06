@@ -2555,34 +2555,28 @@ function ModulCover({
               onClick={() => onSelectModule(m.id)}
               className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-4"
             >
-              <div className="space-y-3">
-                {/* Baris Atas: Status Baca di kanan */}
-                <div className="flex items-center justify-end">
-                  {isRead ? (
-                    <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200/60">
-                      Sudah dibaca
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-500">
-                      Belum dibaca
-                    </span>
-                  )}
-                </div>
-
-                {/* Judul & Deskripsi */}
-                <div className="space-y-1">
-                  <h3 className="text-sm sm:text-base font-bold text-[#27374D] leading-snug group-hover:text-blue-900 transition-colors">
-                    {m.title}
-                  </h3>
-                  <p className="text-xs text-[#526D82] leading-relaxed line-clamp-2">
-                    {m.summary}
-                  </p>
-                </div>
+              {/* Judul & Deskripsi */}
+              <div className="space-y-1.5">
+                <h3 className="text-sm sm:text-base font-bold text-[#27374D] leading-snug group-hover:text-blue-900 transition-colors">
+                  {m.title}
+                </h3>
+                <p className="text-xs text-[#526D82] leading-relaxed line-clamp-2">
+                  {m.summary}
+                </p>
               </div>
 
-              {/* Footer: Aksi Baca */}
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-[11px] text-[#526D82]">
-                <span className="text-[11px] font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
+              {/* Footer: Status di kiri pojok & Aksi Baca Modul di kanan */}
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                {isRead ? (
+                  <span className="font-medium text-emerald-600">
+                    Sudah dibaca
+                  </span>
+                ) : (
+                  <span className="font-medium text-[#526D82]">
+                    Belum dibaca
+                  </span>
+                )}
+                <span className="font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
                   Baca Modul <ChevronRight className="h-3 w-3" />
                 </span>
               </div>
@@ -2918,8 +2912,8 @@ function KilatCover({
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
       {/* Kolom Kiri: Tantangan Kilat Card */}
       <div className="lg:col-span-5 flex flex-col">
-        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-[#27374D] text-white p-7 sm:p-9 shadow-lg flex flex-col justify-between h-full space-y-6">
-          <div className="space-y-4">
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-[#27374D] text-white p-6 sm:p-7 shadow-lg flex flex-col justify-between h-full space-y-4">
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#9DB2BF]">
                 Tantangan Kilat
@@ -2931,34 +2925,18 @@ function KilatCover({
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
                 {currentDiff.timeLabel}
               </h2>
-              <p className="text-sm text-[#DDE6ED]/90 leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#DDE6ED]/90 leading-relaxed">
                 Asah refleks insting membedakan pesan biasa vs manipulasi sebelum kamu tertipu!
               </p>
-            </div>
-
-            {/* Pills Indikator */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-semibold text-[#DDE6ED]">
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
-                <Clock className="h-3.5 w-3.5 text-amber-300" />
-                {currentDiff.timeLabel} Timer
-              </span>
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
-                <ListChecks className="h-3.5 w-3.5 text-sky-300" />
-                10 Soal Uji Visual
-              </span>
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" />
-                Pilihan Yes / No
-              </span>
             </div>
           </div>
 
           {/* Pratinjau Visual Soal + Header Viral "QUIZ KILAT" */}
-          <div className="relative my-1 py-5 px-3 rounded-2xl bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-transparent border border-white/15 overflow-hidden flex flex-col items-center justify-center min-h-[220px] sm:min-h-[250px] shadow-inner group">
+          <div className="relative my-auto py-5 px-3 rounded-2xl bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-transparent border border-white/15 overflow-hidden flex flex-col items-center justify-center min-h-[190px] shadow-inner group">
             {/* Ambient Radial Lights */}
             <div className="absolute -top-10 -left-10 w-36 h-36 bg-sky-400/25 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -bottom-10 -right-10 w-36 h-36 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
@@ -3057,7 +3035,7 @@ function KilatCover({
       </div>
 
       {/* Kolom Kanan: Aturan Main + Pengaturan Tingkat Kesulitan */}
-      <div className="lg:col-span-7 flex flex-col space-y-5">
+      <div className="lg:col-span-7 flex flex-col justify-between space-y-4 h-full">
         {/* Card 1: Aturan Main Tantangan */}
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
           <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
@@ -3117,58 +3095,60 @@ function KilatCover({
         </div>
 
         {/* Card 2: Pengaturan Tingkat Kesulitan */}
-        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
-              <Sliders className="h-4 w-4 text-[#526D82]" />
-              <span>Pilih Tingkat Kesulitan:</span>
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4 flex-1 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
+                <Sliders className="h-4 w-4 text-[#526D82]" />
+                <span>Pilih Tingkat Kesulitan:</span>
+              </div>
+              <span className="text-xs text-[#526D82] hidden sm:inline">
+                Klik opsi untuk mengatur durasi tantangan
+              </span>
             </div>
-            <span className="text-xs text-[#526D82] hidden sm:inline">
-              Klik opsi untuk mengatur durasi tantangan
-            </span>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {KILAT_DIFFICULTIES.map((diff) => {
-              const isSelected = diff.duration === duration;
-              return (
-                <button
-                  key={diff.id}
-                  type="button"
-                  onClick={() => onSelectDuration(diff.duration)}
-                  className={`text-left rounded-2xl p-4 border transition-all cursor-pointer relative flex flex-col justify-between space-y-3 ${
-                    isSelected
-                      ? "border-[#27374D] bg-[#27374D]/5 ring-2 ring-[#27374D] shadow-sm"
-                      : "border-[#9DB2BF]/40 bg-white hover:border-[#526D82] hover:bg-[#DDE6ED]/20"
-                  }`}
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#27374D]">
-                        {diff.name}
-                      </span>
-                      {isSelected ? (
-                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#27374D] text-white">
-                          <Check className="h-2.5 w-2.5 stroke-[3]" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {KILAT_DIFFICULTIES.map((diff) => {
+                const isSelected = diff.duration === duration;
+                return (
+                  <button
+                    key={diff.id}
+                    type="button"
+                    onClick={() => onSelectDuration(diff.duration)}
+                    className={`text-left rounded-2xl p-4 border transition-all cursor-pointer relative flex flex-col justify-between space-y-3 h-full ${
+                      isSelected
+                        ? "border-[#27374D] bg-[#27374D]/5 ring-2 ring-[#27374D] shadow-sm"
+                        : "border-[#9DB2BF]/40 bg-white hover:border-[#526D82] hover:bg-[#DDE6ED]/20"
+                    }`}
+                  >
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#27374D]">
+                          {diff.name}
                         </span>
-                      ) : (
-                        <span className="h-4 w-4 rounded-full border border-[#9DB2BF]" />
-                      )}
+                        {isSelected ? (
+                          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#27374D] text-white">
+                            <Check className="h-2.5 w-2.5 stroke-[3]" />
+                          </span>
+                        ) : (
+                          <span className="h-4 w-4 rounded-full border border-[#9DB2BF]" />
+                        )}
+                      </div>
+                      <div className="text-lg font-black text-[#27374D]">
+                        {diff.timeLabel}
+                      </div>
+                      <span className="inline-block text-[10px] font-semibold text-[#526D82] bg-white px-2 py-0.5 rounded-md border border-[#9DB2BF]/40">
+                        {diff.pace}
+                      </span>
                     </div>
-                    <div className="text-lg font-black text-[#27374D]">
-                      {diff.timeLabel}
-                    </div>
-                    <span className="inline-block text-[10px] font-semibold text-[#526D82] bg-white px-2 py-0.5 rounded-md border border-[#9DB2BF]/40">
-                      {diff.pace}
-                    </span>
-                  </div>
 
-                  <p className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-[#DDE6ED]">
-                    {diff.desc}
-                  </p>
-                </button>
-              );
-            })}
+                    <p className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-[#DDE6ED]">
+                      {diff.desc}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

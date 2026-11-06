@@ -53,16 +53,18 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Menghilangkan badge pill tingkat risiko (*Level Waspada*, *Risiko Tinggi*, *Risiko Sangat Tinggi*) di pojok kanan atas kartu modul beranda (`MODULE_SHORTCUTS`) untuk tampilan kartu yang lebih bersih dan minimalis.
       - Menghilangkan badge pill kategori (*Malware Android*, *Manipulasi Sosial*, dll.) pada kartu kamus dan halaman detail istilah (`Belajar.tsx`).
       - Menghapus tautan redundan *"Pelajari Modus >"* di baris atas kartu kamus istilah (`Belajar.tsx`) agar tata letak kartu menjadi ringkas dan terfokus pada nama istilah, penjelasan, serta tombol aksi *"Buka Detail →"* di bagian bawah.
+      - Menghapus tautan menu *"Keterbatasan"* pada baris navigasi atas Landing Page publik (`Layout.tsx`) sesuai instruksi pengguna, menjaga tautan navbar terfokus pada konten utama (*Home*, *Tiga Pilar*, *Kasus & Modul*, *Cerita Rekan*, dan *FAQ*).
       - Menghapus label *kicker* redundan `"DAFTAR PERIKSA BERURUTAN"` di atas judul panduan tindakan darurat pada halaman **Panduan Lindungi** (`Lindungi.tsx`), dan menambahkan teks deskripsi pendukung ringkas langsung di bawah judul kondisi (`activeGuide.title`), seperti *"Pesan / Tautan Mencurigakan Baru Diterima (Belum Diklik)"*, agar hierarki tipografi lebih bersih, seimbang, dan informatif.
+      - **Penyederhanaan Kotak Peringatan Darurat (`Lindungi.tsx`)**: Mengintegrasikan teks pesan penting pembekuan rekening (*"Catatan Penting: Pelaporan resmi bertujuan untuk memutus akses pelaku dan membekukan rekening penampung..."*) langsung berdampingan dengan ikon segitiga darurat (`AlertTriangle`), mengeliminasi pengantar judul yang berulang agar pesan mitigasi kritis langsung tersampaikan secara ringkas dan tegas.
       - Menyelaraskan tipografi header **Pintasan Simulator** di Dashboard Beranda (`Beranda.tsx`): menghapus ikon smartphone dalam kotak dan format huruf besar tracking lebar, menggantinya dengan gaya font judul clean (`text-base font-bold text-[#27374D] Pintasan Simulator`) yang serasi dengan kartu *Kamus & Modus Populer* dan *Activities*.
-    - **Penerapan Logo Resmi JagaRuang**:
-      - Memproses dan menetapkan aset visual logo perisai geometris emas (*gold geometric shield*) resmi ke dalam direktori publik dan aset aplikasi (`/logo.png`).
-      - Mengganti teks/lencana inisial `JR` sebelumnya di seluruh antarmuka aplikasi:
-        - Navbar Landing Page publik (`Layout.tsx`).
-        - Header atas Sidebar Dashboard (`Layout.tsx`).
-        - Top bar navigasi mobile (`Layout.tsx`).
-        - Header modal dialog Masuk / Login (`LoginModal.tsx`).
-        - Favicon peramban web (`index.html`).
+      - **Penyelarasan Indikator Status Baca Kartu Modul (`Beranda.tsx` & `Belajar.tsx`)**:
+        - Memindahkan indikator status baca (*Belum dibaca* / *Sudah dibaca*) dari kotak pill terpisah di atas kartu ke baris bawah footer kartu, persis di pojok kiri berhadapan dengan tombol *"Baca Modul →"*.
+        - Menghilangkan badge kotak/square berlatar belakang, menampilkannya sebagai teks bersih (*text only*) yang ringkas dan rapi (`font-medium text-[#526D82]` untuk belum dibaca, `text-emerald-600` untuk sudah dibaca).
+    - **Penerapan Logo Resmi JagaRuang (Dual Mode: Biru untuk Cerah, Putih untuk Gelap)**:
+      - Menghapus logo emas versi lama sesuai arahan pengguna.
+      - Memproses dan menetapkan 2 varian logo perisai geometris resmi dengan pemotongan presisi (*cropped*) tanpa sisa padding kosong:
+        - **Logo Biru (`/logo-blue.png`)**: Digunakan untuk permukaan posisi cerah/terang (Navbar Landing Page `bg-white`, Topbar Mobile `bg-white`, Modal Login `bg-white`, dan Favicon peramban `index.html`).
+        - **Logo Putih (`/logo-white.png`)**: Digunakan untuk permukaan posisi gelap (Header Sidebar Dashboard `bg-[#526D82]`).
     - **Pembaruan Sandi Rahasia Keluarga & Rekomendasi 2x2 Sandi Campuran (Sandi.tsx)**:
       - Menghapus pill teks pengingat di dalam kotak tampilan sandi besar sesuai instruksi pengguna, menjaga tampilan visual sandi utama bersih dan fokus.
       - Menghapus tombol toggle visibilitas sandi (*Rahasiakan Sandi* / *Rahasiakan*) dari kotak sandi utama maupun header rekomendasi sesuai permintaan pengguna, sehingga teks sandi selalu terlihat jelas dan langsung dapat disalin atau ditetapkan.
@@ -71,10 +73,14 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
         - Memadukan huruf kapital, huruf kecil, dan angka (misalnya `Lentera79Samudra`, `kopi88Garuda`, `Elang2026Rembulan`, dan `99KasturiLembah`).
         - Dilengkapi tombol interaktif **Tetapkan Sandi** (berubah menjadi `[✓ Ditetapkan]` saat aktif) untuk menetapkan pilihan ke kotak utama dengan satu klik.
         - Tombol **Acak Opsi Baru** (`RefreshCw`) untuk menghasilkan 4 kombinasi campuran baru secara instan kapan saja.
+      - **Accordion Kolapsibel SOP Tindakan Telepon Darurat**:
+        - Mengubah 3 kartu statis panjang menjadi daftar accordion interaktif yang ringkas (`SOP_STEPS`), menghemat ruang vertikal halaman secara signifikan.
+        - Menghilangkan badge kotak nomor hitam (`[ 01 ]`), menggantinya dengan penomoran teks sejajar langsung dengan judul (*"1. Jangan Langsung Panik"*, *"2. Tanyakan Sandi Rahasia"*, *"3. Tolak & Verifikasi Mandiri"*).
+        - Menambahkan ikon panah kanan `>` (`ChevronRight`) di ujung kanan header yang berotasi 90° ke bawah saat baris diklik untuk membuka penjelasan langkah mitigasi.
     - **Pembaruan Layout 2-Kolom & Pengaturan Tingkat Kesulitan Tantangan Kilat (Belajar.tsx)**:
       - **Tata Letak 2 Kolom Seimbang**: Mengubah tata letak cover Tantangan Kilat dari tumpukan satu kolom menjadi grid 2 kolom (`grid-cols-1 lg:grid-cols-12 gap-6 items-stretch`).
       - **Kolom Kiri (Kartu Hero Gelap - `lg:col-span-5`)**:
-        - Kartu biru dongker (`#27374D`) dengan header dinamis `TANTANGAN KILAT`, badge mode (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`), judul waktu dinamis (`180 Detik`, `120 Detik`, `60 Detik`), pill timer, 10 pesan uji, indikator on-device, tombol *"Mulai Sekarang"*, dan estimasi kecepatan menjawab.
+        - Kartu biru dongker (`#27374D`) dengan header dinamis `TANTANGAN KILAT`, badge mode (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`), judul waktu dinamis (`180 Detik`, `120 Detik`, `60 Detik`), tombol *"Mulai Sekarang"*, dan estimasi kecepatan menjawab. Menghapus 3 badge pill indikator (*Timer*, *10 Soal Uji Visual*, *Pilihan Yes / No*) agar tata letak kartu hero lebih rapi dan tingginya sejajar presisi dengan kartu di sebelah kanan.
         - **Pratinjau Visual Soal & Tipografi Header Viral "QUIZ KILAT"**:
           - Mengisi area tengah kartu hero yang sebelumnya kosong dengan wadah visual interaktif berlatar belakang pencahayaan ambient radial glow (sky, amber, indigo).
           - Menyajikan kartu tangkapan layar simulasi nyata dari soal kuis (SMS Phishing perbankan dengan tautan palsu dan WhatsApp kurir pengirim malware `.apk`) yang dimiringkan bersilangan (`-rotate-6` dan `rotate-6`) dengan respons hover dinamis.

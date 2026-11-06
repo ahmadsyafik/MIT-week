@@ -58,10 +58,10 @@ export default function LoginModal() {
           <X className="h-5 w-5" />
         </button>
 
-        {/* Header Modal */}
+        {/* Header Modal (Posisi Cerah: Logo Biru) */}
         <div className="flex items-center gap-3 mb-4">
           <img
-            src="/logo.png"
+            src="/logo-blue.png"
             alt="Logo JagaRuang"
             className="h-11 w-11 object-contain shrink-0"
           />

@@ -595,34 +595,28 @@ export default function Beranda() {
                     to={`/belajar?tab=modul&module=${m.id}`}
                     className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer space-y-4"
                   >
-                    <div className="space-y-3">
-                      {/* Baris Atas: Status Baca di kanan */}
-                      <div className="flex items-center justify-end">
-                        {isRead ? (
-                          <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200/60">
-                            Sudah dibaca
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-500">
-                            Belum dibaca
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Judul & Deskripsi */}
-                      <div className="space-y-1">
-                        <h3 className="text-sm sm:text-base font-bold text-[#27374D] leading-snug group-hover:text-blue-900 transition-colors">
-                          {m.title}
-                        </h3>
-                        <p className="text-xs text-[#526D82] leading-relaxed line-clamp-2">
-                          {m.summary}
-                        </p>
-                      </div>
+                    {/* Judul & Deskripsi */}
+                    <div className="space-y-1.5">
+                      <h3 className="text-sm sm:text-base font-bold text-[#27374D] leading-snug group-hover:text-blue-900 transition-colors">
+                        {m.title}
+                      </h3>
+                      <p className="text-xs text-[#526D82] leading-relaxed line-clamp-2">
+                        {m.summary}
+                      </p>
                     </div>
 
-                    {/* Footer: Aksi */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-[11px] text-[#526D82]">
-                      <span className="text-[11px] font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
+                    {/* Footer: Status di kiri pojok & Aksi Baca Modul di kanan */}
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                      {isRead ? (
+                        <span className="font-medium text-emerald-600">
+                          Sudah dibaca
+                        </span>
+                      ) : (
+                        <span className="font-medium text-[#526D82]">
+                          Belum dibaca
+                        </span>
+                      )}
+                      <span className="font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
                         Baca Modul <ChevronRight className="h-3 w-3" />
                       </span>
                     </div>

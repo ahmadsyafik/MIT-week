@@ -166,19 +166,14 @@ export default function Lindungi() {
         {/* KALIMAT PEMBUKA LAYAR DARURAT (SESUAI ATURAN KETAT FE-4.1)          */}
         {/* Menekankan melapor secepat mungkin, JANGAN menjanjikan dana kembali. */}
         {/* =================================================================== */}
-        <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50/70 p-4 sm:p-5 text-rose-950 space-y-2 shadow-2xs">
-          <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-rose-900">
-            <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0" />
-            <span>Prinsip Utama Tindakan Darurat: Kecepatan Waktu Adalah Kunci</span>
+        <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50/70 p-4 sm:p-5 text-rose-950 shadow-2xs">
+          <div className="flex items-start gap-2.5">
+            <AlertTriangle className="h-4.5 w-4.5 text-rose-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-rose-900/95 leading-relaxed">
+              <strong className="font-bold text-rose-950">Catatan Penting:</strong> Pelaporan resmi bertujuan untuk memutus akses pelaku dan membekukan rekening penampung.{" "}
+              <strong>Tidak ada pihak yang dapat menjamin dana pasti kembali</strong>, namun melapor segera memperbesar peluang pencegahan kerugian finansial yang lebih besar.
+            </p>
           </div>
-          <p className="text-xs text-rose-900/90 leading-relaxed">
-            Jika kamu baru saja mengklik tautan mencurigakan, menginstal berkas APK, atau mentransfer uang,
-            <strong> lakukan tindakan mitigasi dalam menit-menit pertama</strong> untuk mencegah pencurian data dan pengurasan rekening lebih lanjut.
-          </p>
-          <p className="text-[11px] text-rose-800/80 leading-relaxed border-t border-rose-200/60 pt-2 font-medium">
-            *Catatan Penting: Pelaporan resmi bertujuan untuk memutus akses pelaku dan membekukan rekening penampung.
-            <strong> Tidak ada pihak yang dapat menjamin dana pasti kembali</strong>, namun melapor segera memperbesar peluang pencegahan kerugian finansial yang lebih besar.
-          </p>
         </div>
       </div>
 
