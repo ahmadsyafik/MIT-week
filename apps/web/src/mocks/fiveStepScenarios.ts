@@ -64,6 +64,11 @@ export interface FiveStepScenarioData {
     attachmentSize?: string;
     attachmentType?: "apk" | "pdf" | "jpg";
     additionalMessages?: string[]; // Pesan pembuka bertahap agar tidak tiba-tiba
+    supportingImage?: {
+      src: string;
+      caption?: string;
+      alt: string;
+    };
   };
   evidences: ScenarioInvestigationEvidence[];
   decisions: Record<number, FiveStepDecision>;
@@ -85,14 +90,19 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "+62 812-7788-9901",
     dataReference: "Kategori #10 IASC — APK via WhatsApp (Rp137,45 M) + pola Social Engineering",
     briefing: {
-      messageText: "Kami ingin mengabarkan berita bahagia dan mengundang ke pernikahan kami. Mohon buka undangan digital di aplikasi ini ya 🙏",
+      messageText: "Kami ingin mengabarkan berita bahagia dan mengundang ke pernikahan kami. Mohon buka undangan digital di aplikasi ini ya.",
       attachmentName: "Undangan_Pernikahan_Digital.apk",
       attachmentSize: "7.8 MB",
       attachmentType: "apk",
       additionalMessages: [
-        "Halo kak, salam sejahtera 🙏 Maaf mengganggu waktunya sebentar ya.",
-        "Ditunggu kehadirannya ya kak! Konfirmasi kehadirannya bisa langsung diisi di dalam aplikasinya 💐",
+        "Halo kak, salam sejahtera. Maaf mengganggu waktunya sebentar ya.",
+        "Ditunggu kehadirannya ya kak! Konfirmasi kehadirannya bisa langsung diisi di dalam aplikasinya.",
       ],
+      supportingImage: {
+        src: "/simulator/k1-invitation.svg",
+        caption: "Undangan_Digital_Dimas_Sarah.jpg",
+        alt: "Foto Kartu Undangan Pernikahan Digital",
+      },
     },
     evidences: [
       {
@@ -131,7 +141,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
             label: "Langsung unduh & buka file undangan tersebut",
             reason: "Penasaran dan tidak enak menolak undangan.",
             userReply: "Iya kak terima kasih undangannya, langsung aku unduh dan buka ya.",
-            attackerReply: "Sip mantap kak! Nanti kalau ada peringatan di layar HP, klik 'Izinkan' atau 'Tetap Pasang' aja ya biar aplikasinya kebuka 🙏",
+            attackerReply: "Sip mantap kak! Nanti kalau ada peringatan di layar HP, klik 'Izinkan' atau 'Tetap Pasang' aja ya biar aplikasinya kebuka.",
             consequence: "File langsung diunduh dan dibuka. Kamu tidak sempat menanyakan apa pun ke pengirim.",
             nextStep: 3,
           },
@@ -140,7 +150,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
             label: "Balas chat dan tanyakan siapa pengirimnya untuk memastikan",
             reason: "Tidak mau membuka apa pun sebelum tahu siapa pengirimnya.",
             userReply: "Halo kak, terima kasih. Mohon maaf ini dari siapa ya? Karena nomornya belum tersimpan di kontak saya.",
-            attackerReply: "Lah masa kamu lupa sih kak? Ini calon pengantin teman seangkatan SMA kita dulu hehe 😅 Masa nomor kawan sendiri lupa. Buruan dibuka ya kak aplikasinya sebelum link kuotanya penuh.",
+            attackerReply: "Lah masa kamu lupa sih kak? Ini calon pengantin teman seangkatan SMA kita dulu. Masa nomor kawan sendiri lupa. Buruan dibuka ya kak aplikasinya sebelum link kuotanya penuh.",
             consequence: "Kamu membalas chat untuk memastikan identitas pengirim sebelum membuka file apa pun.",
             nextStep: 2,
           },
@@ -158,7 +168,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       2: {
         id: 2,
         stepTitle: "Keputusan 2",
-        scenarioPrompt: 'Pengirim membalas: "Lah masa lupa, ini calon pengantin dari SMA kita dulu, buruan dibuka undangannya sebelum kuota link-nya penuh ya 😅". Apa langkahmu?',
+        scenarioPrompt: 'Pengirim membalas: "Lah masa lupa, ini calon pengantin dari SMA kita dulu, buruan dibuka undangannya sebelum kuota link-nya penuh ya". Apa langkahmu?',
         senderRole: "attacker",
         options: {
           A: {
@@ -350,14 +360,19 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "+62 877-4409-1234",
     dataReference: "Kategori #10 IASC — APK via WhatsApp + #2 Mengaku Pihak Lain (Rp1,54 T, terbesar kedua)",
     briefing: {
-      messageText: "Kak, paket Anda gagal terkirim karena alamat kurang jelas, lihat foto buktinya di sini ya 📦",
+      messageText: "Kak, paket Anda gagal terkirim karena alamat kurang jelas, lihat foto buktinya di sini ya.",
       attachmentName: "Foto_Resi_Paket.jpg.apk",
       attachmentSize: "6.4 MB",
       attachmentType: "apk",
       additionalMessages: [
         "Selamat siang kak, ini dari kurir ekspedisi pengantaran paket logistik.",
-        "Tolong dicek sekarang ya kak biar kurir kami bisa langsung jalan kirim ke alamat rumah hari ini 🙏",
+        "Tolong dicek sekarang ya kak biar kurir kami bisa langsung jalan kirim ke alamat rumah hari ini.",
       ],
+      supportingImage: {
+        src: "/simulator/k2-resi-kurir.svg",
+        caption: "Foto_Bukti_Resi_Paket.jpg",
+        alt: "Foto Lembar Resi & Paket Gagal Kirim",
+      },
     },
     evidences: [
       {
@@ -396,7 +411,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
             label: "Langsung unduh & buka file Foto_Resi_Paket.jpg.apk",
             reason: "Penasaran, takut ada paket penting yang benar-benar tertahan.",
             userReply: "Waduh ada paket apa ya? Langsung saya unduh dan buka fotonya sekarang.",
-            attackerReply: "Oke kak langsung dibuka ya, nanti kalau sistem minta konfirmasi penginstalan, klik 'Setuju' biar gambar resi dan lokasinya muncul 🙏",
+            attackerReply: "Oke kak langsung dibuka ya, nanti kalau sistem minta konfirmasi penginstalan, klik 'Setuju' biar gambar resi dan lokasinya muncul.",
             consequence: "File langsung diunduh dan dibuka. Kamu tidak sempat mengecek status pengiriman ke mana pun.",
             nextStep: 3,
           },
@@ -405,7 +420,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
             label: "Balas chat dan tanyakan nama penerima serta alamat lengkap paket",
             reason: "Tidak merasa sedang menunggu paket apa pun belakangan ini.",
             userReply: "Tunggu sebentar, saya tidak sedang memesan barang. Saya akan cek status nomor resi di aplikasi resmi ekspedisi terlebih dahulu.",
-            attackerReply: "Lah masa nggak ada kak, ini baru masuk sistem kami kemarin kok. Coba buka fotonya dulu deh biar tahu pengirimnya dari siapa 😅",
+            attackerReply: "Lah masa nggak ada kak, ini baru masuk sistem kami kemarin kok. Coba buka fotonya dulu deh biar tahu pengirimnya dari siapa.",
             consequence: "Kamu membuka aplikasi ekspedisi resmi dan mengecek nomor resi sendiri — ternyata tidak ada paket atas namanya.",
             nextStep: 2,
           },
@@ -423,7 +438,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       2: {
         id: 2,
         stepTitle: "Keputusan 2",
-        scenarioPrompt: 'Balasan lanjutan dari kurir: "Lah masa nggak ada, ini baru masuk sistem kami kemarin, coba update aplikasi pelacakan ini ya biar muncul datanya 😅". Apa langkahmu?',
+        scenarioPrompt: 'Balasan lanjutan dari kurir: "Lah masa nggak ada, ini baru masuk sistem kami kemarin, coba update aplikasi pelacakan ini ya biar muncul datanya". Apa langkahmu?',
         senderRole: "attacker",
         options: {
           A: {
@@ -621,8 +636,13 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       attachmentType: "pdf",
       additionalMessages: [
         "Halo kak! Kami dari tim HRD agensi digital melihat profil Anda yang sangat potensial untuk posisi freelance.",
-        "Untuk verifikasi slot dan ID Card karyawan, silakan transfer Rp150.000 untuk biaya administrasi sistem ya kak 🙏",
+        "Untuk verifikasi slot dan ID Card karyawan, silakan transfer Rp150.000 untuk biaya administrasi sistem ya kak.",
       ],
+      supportingImage: {
+        src: "/simulator/k3-loker-id.svg",
+        caption: "ID_Card_HRD_Clarissa.jpg",
+        alt: "Kartu ID Recruiter & Penawaran Freelance",
+      },
     },
     evidences: [
       {
@@ -882,9 +902,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     briefing: {
       messageText: "Selamat siang Bapak/Ibu nasabah, saya dari Divisi Keamanan Bank X. Sistem kami mendeteksi transaksi transfer mencurigakan sebesar Rp4.500.000 keluar dari rekening Anda.",
       additionalMessages: [
-        "📞 Panggilan Suara Masuk: Layanan Keamanan Kartu & Transaksi Bank...",
+        "[Panggilan Suara Masuk] Layanan Keamanan Kartu & Transaksi Bank...",
         "Demi membatalkan transaksi tidak sah ini, kami baru saja mengirimkan 6 digit kode pengamanan via SMS. Mohon sebutkan kodenya segera.",
       ],
+      supportingImage: {
+        src: "/simulator/k4-bank-notice.svg",
+        caption: "Surat_Notifikasi_Anomali_Transaksi.jpg",
+        alt: "Surat Peringatan Transaksi Ilegal Bank",
+      },
     },
     evidences: [
       {
@@ -1148,9 +1173,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       attachmentSize: "2.1 MB",
       attachmentType: "jpg",
       additionalMessages: [
-        "Hai kamu! Gimana harinya? Sibuk banget ya belakangan ini? 😊",
-        "Kalau kamu mau coba, nanti aku ajarin langkahnya dari awal kok, modal kecil dulu aja biar kamu ngerasain hasilnya barengan 💕",
+        "Hai kamu! Gimana harinya? Sibuk banget ya belakangan ini?",
+        "Kalau kamu mau coba, nanti aku ajarin langkahnya dari awal kok, modal kecil dulu aja biar kamu ngerasain hasilnya barengan.",
       ],
+      supportingImage: {
+        src: "/simulator/k5-trading-profit.svg",
+        caption: "Bukti_Profit_Trading_Harian.jpg",
+        alt: "Tangkapan Layar Portofolio Kripto Profit",
+      },
     },
     evidences: [
       {
@@ -1189,7 +1219,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
             label: "Transfer modal awal ke link platform investasi kripto yang direkomendasikan",
             reason: "Percaya penuh karena hubungan yang sudah terasa dekat selama ini.",
             userReply: "Boleh banget! Aku percaya sama kamu, ini aku coba transfer modal awal Rp500.000 ke akun tradingnya.",
-            attackerReply: "Keren banget sayang! Nanti kalau saldo depositnya sudah masuk akun, aku kasih sinyal jam berapa harus pasang ya 💕",
+            attackerReply: "Keren banget sayang! Nanti kalau saldo depositnya sudah masuk akun, aku kasih sinyal jam berapa harus pasang ya.",
             consequence: "Dana awal langsung ditransfer ke platform yang direkomendasikan.",
             nextStep: 3,
           },
@@ -1198,7 +1228,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
             label: "Minta bukti izin resmi OJK atau Bappebti sebelum mempertimbangkan investasi",
             reason: "Keputusan finansial sebesar ini perlu dicek legalitasnya dulu, siapa pun yang menawarkan.",
             userReply: "Kelihatannya menarik, tapi boleh tahu nama perusahaannya? Aku mau cek legalitas izinnya di OJK dulu ya.",
-            attackerReply: "Tenang aja sayang, platform ini induknya di luar negeri dan pakai enkripsi aman kok. Aku udah narik profit 3 kali lancar banget, masa kamu ragu sama aku? 🥺",
+            attackerReply: "Tenang aja sayang, platform ini induknya di luar negeri dan pakai enkripsi aman kok. Aku udah narik profit 3 kali lancar banget, masa kamu ragu sama aku?",
             consequence: "Kamu mengecek nama platform di situs resmi OJK dan tidak menemukannya dalam daftar yang terdaftar/berizin.",
             nextStep: 2,
           },
@@ -1207,7 +1237,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
             label: "Tolak tegas ajakan transfer investasi dan blokir kontak perkenalan tersebut",
             reason: "Modus pertemanan daring yang tiba-tiba mengarahkan transfer dana adalah ciri Pig Butchering.",
             userReply: "Saya tidak tertarik dengan skema investasi titip dana atau trading titipan. Komunikasi ini saya hentikan.",
-            attackerReply: "Kok kamu tiba-tiba dingin gini sih? Aku kan cuma mau kita sukses finansial bareng... Kenapa kontakku malah diblokir? 😢",
+            attackerReply: "Kok kamu tiba-tiba dingin gini sih? Aku kan cuma mau kita sukses finansial bareng... Kenapa kontakku malah diblokir?",
             consequence: "Keputusan matang! Kamu berhasil menghindari jebakan manipulasi emosional (Pig Butchering) sebelum kerugian finansial terjadi.",
             nextStep: "EndingA",
           },
@@ -1216,7 +1246,7 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       2: {
         id: 2,
         stepTitle: "Keputusan 2",
-        scenarioPrompt: 'Balasan lanjutan kenalan: "Itu baru listing kok, aku juga pakai sejak awal dan udah untung banyak. Buruan sebelum slot promonya kehabisan ya sayang 🥹". Apa langkahmu?',
+        scenarioPrompt: 'Balasan lanjutan kenalan: "Itu baru listing kok, aku juga pakai sejak awal dan udah untung banyak. Buruan sebelum slot promonya kehabisan ya sayang". Apa langkahmu?',
         senderRole: "attacker",
         options: {
           A: {
@@ -1410,9 +1440,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     briefing: {
       messageText: "Sistem keamanan mendeteksi aktivitas login mencurigakan. Akun Anda dijadwalkan akan ditangguhkan permanen dalam 24 jam.",
       additionalMessages: [
-        "🚨 [Pemberitahuan Darurat] Keamanan Akun Terancam Penutupan Sepihak.",
+        "[Pemberitahuan Darurat] Keamanan Akun Terancam Penutupan Sepihak.",
         "Segera konfirmasi kepemilikan Anda melalui tautan verifikasi sebelum akses Anda diputus permanen: secure-auth-portal.net/verify",
       ],
+      supportingImage: {
+        src: "/simulator/k6-voucher-hadiah.svg",
+        caption: "Official_Security_Notice.jpg",
+        alt: "Pemberitahuan Darurat Penangguhan Akun",
+      },
     },
     evidences: [
       {
@@ -1675,9 +1710,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       attachmentSize: "850 KB",
       attachmentType: "pdf",
       additionalMessages: [
-        "🎉 SELAMAT! Akun media sosial Anda terpilih sebagai pemenang program undian Berkah Akhir Tahun!",
+        "SELAMAT! Akun media sosial Anda terpilih sebagai pemenang program undian Berkah Akhir Tahun!",
         "Untuk klaim resi pengiriman unit ke alamat Anda, mohon bayar biaya administrasi pajak hadiah sebesar Rp 350.000 ke bendahara panitia dalam 1 jam ya kak!",
       ],
+      supportingImage: {
+        src: "/simulator/k7-security-warning.svg",
+        caption: "Sertifikat_Pemenang_Undian.jpg",
+        alt: "Surat Resmi Pemenang Gebyar Hadiah",
+      },
     },
     evidences: [
       {
@@ -1943,6 +1983,11 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         "Halo kak, terima kasih sudah menghubungi admin toko elektronik cuci gudang resmi!",
         "Stok promo flash sale tinggal 1 unit kak dan banyak yang antre. Kalau mau, langsung transfer sekarang biar langsung kami kirim siang ini!",
       ],
+      supportingImage: {
+        src: "/simulator/k8-flash-sale.svg",
+        caption: "Katalog_Flash_Sale_70.jpg",
+        alt: "Katalog Promo Cuci Gudang 70%",
+      },
     },
     evidences: [
       {

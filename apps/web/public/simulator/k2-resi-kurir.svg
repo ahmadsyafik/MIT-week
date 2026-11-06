@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="resiBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F4F4F6" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="#E2E8F0" rx="16" />
+  
+  <rect x="30" y="25" width="540" height="350" fill="url(#resiBg)" rx="10" stroke="#CBD5E1" stroke-width="1.5" />
+  
+  <rect x="30" y="25" width="540" height="60" fill="#DC2626" rx="10" />
+  <rect x="30" y="65" width="540" height="20" fill="#DC2626" />
+  <text x="50" y="62" font-family="sans-serif" font-size="22" font-weight="900" fill="#FFFFFF" letter-spacing="1">J&amp;X EXPRESS LOGISTICS</text>
+  <text x="550" y="62" text-anchor="end" font-family="sans-serif" font-size="12" font-weight="bold" fill="#FEF2F2">SURAT BUKTI PENGIRIMAN</text>
+
+  <rect x="45" y="100" width="510" height="36" fill="#FEE2E2" stroke="#FCA5A5" rx="6" />
+  <circle cx="65" cy="118" r="8" fill="#DC2626" />
+  <text x="65" y="122" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">!</text>
+  <text x="85" y="122" font-family="sans-serif" font-size="12" font-weight="bold" fill="#991B1B">STATUS: GAGAL KIRIM — ALAMAT TIDAK DITEMUKAN / PENERIMA TIDAK DI RUMAH</text>
+
+  <g transform="translate(45, 150)">
+    <rect x="0" y="0" width="300" height="45" fill="#FFFFFF" stroke="#E2E8F0" />
+    <path d="M10 5 v35 M15 5 v35 M22 5 v35 M26 5 v35 M34 5 v35 M42 5 v35 M48 5 v35 M58 5 v35 M64 5 v35 M74 5 v35 M82 5 v35 M94 5 v35 M102 5 v35 M114 5 v35 M122 5 v35 M134 5 v35 M144 5 v35 M156 5 v35 M166 5 v35 M178 5 v35 M190 5 v35 M204 5 v35 M218 5 v35 M230 5 v35 M244 5 v35 M256 5 v35 M270 5 v35 M284 5 v35" stroke="#1E293B" stroke-width="2.5" />
+    <text x="150" y="58" text-anchor="middle" font-family="monospace" font-size="11" font-weight="bold" fill="#475569">NO. RESI: JX-88492019-ID</text>
+  </g>
+
+  <g transform="translate(370, 150)">
+    <rect x="0" y="0" width="185" height="65" fill="#F8FAFC" stroke="#E2E8F0" rx="6" />
+    <text x="10" y="20" font-family="sans-serif" font-size="10" font-weight="bold" fill="#64748B">BERAT / TIPE:</text>
+    <text x="10" y="38" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1E293B">1.4 KG (ELEKTRONIK)</text>
+    <text x="10" y="54" font-family="sans-serif" font-size="10" fill="#DC2626">KURIR: EDI WAHYUDI</text>
+  </g>
+
+  <rect x="45" y="225" width="510" height="85" fill="#F8FAFC" stroke="#E2E8F0" rx="6" />
+  <text x="60" y="248" font-family="sans-serif" font-size="11" font-weight="bold" fill="#334155">Penerima: +62 877-4409-XXXX (Nama disamarkan)</text>
+  <text x="60" y="268" font-family="sans-serif" font-size="11" fill="#64748B">Alamat Tujuan: Jl. Mawar No. 14, RT 03/05 (Catatan kurir: Gang tidak tertera di GPS)</text>
+  <text x="60" y="292" font-family="sans-serif" font-size="11" font-weight="bold" fill="#DC2626">Catatan Sistem: Buka file lampiran Foto_Resi_Paket.jpg.apk untuk verifikasi GPS ulang</text>
+
+  <circle cx="500" cy="335" r="28" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="3,2" opacity="0.6" />
+  <text x="500" y="338" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="bold" fill="#DC2626" opacity="0.7">VERIFIKASI KURIR</text>
+</svg>

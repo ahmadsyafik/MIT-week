@@ -47,6 +47,20 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Membagi layout dashboard pengguna menjadi 2 baris grid terkoordinasi (`items-stretch`):
         - **Baris 1**: Kolom kiri (*Welcome Back* + *Modul Pembelajaran*) dan kolom kanan (*Pintasan Simulator*). Wadah *Pintasan Simulator* kini meregang penuh (`h-full justify-between`) dengan preview chat responsif (`min-h-[160px] max-h-[220px]`), sehingga ujung garis bawahnya sejajar presisi dengan ujung bawah kartu *Modul Pembelajaran*.
         - **Baris 2**: Kolom kiri (*Activities* – Grafik Pembelajaran Mingguan) dan kolom kanan (*Kamus & Modus Populer*). Wadah *Kamus & Modus Populer* meregang penuh (`h-full justify-between`) dengan daftar istilah terdistribusi proporsional, sehingga ujung garis bawahnya sejajar presisi dengan ujung bawah kartu grafik *Activities*.
+    - **Pembersihan Total Emoticon & Emoji Slop (Anti-Slop Cleanliness)**:
+      - Menghapus 100% karakter emoji, emotikon, dan simbol unicode slop di seluruh antarmuka web, komponen simulator, panduan tindakan, serta data skenario (total 38 kemunculan dieliminasi hingga tersisa 0).
+      - Menghilangkan badge emoji pada halaman Keterbatasan (`⚡`, `🛡️`, `🔍`, `🧪`) dan menggantinya dengan teks clean berbobot profesional.
+      - Menghilangkan emoji pada judul notifikasi dan prompt simulator di `FakeChatSimulator.tsx` (`🔒`, `⚠️`, `🛡️`, `📌`, `💬`).
+      - Menghilangkan emoji pada broadcast warning template di `actionGuides.ts` (`🚨`).
+      - Mengganti simbol teks mentah seperti unicode star `★` dan checkmark `✓`/`✕` di `Belajar.tsx` dan `Lindungi.tsx` dengan komponen ikon vektor SVG berstandar desain sistem (`<Star />`, `<Check />`, `<X />`).
+      - Membersihkan sapaan dan balasan chat skenario di `fiveStepScenarios.ts` dari emoji berlebihan (`🙏`, `💐`, `📦`, `😅`, `💕`, `🥺`, `😢`, `🥹`, dll.) untuk menghasilkan gaya komunikasi yang serius, realistis, dan berkelas.
+    - **Penyempurnaan & Kompaksi Baris Bawah Kartu Skenario Simulator (Belajar.tsx)**:
+      - Menata ulang proporsi baris estimasi dan tombol aksi di bagian bawah kartu skenario (`SimulatorCover`) agar tidak lagi terpotong atau terbungkus menjadi 2 baris (*anti-wrapping*).
+      - Menambahkan `whitespace-nowrap` dan `leading-none` pada durasi `~2 Mnt` serta ikon jam mikro (`h-3 w-3`) sehingga label estimasi tampil rapi dalam 1 baris.
+      - Menyesuaikan teks tombol kapsul aksi menjadi `Mulai` dengan ikon panah di lingkaran putih (persis referensi Nike), mencegah teks tombol terputus menjadi dua baris dan menjaga perbandingan ruang tetap proporsional pada grid 4 kolom.
+    - **Penyederhanaan Lencana Media Kartu Skenario Simulator (Belajar.tsx)**:
+      - Menghapus lencana rating `4.9` di pojok kanan atas kartu yang tidak relevan dengan skenario keamanan.
+      - Memindahkan lencana nama kanal komunikasi (misal: `WhatsApp`) langsung ke pojok kiri atas sebagai satu-satunya lencana utama yang bersih dan berkelas (*clean frosted glass*).
   - **Redesain Total Komposisi Visual 3D Hero (React Three Fiber & Drei)**:
     - Konsep tunggal terpadu: **"iPhone sebagai hero, orbit sebagai aksesori halus"**.
     - **Model Prosedural iPhone 15/16 Pro (`IPhone.tsx`)**: Dibuat 100% secara prosedural dengan material titanium natural (`metalness 0.96`, `roughness 0.26`), layar depan glossy dengan Dynamic Island kapsul, tombol titanium (Action, Volume, Power), kaca frosted belakang, dan modul kamera 3 lensa Pro (outer titanium ring, inner dark bezel, glass lens, True Tone flash, serta LiDAR).

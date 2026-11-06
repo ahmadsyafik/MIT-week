@@ -1661,21 +1661,10 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
                   </div>
                 )}
 
-                {/* Floating Badges: Top-Left (ID & Kanal) */}
-                <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5">
-                  <span className="rounded-full bg-black/45 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-black text-amber-300 border border-white/20 uppercase tracking-wider shadow-xs">
-                    {sc.id.toUpperCase()}
-                  </span>
+                {/* Floating Badge: Pojok Kiri (Kanal: WhatsApp, dll.) */}
+                <div className="absolute top-2.5 left-2.5 z-10">
                   <span className="rounded-full bg-black/45 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/20 shadow-xs">
                     {sc.channel}
-                  </span>
-                </div>
-
-                {/* Floating Badge: Top-Right (Tingkat / Rating) */}
-                <div className="absolute top-2.5 right-2.5 z-10">
-                  <span className="rounded-full bg-black/45 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/20 shadow-xs flex items-center gap-1">
-                    <Star className="h-2.5 w-2.5 fill-amber-300 text-amber-300" />
-                    <span>4.9</span>
                   </span>
                 </div>
 
@@ -1689,33 +1678,33 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
               </div>
 
               {/* Bagian Tengah: Judul & Deskripsi Skenario */}
-              <div className="pt-3.5 pb-1 px-0.5 flex-1 flex flex-col justify-between">
+              <div className="pt-3 pb-0.5 px-0.5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-[#27374D] group-hover:text-[#1e2b3d] line-clamp-1 tracking-tight leading-snug">
+                  <h3 className="text-sm sm:text-base font-bold text-[#27374D] group-hover:text-[#1e2b3d] line-clamp-1 tracking-tight leading-snug">
                     {sc.title}
                   </h3>
-                  <p className="text-xs text-[#526D82] line-clamp-2 leading-relaxed min-h-[34px] mt-1 font-normal">
+                  <p className="text-[11px] sm:text-xs text-[#526D82] line-clamp-2 leading-relaxed min-h-[32px] mt-0.5 font-normal">
                     {sc.description}
                   </p>
                 </div>
 
-                {/* Bagian Bawah: Durasi & Tombol Aksi Kapsul "Mulai Simulasi →" */}
-                <div className="pt-3 flex items-center justify-between border-t border-[#E7DFD5] mt-3">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-[#526D82] uppercase tracking-wider">
+                {/* Bagian Bawah: Durasi & Tombol Aksi Kapsul "Mulai →" (Kompak & Rapi Bebas Line-Break) */}
+                <div className="pt-2.5 flex items-center justify-between border-t border-[#E7DFD5] mt-2.5 gap-2">
+                  <div className="flex flex-col shrink-0 min-w-0">
+                    <span className="text-[9px] font-bold text-[#526D82] uppercase tracking-wider leading-none">
                       Estimasi
                     </span>
-                    <span className="text-sm sm:text-base font-extrabold text-[#27374D] flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5 text-amber-500 inline" />
-                      ~{sc.duration}
-                    </span>
+                    <div className="text-xs font-extrabold text-[#27374D] flex items-center gap-1 whitespace-nowrap mt-1 leading-none">
+                      <Clock className="h-3 w-3 text-amber-500 shrink-0" />
+                      <span>~{sc.duration}</span>
+                    </div>
                   </div>
 
-                  {/* Tombol Kapsul Modern persis referensi "Buy Now →" */}
-                  <div className="inline-flex items-center gap-2 pl-3.5 pr-1.5 py-1.5 rounded-full bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md">
-                    <span className="text-xs font-bold tracking-wide">Mulai Simulasi</span>
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#27374D] group-hover:translate-x-0.5 transition-transform shadow-2xs">
-                      <ArrowRight className="h-3 w-3" />
+                  {/* Tombol Kapsul Proporsional persis referensi "Buy Now →" */}
+                  <div className="inline-flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-full bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md shrink-0 whitespace-nowrap">
+                    <span className="text-[11px] font-bold tracking-wide leading-none">Mulai</span>
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#27374D] group-hover:translate-x-0.5 transition-transform shadow-2xs shrink-0">
+                      <ArrowRight className="h-2.5 w-2.5" />
                     </span>
                   </div>
                 </div>
@@ -3126,13 +3115,23 @@ function KilatPage({
                           #{idx + 1} · {item.source}
                         </span>
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] ${
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                             isCorrect
                               ? "bg-emerald-100 text-emerald-800"
                               : "bg-rose-100 text-rose-800"
                           }`}
                         >
-                          {isCorrect ? "✓ Keputusan Tepat" : "✕ Kurang Tepat"}
+                          {isCorrect ? (
+                            <>
+                              <Check className="h-2.5 w-2.5 stroke-[3]" />
+                              <span>Keputusan Tepat</span>
+                            </>
+                          ) : (
+                            <>
+                              <X className="h-2.5 w-2.5 stroke-[3]" />
+                              <span>Kurang Tepat</span>
+                            </>
+                          )}
                         </span>
                       </div>
                       <p className="text-[#27374D] font-medium leading-relaxed">

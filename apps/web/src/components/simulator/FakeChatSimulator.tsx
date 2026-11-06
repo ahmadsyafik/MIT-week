@@ -27,6 +27,9 @@ import {
   Users,
   Compass,
   FastForward,
+  Eye,
+  X,
+  Image as ImageIcon,
 } from "lucide-react";
 import { addNotification } from "../../lib/notificationService";
 import {
@@ -44,6 +47,11 @@ interface ChatMessage {
     name: string;
     size?: string;
     type: "apk" | "pdf" | "jpg";
+  };
+  image?: {
+    src: string;
+    caption?: string;
+    alt: string;
   };
   systemCard?: {
     type: "warning" | "danger" | "success" | "call" | "consequence";
@@ -94,6 +102,11 @@ export function FakeChatSimulator({
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [copiedFlag, setCopiedFlag] = useState(false);
   const [showEvidenceDrawer, setShowEvidenceDrawer] = useState(false);
+  const [activeLightboxImage, setActiveLightboxImage] = useState<{
+    src: string;
+    caption?: string;
+    alt: string;
+  } | null>(null);
   const [decisionHistory, setDecisionHistory] = useState<Array<{ decisionId: number; choice: "A" | "B" | "C" }>>([]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -198,6 +211,15 @@ export function FakeChatSimulator({
         : undefined,
     };
 
+    const supportingImageMsg: ChatMessage | null = currentScenario.briefing.supportingImage
+      ? {
+          id: `msg-open-img-${Date.now()}`,
+          sender: senderRole,
+          timestamp: "09:41",
+          image: currentScenario.briefing.supportingImage,
+        }
+      : null;
+
     const followUpMsg: ChatMessage | null = addl[1]
       ? {
           id: `msg-open-follow-${Date.now()}`,
@@ -209,7 +231,9 @@ export function FakeChatSimulator({
 
     // Aksi lompat instan jika pengguna ingin mempercepat pembukaan
     fastForwardActionRef.current = () => {
-      const allMsgs = [initialSystemMsg, openingGreetingMsg, mainMessage];
+      const allMsgs = [initialSystemMsg, openingGreetingMsg];
+      if (supportingImageMsg) allMsgs.push(supportingImageMsg);
+      allMsgs.push(mainMessage);
       if (followUpMsg) allMsgs.push(followUpMsg);
       setMessages(allMsgs);
       setIsTyping(false);
@@ -230,38 +254,80 @@ export function FakeChatSimulator({
       setMessages((prev) => [...prev, openingGreetingMsg]);
     }, 1500);
 
-    // 3. Tanda mengetik pesan utama dan berkas lampiran
-    addTimeout(() => {
-      setIsTyping(true);
-      setTypingText(`${currentScenario.senderName} sedang mengirim berkas...`);
-    }, 2200);
-
-    // 4. Balon pesan utama masuk
-    addTimeout(() => {
-      setIsTyping(false);
-      setMessages((prev) => [...prev, mainMessage]);
-    }, 3800);
-
-    if (followUpMsg) {
-      // 5. Pesan pengiring/dorongan psikologis
+    if (supportingImageMsg) {
+      // 3. Penipu mengunggah foto bukti / gambar pendukung
       addTimeout(() => {
         setIsTyping(true);
-        setTypingText(`${currentScenario.senderName} sedang mengetik...`);
-      }, 4400);
+        setTypingText(`${currentScenario.senderName} sedang mengirim gambar pendukung...`);
+      }, 2100);
 
-      // 6. Balon pengiring masuk dan buka pilihan keputusan 1
       addTimeout(() => {
         setIsTyping(false);
-        setMessages((prev) => [...prev, followUpMsg]);
-        setCurrentDecisionId(1);
-        fastForwardActionRef.current = null;
-      }, 5700);
+        setMessages((prev) => [...prev, supportingImageMsg]);
+      }, 3400);
+
+      // 4. Penipu mengirim pesan utama dan lampiran berkas
+      addTimeout(() => {
+        setIsTyping(true);
+        setTypingText(`${currentScenario.senderName} sedang mengirim berkas...`);
+      }, 4000);
+
+      addTimeout(() => {
+        setIsTyping(false);
+        setMessages((prev) => [...prev, mainMessage]);
+      }, 5300);
+
+      if (followUpMsg) {
+        // 5. Pesan pengiring/dorongan psikologis
+        addTimeout(() => {
+          setIsTyping(true);
+          setTypingText(`${currentScenario.senderName} sedang mengetik...`);
+        }, 5900);
+
+        addTimeout(() => {
+          setIsTyping(false);
+          setMessages((prev) => [...prev, followUpMsg]);
+          setCurrentDecisionId(1);
+          fastForwardActionRef.current = null;
+        }, 7200);
+      } else {
+        addTimeout(() => {
+          setIsTyping(false);
+          setCurrentDecisionId(1);
+          fastForwardActionRef.current = null;
+        }, 5800);
+      }
     } else {
+      // Alur tanpa gambar pendukung
+      addTimeout(() => {
+        setIsTyping(true);
+        setTypingText(`${currentScenario.senderName} sedang mengirim berkas...`);
+      }, 2200);
+
       addTimeout(() => {
         setIsTyping(false);
-        setCurrentDecisionId(1);
-        fastForwardActionRef.current = null;
-      }, 4400);
+        setMessages((prev) => [...prev, mainMessage]);
+      }, 3800);
+
+      if (followUpMsg) {
+        addTimeout(() => {
+          setIsTyping(true);
+          setTypingText(`${currentScenario.senderName} sedang mengetik...`);
+        }, 4400);
+
+        addTimeout(() => {
+          setIsTyping(false);
+          setMessages((prev) => [...prev, followUpMsg]);
+          setCurrentDecisionId(1);
+          fastForwardActionRef.current = null;
+        }, 5700);
+      } else {
+        addTimeout(() => {
+          setIsTyping(false);
+          setCurrentDecisionId(1);
+          fastForwardActionRef.current = null;
+        }, 4400);
+      }
     }
   };
 
@@ -701,6 +767,42 @@ export function FakeChatSimulator({
                       </p>
                     )}
 
+                    {/* Gambar / Foto Bukti Pendukung */}
+                    {msg.image && (
+                      <div className="rounded-xl overflow-hidden border border-[#9DB2BF]/50 bg-[#F8FAFC] mt-1 shadow-xs">
+                        <div
+                          className="relative cursor-pointer group/img overflow-hidden"
+                          onClick={() => setActiveLightboxImage(msg.image!)}
+                        >
+                          <img
+                            src={msg.image.src}
+                            alt={msg.image.alt || "Gambar Pendukung"}
+                            className="w-full max-h-[220px] object-cover object-top transition-transform duration-300 group-hover/img:scale-105"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="bg-black/75 text-white text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-xs shadow-md">
+                              <Eye className="h-3.5 w-3.5 text-amber-300" />
+                              <span>Klik untuk perbesar</span>
+                            </span>
+                          </div>
+                          <div className="absolute top-2 right-2">
+                            <span className="bg-black/60 text-white text-[9px] font-mono px-2 py-0.5 rounded-full backdrop-blur-xs border border-white/20">
+                              Foto Lampiran
+                            </span>
+                          </div>
+                        </div>
+                        {msg.image.caption && (
+                          <div className="px-3 py-1.5 bg-white border-t border-[#9DB2BF]/30 flex items-center justify-between text-[11px] text-[#526D82]">
+                            <span className="font-medium truncate">{msg.image.caption}</span>
+                            <span className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.2 rounded font-bold ml-2 shrink-0">
+                              Bukti Skenario
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Lampiran Dokumen/File */}
                     {msg.attachment && (
                       <div className="rounded-xl border border-rose-200 bg-rose-50/70 p-3 space-y-2 mt-2">
@@ -787,7 +889,7 @@ export function FakeChatSimulator({
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold text-[#526D82] hover:text-[#27374D] bg-white/90 hover:bg-white border border-[#9DB2BF]/50 shadow-xs cursor-pointer transition-all ml-2"
                 >
                   <FastForward className="h-3 w-3 text-amber-600" />
-                  <span>Percepat ⏩</span>
+                  <span>Percepat</span>
                 </button>
               )}
             </div>

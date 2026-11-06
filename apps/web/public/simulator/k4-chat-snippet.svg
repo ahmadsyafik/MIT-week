@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" width="100%" height="100%">
+  <defs>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#27374D" />
+      <stop offset="100%" stop-color="#1E2B3D" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1" />
+    </filter>
+  </defs>
+
+  <!-- Background Wallpaper Chat Lembut -->
+  <rect width="480" height="320" fill="#ECE5DD" rx="20" />
+  
+  <!-- Subtle pattern dots -->
+  <g opacity="0.15">
+    <circle cx="40" cy="80" r="1.5" fill="#000" /><circle cx="120" cy="80" r="1.5" fill="#000" /><circle cx="200" cy="80" r="1.5" fill="#000" /><circle cx="280" cy="80" r="1.5" fill="#000" /><circle cx="360" cy="80" r="1.5" fill="#000" /><circle cx="440" cy="80" r="1.5" fill="#000" />
+    <circle cx="80" cy="140" r="1.5" fill="#000" /><circle cx="160" cy="140" r="1.5" fill="#000" /><circle cx="240" cy="140" r="1.5" fill="#000" /><circle cx="320" cy="140" r="1.5" fill="#000" /><circle cx="400" cy="140" r="1.5" fill="#000" />
+    <circle cx="40" cy="200" r="1.5" fill="#000" /><circle cx="120" cy="200" r="1.5" fill="#000" /><circle cx="200" cy="200" r="1.5" fill="#000" /><circle cx="280" cy="200" r="1.5" fill="#000" /><circle cx="360" cy="200" r="1.5" fill="#000" /><circle cx="440" cy="200" r="1.5" fill="#000" />
+    <circle cx="80" cy="260" r="1.5" fill="#000" /><circle cx="160" cy="260" r="1.5" fill="#000" /><circle cx="240" cy="260" r="1.5" fill="#000" /><circle cx="320" cy="260" r="1.5" fill="#000" /><circle cx="400" cy="260" r="1.5" fill="#000" />
+  </g>
+
+  <!-- Top Phone Chat Header Bar -->
+  <rect width="480" height="54" fill="url(#headerGrad)" rx="0" />
+  
+  <!-- Avatar -->
+  <circle cx="30" cy="27" r="16" fill="#F59E0B" />
+  <text x="30" y="32" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">?</text>
+
+  <!-- Sender Text Info -->
+  <text x="56" y="23" font-family="sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">Pusat Investigasi Fraud Bank</text>
+  <text x="56" y="39" font-family="sans-serif" font-size="9" fill="#9DB2BF">Panggilan Masuk • Spoofing 1500888</text>
+
+  <!-- Scenario Badge Pill on Top Right -->
+  <rect x="375" y="15" width="88" height="24" rx="12" fill="#000000" fill-opacity="0.5" stroke="#FFFFFF" stroke-opacity="0.2" />
+  <text x="419" y="31" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="bold" fill="#FCD34D">Skenario K4</text>
+
+  <!-- Chat Message Bubble Container -->
+  <g transform="translate(20, 68)" filter="url(#shadow)">
+    <!-- Main Bubble -->
+    <rect width="380" height="195" fill="#FFFFFF" rx="14" />
+    
+    <!-- Bubble tail -->
+    <path d="M -8 14 L 0 8 L 0 24 Z" fill="#FFFFFF" />
+
+    <!-- Chat Text Content -->
+    <text x="14" y="24" font-family="sans-serif" font-size="11.5" fill="#1F2937">Terdeteksi transaksi mencurigakan Rp 4.500.000. </text>
+    <text x="14" y="42" font-family="sans-serif" font-size="11.5" fill="#1F2937">Sebutkan 6 digit SMS verifikasi untuk blokir.</text>
+    
+
+    
+    <!-- Photo Attachment Preview Mini -->
+    <g transform="translate(14, 54)">
+      <rect width="352" height="62" rx="8" fill="#F1F5F9" stroke="#E2E8F0" />
+      <rect x="6" y="6" width="50" height="50" rx="6" fill="#3B82F6" opacity="0.8" />
+      <text x="31" y="35" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="bold" fill="#FFFFFF">IMG</text>
+      <text x="68" y="26" font-family="sans-serif" font-size="10.5" font-weight="bold" fill="#1E293B">Surat_Notifikasi_Anomali.jpg</text>
+      <text x="68" y="44" font-family="sans-serif" font-size="9" fill="#64748B">Peringatan Transaksi Ilegal Bank Nasional</text>
+    </g>
+    
+
+    
+
+    <text x="366" y="186" text-anchor="end" font-family="sans-serif" font-size="9" fill="#9CA3AF">09:41</text>
+  </g>
+
+  
+  <!-- Bottom Warning Banner -->
+  <g transform="translate(20, 276)">
+    <rect width="440" height="28" rx="6" fill="#FFFBEB" stroke="#FDE68A" />
+    <text x="14" y="18" font-family="sans-serif" font-size="9.5" font-weight="bold" fill="#B45309">Peringatan: Pihak bank resmi tidak pernah meminta kode OTP via telepon</text>
+  </g>
+  
+</svg>
