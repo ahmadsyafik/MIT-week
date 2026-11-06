@@ -10,18 +10,18 @@ export const HERO_3D_CONFIG = {
 
   // 2. PALET WARNA (Titanium Natural, Slate-50 / DDE6ED Screen, Emerald & Red Accents)
   colors: {
-    // Titanium Natural (iPhone 15/16 Pro - abu hangat titanium)
-    titaniumFrame: "#969087",      // Warm natural titanium
-    titaniumHighlight: "#C7C4BF",
-    titaniumDark: "#4D4943",
-    // Screen (DDE6ED latar dashboard JagaRuang)
-    screenBg: "#DDE6ED",
-    screenBezel: "#0F172A",
-    // Back matte frosted glass (Titanium Slate)
-    backGlass: "#2A3644",
-    cameraPlateau: "#1E2733",
-    cameraLensRing: "#A8A49E",
-    cameraLensGlass: "#0B111D",
+    // Midnight Space Black Frame (sesuai mockup UI ponsel JagaRuang #0E1726)
+    titaniumFrame: "#0E1726",
+    titaniumHighlight: "#223763",
+    titaniumDark: "#080D15",
+    // Screen (F3F5F8 latar bersih dashboard mockup)
+    screenBg: "#F3F5F8",
+    screenBezel: "#080D15",
+    // Back matte frosted glass
+    backGlass: "#0E1726",
+    cameraPlateau: "#080D15",
+    cameraLensRing: "#27374D",
+    cameraLensGlass: "#050910",
     // Orbit ring (Slate kebiruan berdimensi 3D)
     orbitRing: "#7E92A2",
     orbitEmissive: "#3B4E5E",

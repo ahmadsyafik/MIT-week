@@ -81,40 +81,32 @@ function IPhoneComponent({ scale = 1 }: IPhoneProps) {
         )}
       </mesh>
 
-      {/* 4. Dynamic Island HORIZONTAL (Floating Item Hitam Horizontal di Atas Layar) */}
-      <group position={[0, dimensions.phoneHeight / 2 - 0.24, dimensions.phoneDepth / 2 + 0.016]}>
-        {/* Kapsul Hitam Horizontal: dirotasi 90 derajat (Math.PI / 2) pada sumbu Z agar mendatar */}
-        <mesh rotation={[0, 0, Math.PI / 2]}>
-          <capsuleGeometry args={[0.046, 0.36, 6, 12]} />
-          <meshBasicMaterial color="#000000" />
-        </mesh>
-        {/* Lensa Kamera Depan Kecil */}
-        <mesh position={[-0.11, 0, 0.002]}>
-          <circleGeometry args={[0.016, 12]} />
-          <meshBasicMaterial color="#1E293B" />
-        </mesh>
-      </group>
+      {/* 4. Earpiece Speaker Slit di Bezel Atas Layar */}
+      <mesh position={[0, dimensions.screenHeight / 2 + 0.035, dimensions.phoneDepth / 2 + 0.006]}>
+        <boxGeometry args={[0.28, 0.018, 0.008]} />
+        <meshBasicMaterial color="#050910" />
+      </mesh>
 
       {/* 5. Tombol Samping iPhone */}
       {/* Action Button */}
       <mesh position={[-dimensions.phoneWidth / 2 - 0.015, 1.25, 0]}>
         <boxGeometry args={[0.03, 0.15, 0.06]} />
-        <meshStandardMaterial color={colors.titaniumFrame} metalness={0.9} roughness={0.35} />
+        <meshStandardMaterial color={colors.titaniumHighlight} metalness={0.85} roughness={0.32} />
       </mesh>
       {/* Volume Up */}
       <mesh position={[-dimensions.phoneWidth / 2 - 0.015, 0.82, 0]}>
         <boxGeometry args={[0.03, 0.32, 0.06]} />
-        <meshStandardMaterial color={colors.titaniumFrame} metalness={0.9} roughness={0.35} />
+        <meshStandardMaterial color={colors.titaniumHighlight} metalness={0.85} roughness={0.32} />
       </mesh>
       {/* Volume Down */}
       <mesh position={[-dimensions.phoneWidth / 2 - 0.015, 0.40, 0]}>
         <boxGeometry args={[0.03, 0.32, 0.06]} />
-        <meshStandardMaterial color={colors.titaniumFrame} metalness={0.9} roughness={0.35} />
+        <meshStandardMaterial color={colors.titaniumHighlight} metalness={0.85} roughness={0.32} />
       </mesh>
       {/* Power Button */}
       <mesh position={[dimensions.phoneWidth / 2 + 0.015, 0.65, 0]}>
         <boxGeometry args={[0.03, 0.5, 0.06]} />
-        <meshStandardMaterial color={colors.titaniumFrame} metalness={0.9} roughness={0.35} />
+        <meshStandardMaterial color={colors.titaniumHighlight} metalness={0.85} roughness={0.32} />
       </mesh>
 
       {/* 6. Punggung Belakang iPhone & Kamera Pro */}
