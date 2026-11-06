@@ -19,10 +19,12 @@ import {
   Star,
   Lock,
   ExternalLink,
+  Clock,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Disclaimer } from "../components/ui";
 import ThreeHeroCanvas from "../components/ThreeHeroCanvas";
+import { LEARNING_MODULES } from "./Belajar";
 
 // Data Modul Pintasan (Item 6)
 const MODULE_SHORTCUTS = [
@@ -121,8 +123,17 @@ const FAQ_ITEMS = [
 export default function Beranda() {
   const { user, isAuthenticated, openLoginModal } = useAuth();
 
-
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+
+  // Status modul yang sudah dibaca (tersinkronisasi dengan localStorage dari Belajar.tsx)
+  const [readModules] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("jagaruang_read_modules");
+      return saved ? JSON.parse(saved) : ["m3", "m6"];
+    } catch {
+      return ["m3", "m6"];
+    }
+  });
 
   // =========================================================================
   // KONDISI 1: PENGUNJUNG BELUM LOGIN (LANDING PAGE PERSIS SEPERTI VIDEO REFERENSI)
@@ -488,19 +499,19 @@ export default function Beranda() {
   // =========================================================================
   return (
     <div className="space-y-6">
-      {/* Grid Dashboard 2 Kolom (Persis seperti layout di referensi) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* =================================================================== */}
-        {/* SISI KIRI (lg:col-span-7 xl:col-span-8): ITEM 1, 6, 4               */}
-        {/* =================================================================== */}
-        <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+      {/* =================================================================== */}
+      {/* BARIS 1: WELCOME BACK & MODUL PEMBELAJARAN (KIRI) + PINTASAN SIMULATOR (KANAN) */}
+      {/* Ujung bawah Pintasan Simulator sejajar persis dengan ujung bawah Modul */}
+      {/* =================================================================== */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Sisi Kiri (lg:col-span-7 xl:col-span-8): Welcome Back & Modul Pembelajaran */}
+        <div className="lg:col-span-7 xl:col-span-8 flex flex-col justify-between space-y-6">
           {/* --------------------------------------------------------------- */}
           {/* 1. WELCOME BACK BANNER                                           */}
           {/* --------------------------------------------------------------- */}
           <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div className="space-y-2 max-w-md z-10">
-
                 <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">
                   Welcome Back !
                 </h1>
@@ -562,69 +573,153 @@ export default function Beranda() {
           </div>
 
           {/* --------------------------------------------------------------- */}
-          {/* 6. PINTASAN MENUJU MODUL (3 KARTU KURSUS PERSIS SEPERTI GAMBAR)  */}
+          {/* 6. PINTASAN MENUJU MODUL PEMBELAJARAN (PERSIS SEPERTI GAMBAR)   */}
           {/* --------------------------------------------------------------- */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-base sm:text-lg font-bold text-[#27374D]">Modul Pembelajaran</h2>
-              <Link to="/belajar?tab=simulator" className="text-xs font-bold text-[#526D82] hover:text-[#27374D] transition-colors">
-                Lihat Semua Kasus →
+              <Link to="/belajar?tab=modul" className="text-xs font-bold text-[#526D82] hover:text-[#27374D] transition-colors">
+                Lihat Semua Modul →
               </Link>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {MODULE_SHORTCUTS.map((m) => {
+              {LEARNING_MODULES.slice(0, 3).map((m) => {
                 const Icon = m.icon;
+                const isRead = readModules.includes(m.id);
                 return (
                   <Link
                     key={m.id}
-                    to={m.scenarioId ? `/belajar?tab=simulator&scenario=${m.scenarioId}` : `/belajar?tab=simulator`}
-                    className="group flex flex-col justify-between rounded-2xl border border-[#9DB2BF]/50 bg-white p-4 hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer"
+                    to={`/belajar?tab=modul&module=${m.id}`}
+                    className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer space-y-4"
                   >
                     <div className="space-y-3">
-                      {/* Ilustrasi Thumbnail Modul */}
-                      <div className={`flex h-28 w-full items-center justify-center rounded-xl bg-gradient-to-br ${m.accent} border border-[#9DB2BF]/40 relative overflow-hidden group-hover:scale-[1.02] transition-transform`}>
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-[#526D82] border border-[#9DB2BF]/50 shadow-xs">
-                          <Icon className="h-6 w-6" />
+                      {/* Baris Atas: Ikon di kiri, Status Baca di kanan */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-[#526D82] border border-slate-200 group-hover:bg-[#DDE6ED]/60 group-hover:text-[#27374D] transition-colors">
+                          <Icon className="h-4 w-4" />
                         </div>
-                        <span className="absolute top-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold text-[#526D82] border border-[#9DB2BF]/50 shadow-2xs">
-                          {m.badge}
-                        </span>
+
+                        {isRead ? (
+                          <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200/60">
+                            Sudah dibaca
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-500">
+                            Belum dibaca
+                          </span>
+                        )}
                       </div>
 
-                      {/* Judul & Keterangan */}
-                      <div>
-                        <h3 className="text-sm font-bold text-[#27374D] group-hover:text-[#526D82] transition-colors line-clamp-1">
+                      {/* Kategori Modul (Huruf Kapital Ringkas) */}
+                      <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#526D82]">
+                        {m.category}
+                      </div>
+
+                      {/* Judul & Deskripsi */}
+                      <div className="space-y-1">
+                        <h3 className="text-sm sm:text-base font-bold text-[#27374D] leading-snug group-hover:text-blue-900 transition-colors">
                           {m.title}
                         </h3>
-                        <p className="text-[11px] text-[#526D82] mt-0.5">{m.author}</p>
+                        <p className="text-xs text-[#526D82] leading-relaxed line-clamp-2">
+                          {m.summary}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Stats Bawah: Langkah, Durasi, Progres */}
-                    <div className="pt-4 border-t border-[#9DB2BF]/30 mt-3 flex items-center justify-between text-[11px] text-[#526D82]">
-                      <div className="flex items-center gap-1">
-                        <Compass className="h-3.5 w-3.5 text-[#9DB2BF]" />
-                        <span>{m.steps} Kasus</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <CalendarIcon className="h-3.5 w-3.5 text-[#9DB2BF]" />
+                    {/* Footer: Waktu Baca & Aksi */}
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-[#526D82]">
+                      <span className="flex items-center gap-1 font-medium">
+                        <Clock className="h-3 w-3" />
                         <span>{m.duration}</span>
-                      </div>
-                      <div className="flex items-center gap-1 font-bold text-[#27374D]">
-                        <span>{m.progress}%</span>
-                      </div>
+                      </span>
+                      <span className="text-[11px] font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
+                        Baca Modul <ChevronRight className="h-3 w-3" />
+                      </span>
                     </div>
                   </Link>
                 );
               })}
             </div>
           </div>
+        </div>
 
+        {/* Sisi Kanan (lg:col-span-5 xl:col-span-4): Pintasan Simulator Aktif */}
+        <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
+          {/* --------------------------------------------------------------- */}
+          {/* 2. PINTASAN SIMULATOR AKTIF (SELARAS PERSIS UJUNG BAWAH MODUL)   */}
+          {/* --------------------------------------------------------------- */}
+          <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs flex flex-col justify-between h-full space-y-4">
+            {/* Header Pintasan */}
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50 shadow-xs">
+                <Smartphone className="h-4 w-4" />
+              </span>
+              <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
+                Pintasan Simulator
+              </span>
+            </div>
+
+            {/* Gambar Cuplikan Chat Skenario K1 */}
+            <div className="relative overflow-hidden rounded-2xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/40 shadow-xs group/thumb flex-1 min-h-[160px] max-h-[220px]">
+              <img
+                src="/simulator/k1-chat-snippet.png"
+                alt="Cuplikan Chat Simulator K1"
+                className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/thumb:scale-[1.02]"
+              />
+              <div className="absolute top-2.5 right-2.5">
+                <span className="rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-amber-300 border border-white/10 shadow-xs">
+                  Skenario K1
+                </span>
+              </div>
+            </div>
+
+            {/* Judul & Keterangan Skenario */}
+            <div className="space-y-1.5">
+              <h3 className="text-lg sm:text-xl font-black text-[#27374D] tracking-tight">
+                Undangan Pernikahan APK
+              </h3>
+              <p className="text-xs text-[#526D82] leading-relaxed">
+                Simulasi keputusan saat menerima pesan berformat .apk dari nomor tak dikenal.
+              </p>
+            </div>
+
+            {/* Info Status / Metadata Bar */}
+            <div className="pt-3 border-t border-[#9DB2BF]/30 flex items-center justify-between text-xs text-[#526D82]">
+              <div className="flex items-center gap-1.5">
+                <Compass className="h-3.5 w-3.5 text-[#9DB2BF]" />
+                <span className="text-[11px] font-medium">Durasi: ~2 Menit</span>
+              </div>
+              <span className="rounded-full bg-[#DDE6ED] px-2.5 py-0.5 text-[10px] font-bold text-[#27374D] border border-[#9DB2BF]/50">
+                Tingkat Dasar
+              </span>
+            </div>
+
+            {/* Tombol Aksi Menuju Simulator */}
+            <Link to="/belajar?tab=simulator&scenario=k1" className="block pt-1">
+              <button
+                type="button"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#27374D] hover:bg-[#1e2b3d] text-white py-2.5 px-4 text-xs font-bold transition-all shadow-md active:scale-[0.99] cursor-pointer"
+              >
+                <span>Lanjutkan Simulasi</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* =================================================================== */}
+      {/* BARIS 2: ACTIVITIES (KIRI) + KAMUS & MODUS POPULER (KANAN)         */}
+      {/* Ujung bawah Kamus sejajar persis dengan ujung bawah Activities    */}
+      {/* =================================================================== */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Sisi Kiri (lg:col-span-7 xl:col-span-8): Grafik Pembelajaran Mingguan */}
+        <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
           {/* --------------------------------------------------------------- */}
           {/* 4. GRAFIK PEMBELAJARAN DALAM SEMINGGU (ACTIVITIES WAVE CHART)    */}
           {/* --------------------------------------------------------------- */}
-          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col justify-between h-full space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <h3 className="text-base font-bold text-[#27374D]">Activities</h3>
@@ -730,82 +825,19 @@ export default function Beranda() {
           </div>
         </div>
 
-        {/* =================================================================== */}
-        {/* SISI KANAN (lg:col-span-5 xl:col-span-4): ITEM 2 & 3                 */}
-        {/* =================================================================== */}
-        <div className="lg:col-span-5 xl:col-span-4 space-y-6">
+        {/* Sisi Kanan (lg:col-span-5 xl:col-span-4): Kamus & Modus Populer */}
+        <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
           {/* --------------------------------------------------------------- */}
-          {/* 2. PINTASAN SIMULATOR AKTIF (SELARAS DENGAN WELCOME BACK)        */}
+          {/* 3. RINGKASAN KAMUS KATA YANG POPULAR (SELARAS UJUNG ACTIVITIES)  */}
           {/* --------------------------------------------------------------- */}
-          <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs flex flex-col justify-between space-y-4">
-            {/* Header Pintasan */}
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50 shadow-xs">
-                <Smartphone className="h-4 w-4" />
-              </span>
-              <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                Pintasan Simulator
-              </span>
-            </div>
-
-            {/* Gambar Cuplikan Chat Skenario K1 */}
-            <div className="relative overflow-hidden rounded-2xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/40 shadow-xs group/thumb">
-              <img
-                src="/simulator/k1-chat-snippet.png"
-                alt="Cuplikan Chat Simulator K1"
-                className="w-full h-40 sm:h-44 object-cover object-top transition-transform duration-300 group-hover/thumb:scale-[1.02]"
-              />
-              <div className="absolute top-2.5 right-2.5">
-                <span className="rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-amber-300 border border-white/10 shadow-xs">
-                  Skenario K1
-                </span>
-              </div>
-            </div>
-
-            {/* Judul & Keterangan Skenario */}
-            <div className="space-y-1.5">
-              <h3 className="text-lg sm:text-xl font-black text-[#27374D] tracking-tight">
-                Undangan Pernikahan APK
-              </h3>
-              <p className="text-xs text-[#526D82] leading-relaxed">
-                Simulasi keputusan saat menerima pesan berformat .apk dari nomor tak dikenal.
-              </p>
-            </div>
-
-            {/* Info Status / Metadata Bar */}
-            <div className="pt-3 border-t border-[#9DB2BF]/30 flex items-center justify-between text-xs text-[#526D82]">
-              <div className="flex items-center gap-1.5">
-                <Compass className="h-3.5 w-3.5 text-[#9DB2BF]" />
-                <span className="text-[11px] font-medium">Durasi: ~2 Menit</span>
-              </div>
-              <span className="rounded-full bg-[#DDE6ED] px-2.5 py-0.5 text-[10px] font-bold text-[#27374D] border border-[#9DB2BF]/50">
-                Tingkat Dasar
-              </span>
-            </div>
-
-            {/* Tombol Aksi Menuju Simulator */}
-            <Link to="/belajar?tab=simulator&scenario=k1" className="block pt-1">
-              <button
-                type="button"
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#27374D] hover:bg-[#1e2b3d] text-white py-2.5 px-4 text-xs font-bold transition-all shadow-md active:scale-[0.99] cursor-pointer"
-              >
-                <span>Lanjutkan Simulasi</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </Link>
-          </div>
-
-          {/* --------------------------------------------------------------- */}
-          {/* 3. RINGKASAN KAMUS KATA YANG POPULAR (UPCOMING TASK LIST)        */}
-          {/* --------------------------------------------------------------- */}
-          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col justify-between h-full space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-[#27374D]">Kamus & Modus Populer</h3>
               <span className="text-[11px] text-[#526D82]">Diperbarui Mingguan</span>
             </div>
 
             {/* List Istilah */}
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1 flex flex-col justify-between">
               {POPULAR_TERMS.map((term) => {
                 const TermIcon = term.icon;
                 return (

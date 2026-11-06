@@ -249,7 +249,7 @@ export function mockBuildWarningCard(analysis?: AnalysisResult): WarningCard {
     ? analysis.modus.join(", ")
     : "Manipulasi Kontak / Rekayasa Sosial";
 
-  const text = `🚨 PERINGATAN WASPADA PENIPUAN DIGITAL (JagaRuang) 🚨
+  const text = `PERINGATAN WASPADA PENIPUAN DIGITAL (JagaRuang)
 
 Halo keluarga & teman, harap waspada jika menerima pesan yang mendesak atau mencurigakan:
 

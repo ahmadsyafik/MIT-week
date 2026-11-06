@@ -169,7 +169,7 @@ export function FakeChatSimulator({
       id: "msg-0",
       sender: "system",
       timestamp: "09:40",
-      text: `🔒 Saluran komunikasi: ${currentScenario.channel} • Nomor asing (${currentScenario.senderAddress}). Berhati-hatilah terhadap tautan atau berkas.`,
+      text: `Saluran komunikasi: ${currentScenario.channel} • Nomor asing (${currentScenario.senderAddress}). Berhati-hatilah terhadap tautan atau berkas.`,
     };
 
     setMessages([initialSystemMsg]);
@@ -181,7 +181,7 @@ export function FakeChatSimulator({
       id: `msg-open-greet-${Date.now()}`,
       sender: senderRole,
       timestamp: "09:40",
-      text: addl[0] || `Halo kak, mohon maaf mengganggu waktunya sebentar 🙏`,
+      text: addl[0] || `Halo kak, mohon maaf mengganggu waktunya sebentar.`,
     };
 
     const mainMessage: ChatMessage = {
@@ -333,7 +333,7 @@ export function FakeChatSimulator({
       timestamp: "09:43",
       systemCard: {
         type: isRisky ? "warning" : "success",
-        title: isRisky ? "⚠️ Konsekuensi Tindakan Berisiko" : "🛡️ Konsekuensi Tindakan Aman & Hati-hati",
+        title: isRisky ? "Konsekuensi Tindakan Berisiko" : "Konsekuensi Tindakan Aman & Hati-hati",
         body: selectedOption.consequence,
       },
     };
@@ -355,7 +355,7 @@ export function FakeChatSimulator({
           nextDecision.senderRole === "system"
             ? {
                 type: "warning",
-                title: "⚠️ Peringatan Sistem Keamanan Perangkat",
+                title: "Peringatan Sistem Keamanan Perangkat",
                 body: nextDecision.scenarioPrompt,
               }
             : undefined,
@@ -457,7 +457,7 @@ export function FakeChatSimulator({
       {/* Label Berkas Meja Detektif (Aksen Kasual & Organik agar tidak kaku) */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-1">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-sm bg-amber-100/90 text-[#27374D] border border-amber-300/80 shadow-xs text-xs font-black rotate-[-1deg]">
-          <span>📌 BERKAS #{currentScenario.id.toUpperCase()}: {currentScenario.title}</span>
+          <span>BERKAS #{currentScenario.id.toUpperCase()}: {currentScenario.title}</span>
         </div>
         <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#526D82] bg-white/70 px-2.5 py-0.5 rounded-full border border-[#9DB2BF]/40">
           <span>Mode Simulasi Kasus Nyata</span>
@@ -589,7 +589,7 @@ export function FakeChatSimulator({
             </p>
           </div>
           <span className="text-[11px] font-mono text-[#526D82] shrink-0 hidden md:inline">
-            Scroll ke atas untuk memeriksa riwayat 💬
+            Scroll ke atas untuk memeriksa riwayat
           </span>
         </div>
 

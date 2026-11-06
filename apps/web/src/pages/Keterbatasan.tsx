@@ -132,16 +132,16 @@ export default function Keterbatasan() {
 
           <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
             <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              ⚡ Tanpa Server Aplikasi
+              Tanpa Server Aplikasi
             </span>
             <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              🛡️ Zero Cookies & Analytics
+              Zero Cookies & Analytics
             </span>
             <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              🔍 22 Aturan Heuristik L1–L5
+              22 Aturan Heuristik L1–L5
             </span>
             <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              🧪 Contoh & Skenario Fiktif
+              Contoh & Skenario Fiktif
             </span>
           </div>
         </div>

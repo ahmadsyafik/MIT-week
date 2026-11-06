@@ -38,6 +38,7 @@ import {
   Heart,
   Share2,
   Check,
+  Star,
   Copy,
   Play,
   Pause,
@@ -165,7 +166,7 @@ const SCENARIOS: ScenarioCase[] = [
     description: "File .apk menyamar sebagai undangan pernikahan digital yang dikirimkan melalui ruang obrolan WhatsApp.",
     senderName: "Admin Undangan Palsu",
     senderAddress: "+62 812-7788-9901",
-    messageText: "Kak, kami mengundang ke pernikahan kami, buka undangan digital di aplikasi ini ya 🙏 Mohon hadir dan doanya.",
+    messageText: "Kak, kami mengundang ke pernikahan kami, buka undangan digital di aplikasi ini ya. Mohon hadir dan doanya.",
     attachmentName: "Undangan_Pernikahan_Digital.apk",
     attachmentSize: "7.8 MB",
     briefing: [
@@ -750,7 +751,7 @@ const SCENARIOS: ScenarioCase[] = [
 // -----------------------------------------------------------------------------
 // 2. DATA 12 MODUL PEMBELAJARAN (SESUAI GAMBAR DESAIN)
 // -----------------------------------------------------------------------------
-interface LearningModule {
+export interface LearningModule {
   id: string;
   title: string;
   category: "Dasar Keamanan" | "Per Kanal" | "Checklist Praktis" | "Pola Kejadian Nyata" | "Setelah Kejadian";
@@ -764,7 +765,7 @@ interface LearningModule {
   takeaway: string;
 }
 
-const LEARNING_MODULES: LearningModule[] = [
+export const LEARNING_MODULES: LearningModule[] = [
   {
     id: "m1",
     title: "Apa Itu Rekayasa Sosial?",
@@ -1313,7 +1314,7 @@ export default function Belajar() {
 
   // State tampilan subhalaman khusus (null = cover)
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(() => searchParams.get("scenario") || null);
-  const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  const [activeModuleId, setActiveModuleId] = useState<string | null>(() => searchParams.get("module") || null);
   const [kilatMode, setKilatMode] = useState<"cover" | "drill">("cover");
   const [activeGlossaryId, setActiveGlossaryId] = useState<string | null>(null);
 
@@ -1354,14 +1355,18 @@ export default function Belajar() {
     if (tabParam && ["simulator", "modul", "kilat", "kamus"].includes(tabParam)) {
       if (tabParam !== activeTab) {
         setActiveTab(tabParam as TabType);
-        // Reset subhalaman saat berganti tab agar membuka cover terlebih dahulu
-        setActiveScenarioId(null);
-        setActiveModuleId(null);
+        // Buka subhalaman jika ada parameter khusus di URL
+        setActiveScenarioId(searchParams.get("scenario") || null);
+        setActiveModuleId(searchParams.get("module") || null);
         setKilatMode("cover");
         setActiveGlossaryId(null);
       }
     }
-  }, [searchParams, activeTab]);
+    const moduleParam = searchParams.get("module");
+    if (moduleParam && moduleParam !== activeModuleId) {
+      setActiveModuleId(moduleParam);
+    }
+  }, [searchParams, activeTab, activeModuleId]);
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -1503,7 +1508,14 @@ export default function Belajar() {
               <ModulPage
                 moduleId={activeModuleId}
                 isRead={readModules.includes(activeModuleId)}
-                onBack={() => setActiveModuleId(null)}
+                onBack={() => {
+                  setActiveModuleId(null);
+                  if (searchParams.has("module")) {
+                    const next = new URLSearchParams(searchParams);
+                    next.delete("module");
+                    setSearchParams(next);
+                  }
+                }}
                 onToggleRead={() => handleMarkModuleRead(activeModuleId)}
                 onNavigateTab={handleTabChange}
               />
@@ -1609,7 +1621,7 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
         </p>
       </div>
 
-      {/* Grid 8 Kartu Skenario (K1 - K8) */}
+      {/* Grid 8 Kartu Skenario (K1 - K8) - Desain Kartu Modern Sesuai Referensi Visual */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {SCENARIOS.map((sc) => {
           const Icon = sc.icon;
@@ -1617,79 +1629,96 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
             <div
               key={sc.id}
               onClick={() => onSelectScenario(sc.id)}
-              className="relative overflow-hidden rounded-2xl border border-[#9DB2BF]/50 bg-[#27374D] shadow-xs hover:border-[#526D82] hover:shadow-xl transition-all cursor-pointer group h-72 flex flex-col justify-between"
+              className="group relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
             >
-              {/* Layer 1: Background Image (dengan efek sedikit blur & kecerahan diturunkan) */}
-              <div className="absolute inset-0 overflow-hidden">
-                {sc.bgImage ? (
-                  <img
-                    src={sc.bgImage}
-                    alt={`Background ${sc.title}`}
-                    onError={(e) => {
-                      // Sembunyikan jika file bg belum ada di folder public
-                      (e.target as HTMLElement).style.display = "none";
-                    }}
-                    className="h-full w-full object-cover filter blur-[2px] brightness-75 scale-105 transition-transform duration-500 group-hover:scale-110"
-                  />
-                ) : null}
-                {/* Fallback styling background layer dengan efek blur & kecerahan diturunkan */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center filter blur-[2px] brightness-75 scale-105 transition-transform duration-500 group-hover:scale-110"
-                  style={{
-                    backgroundImage: `url('/images/simulator/bg.png'), url('/images/simulator/bg.jpg'), linear-gradient(135deg, #27374D 0%, #1e2b3d 60%, #111a24 100%)`,
-                  }}
-                />
-                {/* Overlay gelap halus */}
-                <div className="absolute inset-0 bg-black/25" />
-              </div>
-
-              {/* Layer 2: Bagian Atas Minimalis (Badge ID Skenario K1-K8) */}
-              <div className="relative z-10 p-3.5 flex items-center justify-between">
-                <span className="rounded-full bg-black/40 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-black text-amber-300 border border-white/10 uppercase tracking-widest shadow-xs">
-                  {sc.id.toUpperCase()}
-                </span>
-                <span className="rounded-full bg-black/40 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-[#DDE6ED] border border-white/10 shadow-xs">
-                  {sc.channel}
-                </span>
-              </div>
-
-              {/* Layer 3: Gambar di Tengah (Center Image - disiapkan untuk gambar yang akan diunggah) */}
-              <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-3 text-center">
+              {/* Bagian Atas: Gambar / Media Preview Card */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-[#EAE4DC] flex items-center justify-center">
                 {sc.centerImage ? (
-                  <div className="flex flex-col items-center justify-center">
-                    <div className="relative max-h-32 aspect-[1696/2528] overflow-hidden rounded-md shadow-2xl border border-white/20 transition-transform duration-300 group-hover:scale-105 bg-[#2b1f1d]">
-                      <img
-                        src={sc.centerImage}
-                        alt={sc.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <h3 className="text-xs sm:text-sm font-bold text-white drop-shadow-md leading-tight line-clamp-1 px-2 mt-2">
-                      {sc.title}
-                    </h3>
+                  <div className="w-full h-full flex items-center justify-center p-2.5 bg-[#EAE4DC] overflow-hidden">
+                    <img
+                      src={sc.centerImage}
+                      alt={sc.title}
+                      className="max-h-full max-w-full object-contain rounded-xl shadow-md transition-transform duration-500 group-hover:scale-105"
+                    />
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:bg-white/20">
-                      <Icon className="h-8 w-8 text-white/90 drop-shadow-md" />
+                  <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden p-4">
+                    {/* Background template halus dengan blur lembut */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center filter blur-[1.5px] brightness-90 scale-105 transition-transform duration-500 group-hover:scale-110"
+                      style={{
+                        backgroundImage: `url('/simulator/desk-template.jpg'), linear-gradient(135deg, #27374D 0%, #526D82 100%)`,
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-[#27374D]/25" />
+
+                    {/* Floating Center Icon Pill */}
+                    <div className="relative z-1 flex flex-col items-center justify-center space-y-1.5">
+                      <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 text-white shadow-md transition-all duration-300 group-hover:scale-110 group-hover:bg-white/40">
+                        <Icon className="h-6 w-6 text-white drop-shadow-md" />
+                      </div>
                     </div>
-                    {/* Judul Skenario */}
-                    <h3 className="text-xs sm:text-sm font-bold text-white drop-shadow-md leading-tight line-clamp-2 px-2">
-                      {sc.title}
-                    </h3>
                   </div>
                 )}
+
+                {/* Floating Badges: Top-Left (ID & Kanal) */}
+                <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5">
+                  <span className="rounded-full bg-black/45 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-black text-amber-300 border border-white/20 uppercase tracking-wider shadow-xs">
+                    {sc.id.toUpperCase()}
+                  </span>
+                  <span className="rounded-full bg-black/45 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/20 shadow-xs">
+                    {sc.channel}
+                  </span>
+                </div>
+
+                {/* Floating Badge: Top-Right (Tingkat / Rating) */}
+                <div className="absolute top-2.5 right-2.5 z-10">
+                  <span className="rounded-full bg-black/45 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/20 shadow-xs flex items-center gap-1">
+                    <Star className="h-2.5 w-2.5 fill-amber-300 text-amber-300" />
+                    <span>4.9</span>
+                  </span>
+                </div>
+
+                {/* Bottom Carousel / Card Dots Indicator (Persis Desain Referensi) */}
+                <div className="absolute bottom-2.5 inset-x-0 z-10 flex items-center justify-center gap-1.5 pointer-events-none">
+                  <span className="h-1.5 w-3.5 rounded-full bg-white shadow-xs" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-xs" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-xs" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-xs" />
+                </div>
               </div>
 
-              {/* Layer 4: Footer Aksi Bawah */}
-              <div className="relative z-10 p-3 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-center justify-between text-white/90">
-                <span className="text-[11px] font-medium text-[#DDE6ED] truncate flex items-center gap-1">
-                  <Clock className="h-3 w-3 text-amber-300" />
-                  <span>{sc.duration}</span>
-                </span>
-                <span className="text-[11px] font-bold text-white group-hover:underline flex items-center gap-0.5">
-                  Mulai Simulasi <ChevronRight className="h-3 w-3" />
-                </span>
+              {/* Bagian Tengah: Judul & Deskripsi Skenario */}
+              <div className="pt-3.5 pb-1 px-0.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-[#27374D] group-hover:text-[#1e2b3d] line-clamp-1 tracking-tight leading-snug">
+                    {sc.title}
+                  </h3>
+                  <p className="text-xs text-[#526D82] line-clamp-2 leading-relaxed min-h-[34px] mt-1 font-normal">
+                    {sc.description}
+                  </p>
+                </div>
+
+                {/* Bagian Bawah: Durasi & Tombol Aksi Kapsul "Mulai Simulasi →" */}
+                <div className="pt-3 flex items-center justify-between border-t border-[#E7DFD5] mt-3">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold text-[#526D82] uppercase tracking-wider">
+                      Estimasi
+                    </span>
+                    <span className="text-sm sm:text-base font-extrabold text-[#27374D] flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5 text-amber-500 inline" />
+                      ~{sc.duration}
+                    </span>
+                  </div>
+
+                  {/* Tombol Kapsul Modern persis referensi "Buy Now →" */}
+                  <div className="inline-flex items-center gap-2 pl-3.5 pr-1.5 py-1.5 rounded-full bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md">
+                    <span className="text-xs font-bold tracking-wide">Mulai Simulasi</span>
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#27374D] group-hover:translate-x-0.5 transition-transform shadow-2xs">
+                      <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           );
@@ -2285,7 +2314,7 @@ function SimulatorPage({
                             : "border-[#9DB2BF]"
                         }`}
                       >
-                        {isSelected && "✓"}
+                        {isSelected && <Check className="h-2.5 w-2.5 stroke-[3]" />}
                       </div>
                       <span className="leading-relaxed">{ev.label}</span>
                     </button>
@@ -2752,7 +2781,7 @@ function ModulPage({
                         : "border-[#9DB2BF]"
                     }`}
                   >
-                    {isChecked && "✓"}
+                    {isChecked && <Check className="h-2.5 w-2.5 stroke-[3]" />}
                   </div>
                   <span className="flex-1 leading-relaxed">{chk}</span>
                 </button>

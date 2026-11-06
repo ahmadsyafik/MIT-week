@@ -451,7 +451,7 @@ export default function Lindungi() {
                       }`}
                       aria-label={`Tandai langkah ${step.order} selesai`}
                     >
-                      ✓
+                      {isChecked ? <Check className="h-3.5 w-3.5 stroke-[3]" /> : null}
                     </button>
 
                     <div className="flex-1 space-y-2">

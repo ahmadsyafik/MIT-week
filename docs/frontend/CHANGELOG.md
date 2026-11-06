@@ -37,6 +37,16 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Bagian 4 (Kamus Jebakan)**: Cover pencarian istilah dan filter kategori; klik istilah membuka halaman khusus kupas tuntas modus, cara kerja, titik masuk, dan pertolongan pertama.
     - **Notifikasi & On-Device Storage**: Terintegrasi dengan sistem notifikasi progres target dan persistensi status modul lokal di `localStorage`.
     - Dashboard pengguna login tetap terjaga 100% utuh tanpa perubahan.
+  - **Penyelarasan Desain & Kesejajaran Grid Dashboard (Beranda.tsx)**:
+    - Menyelaraskan kartu bagian **Modul Pembelajaran** di Dashboard pengguna (`Beranda.tsx`) dengan desain kartu modul pembelajaran dari Hub Belajar:
+      - Mengganti kartu lama dengan modul pembelajaran riil: *Apa Itu Rekayasa Sosial?*, *Anatomi Sebuah Penipuan*, dan *Keamanan di WhatsApp*.
+      - Komposisi kartu identik referensi: wadah ikon di kiri atas, status pill "Belum dibaca" / "Sudah dibaca" tersinkronisasi dengan `localStorage` (`jagaruang_read_modules`), label kategori huruf kapital, judul tebal, ringkasan 2 baris, durasi membaca, dan aksi `Baca Modul →`.
+      - Tautan header disesuaikan menjadi `Lihat Semua Modul →` yang mengarah ke `/belajar?tab=modul`.
+      - Navigasi kartu langsung membuka materi modul yang dipilih (`/belajar?tab=modul&module={id}`) dengan dukungan tombol kembali yang mulus.
+    - **Penyelarasan Panjang & Garis Bawah Kartu Dashboard**:
+      - Membagi layout dashboard pengguna menjadi 2 baris grid terkoordinasi (`items-stretch`):
+        - **Baris 1**: Kolom kiri (*Welcome Back* + *Modul Pembelajaran*) dan kolom kanan (*Pintasan Simulator*). Wadah *Pintasan Simulator* kini meregang penuh (`h-full justify-between`) dengan preview chat responsif (`min-h-[160px] max-h-[220px]`), sehingga ujung garis bawahnya sejajar presisi dengan ujung bawah kartu *Modul Pembelajaran*.
+        - **Baris 2**: Kolom kiri (*Activities* – Grafik Pembelajaran Mingguan) dan kolom kanan (*Kamus & Modus Populer*). Wadah *Kamus & Modus Populer* meregang penuh (`h-full justify-between`) dengan daftar istilah terdistribusi proporsional, sehingga ujung garis bawahnya sejajar presisi dengan ujung bawah kartu grafik *Activities*.
   - **Redesain Total Komposisi Visual 3D Hero (React Three Fiber & Drei)**:
     - Konsep tunggal terpadu: **"iPhone sebagai hero, orbit sebagai aksesori halus"**.
     - **Model Prosedural iPhone 15/16 Pro (`IPhone.tsx`)**: Dibuat 100% secara prosedural dengan material titanium natural (`metalness 0.96`, `roughness 0.26`), layar depan glossy dengan Dynamic Island kapsul, tombol titanium (Action, Volume, Power), kaca frosted belakang, dan modul kamera 3 lensa Pro (outer titanium ring, inner dark bezel, glass lens, True Tone flash, serta LiDAR).
@@ -56,6 +66,12 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - **Kontrol Percepat Fleksibel (*Fast-Forward*)**: Menyediakan tombol "Lewati Mengetik ⏩" / "Tampilkan Langsung" agar pengguna atau penguji dapat melewati jeda waktu kapan saja tanpa hambatan.
       - **Stabilisasi Scroll Alami (*Scroll Containment & No-Bounce*)**: Menghapus penggunaan `scrollIntoView()` yang sebelumnya menyeret seluruh jendela/viewport halaman ke bawah, menonaktifkan CSS `scroll-smooth` pada kontainer chat yang memicu bug lompat ke atas (*reset to top glitch*) di peramban Chromium/Edge saat pengguna menggulir secara manual, mengintegrasikan `isNearBottomRef` agar posisi baca pengguna dihormati (tidak dipaksa melompat ke bawah saat pengguna sedang membaca pesan di atas), serta menambahkan `overscroll-contain` untuk isolasi gulir yang kokoh.
       - **Pembersihan Timer Aman (Memory-Safe)**: Mengintegrasikan `timeoutIdsRef` dan `clearAllTimeouts` untuk mencegah *race condition* atau kebocoran memori saat simulasi diulang atau berpindah skenario.
+    - **Redesain Kartu Skenario Simulator Cover Sesuai Referensi Visual ([`Belajar.tsx`](../../apps/web/src/pages/Belajar.tsx))**:
+      - Mengubah tampilan kartu skenario (K1 s.d K8) dari desain gelap kaku sebelumnya menjadi kartu modern estetik bersuasana hangat (*warm off-white* `#FAF8F5` dengan sudut lengkung halus `rounded-[28px]` dan *border* `#E7DFD5`).
+      - Bagian atas kartu memuat kotak gambar `aspect-[4/3]` berbingkai melengkung `rounded-[20px]`, dilengkapi *floating badges* bergaya *frosted glass* di sudut kiri atas (ID Kasus `K1` dan kanal komunikasi) serta sudut kanan atas (rating `★ 4.9`).
+      - Menyematkan indikator titik (*dot carousel indicator*) di dasar gambar persis referensi visual.
+      - Bagian tengah memuat judul skenario yang tegas berkontras tinggi (`#27374D`) dan deskripsi singkat 2 baris (`#526D82`).
+      - Baris bawah menampilkan estimasi durasi latih di sisi kiri dan tombol kapsul aksi *"Mulai Simulasi"* di sisi kanan lengkap dengan aksen lingkaran putih berisi ikon panah (`ArrowRight`).
     - **Pembaruan Desain & Mekanisme Simulator (Netralitas Tombol, 3 Pilihan, & Layout Organik)**:
       - **3 Pilihan Tindakan di Titik Keputusan Awal**: Mengembangkan titik keputusan awal pada seluruh skenario (K1 s.d K8) dari sebelumnya 2 pilihan menjadi **3 pilihan tindakan realistis** (Opsi A, Opsi B, dan Opsi C) mencakup reaksi impulsif, verifikasi identitas, dan tindakan pencegahan/pelaporan langsung.
       - **Tombol Keputusan 100% Netral (Bebas Spoiler Warna)**: Menghapus seluruh aksen warna hijau (`emerald`) dan merah (`rose`), badge petunjuk "Berisiko" vs "Aman & Verifikasi", serta teks indikator dalam label. Seluruh opsi kini disajikan dengan gaya visual netral seragam (`bg-white`, border abu-kebiruan `#9DB2BF`, dan badge netral `#DDE6ED` / `#27374D`) agar menguji insting objektif pengguna tanpa bias warna.
