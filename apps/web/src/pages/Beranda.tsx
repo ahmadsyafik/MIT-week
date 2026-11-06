@@ -20,6 +20,7 @@ import {
   Lock,
   ExternalLink,
   Clock,
+  Globe,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Disclaimer } from "../components/ui";
@@ -38,7 +39,6 @@ const MODULE_SHORTCUTS = [
     duration: "3 Mnt",
     progress: 80,
     accent: "from-[#DDE6ED] to-[#9DB2BF]/30",
-    badge: "Level Waspada",
     icon: Smartphone,
   },
   {
@@ -51,7 +51,6 @@ const MODULE_SHORTCUTS = [
     duration: "4 Mnt",
     progress: 40,
     accent: "from-[#DDE6ED] to-[#526D82]/20",
-    badge: "Risiko Tinggi",
     icon: Search,
   },
   {
@@ -64,7 +63,6 @@ const MODULE_SHORTCUTS = [
     duration: "3 Mnt",
     progress: 0,
     accent: "from-[#DDE6ED] to-[#9DB2BF]/40",
-    badge: "Risiko Sangat Tinggi",
     icon: FileCode,
   },
 ];
@@ -96,6 +94,15 @@ const POPULAR_TERMS = [
     category: "Identitas",
     date: "18 Nov 2026",
     icon: Smartphone,
+    color: "bg-[#DDE6ED] text-[#27374D] border-[#9DB2BF]",
+  },
+  {
+    id: "phishing-web",
+    term: "Phishing Website",
+    desc: "Situs tiruan pencuri kredensial & PIN bank",
+    category: "Penipuan Web",
+    date: "16 Nov 2026",
+    icon: Globe,
     color: "bg-[#DDE6ED] text-[#27374D] border-[#9DB2BF]",
   },
 ];
@@ -322,9 +329,6 @@ export default function Beranda() {
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[#526D82] border border-[#9DB2BF]/50 shadow-sm">
                         <Icon className="h-7 w-7" />
                       </div>
-                      <span className="absolute top-3 right-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold text-[#526D82] border border-[#9DB2BF]/50 shadow-2xs">
-                        {m.badge}
-                      </span>
                     </div>
 
                     <div>
@@ -505,27 +509,27 @@ export default function Beranda() {
       {/* =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Sisi Kiri (lg:col-span-7 xl:col-span-8): Welcome Back & Modul Pembelajaran */}
-        <div className="lg:col-span-7 xl:col-span-8 flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-7 xl:col-span-8 flex flex-col space-y-6">
           {/* --------------------------------------------------------------- */}
           {/* 1. WELCOME BACK BANNER                                           */}
           {/* --------------------------------------------------------------- */}
-          <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-              <div className="space-y-2 max-w-md z-10">
-                <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">
+          <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-7 sm:p-8 lg:p-9 shadow-xs flex-1 flex flex-col justify-center">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 lg:gap-8">
+              <div className="space-y-3 max-w-lg z-10">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#27374D] tracking-tight">
                   Welcome Back !
                 </h1>
-                <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">
+                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
                   Latih insting pertahanan digitalmu hari ini melalui skenario interaktif dan analisis indikasi rekayasa sosial.
                 </p>
 
                 {/* Progress Bar Latihan */}
-                <div className="pt-2 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs font-semibold">
+                <div className="pt-3 sm:pt-4 space-y-2">
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-semibold">
                     <span className="text-[#27374D]">Course Progress</span>
-                    <span className="text-[#526D82] font-extrabold">82%</span>
+                    <span className="text-[#526D82] font-extrabold text-sm sm:text-base">82%</span>
                   </div>
-                  <div className="h-3 w-full overflow-hidden rounded-full bg-[#DDE6ED] border border-[#9DB2BF]/50 p-0.5">
+                  <div className="h-3.5 w-full overflow-hidden rounded-full bg-[#DDE6ED] border border-[#9DB2BF]/50 p-0.5">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-[#526D82] to-[#27374D] transition-all duration-500 shadow-xs"
                       style={{ width: "82%" }}
@@ -536,11 +540,11 @@ export default function Beranda() {
 
               {/* Ilustrasi Isometrik Buku & Topi Wisuda */}
               <div className="relative shrink-0 flex items-center justify-center sm:pr-4">
-                <div className="relative flex h-32 w-32 items-center justify-center">
-                  <div className="absolute inset-0 rounded-full bg-[#DDE6ED] blur-xl" />
+                <div className="relative flex h-36 w-36 sm:h-40 sm:w-40 items-center justify-center">
+                  <div className="absolute inset-0 rounded-full bg-[#DDE6ED] blur-2xl" />
 
                   {/* SVG Isometric Books & Graduation Hat */}
-                  <svg viewBox="0 0 160 140" className="h-32 w-32 drop-shadow-md" fill="none">
+                  <svg viewBox="0 0 160 140" className="h-36 w-36 sm:h-40 sm:w-40 drop-shadow-md" fill="none">
                     {/* Shadow Bawah */}
                     <ellipse cx="80" cy="120" rx="55" ry="14" fill="#9DB2BF" opacity="0.4" />
 
@@ -822,26 +826,26 @@ export default function Beranda() {
           {/* --------------------------------------------------------------- */}
           {/* 3. RINGKASAN KAMUS KATA YANG POPULAR (SELARAS UJUNG ACTIVITIES)  */}
           {/* --------------------------------------------------------------- */}
-          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col justify-between h-full space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col h-full">
+            <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-base font-bold text-[#27374D]">Kamus & Modus Populer</h3>
               <span className="text-[11px] text-[#526D82]">Diperbarui Mingguan</span>
             </div>
 
-            {/* List Istilah */}
-            <div className="space-y-3 flex-1 flex flex-col justify-between">
+            {/* List 4 Istilah Populer dengan Jarak Rapi & Proporsional */}
+            <div className="space-y-2.5 flex-1 flex flex-col justify-start">
               {POPULAR_TERMS.map((term) => {
                 const TermIcon = term.icon;
                 return (
                   <Link
                     key={term.id}
                     to="/belajar?tab=kamus"
-                    className="group flex items-center justify-between rounded-2xl border border-[#9DB2BF]/40 bg-white p-3 hover:border-[#526D82] hover:bg-[#DDE6ED]/30 transition-all shadow-2xs"
+                    className="group flex items-center justify-between rounded-2xl border border-[#9DB2BF]/40 bg-white p-2.5 sm:p-3 hover:border-[#526D82] hover:bg-[#DDE6ED]/30 transition-all shadow-2xs"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       {/* Thumbnail Ikon */}
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#9DB2BF]/50 bg-[#DDE6ED] text-[#27374D]">
-                        <TermIcon className="h-5 w-5" />
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#9DB2BF]/50 bg-[#DDE6ED] text-[#27374D]">
+                        <TermIcon className="h-4.5 w-4.5" />
                       </div>
                       <div className="min-w-0">
                         <h4 className="text-xs font-bold text-[#27374D] group-hover:text-[#526D82] transition-colors truncate">
@@ -860,7 +864,7 @@ export default function Beranda() {
             </div>
 
             {/* Tombol See All (Lihat Semua Kamus) */}
-            <div className="pt-1">
+            <div className="pt-3 mt-3 border-t border-[#9DB2BF]/20">
               <Link
                 to="/belajar?tab=kamus"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526D82] hover:text-[#27374D] transition-colors"

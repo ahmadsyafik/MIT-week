@@ -3249,18 +3249,7 @@ function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
             onClick={() => onSelectTerm(term.id)}
             className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-3"
           >
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${term.tagColor}`}
-                >
-                  {term.category}
-                </span>
-                <span className="text-[11px] font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
-                  Pelajari Modus <ChevronRight className="h-3 w-3" />
-                </span>
-              </div>
-
+            <div className="space-y-2">
               <h3 className="text-base font-bold text-[#27374D] group-hover:text-blue-900 transition-colors">
                 {term.name}
               </h3>
@@ -3304,12 +3293,6 @@ function KamusPage({
           <ArrowLeft className="h-4 w-4" />
           <span>Kembali ke Kamus Istilah</span>
         </button>
-
-        <span
-          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${term.tagColor}`}
-        >
-          {term.category}
-        </span>
       </div>
 
       {/* Main Container Halaman Khusus Istilah */}

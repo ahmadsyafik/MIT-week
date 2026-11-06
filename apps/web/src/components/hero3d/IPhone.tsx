@@ -21,15 +21,16 @@ function createRoundedRectGeometry(width: number, height: number, radius: number
 
   shape.moveTo(x + r, y);
   shape.lineTo(x + w - r, y);
-  shape.quadraticCurveTo(x + w, y, x + w, y + r);
+  shape.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false);
   shape.lineTo(x + w, y + h - r);
-  shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  shape.absarc(x + w - r, y + h - r, r, 0, Math.PI / 2, false);
   shape.lineTo(x + r, y + h);
-  shape.quadraticCurveTo(x, y + h, x, y + h - r);
+  shape.absarc(x + r, y + h - r, r, Math.PI / 2, Math.PI, false);
   shape.lineTo(x, y + r);
-  shape.quadraticCurveTo(x, y, x + r, y);
+  shape.absarc(x + r, y + r, r, Math.PI, (3 * Math.PI) / 2, false);
+  shape.closePath();
 
-  const geom = new THREE.ShapeGeometry(shape, 16);
+  const geom = new THREE.ShapeGeometry(shape, 12);
   const pos = geom.attributes.position;
   const uvs = new Float32Array(pos.count * 2);
   for (let i = 0; i < pos.count; i++) {
@@ -99,16 +100,16 @@ function IPhoneComponent({ scale = 1 }: IPhoneProps) {
 
       {/* 2. Bezel Layar Hitam Samping (Dipertahankan Utuh di Sekeliling Layar) */}
       <RoundedBox
-        args={[dimensions.screenWidth + 0.04, dimensions.screenHeight + 0.04, 0.012]}
+        args={[dimensions.screenWidth + 0.04, dimensions.screenHeight + 0.04, 0.004]}
         radius={dimensions.screenRadius + 0.02}
         smoothness={6}
-        position={[0, 0, dimensions.phoneDepth / 2 + 0.001]}
+        position={[0, 0, dimensions.phoneDepth / 2 + 0.002]}
       >
         <meshBasicMaterial color={colors.screenBezel} />
       </RoundedBox>
 
-      {/* 3. Bidang Layar HP: ShapeGeometry Membulat Presisi (Tanpa Sudut Siku Menembus Bodi) */}
-      <mesh geometry={screenGeometry} position={[0, 0, dimensions.phoneDepth / 2 + 0.003]}>
+      {/* 3. Bidang Layar HP: ShapeGeometry Membulat Presisi (Berada Rata & Tepat di Depan Bezel) */}
+      <mesh geometry={screenGeometry} position={[0, 0, dimensions.phoneDepth / 2 + 0.006]}>
         {texture ? (
           <meshBasicMaterial
             map={Array.isArray(texture) ? texture[0] : texture}
@@ -121,7 +122,7 @@ function IPhoneComponent({ scale = 1 }: IPhoneProps) {
       </mesh>
 
       {/* 4. Earpiece Speaker Slit di Bezel Atas Layar */}
-      <mesh position={[0, dimensions.screenHeight / 2 + 0.035, dimensions.phoneDepth / 2 + 0.006]}>
+      <mesh position={[0, dimensions.screenHeight / 2 + 0.035, dimensions.phoneDepth / 2 + 0.008]}>
         <boxGeometry args={[0.28, 0.018, 0.008]} />
         <meshBasicMaterial color="#050910" />
       </mesh>
