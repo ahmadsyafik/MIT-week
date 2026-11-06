@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
-  Menu,
-  X,
   LogOut,
   LayoutDashboard,
   Search,
@@ -82,35 +80,38 @@ function getRandomRecommendations(pool: SearchItem[], count = 5): SearchItem[] {
 
 export default function Layout() {
   const { user, isAuthenticated, logout, openLoginModal } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [recommendations, setRecommendations] = useState<SearchItem[]>([]);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const profileContainerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Tutup drawer sidebar mobile & dropdown search saat rute berpindah
+  // Tutup dropdown search & profile saat rute berpindah
   useEffect(() => {
-    setSidebarOpen(false);
     setIsSearchOpen(false);
+    setIsProfileOpen(false);
   }, [location.pathname]);
 
-  // Listener klik di luar search box untuk menutup dropdown rekomendasi
+  // Listener klik di luar search box & profile dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (searchContainerRef.current && !searchContainerRef.current.contains(target)) {
         setIsSearchOpen(false);
+      }
+      if (profileContainerRef.current && !profileContainerRef.current.contains(target)) {
+        setIsProfileOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const closeSidebar = () => setSidebarOpen(false);
-
   const handleLogout = () => {
-    closeSidebar();
+    setIsProfileOpen(false);
     logout();
   };
 
