@@ -320,18 +320,71 @@ function makeChatSnippetSvg({
     <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1" />
     </filter>
+    <pattern id="chatDoodle" width="240" height="240" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#27374D" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.11">
+        <!-- Chat Bubble -->
+        <path d="M 18 16 h 18 a 4 4 0 0 1 4 4 v 9 a 4 4 0 0 1 -4 4 h -10 l -5 4 v -4 a 4 4 0 0 1 -3 -4 v -9 a 4 4 0 0 1 4 -4 z" />
+        <line x1="23" y1="23" x2="33" y2="23" />
+        <!-- Coffee Cup -->
+        <path d="M 78 18 h 16 v 10 a 5 5 0 0 1 -5 5 h -6 a 5 5 0 0 1 -5 -5 z" />
+        <path d="M 94 21 a 3 3 0 0 1 3 3 a 3 3 0 0 1 -3 3" />
+        <line x1="75" y1="36" x2="97" y2="36" />
+        <!-- Magnifying Glass -->
+        <circle cx="145" cy="24" r="7" />
+        <line x1="150" y1="29" x2="157" y2="36" />
+        <!-- Paper Plane -->
+        <path d="M 198 34 l 18 -9 l -9 18 l -3 -6 l -6 -3 z" />
+        <line x1="216" y1="25" x2="204" y2="28" />
+        <!-- Headphones -->
+        <path d="M 22 78 a 10 10 0 0 1 20 0" />
+        <rect x="20" y="77" width="4" height="7" rx="1.5" />
+        <rect x="40" y="77" width="4" height="7" rx="1.5" />
+        <!-- Clock -->
+        <circle cx="92" cy="78" r="9" />
+        <polyline points="92 73 92 78 96 80" />
+        <!-- Padlock -->
+        <rect x="150" y="77" width="13" height="10" rx="2" />
+        <path d="M 153 77 v -4 a 3.5 3.5 0 0 1 7 0 v 4" />
+        <!-- Mail Envelope -->
+        <rect x="202" y="75" width="16" height="12" rx="2" />
+        <polyline points="203 76 210 82 217 76" />
+        <!-- Heart -->
+        <path d="M 26 132 c -4 -6 -11 0 -5 7 l 5 6 l 5 -6 c 6 -7 -1 -13 -5 -7 z" />
+        <!-- Shield -->
+        <path d="M 85 125 h 16 v 6 c 0 6 -8 11 -8 11 c 0 0 -8 -5 -8 -11 z" />
+        <!-- Camera -->
+        <rect x="142" y="126" width="18" height="13" rx="2.5" />
+        <circle cx="151" cy="132.5" r="3.5" />
+        <!-- Music Note -->
+        <ellipse cx="203" cy="136" rx="2.5" ry="2" />
+        <line x1="205.5" y1="136" x2="205.5" y2="124" />
+        <ellipse cx="214" cy="133" rx="2.5" ry="2" />
+        <line x1="216.5" y1="133" x2="216.5" y2="121" />
+        <line x1="205.5" y1="124" x2="216.5" y2="121" />
+        <!-- Smartphone -->
+        <rect x="25" y="180" width="11" height="17" rx="2" />
+        <!-- Star -->
+        <polygon points="90,178 92,183 97,183 93,186 95,191 90,188 85,191 87,186 83,183 88,183" />
+        <!-- Cloud -->
+        <path d="M 145 186 a 3.5 3.5 0 0 1 6 -1.5 a 5 5 0 0 1 9 1.5 a 3.5 3.5 0 0 1 1 6 h -15 a 3.5 3.5 0 0 1 -1 -6 z" />
+        <!-- Lightbulb -->
+        <path d="M 204 180 a 4.5 4.5 0 0 1 7 4.5 c -1 1.5 -1.8 2.5 -1.8 4 h -3.4 c 0 -1.5 -0.8 -2.5 -1.8 -4 a 4.5 4.5 0 0 1 0 -4.5 z" />
+        <!-- Accents -->
+        <path d="M 58 48 v 5 M 55.5 50.5 h 5" stroke-width="1" />
+        <path d="M 182 50 v 5 M 179.5 52.5 h 5" stroke-width="1" />
+        <path d="M 60 148 v 5 M 57.5 150.5 h 5" stroke-width="1" />
+        <circle cx="118" cy="46" r="1.5" />
+        <circle cx="125" cy="105" r="1.5" />
+        <circle cx="58" cy="100" r="1.2" />
+        <circle cx="118" cy="155" r="1.5" />
+        <circle cx="65" cy="208" r="1.5" />
+      </g>
+    </pattern>
   </defs>
 
-  <!-- Background Wallpaper Chat Lembut -->
-  <rect width="480" height="320" fill="#ECE5DD" rx="20" />
-  
-  <!-- Subtle pattern dots -->
-  <g opacity="0.15">
-    <circle cx="40" cy="80" r="1.5" fill="#000" /><circle cx="120" cy="80" r="1.5" fill="#000" /><circle cx="200" cy="80" r="1.5" fill="#000" /><circle cx="280" cy="80" r="1.5" fill="#000" /><circle cx="360" cy="80" r="1.5" fill="#000" /><circle cx="440" cy="80" r="1.5" fill="#000" />
-    <circle cx="80" cy="140" r="1.5" fill="#000" /><circle cx="160" cy="140" r="1.5" fill="#000" /><circle cx="240" cy="140" r="1.5" fill="#000" /><circle cx="320" cy="140" r="1.5" fill="#000" /><circle cx="400" cy="140" r="1.5" fill="#000" />
-    <circle cx="40" cy="200" r="1.5" fill="#000" /><circle cx="120" cy="200" r="1.5" fill="#000" /><circle cx="200" cy="200" r="1.5" fill="#000" /><circle cx="280" cy="200" r="1.5" fill="#000" /><circle cx="360" cy="200" r="1.5" fill="#000" /><circle cx="440" cy="200" r="1.5" fill="#000" />
-    <circle cx="80" cy="260" r="1.5" fill="#000" /><circle cx="160" cy="260" r="1.5" fill="#000" /><circle cx="240" cy="260" r="1.5" fill="#000" /><circle cx="320" cy="260" r="1.5" fill="#000" /><circle cx="400" cy="260" r="1.5" fill="#000" />
-  </g>
+  <!-- Background Wallpaper Chat Doodle Halus -->
+  <rect width="480" height="320" fill="#EFEAE2" rx="20" />
+  <rect width="480" height="320" fill="url(#chatDoodle)" rx="20" />
 
   <!-- Top Phone Chat Header Bar -->
   <rect width="480" height="54" fill="url(#headerGrad)" rx="0" />
@@ -343,10 +396,6 @@ function makeChatSnippetSvg({
   <!-- Sender Text Info -->
   <text x="56" y="23" font-family="sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">${senderName}</text>
   <text x="56" y="39" font-family="sans-serif" font-size="9" fill="#9DB2BF">${senderStatus}</text>
-
-  <!-- Scenario Badge Pill on Top Right -->
-  <rect x="375" y="15" width="88" height="24" rx="12" fill="#000000" fill-opacity="0.5" stroke="#FFFFFF" stroke-opacity="0.2" />
-  <text x="419" y="31" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="bold" fill="#FCD34D">${badge}</text>
 
   <!-- Chat Message Bubble Container -->
   <g transform="translate(20, 68)" filter="url(#shadow)">

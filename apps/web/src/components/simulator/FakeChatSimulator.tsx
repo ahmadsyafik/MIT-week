@@ -12,7 +12,6 @@ import {
   FileCode,
   Download,
   AlertOctagon,
-  Sparkles,
   Info,
   Check,
   ChevronDown,
@@ -569,9 +568,8 @@ export function FakeChatSimulator({
       {showEvidenceDrawer && (
         <div className="relative rounded-2xl border-2 border-amber-300/80 bg-[#FEFCE8] p-4 sm:p-5 shadow-xl space-y-3 animate-fadeIn rotate-[-0.5deg]">
           <div className="flex items-center justify-between border-b border-amber-300/50 pb-2">
-            <span className="text-xs font-black text-[#27374D] uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-amber-600" />
-              <span>Catatan Investigasi: 4 Tanda Kejanggalan Penting</span>
+            <span className="text-xs font-black text-[#27374D] uppercase tracking-wider">
+              Catatan Investigasi: 4 Tanda Kejanggalan Penting
             </span>
             <span className="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2.5 py-0.5 rounded-full border border-amber-300">
               Petunjuk Kasus (+40 Poin)
@@ -659,15 +657,15 @@ export function FakeChatSimulator({
           </span>
         </div>
 
-        {/* Scrollable Chat Area */}
+        {/* Scrollable Chat Area dengan Wallpaper Doodle Realistis */}
         <div
           ref={chatScrollContainerRef}
           onScroll={handleScroll}
-          className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[500px] sm:max-h-[580px] bg-[#EEF2F6] bg-opacity-70 overscroll-contain relative"
+          className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[500px] sm:max-h-[580px] bg-[#EFEAE2] overscroll-contain relative"
           style={{
-            backgroundImage: `radial-gradient(#9DB2BF 0.65px, transparent 0.65px), radial-gradient(#9DB2BF 0.65px, #EEF2F6 0.65px)`,
-            backgroundSize: "26px 26px",
-            backgroundPosition: "0 0, 13px 13px",
+            backgroundImage: `url('/simulator/chat-doodle-pattern.svg')`,
+            backgroundRepeat: "repeat",
+            backgroundSize: "240px 240px",
           }}
         >
           {/* Tanggal Separator */}
@@ -1042,11 +1040,8 @@ export function FakeChatSimulator({
           {currentDecisionId && !activeEnding && !isTyping && (
             <div className="space-y-3 pt-1.5 animate-fadeIn">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-[#27374D] uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4 text-amber-500" />
-                  <span>
-                    {currentScenario.decisions[currentDecisionId]?.stepTitle}: Tentukan Keputusanmu
-                  </span>
+                <span className="text-xs font-black text-[#27374D] uppercase tracking-wider">
+                  {currentScenario.decisions[currentDecisionId]?.stepTitle}: Tentukan Keputusanmu
                 </span>
                 <span className="text-[11px] text-[#526D82] font-semibold hidden sm:inline">
                   Pilih langkah yang menurutmu paling tepat (tanpa petunjuk warna)
@@ -1118,7 +1113,7 @@ export function FakeChatSimulator({
                   className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all cursor-pointer shadow-2xs"
                 >
                   <FastForward className="h-3.5 w-3.5 text-amber-700" />
-                  <span>Lewati Mengetik ⏩</span>
+                  <span>Lewati Mengetik</span>
                 </button>
               )}
             </div>
@@ -1152,6 +1147,63 @@ export function FakeChatSimulator({
           )}
         </div>
       </div>
+
+      {/* Lightbox Modal untuk Memeriksa Foto / Dokumen Pendukung Penipu */}
+      {activeLightboxImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xs p-4 animate-fadeIn"
+          onClick={() => setActiveLightboxImage(null)}
+        >
+          <div
+            className="relative max-w-2xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/20 flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Modal Lightbox */}
+            <div className="flex items-center justify-between bg-[#27374D] text-white px-5 py-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="h-7 w-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center border border-amber-400/30">
+                  <ImageIcon className="h-4 w-4" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs sm:text-sm text-white tracking-wide truncate">
+                    {activeLightboxImage.caption || "Foto Bukti Terlampir"}
+                  </h4>
+                  <p className="text-[10px] text-[#DDE6ED]/70 font-mono">
+                    Tangkapan Layar &amp; Dokumen Penipu
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveLightboxImage(null)}
+                className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+                aria-label="Tutup"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Konten Gambar Full Lightbox */}
+            <div className="p-4 sm:p-6 bg-[#F1F5F9] flex items-center justify-center max-h-[70vh] overflow-auto">
+              <img
+                src={activeLightboxImage.src}
+                alt={activeLightboxImage.alt}
+                className="max-h-[60vh] w-auto max-w-full object-contain rounded-2xl shadow-lg border border-[#9DB2BF]/30 bg-white"
+              />
+            </div>
+
+            {/* Footer Modal Info */}
+            <div className="px-5 py-3 bg-white border-t border-[#9DB2BF]/30 flex items-center justify-between text-xs text-[#526D82]">
+              <span className="font-medium text-[11px] sm:text-xs">
+                {activeLightboxImage.alt}
+              </span>
+              <span className="text-[10px] bg-amber-50 text-amber-800 font-bold px-2.5 py-1 rounded-full border border-amber-300 shrink-0 ml-3">
+                Inspeksi Forensik Kasus
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

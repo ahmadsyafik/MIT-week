@@ -663,15 +663,10 @@ export default function Beranda() {
             {/* Gambar Cuplikan Chat Skenario K1 */}
             <div className="relative overflow-hidden rounded-2xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/40 shadow-xs group/thumb flex-1 min-h-[160px] max-h-[220px]">
               <img
-                src="/simulator/k1-chat-snippet.png"
+                src="/simulator/k1-chat-snippet.svg"
                 alt="Cuplikan Chat Simulator K1"
                 className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/thumb:scale-[1.02]"
               />
-              <div className="absolute top-2.5 right-2.5">
-                <span className="rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-amber-300 border border-white/10 shadow-xs">
-                  Skenario K1
-                </span>
-              </div>
             </div>
 
             {/* Judul & Keterangan Skenario */}
@@ -690,9 +685,6 @@ export default function Beranda() {
                 <Compass className="h-3.5 w-3.5 text-[#9DB2BF]" />
                 <span className="text-[11px] font-medium">Durasi: ~2 Menit</span>
               </div>
-              <span className="rounded-full bg-[#DDE6ED] px-2.5 py-0.5 text-[10px] font-bold text-[#27374D] border border-[#9DB2BF]/50">
-                Tingkat Dasar
-              </span>
             </div>
 
             {/* Tombol Aksi Menuju Simulator */}

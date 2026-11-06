@@ -4,7 +4,6 @@ import {
   Compass,
   BookOpen,
   Clock,
-  Sparkles,
   Search,
   CheckCircle2,
   AlertTriangle,
@@ -161,7 +160,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 3,
     icon: Mail,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k1/1.jpg",
+    centerImage: "/simulator/k1-chat-snippet.svg",
     storyCards: K1_STORY_CARDS,
     description: "File .apk menyamar sebagai undangan pernikahan digital yang dikirimkan melalui ruang obrolan WhatsApp.",
     senderName: "Admin Undangan Palsu",
@@ -238,7 +237,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: FileCode,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: undefined,
+    centerImage: "/simulator/k2-chat-snippet.svg",
     description: "File berkedok foto bukti paket dari kurir ekspedisi dengan ekstensi ganda berbahaya.",
     senderName: "Kurir Ekspedisi Paket",
     senderAddress: "+62 877-4409-1234",
@@ -314,7 +313,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: Users,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: undefined,
+    centerImage: "/simulator/k3-chat-snippet.svg",
     description: "Tawaran kerja admin work-from-home yang meminta transfer deposit/biaya di muka.",
     senderName: "HR Global Media Partner",
     senderAddress: "DM Instagram / Telegram: @hr_recruitment_id",
@@ -388,7 +387,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: PhoneCall,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: undefined,
+    centerImage: "/simulator/k4-chat-snippet.svg",
     description: "Panggilan telepon mengaku staf keamanan bank meminta kode OTP dengan dalih pembatalan transaksi.",
     senderName: "Fraud Unit Bank (Palsu)",
     senderAddress: "Panggilan Suara: +62 21-1500888 (Spoofing)",
@@ -462,7 +461,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: Heart,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: undefined,
+    centerImage: "/simulator/k5-chat-snippet.svg",
     description: "Membangun kedekatan emosional bertahap, lalu mengajak investasi bersama di platform trading fiktif.",
     senderName: "Kenalan Online (Amanda / Kevin)",
     senderAddress: "Tinder / Bumble / Instagram DM",
@@ -536,7 +535,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: Mail,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: undefined,
+    centerImage: "/simulator/k6-chat-snippet.svg",
     description: "Email phishing mengaku penyedia layanan resmi, meminta klik tautan verifikasi kata sandi darurat.",
     senderName: "Pusat Keamanan Akun Google",
     senderAddress: "security@g00gle-accounts.verify-user.id",
@@ -608,9 +607,9 @@ const SCENARIOS: ScenarioCase[] = [
     dotColor: "bg-emerald-500",
     duration: "2 Mnt",
     stepsCount: 3,
-    icon: Sparkles,
+    icon: Award,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: undefined,
+    centerImage: "/simulator/k7-chat-snippet.svg",
     description: "Mengaku brand ternama mengumumkan pemenang giveaway, meminta biaya pajak hadiah di muka.",
     senderName: "Akun Giveaway Resmi Brand (Palsu)",
     senderAddress: "Instagram DM: @official_giveaway_brand2026",
@@ -684,7 +683,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: CreditCard,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: undefined,
+    centerImage: "/simulator/k8-chat-snippet.svg",
     description: "Toko fiktif menjual barang elektronik murah jauh di bawah pasar, menolak rekber dan memaksa transfer langsung.",
     senderName: "Toko Elektronik Cuci Gudang",
     senderAddress: "WhatsApp / Chat Marketplace",
@@ -1634,11 +1633,11 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
               {/* Bagian Atas: Gambar / Media Preview Card */}
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-[#EAE4DC] flex items-center justify-center">
                 {sc.centerImage ? (
-                  <div className="w-full h-full flex items-center justify-center p-2.5 bg-[#EAE4DC] overflow-hidden">
+                  <div className="w-full h-full relative overflow-hidden bg-[#27374D]/10">
                     <img
                       src={sc.centerImage}
                       alt={sc.title}
-                      className="max-h-full max-w-full object-contain rounded-xl shadow-md transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                 ) : (
@@ -1740,7 +1739,7 @@ function DeskStorybookSimulator({
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const currentCardUrl = cards[currentIndex] || scenario.centerImage || "/simulator/k1/1.jpg";
+  const currentCardUrl = cards[currentIndex] || scenario.centerImage || "/simulator/k1-chat-snippet.svg";
 
   // Preload gambar berikutnya agar perpindahan kartu instan tanpa kedip putih
   useEffect(() => {
@@ -1879,7 +1878,6 @@ function DeskStorybookSimulator({
 
         {/* Tengah: Badge Counter Kartu */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-lg">
-          <Sparkles className="h-3.5 w-3.5 text-amber-400" />
           <span className="text-xs font-extrabold tracking-wide">
             Kartu {currentIndex + 1}{" "}
             <span className="text-white/60 font-medium">/ {totalCards}</span>
@@ -1968,10 +1966,6 @@ function DeskStorybookSimulator({
           >
             {/* Efek cincin pendar keemasan */}
             <div className="absolute inset-0 rounded-full border-2 border-amber-400/50 group-hover/btn:border-amber-300 group-hover/btn:bg-amber-400/15 animate-pulse transition-all" />
-            {/* Ikon kilau */}
-            <div className="absolute -top-1.5 -right-1 text-amber-300 animate-bounce">
-              <Sparkles className="h-4 w-4 drop-shadow" />
-            </div>
           </div>
         </div>
       </div>
@@ -2836,12 +2830,6 @@ function KilatCover({ onStart }: { onStart: () => void }) {
       {/* Tampilan Standby Cover Tantangan Kilat */}
       <div className="mx-auto max-w-xl text-center">
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-[#27374D] text-white p-8 sm:p-10 shadow-lg space-y-6">
-          <div className="flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#526D82]/50 border border-[#9DB2BF]/40 text-amber-300 shadow-md">
-              <Sparkles className="h-8 w-8 animate-pulse" />
-            </div>
-          </div>
-
           <div className="space-y-2">
             <div className="text-xs font-extrabold uppercase tracking-widest text-[#9DB2BF]">
               Tantangan Kilat

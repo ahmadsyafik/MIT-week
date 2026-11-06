@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   ChevronRight,
   ChevronDown,
-  Sparkles,
   RefreshCw,
   Smartphone,
   HelpCircle,
@@ -440,7 +439,7 @@ export default function Layout() {
                 {/* Header Dropdown */}
                 <div className="flex items-center justify-between px-2 pt-1 pb-1 border-b border-[#9DB2BF]/30">
                   <span className="text-[11px] font-bold text-[#526D82] uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                    <Search className="h-3.5 w-3.5 text-[#526D82]" />
                     {searchQuery.trim() ? "Hasil Pencarian Cepat" : "Rekomendasi Eksplorasi (Maks. 5)"}
                   </span>
                   {!searchQuery.trim() && (

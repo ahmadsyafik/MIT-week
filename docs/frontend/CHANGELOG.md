@@ -61,6 +61,27 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Penyederhanaan Lencana Media Kartu Skenario Simulator (Belajar.tsx)**:
       - Menghapus lencana rating `4.9` di pojok kanan atas kartu yang tidak relevan dengan skenario keamanan.
       - Memindahkan lencana nama kanal komunikasi (misal: `WhatsApp`) langsung ke pojok kiri atas sebagai satu-satunya lencana utama yang bersih dan berkelas (*clean frosted glass*).
+    - **Pembaruan Cuplikan Obrolan Skenario & Bukti Gambar Pendukung Penipu (Belajar.tsx & FakeChatSimulator.tsx)**:
+      - **Cover Kartu Simulator (`Belajar.tsx`)**:
+        - Mengganti ilustrasi anime/komik lama dengan cuplikan obrolan percakapan realistis (`k1-chat-snippet.png`, `k2-chat-snippet.svg`, dst.) yang diambil langsung dari konteks cerita skenario.
+        - Memperbarui gaya rendering cover media menjadi `object-cover object-top` tanpa bingkai latar belakang tebal agar menyerupai layar ponsel asli.
+      - **Unggahan Gambar Pendukung Penipu (`FakeChatSimulator.tsx` & `fiveStepScenarios.ts`)**:
+        - Memperluas skema data skenario (`briefing.supportingImage`) dan alur percakapan simulator sehingga pelaku penipuan tidak hanya mengirim teks polos ("chat tok"), melainkan juga mengunggah berkas foto bukti pendukung yang realistis:
+          - Skenario K1: Foto Kartu Undangan Pernikahan Mewah (`k1-invitation.svg`) sebelum berkas `.apk`.
+          - Skenario K2: Foto Resi Pengiriman Ekspedisi Gagal Kirim dengan Barcode (`k2-resi-kurir.svg`).
+          - Skenario K3: ID Card Resmi Recruiter Global Media & Surat Tugas Freelance (`k3-loker-id.svg`).
+          - Skenario K4: Dokumen Peringatan Anomali Transaksi Bank & Fraud Alert (`k4-bank-notice.svg`).
+          - Skenario K5: Tangkapan Layar Portofolio Trading Kripto Profit Harian (`k5-trading-profit.svg`).
+          - Skenario K6: Surat Notifikasi Darurat Penangguhan Akun Cloud Auth (`k6-voucher-hadiah.svg`).
+          - Skenario K7: Surat Resmi Sertifikat Pemenang Gebyar Undian (`k7-security-warning.svg`).
+          - Skenario K8: Katalog Flash Sale Gadget Cuci Gudang 70% Non-Rekber (`k8-flash-sale.svg`).
+        - Menambahkan wadah visual foto lampiran dalam balon chat dengan efek hover zoom, lencana forensik, dan teks keterangan.
+        - Menyediakan fitur interaktif **Modal Lightbox Forensik** sehingga pengguna dapat mengklik foto untuk memperbesar dan menganalisis tanda kejanggalan dokumen secara mendalam.
+        - Menghilangkan simbol emoji fast-forward `⏩` yang tersisa pada tombol lewati percakapan.
+    - **Penerapan Wallpaper Doodle Realistis pada Semua Fake Chat**:
+      - Membuat pola doodle vektor seamless (`chat-doodle-pattern.svg`) dengan ikon-ikon khas percakapan pesan instan (gelembung chat, cangkir kopi, kaca pembesar, pesawat kertas, headphone, jam, gembok, surat, hati, perisai, kamera, nada musik, smartphone, bintang, awan, bohlam lampu, dan aksen garis halus) dengan opasitas rendah (10%) pada latar belakang hangat `#EFEAE2`.
+      - Menerapkan wallpaper doodle pada area percakapan interaktif [`FakeChatSimulator.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/components/simulator/FakeChatSimulator.tsx) dengan pengulangan mulus (`backgroundRepeat: repeat`, `backgroundSize: 240px 240px`).
+      - Menyematkan elemen pola doodle (`<pattern id="chatDoodle">`) langsung ke dalam seluruh cover cuplikan obrolan SVG skenario (`k1-chat-snippet.svg` hingga `k8-chat-snippet.svg`) di [`Belajar.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/pages/Belajar.tsx) dan [`Beranda.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/pages/Beranda.tsx).
   - **Redesain Total Komposisi Visual 3D Hero (React Three Fiber & Drei)**:
     - Konsep tunggal terpadu: **"iPhone sebagai hero, orbit sebagai aksesori halus"**.
     - **Model Prosedural iPhone 15/16 Pro (`IPhone.tsx`)**: Dibuat 100% secara prosedural dengan material titanium natural (`metalness 0.96`, `roughness 0.26`), layar depan glossy dengan Dynamic Island kapsul, tombol titanium (Action, Volume, Power), kaca frosted belakang, dan modul kamera 3 lensa Pro (outer titanium ring, inner dark bezel, glass lens, True Tone flash, serta LiDAR).
