@@ -49,7 +49,7 @@ function OrbitComponent({ reducedMotion = false }: OrbitProps) {
       rotation={[Math.PI / 3.2, 0.22, Math.PI / 5]}
     >
       {/* 1. Cincin Torus Tipis Tunggal */}
-      <mesh receiveShadow={false} castShadow={false}>
+      <mesh receiveShadow={false} castShadow={false} renderOrder={1}>
         <torusGeometry
           args={[
             dimensions.orbitRadius,
@@ -66,6 +66,7 @@ function OrbitComponent({ reducedMotion = false }: OrbitProps) {
           metalness={0.85}
           transparent
           opacity={0.85}
+          depthWrite={false}
         />
       </mesh>
 

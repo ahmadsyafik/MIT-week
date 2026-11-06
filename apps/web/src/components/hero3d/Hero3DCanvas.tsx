@@ -89,7 +89,8 @@ export default function Hero3DCanvas() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[460px] sm:h-[520px] lg:h-[580px] flex items-center justify-center overflow-visible select-none"
+      className="relative w-full h-[460px] sm:h-[520px] lg:h-[580px] flex items-center justify-center select-none"
+      style={{ overflow: "visible", isolation: "isolate" }}
       aria-hidden="true"
     >
       <Suspense fallback={<Hero3DFallback />}>

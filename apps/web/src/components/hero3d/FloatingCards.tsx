@@ -48,9 +48,10 @@ function FloatingCardsComponent({ reducedMotion = false }: FloatingCardsProps) {
       {/* =================================================================== */}
       {/* 1. KARTU HIJAU (Kiri Atas / Depan z: 0.7)                           */}
       {/* =================================================================== */}
-      <group ref={card1Ref} position={[-2.35, 1.45, 0.7]} rotation={[0.05, 0.18, -0.04]}>
+      <group ref={card1Ref} position={[-1.95, 1.45, 0.7]} rotation={[0.05, 0.18, -0.04]}>
         <Html
           transform
+          occlude={false}
           scale={0.009}
           distanceFactor={7.5}
           style={{ pointerEvents: "none", userSelect: "none" }}
@@ -77,9 +78,10 @@ function FloatingCardsComponent({ reducedMotion = false }: FloatingCardsProps) {
       {/* =================================================================== */}
       {/* 2. KARTU MERAH (Kanan Bawah / Depan z: 0.85)                         */}
       {/* =================================================================== */}
-      <group ref={card2Ref} position={[2.25, -1.35, 0.85]} rotation={[-0.04, -0.16, 0.04]}>
+      <group ref={card2Ref} position={[1.90, -1.35, 0.85]} rotation={[-0.04, -0.16, 0.04]}>
         <Html
           transform
+          occlude={false}
           scale={0.009}
           distanceFactor={7.5}
           style={{ pointerEvents: "none", userSelect: "none" }}
@@ -106,9 +108,10 @@ function FloatingCardsComponent({ reducedMotion = false }: FloatingCardsProps) {
       {/* =================================================================== */}
       {/* 3. KARTU SLATE-BIRU (Kanan Atas / Belakang z: -0.45)                */}
       {/* =================================================================== */}
-      <group ref={card3Ref} position={[2.2, 1.65, -0.45]} rotation={[0.08, -0.14, -0.02]}>
+      <group ref={card3Ref} position={[1.85, 1.65, -0.45]} rotation={[0.08, -0.14, -0.02]}>
         <Html
           transform
+          occlude={false}
           scale={0.0085}
           distanceFactor={7.5}
           style={{ pointerEvents: "none", userSelect: "none" }}

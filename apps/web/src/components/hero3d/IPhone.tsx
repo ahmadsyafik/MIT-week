@@ -18,16 +18,28 @@ function IPhoneComponent({ scale = 1 }: IPhoneProps) {
   const { colors, dimensions } = HERO_3D_CONFIG;
 
   // Muat tekstur screenshot dashboard mobile
-  const texture = useTexture("/dashboard-screen.png");
+  const texture = useTexture("/dashboard-screen.png", (tex) => {
+    const t = Array.isArray(tex) ? tex[0] : tex;
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.generateMipmaps = true;
+    t.anisotropy = 4;
+    t.wrapS = THREE.ClampToEdgeWrapping;
+    t.wrapT = THREE.ClampToEdgeWrapping;
+  });
 
   useEffect(() => {
     if (texture) {
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.generateMipmaps = true;
-      texture.anisotropy = 4;
-      texture.minFilter = THREE.LinearMipmapLinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      texture.needsUpdate = true;
+      const tex = Array.isArray(texture) ? texture[0] : texture;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.generateMipmaps = true;
+      tex.anisotropy = 4;
+      tex.wrapS = THREE.ClampToEdgeWrapping;
+      tex.wrapT = THREE.ClampToEdgeWrapping;
+      tex.repeat.set(1, 1);
+      tex.offset.set(0, 0);
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+      tex.needsUpdate = true;
     }
   }, [texture]);
 
@@ -57,15 +69,17 @@ function IPhoneComponent({ scale = 1 }: IPhoneProps) {
       </RoundedBox>
 
       {/* 3. Bidang Layar HP: Dashboard Mobile JagaRuang (Dimajukan Z & Maksimal Width Layar) */}
-      {texture && (
-        <mesh position={[0, 0, dimensions.phoneDepth / 2 + 0.008]}>
-          <planeGeometry args={[dimensions.screenWidth, dimensions.screenHeight]} />
+      <mesh position={[0, 0, dimensions.phoneDepth / 2 + 0.008]}>
+        <planeGeometry args={[dimensions.screenWidth, dimensions.screenHeight]} />
+        {texture ? (
           <meshBasicMaterial
-            map={texture}
+            map={Array.isArray(texture) ? texture[0] : texture}
             toneMapped={false}
           />
-        </mesh>
-      )}
+        ) : (
+          <meshBasicMaterial color={colors.screenBg} />
+        )}
+      </mesh>
 
       {/* 4. Dynamic Island HORIZONTAL (Floating Item Hitam Horizontal di Atas Layar) */}
       <group position={[0, dimensions.phoneHeight / 2 - 0.24, dimensions.phoneDepth / 2 + 0.016]}>
