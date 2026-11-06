@@ -45,9 +45,9 @@ export const HERO_3D_CONFIG = {
     phoneHeight: 4.58,
     phoneDepth: 0.30,  // Dimajukan Z-depth agar tampak lebih tebal dan berisi
     cornerRadius: 0.44, // Radius besar untuk sudut membulat iPhone
-    screenWidth: 2.04,  // Bezel 0.07 per sisi
-    screenHeight: 4.44, // Bezel 0.07 atas/bawah
-    screenRadius: 0.40, // Mengikuti kelengkungan body
+    screenWidth: 2.02,  // Bezel 0.08 simetris per sisi
+    screenHeight: 4.42, // Bezel 0.08 atas/bawah
+    screenRadius: 0.36, // Mengikuti kelengkungan body secara proporsional presisi (0.44 - 0.08)
     // Cincin Orbit
     orbitRadius: 1.68,
     orbitTubeRadius: 0.022,

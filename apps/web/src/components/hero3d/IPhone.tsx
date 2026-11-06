@@ -1,4 +1,4 @@
-import { useEffect, memo } from "react";
+import { useEffect, useMemo, memo } from "react";
 import { RoundedBox, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { HERO_3D_CONFIG } from "./hero3d.config";
@@ -8,14 +8,53 @@ interface IPhoneProps {
 }
 
 /**
+ * Membuat ShapeGeometry dengan 4 sudut membulat presisi dan koordinat UV [0, 1]
+ * Mencegah sudut siku-siku (90 derajat) planeGeometry menonjol keluar dari bodi melengkung ponsel
+ */
+function createRoundedRectGeometry(width: number, height: number, radius: number): THREE.ShapeGeometry {
+  const shape = new THREE.Shape();
+  const x = -width / 2;
+  const y = -height / 2;
+  const w = width;
+  const h = height;
+  const r = Math.min(radius, w / 2, h / 2);
+
+  shape.moveTo(x + r, y);
+  shape.lineTo(x + w - r, y);
+  shape.quadraticCurveTo(x + w, y, x + w, y + r);
+  shape.lineTo(x + w, y + h - r);
+  shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  shape.lineTo(x + r, y + h);
+  shape.quadraticCurveTo(x, y + h, x, y + h - r);
+  shape.lineTo(x, y + r);
+  shape.quadraticCurveTo(x, y, x + r, y);
+
+  const geom = new THREE.ShapeGeometry(shape, 16);
+  const pos = geom.attributes.position;
+  const uvs = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) {
+    uvs[i * 2] = (pos.getX(i) + w / 2) / w;
+    uvs[i * 2 + 1] = (pos.getY(i) + h / 2) / h;
+  }
+  geom.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+  return geom;
+}
+
+/**
  * Procedural iPhone 15/16 Pro 3D Model
  * - Dimensi body & bezel hitam samping dijaga presisi
  * - Z-depth smartphone dan layar dimajukan agar tampak tebal berisi (3D solid)
  * - Tampilan isi layar dimaksimalkan lebarnya (full width) menutup layar dengan rapi
- * - Dynamic Island floating item diposisikan HORIZONTAL (lebar melintang, bukan vertikal)
+ * - Sudut layar membulat menggunakan ShapeGeometry presisi (bebas glitch sudut tajam)
  */
 function IPhoneComponent({ scale = 1 }: IPhoneProps) {
   const { colors, dimensions } = HERO_3D_CONFIG;
+
+  // Geometry layar ber-sudut membulat (menghindari sudut siku menembus bodi)
+  const screenGeometry = useMemo(
+    () => createRoundedRectGeometry(dimensions.screenWidth, dimensions.screenHeight, dimensions.screenRadius),
+    [dimensions.screenWidth, dimensions.screenHeight, dimensions.screenRadius]
+  );
 
   // Muat tekstur screenshot dashboard mobile
   const texture = useTexture("/dashboard-screen.png", (tex) => {
@@ -60,20 +99,20 @@ function IPhoneComponent({ scale = 1 }: IPhoneProps) {
 
       {/* 2. Bezel Layar Hitam Samping (Dipertahankan Utuh di Sekeliling Layar) */}
       <RoundedBox
-        args={[dimensions.screenWidth + 0.02, dimensions.screenHeight + 0.02, 0.01]}
-        radius={dimensions.screenRadius}
+        args={[dimensions.screenWidth + 0.04, dimensions.screenHeight + 0.04, 0.012]}
+        radius={dimensions.screenRadius + 0.02}
         smoothness={6}
-        position={[0, 0, dimensions.phoneDepth / 2 + 0.002]}
+        position={[0, 0, dimensions.phoneDepth / 2 + 0.001]}
       >
         <meshBasicMaterial color={colors.screenBezel} />
       </RoundedBox>
 
-      {/* 3. Bidang Layar HP: Dashboard Mobile JagaRuang (Dimajukan Z & Maksimal Width Layar) */}
-      <mesh position={[0, 0, dimensions.phoneDepth / 2 + 0.008]}>
-        <planeGeometry args={[dimensions.screenWidth, dimensions.screenHeight]} />
+      {/* 3. Bidang Layar HP: ShapeGeometry Membulat Presisi (Tanpa Sudut Siku Menembus Bodi) */}
+      <mesh geometry={screenGeometry} position={[0, 0, dimensions.phoneDepth / 2 + 0.003]}>
         {texture ? (
           <meshBasicMaterial
             map={Array.isArray(texture) ? texture[0] : texture}
+            transparent
             toneMapped={false}
           />
         ) : (
