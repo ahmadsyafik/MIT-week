@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import {
-  ShieldAlert,
   ShieldCheck,
   Smartphone,
   OctagonAlert,
@@ -142,10 +141,6 @@ export default function Lindungi() {
       {/* ===================================================================== */}
       <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#DDE6ED] px-3 py-0.5 text-[11px] font-bold text-[#27374D] border border-[#9DB2BF]/60">
-            <ShieldAlert className="h-3.5 w-3.5 text-rose-600" />
-            <span>Pilar Mitigasi & Tindakan JagaRuang</span>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">
             Panduan Lindungi Diri & Sekitar
           </h1>

@@ -47,7 +47,32 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Interaktivitas & Aksesibilitas**: Animasi `Float` halus, tilt kursor responsif (maks ~15 derajat) dengan lerp damping, kepatuhan `prefers-reduced-motion` untuk pose statis, dan `IntersectionObserver` / visibility listener untuk auto-pause saat di luar layar.
     - **Konfigurasi Terpusat (`hero3d.config.ts`)**: Seluruh parameter visual, kecepatan, dan skala dikumpulkan di satu file konfigurasi.
     - **Code Splitting & Lazy Loading**: Chunk R3F dimuat secara asinkron dengan skeleton fallback (`Hero3DFallback.tsx`).
-    - **Pembaruan 8 Skenario Simulator Latih (K1 - K8) & Desain Kartu Gambar**:
+    - **FE-Simulator-Pacing**: Alur Percakapan Alami (*Realistic Fake Chat Pacing*) & Respon Interaktif:
+      - **Pembukaan Bertahap Alami**: Chat tidak lagi langsung memunculkan seluruh pesan dan tombol sekaligus. Ditambahkan urutan pembuka bertahap (sapaan awal, tanda pengetikan aktif dengan teks dinamis `${senderName} sedang mengetik...`, lampiran berkas, dan pesan urgensi) dengan jeda waktu realistis layaknya aplikasi percakapan sesungguhnya.
+      - **Respon Balasan Lawan Bicara Pasca-Pilihan**: Setelah pengguna memilih opsi tindakan (Opsi A, B, atau C), simulasi tidak langsung melempar kartu akhir secara terburu-buru. Lawan bicara (pelaku/bank/sistem) merespon secara aktif sesuai konteks jawaban pengguna (`attackerReply`) disertai indikator mengetik dan jeda membaca yang nyaman, sehingga alur cerita dapat dinikmati babak demi babak.
+      - **Koreksi Balasan Lawan Bicara (`attackerReply`)**: Memastikan `replyMsg` selalu memakai sender `role` (pelaku/lawan bicara) sehingga balasan percakapan (seperti *"Sip mantap kak! Nanti kalau ada peringatan di layar HP..."*) selalu muncul sebagai balon chat WhatsApp asli di sisi kiri lengkap dengan avatar, bukan tertukar menjadi pesan sistem/gembok. Sementara itu, peringatan keamanan dari sistem operasi (OS) dirender terpisah sebagai kartu notifikasi sistem perangkat.
+      - **Evaluasi Edukatif Mengalir di Aliran Chat**: Kartu konsekuensi dan evaluasi tindakan muncul alami di dalam alur riwayat pesan sebelum titik keputusan berikutnya atau layar penyelesaian dibuka.
+      - **Penyederhanaan Layar Ending Simulator (Anti-Terbelit-belit & Bebas Desakan Redo)**: Menghapus 5 seksi debrief yang berlebihan (tabel kalkulasi komponen poin, daftar berulang tanda bahaya red flag, dan kutipan mentor bertumpuk). Menggantinya dengan 1 kartu hasil akhir yang ringkas & padat: Badge peringkat, skor akhir (/100), dan intisari evaluasi keputusan pengguna. Menghilangkan tombol oranye mencolok "Ulangi dari Awal" di bilah bawah; aksi default kini disesuaikan menjadi "Selesai & Kembali ke Daftar Kasus", tanpa ada timer countdown, auto-refresh, atau desakan mengulang terburu-buru. Pengguna bebas meninjau seluruh riwayat chat obrolan dengan santai.
+      - **Kontrol Percepat Fleksibel (*Fast-Forward*)**: Menyediakan tombol "Lewati Mengetik ⏩" / "Tampilkan Langsung" agar pengguna atau penguji dapat melewati jeda waktu kapan saja tanpa hambatan.
+      - **Stabilisasi Scroll Alami (*Scroll Containment & No-Bounce*)**: Menghapus penggunaan `scrollIntoView()` yang sebelumnya menyeret seluruh jendela/viewport halaman ke bawah, menonaktifkan CSS `scroll-smooth` pada kontainer chat yang memicu bug lompat ke atas (*reset to top glitch*) di peramban Chromium/Edge saat pengguna menggulir secara manual, mengintegrasikan `isNearBottomRef` agar posisi baca pengguna dihormati (tidak dipaksa melompat ke bawah saat pengguna sedang membaca pesan di atas), serta menambahkan `overscroll-contain` untuk isolasi gulir yang kokoh.
+      - **Pembersihan Timer Aman (Memory-Safe)**: Mengintegrasikan `timeoutIdsRef` dan `clearAllTimeouts` untuk mencegah *race condition* atau kebocoran memori saat simulasi diulang atau berpindah skenario.
+    - **Pembaruan Desain & Mekanisme Simulator (Netralitas Tombol, 3 Pilihan, & Layout Organik)**:
+      - **3 Pilihan Tindakan di Titik Keputusan Awal**: Mengembangkan titik keputusan awal pada seluruh skenario (K1 s.d K8) dari sebelumnya 2 pilihan menjadi **3 pilihan tindakan realistis** (Opsi A, Opsi B, dan Opsi C) mencakup reaksi impulsif, verifikasi identitas, dan tindakan pencegahan/pelaporan langsung.
+      - **Tombol Keputusan 100% Netral (Bebas Spoiler Warna)**: Menghapus seluruh aksen warna hijau (`emerald`) dan merah (`rose`), badge petunjuk "Berisiko" vs "Aman & Verifikasi", serta teks indikator dalam label. Seluruh opsi kini disajikan dengan gaya visual netral seragam (`bg-white`, border abu-kebiruan `#9DB2BF`, dan badge netral `#DDE6ED` / `#27374D`) agar menguji insting objektif pengguna tanpa bias warna.
+      - **Layout Organik & Lebih Hidup (Jangan Terlalu Rapi)**:
+        - Mockup Layar Smartphone Nyata: Membungkai antarmuka chat dengan bezel smartphone modern, mock status bar (sinyal 5G, jam 09:41, indikator baterai), notch kamera, dan ekor balon percakapan alami.
+        - Sentuhan Papan Kasus Detektif: Menyematkan badge berkas beraksen tape miring (`rotate-[-1deg]`), label washi-tape pada bilah keputusan ("Giliranmu Menentukan Tindakan"), serta mengubah drawer bukti investigasi menjadi memo tempel (*sticky note* kuning lembut bergaya catatan lapangan).
+    - **Pembersihan Elemen UI & Penyelarasan Pintasan Simulator**:
+      - Menghapus badge "Pilar Mitigasi & Tindakan JagaRuang" pada header halaman Panduan Lindungi ([`Lindungi.tsx`](../../apps/web/src/pages/Lindungi.tsx)).
+      - Menghapus baris teks keunggulan ringkas ("100% On-Device di Browser" dan "Tautan Tidak Pernah Dibuka") pada Hero Section Beranda ([`Beranda.tsx`](../../apps/web/src/pages/Beranda.tsx)).
+      - Menghapus teks petunjuk "*Model 3D interaktif Three.js — Gerakkan kursor atau sentuh untuk memutar" di bawah kanvas 3D smartphone Beranda ([`Beranda.tsx`](../../apps/web/src/pages/Beranda.tsx)).
+      - Menghapus breadcrumb kecil "Belajar", badge skenario "8 Skenario (K1 - K8)" di cover Belajar, teks "· MIT-Week 2026" di footer, badge "Fitur Perlindungan Kloning Suara AI" di Sandi Keluarga, dan badge "Kasus K1 · Wajib" di Beranda sesuai instruksi pengguna.
+      - Menyelaraskan kartu Pintasan Simulator di Beranda agar tingginya presisi sejajar dengan kartu Modul Pembelajaran, serta menyisipkan grafis pratinjau potongan chat WhatsApp K1 (`k1-chat-snippet.png`).
+    - **Fitur Rekomendasi Pintar di Search Bar Top Header (`Layout.tsx`)**:
+      - Ketika kotak pencarian diklik/difokuskan, dropdown interaktif muncul menampilkan rekomendasi eksplorasi terbatas maksimal 5 item.
+      - Rekomendasi otomatis diacak kembali (*refresh*) setiap kali pengguna mengklik ulang (unclick & click) search bar, lengkap dengan tombol "Acak Lagi".
+      - Menyajikan perpaduan 8 skenario Simulator (K1-K8), 12 Modul Pembelajaran, dan 10 Istilah Kamus dengan ikon dan badge warna yang jelas.
+      - Mengetik teks pada kotak pencarian langsung menyaring hasil secara real-time dan mengarahkan langsung ke halaman target saat item dipilih.
       - Mengintegrasikan seluruh 8 kasus dari dokumen `Rangkaian_Simulator_Latih_JagaRuang.docx`:
         - K1: Undangan Pernikahan Digital.apk (WhatsApp · Wajib)
         - K2: Lihat Foto Paket (WhatsApp · Wajib)
@@ -74,6 +99,9 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Preloading gambar pintar di latar belakang untuk pengalaman perpindahan halaman instan tanpa jeda.
     - **Perayaan Misi Selesai**: Modal popup piala kemenangan saat kartu ke-41 tercapai, tombol salin kode `TRUST{APK-UNDANGAN}`, dan pemicu notifikasi target capaian otomatis.
     - **Pratinjau Cover K1**: Kartu cover K1 menampilkan miniatur kartu buku catatan asli di atas meja kerja yang diburamkan halus.
+  - **Penyelarasan Kartu Pintasan Simulator & Cuplikan Chat K1 ([`Beranda.tsx`](../../apps/web/src/pages/Beranda.tsx))**:
+    - Menambahkan gambar cuplikan chat WhatsApp skenario K1 (`/simulator/k1-chat-snippet.png`) di antara header *"Pintasan Simulator"* dan teks judul *"Undangan Pernikahan APK"*.
+    - Menyesuaikan tinggi/panjang kartu Pintasan Simulator ke bawah sehingga sejajar secara vertikal dengan baris Modul Pembelajaran di sisi kiri.
   - **Penyempurnaan Layar 3D iPhone & Integrasi Screenshot Beranda HD**:
     - **Penghapusan Badge**: Menghapus pill badge `✨ Sesi Aktif Digital Guardian` pada banner Welcome Back di `Beranda.tsx` sesuai permintaan antarmuka yang lebih bersih.
     - **Integrasi Screenshot Beranda HD (1170x2532)**: Layar 3D iPhone kini menampilkan tangkapan layar tampilan mobile Beranda JagaRuang secara proporsional presisi (rasio 1:2.165, pas dengan dimensi layar iPhone 2.06 x 4.46 tanpa distorsi/stretching).

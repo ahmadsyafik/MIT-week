@@ -26,6 +26,7 @@ import {
   MessageSquare,
   Users,
   Compass,
+  FastForward,
 } from "lucide-react";
 import { addNotification } from "../../lib/notificationService";
 import {
@@ -76,25 +77,70 @@ export function FakeChatSimulator({
   const currentScenario: FiveStepScenarioData =
     FIVE_STEP_SCENARIOS[activeId] || FIVE_STEP_SCENARIOS["k1"];
 
+  // Helper untuk membersihkan petunjuk teks seperti "(Berisiko)" atau "(Aman)"
+  const cleanOptionLabel = (rawLabel: string): string => {
+    return rawLabel
+      .replace(/^Pilihan\s+[A-Z]\s*\((?:Berisiko|Aman)\)\s*[—–-]\s*/i, "")
+      .replace(/\s*\((?:Berisiko|Aman)\)/gi, "")
+      .trim();
+  };
+
   // State simulasi
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [currentDecisionId, setCurrentDecisionId] = useState<number | null>(1);
+  const [currentDecisionId, setCurrentDecisionId] = useState<number | null>(null);
   const [activeEnding, setActiveEnding] = useState<ScenarioEnding | null>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [typingText, setTypingText] = useState("Pengirim sedang mengetik...");
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [copiedFlag, setCopiedFlag] = useState(false);
   const [showEvidenceDrawer, setShowEvidenceDrawer] = useState(false);
-  const [decisionHistory, setDecisionHistory] = useState<Array<{ decisionId: number; choice: "A" | "B" }>>([]);
+  const [decisionHistory, setDecisionHistory] = useState<Array<{ decisionId: number; choice: "A" | "B" | "C" }>>([]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatScrollContainerRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef(true);
+  const timeoutIdsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const fastForwardActionRef = useRef<(() => void) | null>(null);
 
-  // Auto-scroll
-  const scrollToBottom = (smooth = true) => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({
+  // Helper pengatur timer yang aman terhadap unmount & reset
+  const addTimeout = (fn: () => void, ms: number) => {
+    const id = setTimeout(() => {
+      fn();
+      timeoutIdsRef.current = timeoutIdsRef.current.filter((tid) => tid !== id);
+    }, ms);
+    timeoutIdsRef.current.push(id);
+    return id;
+  };
+
+  const clearAllTimeouts = () => {
+    timeoutIdsRef.current.forEach((id) => clearTimeout(id));
+    timeoutIdsRef.current = [];
+    fastForwardActionRef.current = null;
+  };
+
+  const handleFastForward = () => {
+    if (fastForwardActionRef.current) {
+      const action = fastForwardActionRef.current;
+      clearAllTimeouts();
+      action();
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearAllTimeouts();
+    };
+  }, []);
+
+  // Auto-scroll yang stabil & aman (hanya scroll box chat internal, tidak menggeser window / viewport)
+  const scrollToBottom = (force = false, smooth = true) => {
+    const container = chatScrollContainerRef.current;
+    if (!container) return;
+
+    if (force || isNearBottomRef.current) {
+      container.scrollTo({
+        top: container.scrollHeight,
         behavior: smooth ? "smooth" : "auto",
-        block: "end",
       });
     }
   };
@@ -102,40 +148,121 @@ export function FakeChatSimulator({
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
     const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
-    setShowScrollDown(distanceToBottom > 120);
+    // Pengguna dianggap di dasar jika jarak ke bawah <= 50px
+    const nearBottom = distanceToBottom <= 50;
+    isNearBottomRef.current = nearBottom;
+    setShowScrollDown(distanceToBottom > 80);
   };
 
-  // Reset & inisialisasi chat
+  // Reset & inisialisasi chat dengan alur pembuka bertahap dan alami
   const initChat = () => {
-    setCurrentDecisionId(1);
+    clearAllTimeouts();
+    setCurrentDecisionId(null);
     setActiveEnding(null);
     setIsTyping(false);
+    isNearBottomRef.current = true;
+    setShowScrollDown(false);
     setCopiedFlag(false);
     setDecisionHistory([]);
 
-    const initialMessages: ChatMessage[] = [
-      {
-        id: "msg-0",
-        sender: "system",
-        timestamp: "09:40",
-        text: `🔒 Saluran komunikasi: ${currentScenario.channel} • Nomor asing (${currentScenario.senderAddress}). Berhati-hatilah terhadap tautan atau berkas.`,
-      },
-      {
-        id: "msg-1",
-        sender: currentScenario.channelType === "voice_call" ? "call" : "attacker",
-        timestamp: "09:41",
-        text: currentScenario.briefing.messageText,
-        attachment: currentScenario.briefing.attachmentName
-          ? {
-              name: currentScenario.briefing.attachmentName,
-              size: currentScenario.briefing.attachmentSize,
-              type: currentScenario.briefing.attachmentType || "apk",
-            }
-          : undefined,
-      },
-    ];
+    const initialSystemMsg: ChatMessage = {
+      id: "msg-0",
+      sender: "system",
+      timestamp: "09:40",
+      text: `🔒 Saluran komunikasi: ${currentScenario.channel} • Nomor asing (${currentScenario.senderAddress}). Berhati-hatilah terhadap tautan atau berkas.`,
+    };
 
-    setMessages(initialMessages);
+    setMessages([initialSystemMsg]);
+
+    const addl = currentScenario.briefing.additionalMessages || [];
+    const senderRole = currentScenario.channelType === "voice_call" ? "call" : "attacker";
+
+    const openingGreetingMsg: ChatMessage = {
+      id: `msg-open-greet-${Date.now()}`,
+      sender: senderRole,
+      timestamp: "09:40",
+      text: addl[0] || `Halo kak, mohon maaf mengganggu waktunya sebentar 🙏`,
+    };
+
+    const mainMessage: ChatMessage = {
+      id: `msg-open-main-${Date.now()}`,
+      sender: senderRole,
+      timestamp: "09:41",
+      text: currentScenario.briefing.messageText,
+      attachment: currentScenario.briefing.attachmentName
+        ? {
+            name: currentScenario.briefing.attachmentName,
+            size: currentScenario.briefing.attachmentSize,
+            type: currentScenario.briefing.attachmentType || "apk",
+          }
+        : undefined,
+    };
+
+    const followUpMsg: ChatMessage | null = addl[1]
+      ? {
+          id: `msg-open-follow-${Date.now()}`,
+          sender: senderRole,
+          timestamp: "09:41",
+          text: addl[1],
+        }
+      : null;
+
+    // Aksi lompat instan jika pengguna ingin mempercepat pembukaan
+    fastForwardActionRef.current = () => {
+      const allMsgs = [initialSystemMsg, openingGreetingMsg, mainMessage];
+      if (followUpMsg) allMsgs.push(followUpMsg);
+      setMessages(allMsgs);
+      setIsTyping(false);
+      setCurrentDecisionId(1);
+      fastForwardActionRef.current = null;
+    };
+
+    // Alur pembukaan bertahap:
+    // 1. Tanda mengetik sapaan pertama
+    addTimeout(() => {
+      setIsTyping(true);
+      setTypingText(`${currentScenario.senderName} sedang mengetik...`);
+    }, 400);
+
+    // 2. Balon sapaan pertama masuk
+    addTimeout(() => {
+      setIsTyping(false);
+      setMessages((prev) => [...prev, openingGreetingMsg]);
+    }, 1500);
+
+    // 3. Tanda mengetik pesan utama dan berkas lampiran
+    addTimeout(() => {
+      setIsTyping(true);
+      setTypingText(`${currentScenario.senderName} sedang mengirim berkas...`);
+    }, 2200);
+
+    // 4. Balon pesan utama masuk
+    addTimeout(() => {
+      setIsTyping(false);
+      setMessages((prev) => [...prev, mainMessage]);
+    }, 3800);
+
+    if (followUpMsg) {
+      // 5. Pesan pengiring/dorongan psikologis
+      addTimeout(() => {
+        setIsTyping(true);
+        setTypingText(`${currentScenario.senderName} sedang mengetik...`);
+      }, 4400);
+
+      // 6. Balon pengiring masuk dan buka pilihan keputusan 1
+      addTimeout(() => {
+        setIsTyping(false);
+        setMessages((prev) => [...prev, followUpMsg]);
+        setCurrentDecisionId(1);
+        fastForwardActionRef.current = null;
+      }, 5700);
+    } else {
+      addTimeout(() => {
+        setIsTyping(false);
+        setCurrentDecisionId(1);
+        fastForwardActionRef.current = null;
+      }, 4400);
+    }
   };
 
   useEffect(() => {
@@ -143,81 +270,164 @@ export function FakeChatSimulator({
   }, [activeId]);
 
   useEffect(() => {
-    scrollToBottom(true);
+    scrollToBottom(false, true);
   }, [messages, isTyping, currentDecisionId, activeEnding]);
 
-  // Eksekusi Pilihan A (Berisiko) atau B (Aman) pada titik keputusan aktif
-  const handleSelectOption = (choice: "A" | "B") => {
+  // Eksekusi Pilihan A, B, atau C dengan percakapan dua arah yang mengalir
+  const handleSelectOption = (choice: "A" | "B" | "C") => {
     if (!currentDecisionId || isTyping || activeEnding) return;
 
     const currentDecision = currentScenario.decisions[currentDecisionId];
     if (!currentDecision) return;
 
     const selectedOption = currentDecision.options[choice];
+    if (!selectedOption) return;
+
+    clearAllTimeouts();
     setDecisionHistory((prev) => [...prev, { decisionId: currentDecisionId, choice }]);
-    setCurrentDecisionId(null); // Kunci sementara
-    setIsTyping(true);
+    const currentId = currentDecisionId;
+    setCurrentDecisionId(null); // Kunci dock saat respon sedang berjalan
 
     // 1. Tambahkan bubble chat dari sisi pengguna (kanan)
     const userMsg: ChatMessage = {
-      id: `user-dec-${currentDecisionId}-${Date.now()}`,
+      id: `user-dec-${currentId}-${Date.now()}`,
       sender: "user",
       timestamp: "09:42",
       text: selectedOption.userReply,
     };
     setMessages((prev) => [...prev, userMsg]);
+    isNearBottomRef.current = true;
+    setShowScrollDown(false);
+    scrollToBottom(true, true);
 
-    // 2. Beri jeda realistis lalu tampilkan kartu konsekuensi
-    setTimeout(() => {
-      const consequenceMsg: ChatMessage = {
-        id: `conseq-dec-${currentDecisionId}`,
-        sender: "system",
-        timestamp: "09:43",
-        systemCard: {
-          type: choice === "A" ? "warning" : "success",
-          title: choice === "A" ? "⚠️ Konsekuensi Tindakan Berisiko" : "🛡️ Konsekuensi Tindakan Aman & Hati-hati",
-          body: selectedOption.consequence,
-        },
-      };
-      setMessages((prev) => [...prev, consequenceMsg]);
+    // Tentukan respon lawan bicara (attacker/call/bank/system)
+    const role = currentScenario.channelType === "voice_call" ? "call" : "attacker";
+    let replyText = selectedOption.attackerReply;
 
-      // 3. Tentukan langkah berikutnya (Lanjut ke keputusan lain atau Capai Ending)
-      const next = selectedOption.nextStep;
+    const next = selectedOption.nextStep;
+    const isRisky = choice === "A" || selectedOption.type === "risky";
+    const nextDecision = typeof next === "number" ? currentScenario.decisions[next] : null;
 
-      if (typeof next === "number") {
-        // Melanjutkan ke titik keputusan berikutnya
-        setTimeout(() => {
-          const nextDecision = currentScenario.decisions[next];
-          if (nextDecision) {
-            // Jika ada pesan dialog balasan dari attacker/sistem
-            const role = nextDecision.senderRole || (currentScenario.channelType === "voice_call" ? "call" : "attacker");
-            const nextPromptMsg: ChatMessage = {
-              id: `prompt-dec-${next}`,
-              sender: role,
-              timestamp: "09:44",
-              text: nextDecision.scenarioPrompt,
-            };
-            setMessages((prev) => [...prev, nextPromptMsg]);
-            setCurrentDecisionId(next);
-          }
-          setIsTyping(false);
-        }, 1100);
-      } else {
-        // Capai salah satu Ending (EndingA, EndingB, EndingC, EndingD, EndingE)
-        setTimeout(() => {
-          const finalEnding = currentScenario.endings[next];
-          setActiveEnding(finalEnding);
-          setIsTyping(false);
-
-          addNotification({
-            title: `${finalEnding.title}: ${currentScenario.title}`,
-            message: `Simulasi tuntas! Skor: ${finalEnding.score}/100 (${finalEnding.rank}). ${finalEnding.subtitle}.`,
-            type: finalEnding.score >= 80 ? "sukses" : "waspada",
-            link: "/belajar?tab=simulator",
-          });
-        }, 1200);
+    if (!replyText && nextDecision) {
+      const promptMatch = nextDecision.scenarioPrompt.match(/["“](.+?)["”]/);
+      if (promptMatch && promptMatch[1]) {
+        replyText = promptMatch[1];
+      } else if (nextDecision.senderRole === "attacker" || !nextDecision.senderRole) {
+        replyText = nextDecision.scenarioPrompt;
       }
-    }, 900);
+    }
+
+    const replyMsg: ChatMessage | null = replyText
+      ? {
+          id: `reply-dec-${currentId}-${Date.now()}`,
+          sender: role,
+          timestamp: "09:43",
+          text: replyText,
+        }
+      : null;
+
+    // Kartu evaluasi edukatif / konsekuensi tindakan
+    const consequenceMsg: ChatMessage = {
+      id: `conseq-dec-${currentId}-${Date.now()}`,
+      sender: "system",
+      timestamp: "09:43",
+      systemCard: {
+        type: isRisky ? "warning" : "success",
+        title: isRisky ? "⚠️ Konsekuensi Tindakan Berisiko" : "🛡️ Konsekuensi Tindakan Aman & Hati-hati",
+        body: selectedOption.consequence,
+      },
+    };
+
+    // Prompt tambahan bila langkah berikutnya merupakan notifikasi sistem/bank
+    let additionalPromptMsg: ChatMessage | null = null;
+    if (
+      nextDecision &&
+      nextDecision.senderRole &&
+      nextDecision.senderRole !== "attacker" &&
+      nextDecision.senderRole !== role
+    ) {
+      additionalPromptMsg = {
+        id: `prompt-dec-${next}-${Date.now()}`,
+        sender: nextDecision.senderRole,
+        timestamp: "09:44",
+        text: nextDecision.scenarioPrompt,
+        systemCard:
+          nextDecision.senderRole === "system"
+            ? {
+                type: "warning",
+                title: "⚠️ Peringatan Sistem Keamanan Perangkat",
+                body: nextDecision.scenarioPrompt,
+              }
+            : undefined,
+      };
+    }
+
+    const finalEnding = typeof next === "string" ? currentScenario.endings[next] : null;
+
+    // Aksi percepat jika pengguna menekan tombol percepat
+    fastForwardActionRef.current = () => {
+      setMessages((prev) => {
+        const msgs = [...prev];
+        if (replyMsg && !msgs.some((m) => m.id === replyMsg.id)) msgs.push(replyMsg);
+        if (additionalPromptMsg && !msgs.some((m) => m.id === additionalPromptMsg.id)) msgs.push(additionalPromptMsg);
+        if (!msgs.some((m) => m.id === consequenceMsg.id)) msgs.push(consequenceMsg);
+        return msgs;
+      });
+      setIsTyping(false);
+      if (typeof next === "number") {
+        setCurrentDecisionId(next);
+      } else if (finalEnding) {
+        setActiveEnding(finalEnding);
+        addNotification({
+          title: `${finalEnding.title}: ${currentScenario.title}`,
+          message: `Simulasi tuntas! Skor: ${finalEnding.score}/100 (${finalEnding.rank}). ${finalEnding.subtitle}.`,
+          type: finalEnding.score >= 80 ? "sukses" : "waspada",
+          link: "/belajar?tab=simulator",
+        });
+      }
+      fastForwardActionRef.current = null;
+    };
+
+    // Alur percakapan realistis:
+    // 1. Lawan bicara membaca dan mulai mengetik respon (500ms)
+    addTimeout(() => {
+      setIsTyping(true);
+      setTypingText(`${currentScenario.senderName} sedang merespons...`);
+    }, 500);
+
+    // 2. Balasan lawan bicara masuk (2200ms)
+    addTimeout(() => {
+      setIsTyping(false);
+      if (replyMsg) {
+        setMessages((prev) => [...prev, replyMsg]);
+      }
+    }, 2200);
+
+    // 3. Jeda membaca narasi, lalu catatan evaluasi/sistem muncul (3800ms)
+    addTimeout(() => {
+      setMessages((prev) => {
+        const msgs = [...prev];
+        if (additionalPromptMsg) msgs.push(additionalPromptMsg);
+        msgs.push(consequenceMsg);
+        return msgs;
+      });
+    }, 3800);
+
+    // 4. Buka titik keputusan berikutnya atau tampilkan layar evaluasi akhir (5300ms)
+    addTimeout(() => {
+      if (typeof next === "number") {
+        setCurrentDecisionId(next);
+      } else if (finalEnding) {
+        setActiveEnding(finalEnding);
+        addNotification({
+          title: `${finalEnding.title}: ${currentScenario.title}`,
+          message: `Simulasi tuntas! Skor: ${finalEnding.score}/100 (${finalEnding.rank}). ${finalEnding.subtitle}.`,
+          type: finalEnding.score >= 80 ? "sukses" : "waspada",
+          link: "/belajar?tab=simulator",
+        });
+      }
+      fastForwardActionRef.current = null;
+    }, 5300);
   };
 
   const handleCopyFlag = () => {
@@ -244,6 +454,16 @@ export function FakeChatSimulator({
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-4 select-none animate-fadeIn">
+      {/* Label Berkas Meja Detektif (Aksen Kasual & Organik agar tidak kaku) */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-sm bg-amber-100/90 text-[#27374D] border border-amber-300/80 shadow-xs text-xs font-black rotate-[-1deg]">
+          <span>📌 BERKAS #{currentScenario.id.toUpperCase()}: {currentScenario.title}</span>
+        </div>
+        <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#526D82] bg-white/70 px-2.5 py-0.5 rounded-full border border-[#9DB2BF]/40">
+          <span>Mode Simulasi Kasus Nyata</span>
+        </div>
+      </div>
+
       {/* Top Bar Navigasi Skenario */}
       <div className="flex items-center justify-between border-b border-[#9DB2BF]/40 pb-3">
         <button
@@ -279,16 +499,16 @@ export function FakeChatSimulator({
         </div>
       </div>
 
-      {/* Drawer 4 Bukti Investigasi Red Flags */}
+      {/* Drawer 4 Bukti Investigasi Red Flags (Memo Tempel Kasual / Sticky Note) */}
       {showEvidenceDrawer && (
-        <div className="rounded-2xl border-2 border-[#526D82]/30 bg-white p-4 sm:p-5 shadow-lg space-y-3 animate-fadeIn">
-          <div className="flex items-center justify-between border-b border-[#DDE6ED] pb-2">
+        <div className="relative rounded-2xl border-2 border-amber-300/80 bg-[#FEFCE8] p-4 sm:p-5 shadow-xl space-y-3 animate-fadeIn rotate-[-0.5deg]">
+          <div className="flex items-center justify-between border-b border-amber-300/50 pb-2">
             <span className="text-xs font-black text-[#27374D] uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-amber-500" />
-              <span>4 Bukti Investigasi Penting yang Perlu Kamu Kenali:</span>
+              <Sparkles className="h-4 w-4 text-amber-600" />
+              <span>Catatan Investigasi: 4 Tanda Kejanggalan Penting</span>
             </span>
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-              Terverifikasi (+40 Poin)
+            <span className="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2.5 py-0.5 rounded-full border border-amber-300">
+              Petunjuk Kasus (+40 Poin)
             </span>
           </div>
 
@@ -296,10 +516,10 @@ export function FakeChatSimulator({
             {currentScenario.evidences.map((ev, idx) => (
               <div
                 key={ev.id}
-                className="rounded-xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/30 p-3 space-y-1"
+                className="rounded-xl border border-amber-300/60 bg-white/80 p-3 space-y-1 shadow-2xs"
               >
                 <div className="flex items-center gap-2 font-bold text-[#27374D]">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#27374D] text-[10px] font-bold text-white">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[10px] font-bold text-white shadow-xs">
                     {idx + 1}
                   </span>
                   <span className="line-clamp-1">{ev.label}</span>
@@ -311,8 +531,20 @@ export function FakeChatSimulator({
         </div>
       )}
 
-      {/* Main Container Simulator (Fake Chat Layout) */}
-      <div className="rounded-3xl border border-[#9DB2BF]/60 bg-white shadow-xl overflow-hidden flex flex-col">
+      {/* Main Container Simulator (Mockup Layar Smartphone Nyata) */}
+      <div className="rounded-[28px] sm:rounded-[36px] border-4 sm:border-[6px] border-[#27374D] bg-[#27374D] shadow-[0_20px_60px_rgba(39,55,77,0.25)] overflow-hidden flex flex-col">
+        {/* Mock Phone Status Bar */}
+        <div className="bg-[#1e2b3d] text-white/70 px-5 py-1.5 flex items-center justify-between text-[11px] font-semibold border-b border-white/10 select-none">
+          <span className="font-mono text-[10px]">09:41</span>
+          <div className="w-16 h-3 bg-black/60 rounded-full mx-auto flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-white/10" />
+          </div>
+          <div className="flex items-center gap-1.5 font-mono text-[10px]">
+            <span>5G</span>
+            <span>88%</span>
+          </div>
+        </div>
+
         {/* Chat App Header Bar */}
         <div className="bg-[#27374D] text-white px-4 py-3 sm:px-6 sm:py-3.5 flex items-center justify-between shadow-md z-10">
           <div className="flex items-center gap-3">
@@ -365,7 +597,7 @@ export function FakeChatSimulator({
         <div
           ref={chatScrollContainerRef}
           onScroll={handleScroll}
-          className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[500px] sm:max-h-[580px] bg-[#EEF2F6] bg-opacity-70 scroll-smooth relative"
+          className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[500px] sm:max-h-[580px] bg-[#EEF2F6] bg-opacity-70 overscroll-contain relative"
           style={{
             backgroundImage: `radial-gradient(#9DB2BF 0.65px, transparent 0.65px), radial-gradient(#9DB2BF 0.65px, #EEF2F6 0.65px)`,
             backgroundSize: "26px 26px",
@@ -525,153 +757,124 @@ export function FakeChatSimulator({
 
           {/* Typing Indicator */}
           {isTyping && (
-            <div className="flex items-end gap-2 max-w-[50%]">
-              <div className="h-7 w-7 rounded-full bg-gradient-to-tr from-amber-600 to-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 mb-1 shadow-xs">
-                ?
+            <div className="flex items-center justify-between max-w-full">
+              <div className="flex items-end gap-2 max-w-[80%]">
+                <div className="h-7 w-7 rounded-full bg-gradient-to-tr from-amber-600 to-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 mb-1 shadow-xs">
+                  ?
+                </div>
+                <div className="rounded-2xl rounded-bl-xs bg-white px-4 py-2.5 border border-[#9DB2BF]/50 shadow-sm flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#526D82] animate-bounce" />
+                  <span
+                    className="h-2 w-2 rounded-full bg-[#526D82] animate-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <span
+                    className="h-2 w-2 rounded-full bg-[#526D82] animate-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  />
+                  <span className="text-[11px] text-[#526D82] ml-1 font-medium italic">
+                    {typingText}
+                  </span>
+                </div>
               </div>
-              <div className="rounded-2xl rounded-bl-xs bg-white px-4 py-2.5 border border-[#9DB2BF]/50 shadow-sm flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#526D82] animate-bounce" />
-                <span
-                  className="h-2 w-2 rounded-full bg-[#526D82] animate-bounce"
-                  style={{ animationDelay: "150ms" }}
-                />
-                <span
-                  className="h-2 w-2 rounded-full bg-[#526D82] animate-bounce"
-                  style={{ animationDelay: "300ms" }}
-                />
-                <span className="text-[11px] text-[#526D82] ml-1 font-medium italic">
-                  Pengirim sedang merespons...
-                </span>
-              </div>
+
+              {/* Tombol Percepat Dialog jika pengguna ingin cepat */}
+              {fastForwardActionRef.current && (
+                <button
+                  type="button"
+                  onClick={handleFastForward}
+                  title="Lewati jeda mengetik"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold text-[#526D82] hover:text-[#27374D] bg-white/90 hover:bg-white border border-[#9DB2BF]/50 shadow-xs cursor-pointer transition-all ml-2"
+                >
+                  <FastForward className="h-3 w-3 text-amber-600" />
+                  <span>Percepat ⏩</span>
+                </button>
+              )}
             </div>
           )}
 
           {/* ================================================================= */}
-          {/* KOTAK DEBRIEF AKHIR DENGAN 5 PILIHAN ENDING (A, B, C, D, E)        */}
+          {/* KOTAK EVALUASI AKHIR RINGKAS & JELAS (TIDAK TERBELIT-BELIT)       */}
           {/* ================================================================= */}
           {activeEnding && (
-            <div className="pt-4 pb-2 animate-fadeIn space-y-4">
+            <div className="pt-2 pb-2 animate-fadeIn">
               <div
-                className={`rounded-3xl border-2 p-5 sm:p-7 shadow-xl space-y-5 bg-white ${
-                  activeEnding.rank === "Guardian"
-                    ? "border-emerald-500 shadow-emerald-500/10"
-                    : activeEnding.rank === "Penjaga"
-                    ? "border-amber-500 shadow-amber-500/10"
-                    : "border-rose-500 shadow-rose-500/10"
+                className={`rounded-2xl border p-4 sm:p-5 shadow-md space-y-3 bg-white ${
+                  activeEnding.score >= 80
+                    ? "border-emerald-300 bg-emerald-50/20"
+                    : activeEnding.score >= 50
+                    ? "border-amber-300 bg-amber-50/20"
+                    : "border-rose-300 bg-rose-50/20"
                 }`}
               >
-                {/* Header Ending & Badge Skor */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#DDE6ED] pb-4">
+                {/* Header Ending & Skor */}
+                <div className="flex items-center justify-between gap-3 border-b border-[#9DB2BF]/30 pb-3">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-md ${
-                        activeEnding.rank === "Guardian"
+                      className={`flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl text-white shadow-xs shrink-0 ${
+                        activeEnding.score >= 80
                           ? "bg-emerald-600"
-                          : activeEnding.rank === "Penjaga"
+                          : activeEnding.score >= 50
                           ? "bg-amber-500"
                           : "bg-rose-600"
                       }`}
                     >
-                      {activeEnding.rank === "Guardian" ? (
-                        <ShieldCheck className="h-7 w-7" />
-                      ) : activeEnding.rank === "Penjaga" ? (
-                        <AlertTriangle className="h-7 w-7" />
+                      {activeEnding.score >= 80 ? (
+                        <ShieldCheck className="h-6 w-6" />
+                      ) : activeEnding.score >= 50 ? (
+                        <AlertTriangle className="h-6 w-6" />
                       ) : (
-                        <ShieldAlert className="h-7 w-7" />
+                        <ShieldAlert className="h-6 w-6" />
                       )}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <span
-                          className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider border ${
-                            activeEnding.rank === "Guardian"
-                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                              : activeEnding.rank === "Penjaga"
-                              ? "bg-amber-100 text-amber-900 border-amber-300"
-                              : "bg-rose-100 text-rose-800 border-rose-300"
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                            activeEnding.score >= 80
+                              ? "bg-emerald-100 text-emerald-800"
+                              : activeEnding.score >= 50
+                              ? "bg-amber-100 text-amber-900"
+                              : "bg-rose-100 text-rose-800"
                           }`}
                         >
-                          Peringkat: {activeEnding.rank}
+                          {activeEnding.rank}
                         </span>
-                        <span className="text-xs font-bold text-[#526D82]">
-                          {activeEnding.pathDescription}
+                        <span className="text-xs font-semibold text-[#526D82]">
+                          {activeEnding.subtitle}
                         </span>
                       </div>
-                      <h3 className="text-lg sm:text-xl font-black text-[#27374D] mt-0.5">
+                      <h3 className="text-sm sm:text-base font-black text-[#27374D] mt-0.5">
                         {activeEnding.title}
                       </h3>
-                      <p className="text-xs text-[#526D82] font-semibold">{activeEnding.subtitle}</p>
                     </div>
                   </div>
 
                   {/* Skor Besar */}
-                  <div className="flex items-center justify-end sm:flex-col sm:items-end">
+                  <div className="text-right shrink-0">
                     <span className="text-2xl sm:text-3xl font-black text-[#27374D]">
                       {activeEnding.score}
-                      <span className="text-sm font-bold text-[#526D82]"> / 100</span>
+                      <span className="text-xs font-bold text-[#526D82]"> / 100</span>
                     </span>
-                    <span className="text-[10px] text-[#526D82] font-bold">Skor Pertahanan</span>
+                    <span className="block text-[10px] text-[#526D82] font-semibold">Skor Pertahanan</span>
                   </div>
                 </div>
 
-                {/* Komponen Poin Evaluasi */}
-                <div className="rounded-2xl bg-[#DDE6ED]/40 p-4 border border-[#9DB2BF]/40 space-y-2">
-                  <h4 className="text-xs font-black text-[#27374D] uppercase tracking-wider">
-                    Rincian Komponen Skor Kasus:
-                  </h4>
-                  <div className="space-y-1.5 text-xs text-[#27374D]">
-                    {activeEnding.scoreComponents.map((comp, idx) => (
-                      <div key={idx} className="flex items-center justify-between border-b border-[#DDE6ED] pb-1 last:border-none">
-                        <span>{comp.label}</span>
-                        <span className="font-mono font-black text-[#27374D]">{comp.points}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Narasi Hasil Simulasi */}
-                <div className="space-y-1.5 text-xs text-[#27374D] leading-relaxed">
-                  <span className="font-bold uppercase tracking-wider text-[11px] text-[#526D82] block">
-                    Narasi Keputusanmu:
+                {/* Intisari Evaluasi (Ringkas & Padat) */}
+                <div className="rounded-xl bg-white/90 p-3.5 border border-[#9DB2BF]/30 space-y-1">
+                  <span className="font-bold text-[11px] text-[#526D82] uppercase tracking-wider block">
+                    Evaluasi Keputusanmu:
                   </span>
-                  <p className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 italic">
-                    "{activeEnding.narrative}"
+                  <p className="text-xs sm:text-[13px] text-[#27374D] leading-relaxed">
+                    {activeEnding.narrative}
                   </p>
                 </div>
 
-                {/* Red Flags yang Diajarkan */}
-                <div className="rounded-2xl bg-amber-50/80 p-4 border border-amber-200 space-y-2">
-                  <h4 className="text-xs font-black text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
-                    <span>Tanda Bahaya (Red Flags) yang Diajarkan di Kasus Ini:</span>
-                  </h4>
-                  <ul className="list-disc list-inside space-y-1 text-xs text-amber-900 leading-relaxed">
-                    {currentScenario.debriefRedFlags.map((flag, idx) => (
-                      <li key={idx}>{flag}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Jawaban Ideal dari Jaga (Mentor) */}
-                <div className="rounded-2xl bg-[#27374D] text-white p-4 sm:p-5 shadow-md space-y-2 relative overflow-hidden">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-full bg-amber-400 text-[#27374D] flex items-center justify-center font-black text-xs">
-                      J
-                    </div>
-                    <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
-                      Jawaban Ideal dari Jaga (Mentor Keamanan):
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#DDE6ED] leading-relaxed italic pl-8">
-                    "{currentScenario.mentorAdvice}"
-                  </p>
-                </div>
-
-                {/* Flag Bukti & Tombol Aksi */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#DDE6ED]">
+                {/* Kode Bukti Kasus & Tombol Aksi Bersih */}
+                <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-2.5 border-t border-[#9DB2BF]/20">
                   <div className="flex items-center gap-2 text-xs text-[#526D82]">
                     <span className="font-bold text-[#27374D]">Kode Bukti:</span>
-                    <code className="bg-[#DDE6ED] px-2.5 py-1 rounded-md text-[11px] font-mono text-[#27374D] font-bold">
+                    <code className="bg-[#DDE6ED] px-2 py-0.5 rounded text-[11px] font-mono text-[#27374D] font-bold">
                       {currentScenario.flagCode}
                     </code>
                     <button
@@ -686,17 +889,17 @@ export function FakeChatSimulator({
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                       type="button"
-                      onClick={initChat}
-                      className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-[#27374D] text-white hover:bg-[#1e2b3d] text-xs font-bold transition-all cursor-pointer shadow-md"
+                      onClick={onBack}
+                      className="flex-1 sm:flex-none px-4 py-1.5 rounded-xl bg-[#27374D] hover:bg-[#1e2b3d] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
                     >
-                      Ulangi Kasus (Uji Alur Lain)
+                      Kembali ke Daftar Kasus
                     </button>
                     <button
                       type="button"
-                      onClick={onBack}
-                      className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-[#DDE6ED] text-[#27374D] hover:bg-[#9DB2BF]/40 text-xs font-bold transition-all cursor-pointer border border-[#9DB2BF]/60"
+                      onClick={initChat}
+                      className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl bg-white border border-[#9DB2BF]/60 text-[#526D82] hover:text-[#27374D] text-xs font-semibold transition-all cursor-pointer"
                     >
-                      Kembali ke Daftar
+                      Ulangi Kasus
                     </button>
                   </div>
                 </div>
@@ -709,7 +912,11 @@ export function FakeChatSimulator({
             <div className="sticky bottom-2 flex justify-center pointer-events-none z-20">
               <button
                 type="button"
-                onClick={() => scrollToBottom(true)}
+                onClick={() => {
+                  isNearBottomRef.current = true;
+                  setShowScrollDown(false);
+                  scrollToBottom(true, true);
+                }}
                 className="pointer-events-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#27374D]/90 hover:bg-[#27374D] text-white text-xs font-bold shadow-lg backdrop-blur-sm border border-white/20 transition-all cursor-pointer animate-pulse"
               >
                 <ChevronDown className="h-3.5 w-3.5" />
@@ -722,11 +929,16 @@ export function FakeChatSimulator({
         </div>
 
         {/* =================================================================== */}
-        {/* BOTTOM INTERACTIVE CHOICES DOCK (5 TITIK KEPUTUSAN: PILIHAN A & B)   */}
+        {/* BOTTOM INTERACTIVE CHOICES DOCK (TITIK KEPUTUSAN NETRAL A, B, C)    */}
         {/* =================================================================== */}
-        <div className="border-t border-[#9DB2BF]/50 bg-white p-4 sm:p-5 shadow-lg">
+        <div className="relative border-t border-[#9DB2BF]/50 bg-[#F8FAFC] p-4 sm:p-5 shadow-lg">
+          {/* Aksen Label Tape Kasual (Jangan Terlalu Kaku) */}
+          <div className="absolute -top-3 left-6 px-3 py-0.5 rounded-sm bg-amber-100/95 border border-amber-300 text-[10px] font-black text-[#526D82] uppercase tracking-wider rotate-[-1deg] shadow-2xs">
+            Giliranmu Menentukan Tindakan
+          </div>
+
           {currentDecisionId && !activeEnding && !isTyping && (
-            <div className="space-y-3 animate-fadeIn">
+            <div className="space-y-3 pt-1.5 animate-fadeIn">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-[#27374D] uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="h-4 w-4 text-amber-500" />
@@ -735,80 +947,105 @@ export function FakeChatSimulator({
                   </span>
                 </span>
                 <span className="text-[11px] text-[#526D82] font-semibold hidden sm:inline">
-                  Tiap pilihan langsung menentukan jalur ending
+                  Pilih langkah yang menurutmu paling tepat (tanpa petunjuk warna)
                 </span>
               </div>
 
-              {/* 2 Pilihan Utama: Pilihan A (Berisiko) & Pilihan B (Aman) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* PILIHAN A (BERISIKO) */}
-                <button
-                  type="button"
-                  onClick={() => handleSelectOption("A")}
-                  className="group text-left p-4 rounded-2xl border-2 border-rose-200 bg-rose-50/50 hover:bg-rose-100 hover:border-rose-400 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-2 active:scale-[0.99]"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-lg bg-rose-600 text-white text-xs font-black shadow-xs">
-                        A
-                      </span>
-                      <span className="text-[10px] font-bold text-rose-700 uppercase tracking-wider bg-rose-100 px-2 py-0.5 rounded-full">
-                        Berisiko
-                      </span>
-                    </div>
-                    <p className="text-xs sm:text-[13px] font-bold text-[#27374D] group-hover:text-rose-950 transition-colors leading-snug">
-                      {currentScenario.decisions[currentDecisionId]?.options.A.label}
-                    </p>
-                  </div>
-                  <p className="text-[11px] text-[#526D82] leading-tight italic">
-                    Alasan: "{currentScenario.decisions[currentDecisionId]?.options.A.reason}"
-                  </p>
-                </button>
+              {/* Grid Pilihan Netral (Mendukung 2 atau 3 Pilihan Tanpa Clue Merah / Hijau) */}
+              {(() => {
+                const dec = currentScenario.decisions[currentDecisionId];
+                if (!dec) return null;
+                const availableKeys = (["A", "B", "C"] as const).filter(
+                  (key) => dec.options[key] !== undefined
+                );
+                const gridClass =
+                  availableKeys.length === 3
+                    ? "grid grid-cols-1 md:grid-cols-3 gap-3.5"
+                    : "grid grid-cols-1 sm:grid-cols-2 gap-3.5";
 
-                {/* PILIHAN B (AMAN) */}
+                return (
+                  <div className={gridClass}>
+                    {availableKeys.map((key) => {
+                      const opt = dec.options[key]!;
+                      const cleanLabel = cleanOptionLabel(opt.label);
+
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => handleSelectOption(key)}
+                          className="group text-left p-4 rounded-2xl border-2 border-[#9DB2BF]/60 bg-white hover:bg-[#DDE6ED]/40 hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-2.5 active:scale-[0.99] shadow-xs"
+                        >
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="inline-flex items-center justify-center h-6 w-6 rounded-lg bg-[#27374D] group-hover:bg-[#526D82] text-white text-xs font-black transition-colors shadow-xs">
+                                {key}
+                              </span>
+                              <span className="text-[10px] font-bold text-[#526D82] uppercase tracking-wider bg-[#DDE6ED] px-2.5 py-0.5 rounded-full border border-[#9DB2BF]/40">
+                                Opsi {key}
+                              </span>
+                            </div>
+                            <p className="text-xs sm:text-[13px] font-bold text-[#27374D] group-hover:text-[#1e2b3d] transition-colors leading-snug">
+                              {cleanLabel}
+                            </p>
+                          </div>
+                          <p className="text-[11px] text-[#526D82] leading-tight italic pt-1.5 border-t border-[#9DB2BF]/25">
+                            Pertimbangan: "{opt.reason}"
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {(!currentDecisionId || isTyping) && !activeEnding && (
+            <div className="flex items-center justify-between py-2 px-1 text-xs text-[#526D82] animate-fadeIn">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
+                <span className="font-semibold italic">
+                  {isTyping ? typingText : "Menunggu respons percakapan..."}
+                </span>
+              </div>
+              {fastForwardActionRef.current && (
                 <button
                   type="button"
-                  onClick={() => handleSelectOption("B")}
-                  className="group text-left p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100 hover:border-emerald-400 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-2 active:scale-[0.99]"
+                  onClick={handleFastForward}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all cursor-pointer shadow-2xs"
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-lg bg-emerald-600 text-white text-xs font-black shadow-xs">
-                        B
-                      </span>
-                      <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider bg-emerald-100 px-2 py-0.5 rounded-full">
-                        Aman & Verifikasi
-                      </span>
-                    </div>
-                    <p className="text-xs sm:text-[13px] font-bold text-[#27374D] group-hover:text-emerald-950 transition-colors leading-snug">
-                      {currentScenario.decisions[currentDecisionId]?.options.B.label}
-                    </p>
-                  </div>
-                  <p className="text-[11px] text-[#526D82] leading-tight italic">
-                    Alasan: "{currentScenario.decisions[currentDecisionId]?.options.B.reason}"
-                  </p>
+                  <FastForward className="h-3.5 w-3.5 text-amber-700" />
+                  <span>Lewati Mengetik ⏩</span>
                 </button>
-              </div>
+              )}
             </div>
           )}
 
           {activeEnding && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#526D82]">
-              <span className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#526D82] py-0.5 animate-fadeIn">
+              <span className="flex items-center gap-2 font-medium">
                 <Check className="h-4 w-4 text-emerald-600 shrink-0" />
                 <span>
-                  Simulasi tuntas ({activeEnding.title}). Kamu dapat menggulir ke atas untuk meninjau
-                  kembali seluruh rekaman chat dan pilihan yang telah kamu ambil.
+                  Kasus selesai ({activeEnding.title}). Riwayat obrolan di atas tetap tersimpan dan dapat kamu baca kembali kapan saja.
                 </span>
               </span>
-              <button
-                type="button"
-                onClick={initChat}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-bold cursor-pointer transition-all shadow-md shrink-0"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                <span>Ulangi dari Awal</span>
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="px-4 py-1.5 rounded-xl bg-[#27374D] text-white hover:bg-[#1e2b3d] text-xs font-bold transition-all cursor-pointer shadow-xs"
+                >
+                  Selesai
+                </button>
+                <button
+                  type="button"
+                  onClick={initChat}
+                  className="px-3 py-1.5 rounded-xl bg-white border border-[#9DB2BF]/60 text-[#526D82] hover:text-[#27374D] text-xs font-semibold transition-all cursor-pointer"
+                >
+                  Coba Alur Lain
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -15,6 +15,7 @@ export interface DecisionOption {
   label: string;
   reason: string;
   userReply: string;
+  attackerReply?: string; // Balasan percakapan dari pelaku/lawan bicara
   consequence: string;
   nextStep: number | "EndingA" | "EndingB" | "EndingC" | "EndingD" | "EndingE";
 }
@@ -25,8 +26,9 @@ export interface FiveStepDecision {
   scenarioPrompt: string; // Teks situasi / balasan pengirim / event
   senderRole?: "attacker" | "system" | "bank" | "call";
   options: {
-    A: DecisionOption; // Selalu pilihan A (berisiko)
-    B: DecisionOption; // Selalu pilihan B (aman)
+    A: DecisionOption; // Pilihan A
+    B: DecisionOption; // Pilihan B
+    C?: DecisionOption; // Pilihan C (Opsi netral tambahan)
   };
 }
 
@@ -61,6 +63,7 @@ export interface FiveStepScenarioData {
     attachmentName?: string;
     attachmentSize?: string;
     attachmentType?: "apk" | "pdf" | "jpg";
+    additionalMessages?: string[]; // Pesan pembuka bertahap agar tidak tiba-tiba
   };
   evidences: ScenarioInvestigationEvidence[];
   decisions: Record<number, FiveStepDecision>;
@@ -82,10 +85,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "+62 812-7788-9901",
     dataReference: "Kategori #10 IASC — APK via WhatsApp (Rp137,45 M) + pola Social Engineering",
     briefing: {
-      messageText: "Kak, kami mengundang ke pernikahan kami, buka undangan digital di aplikasi ini ya 🙏",
+      messageText: "Kami ingin mengabarkan berita bahagia dan mengundang ke pernikahan kami. Mohon buka undangan digital di aplikasi ini ya 🙏",
       attachmentName: "Undangan_Pernikahan_Digital.apk",
       attachmentSize: "7.8 MB",
       attachmentType: "apk",
+      additionalMessages: [
+        "Halo kak, salam sejahtera 🙏 Maaf mengganggu waktunya sebentar ya.",
+        "Ditunggu kehadirannya ya kak! Konfirmasi kehadirannya bisa langsung diisi di dalam aplikasinya 💐",
+      ],
     },
     evidences: [
       {
@@ -121,19 +128,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Langsung unduh & buka file",
+            label: "Langsung unduh & buka file undangan tersebut",
             reason: "Penasaran dan tidak enak menolak undangan.",
             userReply: "Iya kak terima kasih undangannya, langsung aku unduh dan buka ya.",
+            attackerReply: "Sip mantap kak! Nanti kalau ada peringatan di layar HP, klik 'Izinkan' atau 'Tetap Pasang' aja ya biar aplikasinya kebuka 🙏",
             consequence: "File langsung diunduh dan dibuka. Kamu tidak sempat menanyakan apa pun ke pengirim.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Balas dulu, tanya 'ini siapa ya kak?'",
+            label: "Balas chat dan tanyakan siapa pengirimnya untuk memastikan",
             reason: "Tidak mau membuka apa pun sebelum tahu siapa pengirimnya.",
             userReply: "Halo kak, terima kasih. Mohon maaf ini dari siapa ya? Karena nomornya belum tersimpan di kontak saya.",
+            attackerReply: "Lah masa kamu lupa sih kak? Ini calon pengantin teman seangkatan SMA kita dulu hehe 😅 Masa nomor kawan sendiri lupa. Buruan dibuka ya kak aplikasinya sebelum link kuotanya penuh.",
             consequence: "Kamu membalas chat untuk memastikan identitas pengirim sebelum membuka file apa pun.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Abaikan dan laporkan pesan sebagai spam atau nomor mencurigakan",
+            reason: "Undangan resmi tidak pernah dikirim dalam format mentah .apk dari nomor baru.",
+            userReply: "Format file .apk mentah dari nomor asing sangat berisiko trojan. Saya tidak akan membuka dan langsung menandai spam.",
+            attackerReply: "Lho kok diblokir kak? Ini beneran undangan nikahan kerabat kok, suwer jangan suudzon dulu...",
+            consequence: "Keputusan preventif cerdas! Kamu menolak menyentuh malware mentah dan mengamankan HP sebelum pelaku sempat melancarkan rekayasa sosial.",
+            nextStep: "EndingA",
           },
         },
       },
@@ -336,6 +354,10 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
       attachmentName: "Foto_Resi_Paket.jpg.apk",
       attachmentSize: "6.4 MB",
       attachmentType: "apk",
+      additionalMessages: [
+        "Selamat siang kak, ini dari kurir ekspedisi pengantaran paket logistik.",
+        "Tolong dicek sekarang ya kak biar kurir kami bisa langsung jalan kirim ke alamat rumah hari ini 🙏",
+      ],
     },
     evidences: [
       {
@@ -371,19 +393,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Lanjutkan tanpa verifikasi",
+            label: "Langsung unduh & buka file Foto_Resi_Paket.jpg.apk",
             reason: "Penasaran, takut ada paket penting yang benar-benar tertahan.",
             userReply: "Waduh ada paket apa ya? Langsung saya unduh dan buka fotonya sekarang.",
+            attackerReply: "Oke kak langsung dibuka ya, nanti kalau sistem minta konfirmasi penginstalan, klik 'Setuju' biar gambar resi dan lokasinya muncul 🙏",
             consequence: "File langsung diunduh dan dibuka. Kamu tidak sempat mengecek status pengiriman ke mana pun.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Verifikasi dulu sebelum lanjut",
+            label: "Balas chat dan tanyakan nama penerima serta alamat lengkap paket",
             reason: "Tidak merasa sedang menunggu paket apa pun belakangan ini.",
             userReply: "Tunggu sebentar, saya tidak sedang memesan barang. Saya akan cek status nomor resi di aplikasi resmi ekspedisi terlebih dahulu.",
+            attackerReply: "Lah masa nggak ada kak, ini baru masuk sistem kami kemarin kok. Coba buka fotonya dulu deh biar tahu pengirimnya dari siapa 😅",
             consequence: "Kamu membuka aplikasi ekspedisi resmi dan mengecek nomor resi sendiri — ternyata tidak ada paket atas namanya.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Abaikan file di chat, cek nomor resi secara mandiri di aplikasi resmi ekspedisi",
+            reason: "Foto resi asli tidak menggunakan ekstensi .apk dan kurir resmi punya akun centang hijau.",
+            userReply: "Ekstensi ganda .jpg.apk tidak masuk akal untuk foto resi. Saya akan melacak kiriman mandiri lewat aplikasi resmi ekspedisi.",
+            attackerReply: "Kok malah nggak mau buka kak? Nanti paketnya diretur lho kalau nggak dikonfirmasi hari ini...",
+            consequence: "Langkah protektif tepat! Kamu langsung melacak resi di aplikasi resmi dan mendapati tidak ada paket bermasalah. Berkas .apk berbahaya berhasil dihindari.",
+            nextStep: "EndingA",
           },
         },
       },
@@ -582,10 +615,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "DM Instagram: @recruitment_workfromhome_id",
     dataReference: "Kategori #4 IASC — Penawaran Kerja Palsu (Rp708,58 M)",
     briefing: {
-      messageText: "Selamat, Anda lolos sebagai Admin WFH, gaji Rp5.000.000/bulan, langsung kerja besok. Transfer Rp150.000 dulu untuk biaya administrasi dan pelatihan ya.",
+      messageText: "Selamat! Anda dinyatakan lolos seleksi sebagai Admin WFH dengan kompensasi Rp5.000.000/bulan, langsung mulai besok.",
       attachmentName: "Formulir_Penerimaan_Karyawan.pdf",
       attachmentSize: "1.2 MB",
       attachmentType: "pdf",
+      additionalMessages: [
+        "Halo kak! Kami dari tim HRD agensi digital melihat profil Anda yang sangat potensial untuk posisi freelance.",
+        "Untuk verifikasi slot dan ID Card karyawan, silakan transfer Rp150.000 untuk biaya administrasi sistem ya kak 🙏",
+      ],
     },
     evidences: [
       {
@@ -621,19 +658,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Lanjutkan tanpa verifikasi",
+            label: "Langsung setuju dan transfer deposit biaya administrasi agar slot kerja aman",
             reason: "Senang ada kerjaan dengan gaji lumayan dan proses cepat.",
             userReply: "Wah terima kasih! Baik saya setuju dan segera transfer Rp150.000 untuk biaya administrasi.",
+            attackerReply: "Bagus sekali kak! Silakan transfer ke rekening bendahara kami ya, setelah bukti transfer masuk akun kerja Anda langsung kami aktifkan.",
             consequence: "Rp150.000 langsung ditransfer sebagai 'biaya administrasi'.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Verifikasi dulu sebelum lanjut",
+            label: "Tanyakan profil resmi perusahaan, situs web resmi, dan surat kontrak tertulis",
             reason: "Proses penerimaannya terasa terlalu instan untuk dipercaya begitu saja.",
             userReply: "Mohon maaf, boleh tahu nama resmi perusahaan dan situs resminya? Saya ingin memverifikasi profil perusahaannya terlebih dahulu.",
+            attackerReply: "Perusahaan kami PT Global Media Sejahtera kak, webnya lagi migrasi sistem baru. Tapi tenang aja ini legal kok, slotnya sisa 1 orang lagi nih.",
             consequence: "Kamu mencari nama perusahaan di internet dan tidak menemukan jejak resmi apa pun — tidak ada situs web, alamat, atau ulasan karyawan.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Tolak tawaran dan laporkan lowongan fiktif yang meminta uang muka kerja",
+            reason: "Perekrutan kerja yang meminta pelamar mentransfer uang adalah tanda mutlak penipuan.",
+            userReply: "Perekrutan tenaga kerja legal tidak pernah memungut deposit uang dari pelamar. Saya menolak dan melaporkan akun ini.",
+            attackerReply: "Lho kok dituduh penipuan kak? Kami ini agensi resmi lho, yaudah kalau nggak mau rezeki buat pelamar lain aja.",
+            consequence: "Langkah tegas dan tepat! Kamu menolak skema pemerasan deposit dan melindungi keuanganmu dari jebakan loker fiktif.",
+            nextStep: "EndingA",
           },
         },
       },
@@ -832,7 +880,11 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "+62 821-9900-1122 (Panggilan Suara Masuk)",
     dataReference: "Kategori #2 IASC — Mengaku Pihak Lain, TERBESAR secara kerugian (Rp1,54 T)",
     briefing: {
-      messageText: "Selamat siang, saya dari pihak keamanan Bank X, kartu Anda terindikasi transaksi mencurigakan senilai Rp4.500.000. Untuk membatalkannya, mohon sebutkan kode OTP yang baru saja dikirim ke nomor Anda.",
+      messageText: "Selamat siang Bapak/Ibu nasabah, saya dari Divisi Keamanan Bank X. Sistem kami mendeteksi transaksi transfer mencurigakan sebesar Rp4.500.000 keluar dari rekening Anda.",
+      additionalMessages: [
+        "📞 Panggilan Suara Masuk: Layanan Keamanan Kartu & Transaksi Bank...",
+        "Demi membatalkan transaksi tidak sah ini, kami baru saja mengirimkan 6 digit kode pengamanan via SMS. Mohon sebutkan kodenya segera.",
+      ],
     },
     evidences: [
       {
@@ -869,19 +921,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Lanjutkan tanpa verifikasi",
+            label: "Percaya instruksi penelpon dan ikuti proses pemblokiran via telepon",
             reason: "Panik mendengar ada transaksi mencurigakan dan ingin segera dibatalkan.",
             userReply: "Aduh ada transaksi apa ya pak? Kode OTP-nya 938210, tolong segera dibatalkan sekarang!",
+            attackerReply: "Baik kode OTP diterima, sistem kami sedang memproses pembatalan darurat... Mohon jangan buka m-banking selama 15 menit ya.",
             consequence: "Kode OTP disebutkan — penipu langsung memakainya untuk mengambil alih akun mobile banking.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Verifikasi dulu sebelum lanjut",
+            label: "Minta nama lengkap petugas, nomor ID pegawai, dan nomor tiket pengaduan resmi",
             reason: "Institusi resmi tidak pernah meminta kode OTP lewat telepon.",
             userReply: "Maaf, pihak bank resmi tidak pernah meminta kode OTP lewat telepon. Saya tutup telepon ini dan akan verifikasi mandiri ke call center resmi bank saya.",
+            attackerReply: "Nama saya Bambang Hermawan ID 88492 dari Divisi Fraud Bank Pusat. Ini darurat Bapak/Ibu, saldo Anda bisa hilang kalau OTP tidak segera diverifikasi sekarang!",
             consequence: "Telepon ditutup. Kamu menelepon nomor call center resmi dari kartu ATM/aplikasi bank untuk konfirmasi — pihak bank menyatakan tidak ada transaksi mencurigakan apa pun.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Tutup panggilan langsung dan blokir nomor penelpon yang meminta kode OTP",
+            reason: "Bank tidak pernah menelepon nasabah untuk meminta kode rahasia atau OTP perbankan.",
+            userReply: "Pihak bank resmi tidak pernah meminta kode OTP nasabah. Panggilan ini saya putus sekarang dan nomornya saya blokir.",
+            attackerReply: "[Panggilan Suara Terputus] Penelepon mencoba menghubungi kembali 2 kali namun panggilan otomatis ditolak oleh fitur pemblokiran nomor spam.",
+            consequence: "Refleks keamanan yang sempurna! Memutus sambungan sepihak menggagalkan upaya social engineering penipu seketika.",
+            nextStep: "EndingA",
           },
         },
       },
@@ -1080,10 +1143,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "Chat Aplikasi Dating: @siska_lifestyle",
     dataReference: "Kategori #3 IASC — Penipuan Investasi (Rp1,40 T); pola dikenal sebagai 'pig butchering scam'",
     briefing: {
-      messageText: "Belakangan ini aku lagi untung besar dari trading lho, mau nggak aku ajarin pakai platform yang sama? Aman kok, aku juga udah buktiin sendiri.",
+      messageText: "Aku lagi istirahat trading nih, tadi pagi coba analisa pasar kripto di platform baru lumayan banget profit 25% dalam 2 jam.",
       attachmentName: "Bukti_Profit_Trading.jpg",
       attachmentSize: "2.1 MB",
       attachmentType: "jpg",
+      additionalMessages: [
+        "Hai kamu! Gimana harinya? Sibuk banget ya belakangan ini? 😊",
+        "Kalau kamu mau coba, nanti aku ajarin langkahnya dari awal kok, modal kecil dulu aja biar kamu ngerasain hasilnya barengan 💕",
+      ],
     },
     evidences: [
       {
@@ -1119,19 +1186,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Lanjutkan tanpa verifikasi",
+            label: "Transfer modal awal ke link platform investasi kripto yang direkomendasikan",
             reason: "Percaya penuh karena hubungan yang sudah terasa dekat selama ini.",
             userReply: "Boleh banget! Aku percaya sama kamu, ini aku coba transfer modal awal Rp500.000 ke akun tradingnya.",
+            attackerReply: "Keren banget sayang! Nanti kalau saldo depositnya sudah masuk akun, aku kasih sinyal jam berapa harus pasang ya 💕",
             consequence: "Dana awal langsung ditransfer ke platform yang direkomendasikan.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Verifikasi dulu sebelum lanjut",
+            label: "Minta bukti izin resmi OJK atau Bappebti sebelum mempertimbangkan investasi",
             reason: "Keputusan finansial sebesar ini perlu dicek legalitasnya dulu, siapa pun yang menawarkan.",
             userReply: "Kelihatannya menarik, tapi boleh tahu nama perusahaannya? Aku mau cek legalitas izinnya di OJK dulu ya.",
+            attackerReply: "Tenang aja sayang, platform ini induknya di luar negeri dan pakai enkripsi aman kok. Aku udah narik profit 3 kali lancar banget, masa kamu ragu sama aku? 🥺",
             consequence: "Kamu mengecek nama platform di situs resmi OJK dan tidak menemukannya dalam daftar yang terdaftar/berizin.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Tolak tegas ajakan transfer investasi dan blokir kontak perkenalan tersebut",
+            reason: "Modus pertemanan daring yang tiba-tiba mengarahkan transfer dana adalah ciri Pig Butchering.",
+            userReply: "Saya tidak tertarik dengan skema investasi titip dana atau trading titipan. Komunikasi ini saya hentikan.",
+            attackerReply: "Kok kamu tiba-tiba dingin gini sih? Aku kan cuma mau kita sukses finansial bareng... Kenapa kontakku malah diblokir? 😢",
+            consequence: "Keputusan matang! Kamu berhasil menghindari jebakan manipulasi emosional (Pig Butchering) sebelum kerugian finansial terjadi.",
+            nextStep: "EndingA",
           },
         },
       },
@@ -1330,7 +1408,11 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "security@service-acc-verify.com (bukan domain resmi)",
     dataReference: "Kategori #7 IASC — Phishing (Rp605,48 M)",
     briefing: {
-      messageText: "Akun Anda akan ditangguhkan dalam 24 jam, klik di sini untuk verifikasi segera agar akses Anda tidak terputus.",
+      messageText: "Sistem keamanan mendeteksi aktivitas login mencurigakan. Akun Anda dijadwalkan akan ditangguhkan permanen dalam 24 jam.",
+      additionalMessages: [
+        "🚨 [Pemberitahuan Darurat] Keamanan Akun Terancam Penutupan Sepihak.",
+        "Segera konfirmasi kepemilikan Anda melalui tautan verifikasi sebelum akses Anda diputus permanen: secure-auth-portal.net/verify",
+      ],
     },
     evidences: [
       {
@@ -1366,19 +1448,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Lanjutkan tanpa verifikasi",
+            label: "Klik tombol tautan verifikasi di email untuk segera memulihkan akun",
             reason: "Takut akunnya benar-benar ditangguhkan dalam 24 jam.",
             userReply: "Segera klik tautan di dalam email dan ketikkan username serta kata sandi akun.",
+            attackerReply: "[Server Phishing] Kredensial akun berhasil terekam ke database penipu. Menampilkan animasi pemulihan palsu...",
             consequence: "Tautan diklik dan kata sandi dimasukkan di halaman yang tampilannya mirip halaman login asli.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Verifikasi dulu sebelum lanjut",
+            label: "Periksa alamat domain pengirim email dan tujuan link sebelum klik",
             reason: "Tenggat waktu yang mendesak ini terasa mencurigakan untuk dipercaya begitu saja.",
             userReply: "Periksa domain pengirim lewat fitur Cek Email dan buka situs resmi via peramban web langsung tanpa klik tautan email.",
+            attackerReply: "[Notifikasi Sistem Email Susulan] Peringatan: Batas waktu verifikasi tersisa 12 jam. Segera selesaikan otorisasi kata sandi.",
             consequence: "Kamu mengecek domain pengirim lewat fitur Cek Email dan menemukan tanda bahaya; kamu membuka situs resmi langsung dari ketikan sendiri, bukan dari tautan email.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Tandai email sebagai phishing dan buka situs resmi langsung via peramban",
+            reason: "Email peringatan darurat dengan tautan login eksternal adalah taktik phishing klasik.",
+            userReply: "Pemberitahuan darurat via email sering kali jebakan phising. Saya tandai email ini sebagai spam dan login manual di tab peramban terpisah.",
+            attackerReply: "[Filter Keamanan Peramban] Email berbahaya berhasil dikarantina. Tautan phishing otomatis diblokir oleh sistem perlindungan.",
+            consequence: "Sikap hati-hati yang tepat! Kamu login lewat web resmi yang diketik sendiri dan memastikan status akun aman tanpa terjebak formulir palsu.",
+            nextStep: "EndingA",
           },
         },
       },
@@ -1577,10 +1670,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "DM: @giveaway_official_promo_id",
     dataReference: "Kategori #6 IASC — Iming-iming Hadiah (Rp226,94 M)",
     briefing: {
-      messageText: "Selamat! Anda terpilih sebagai pemenang undian kami, hadiah smartphone terbaru. Transfer Rp350.000 untuk pajak hadiah agar barang bisa dikirim ya.",
+      messageText: "Selamat! Anda berhak mendapatkan 1 Unit smartphone terbaru secara cuma-cuma tanpa diundi lagi!",
       attachmentName: "Sertifikat_Pemenang_Giveaway.pdf",
       attachmentSize: "850 KB",
       attachmentType: "pdf",
+      additionalMessages: [
+        "🎉 SELAMAT! Akun media sosial Anda terpilih sebagai pemenang program undian Berkah Akhir Tahun!",
+        "Untuk klaim resi pengiriman unit ke alamat Anda, mohon bayar biaya administrasi pajak hadiah sebesar Rp 350.000 ke bendahara panitia dalam 1 jam ya kak!",
+      ],
     },
     evidences: [
       {
@@ -1616,19 +1713,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Lanjutkan tanpa verifikasi",
+            label: "Kirim data pribadi dan transfer biaya pajak pemenang agar hadiah lekas dikirim",
             reason: "Senang dan tidak ingin kehilangan kesempatan mendapat hadiah gratis.",
             userReply: "Wah senang sekali dapat HP baru! Baik saya transfer Rp350.000 untuk pajak hadiahnya sekarang ya.",
+            attackerReply: "Alhamdulillah kak! Silakan transfer ke rekening bendahara kami ya, setelah bukti transfer dikirim unit langsung dipacking kurir VIP.",
             consequence: "Rp350.000 langsung ditransfer sebagai 'pajak hadiah'.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Verifikasi dulu sebelum lanjut",
+            label: "Minta surat pengesahan resmi kementerian dan kontak kantor penyelenggara",
             reason: "Tidak ingat pernah mengikuti undian apa pun dari brand tersebut.",
             userReply: "Mohon maaf, saya tidak pernah mendaftar undian ini. Saya cek pengumuman pemenang di akun resmi bercentang biru terlebih dahulu.",
+            attackerReply: "Ini program promosi khusus followers beruntung kak, jadi tidak diposting di feed biar nggak ramai. Kami resmi berizin kok kak, buruan ya sebelum dialihkan.",
             consequence: "Kamu mengecek akun resmi brand tersebut dan tidak menemukan pengumuman undian apa pun di sana.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Abaikan pemberitahuan dan laporkan pesan undian fiktif yang meminta pungutan",
+            reason: "Undian pemenang sah tidak pernah membebankan pajak transfer langsung ke rekening perorangan.",
+            userReply: "Pemenang undian resmi tidak pernah diminta membayar biaya transfer pajak ke rekening perorangan. Ini penipuan dan saya laporkan.",
+            attackerReply: "Waduh kak rugi banget lho kesempatan dapat HP belasan juta dilepas cuma gara-gara ragu bayar pajak sedikit...",
+            consequence: "Tindakan bijak! Kamu memutus jebakan janji manis hadiah fiktif dan mencegah kerugian materiil.",
+            nextStep: "EndingA",
           },
         },
       },
@@ -1827,10 +1935,14 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
     senderAddress: "Chat Toko: @gadget_diskon_official",
     dataReference: "Kategori #1 IASC — Transaksi Belanja, VOLUME LAPORAN TERBESAR (64.933 laporan, Rp1,14 T)",
     briefing: {
-      messageText: "Ponsel keluaran terbaru dijual separuh harga pasar! Stok terbatas, transfer langsung ke rekening pribadi ya biar diprioritaskan, nggak lewat sistem marketplace yang ribet.",
+      messageText: "Ponsel flagship keluaran terbaru dijual separuh harga pasar! Stok terbatas, langsung transfer ke rekening admin ya biar diprioritaskan.",
       attachmentName: "Foto_Produk_Promo.jpg",
       attachmentSize: "1.5 MB",
       attachmentType: "jpg",
+      additionalMessages: [
+        "Halo kak, terima kasih sudah menghubungi admin toko elektronik cuci gudang resmi!",
+        "Stok promo flash sale tinggal 1 unit kak dan banyak yang antre. Kalau mau, langsung transfer sekarang biar langsung kami kirim siang ini!",
+      ],
     },
     evidences: [
       {
@@ -1866,19 +1978,30 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         options: {
           A: {
             type: "risky",
-            label: "Pilihan A (Berisiko) — Lanjutkan tanpa verifikasi",
+            label: "Transfer langsung ke rekening pribadi penjual demi diskon promo khusus",
             reason: "Tidak ingin kehilangan kesempatan harga murah yang langka ini.",
             userReply: "Wah murah sekali! Baik saya langsung transfer pembayarannya ke rekening pribadi penjual.",
+            attackerReply: "Sip kak, ini nomor rekening BCA/Mandiri saya ya. Begitu transfer langsung saya buatkan nomor resi J&T-nya.",
             consequence: "Uang langsung ditransfer ke rekening pribadi penjual.",
             nextStep: 3,
           },
           B: {
             type: "safe",
-            label: "Pilihan B (Aman) — Verifikasi dulu sebelum lanjut",
+            label: "Minta foto barang langsung dengan kertas bertuliskan nama dan tanggal hari ini",
             reason: "Harga semurah ini untuk barang baru keluaran terbaru terasa tidak masuk akal.",
             userReply: "Saya hanya bersedia bertransaksi lewat sistem pembayaran resmi marketplace yang menjamin uang aman sampai barang diterima.",
+            attackerReply: "Ini kak fotonya masih segel baru kok. Tapi sistem rekber marketplace lagi gangguan dari kemarin, makanya kami buka jalur transfer langsung.",
             consequence: "Kamu menolak transfer langsung dan bersikeras hanya mau bertransaksi lewat sistem pembayaran resmi marketplace yang menahan dana sampai barang diterima.",
             nextStep: 2,
+          },
+          C: {
+            type: "safe",
+            label: "Batalkan pembelian dan wajibkan transaksi hanya melalui rekening bersama resmi",
+            reason: "Ajakan bertransaksi di luar sistem escrow marketplace adalah indikasi kuat toko fiktif.",
+            userReply: "Jika tidak bisa bertransaksi melalui rekening bersama resmi marketplace, transaksi saya batalkan demi keamanan.",
+            attackerReply: "Ya udah kalau ragu kak, ini barangnya mau diambil pembeli lain yang siap transfer sekarang ya...",
+            consequence: "Perlindungan pembeli berhasil! Menolak transfer rekening pribadi menyelamatkan uangmu dari pesanan barang fiktif.",
+            nextStep: "EndingA",
           },
         },
       },

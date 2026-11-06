@@ -14,7 +14,6 @@ import {
   Users,
   Smartphone,
   ShieldCheck,
-  CheckCircle2,
   HelpCircle,
   ChevronDown,
   Star,
@@ -164,18 +163,6 @@ export default function Beranda() {
                 Pelajari Fitur
               </a>
             </div>
-
-            {/* Keunggulan Ringkas */}
-            <div className="pt-4 flex flex-wrap items-center gap-6 text-xs font-semibold text-[#526D82]">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                <span>100% On-Device di Browser</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                <span>Tautan Tidak Pernah Dibuka</span>
-              </div>
-            </div>
           </div>
 
           {/* Kolom Kanan: Three.js Interactive 3D Smartphone Canvas */}
@@ -185,9 +172,6 @@ export default function Beranda() {
 
             <div className="relative w-full max-w-xl overflow-visible">
               <ThreeHeroCanvas />
-              <p className="text-center text-[11px] font-semibold text-[#526D82] mt-2">
-                *Model 3D interaktif Three.js — Gerakkan kursor atau sentuh untuk memutar
-              </p>
             </div>
           </div>
         </section>
@@ -762,6 +746,20 @@ export default function Beranda() {
               <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
                 Pintasan Simulator
               </span>
+            </div>
+
+            {/* Gambar Cuplikan Chat Skenario K1 */}
+            <div className="relative overflow-hidden rounded-2xl border border-[#9DB2BF]/40 bg-[#DDE6ED]/40 shadow-xs group/thumb">
+              <img
+                src="/simulator/k1-chat-snippet.png"
+                alt="Cuplikan Chat Simulator K1"
+                className="w-full h-40 sm:h-44 object-cover object-top transition-transform duration-300 group-hover/thumb:scale-[1.02]"
+              />
+              <div className="absolute top-2.5 right-2.5">
+                <span className="rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-amber-300 border border-white/10 shadow-xs">
+                  Skenario K1
+                </span>
+              </div>
             </div>
 
             {/* Judul & Keterangan Skenario */}

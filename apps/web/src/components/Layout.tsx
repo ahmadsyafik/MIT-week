@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Menu,
@@ -12,6 +12,10 @@ import {
   ShieldCheck,
   ChevronRight,
   ChevronDown,
+  Sparkles,
+  RefreshCw,
+  Smartphone,
+  HelpCircle,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import LoginModal from "./LoginModal";
@@ -25,17 +29,84 @@ const NAV_ITEMS = [
   { to: "/sandi", label: "Sandi Keluarga", shortLabel: "Sandi", icon: KeyRound },
 ];
 
+interface SearchItem {
+  id: string;
+  type: "simulator" | "modul" | "kamus";
+  title: string;
+  subtitle: string;
+  url: string;
+  badge: string;
+}
+
+const SEARCH_POOL: SearchItem[] = [
+  // 8 Skenario Simulator
+  { id: "sim-k1", type: "simulator", title: "Simulator K1 · Undangan APK", subtitle: "WhatsApp · File .apk penipuan", url: "/belajar?tab=simulator&scenario=k1", badge: "Simulator" },
+  { id: "sim-k2", type: "simulator", title: "Simulator K2 · Lihat Foto Paket", subtitle: "WhatsApp · Ekstensi ganda .jpg.apk", url: "/belajar?tab=simulator&scenario=k2", badge: "Simulator" },
+  { id: "sim-k3", type: "simulator", title: "Simulator K3 · Loker Admin WFH", subtitle: "Media Sosial · Jebakan deposit kerja", url: "/belajar?tab=simulator&scenario=k3", badge: "Simulator" },
+  { id: "sim-k4", type: "simulator", title: "Simulator K4 · Telepon Palsu Bank", subtitle: "Panggilan Suara · Manipulasi OTP vishing", url: "/belajar?tab=simulator&scenario=k4", badge: "Simulator" },
+  { id: "sim-k5", type: "simulator", title: "Simulator K5 · Investasi Bodong", subtitle: "Dating App · Jebakan Pig Butchering", url: "/belajar?tab=simulator&scenario=k5", badge: "Simulator" },
+  { id: "sim-k6", type: "simulator", title: "Simulator K6 · Akun Ditangguhkan", subtitle: "Email · Trik phishing login darurat", url: "/belajar?tab=simulator&scenario=k6", badge: "Simulator" },
+  { id: "sim-k7", type: "simulator", title: "Simulator K7 · Giveaway Palsu", subtitle: "Media Sosial · Pungutan pajak hadiah", url: "/belajar?tab=simulator&scenario=k7", badge: "Simulator" },
+  { id: "sim-k8", type: "simulator", title: "Simulator K8 · Toko Online Fiktif", subtitle: "Marketplace · Pancingan diskon murah", url: "/belajar?tab=simulator&scenario=k8", badge: "Simulator" },
+
+  // 12 Modul Pembelajaran
+  { id: "mod-1", type: "modul", title: "Modul · Apa Itu Rekayasa Sosial?", subtitle: "Dasar Keamanan · Konsep dasar manipulasi", url: "/belajar?tab=modul&module=m1", badge: "Modul" },
+  { id: "mod-2", type: "modul", title: "Modul · Anatomi Sebuah Penipuan", subtitle: "Dasar Keamanan · Pendekatan & eksploitasi", url: "/belajar?tab=modul&module=m2", badge: "Modul" },
+  { id: "mod-3", type: "modul", title: "Modul · Keamanan di WhatsApp", subtitle: "Per Kanal · Cek akun centang hijau & broadcast", url: "/belajar?tab=modul&module=m3", badge: "Modul" },
+  { id: "mod-4", type: "modul", title: "Modul · Keamanan Email & Phishing", subtitle: "Per Kanal · Cara bedah domain palsu", url: "/belajar?tab=modul&module=m4", badge: "Modul" },
+  { id: "mod-5", type: "modul", title: "Modul · Waspada Telepon Bank", subtitle: "Per Kanal · Caller ID spoofing & vishing", url: "/belajar?tab=modul&module=m5", badge: "Modul" },
+  { id: "mod-6", type: "modul", title: "Modul · 10 Ciri Pesan Phishing", subtitle: "Checklist Praktis · Checklist sebelum klik link", url: "/belajar?tab=modul&module=m6", badge: "Modul" },
+  { id: "mod-7", type: "modul", title: "Modul · Checklist Sebelum Transfer", subtitle: "Checklist Praktis · Verifikasi rekening tujuan", url: "/belajar?tab=modul&module=m7", badge: "Modul" },
+  { id: "mod-8", type: "modul", title: "Modul · Modus Penipuan Terbanyak", subtitle: "Pola Nyata · Data IASC & OJK", url: "/belajar?tab=modul&module=m8", badge: "Modul" },
+  { id: "mod-9", type: "modul", title: "Modul · Penipuan QRIS & E-Wallet", subtitle: "Pola Nyata · QR palsu & tautan pembayaran", url: "/belajar?tab=modul&module=m9", badge: "Modul" },
+  { id: "mod-10", type: "modul", title: "Modul · Pinjol Ilegal & Pencurian Data", subtitle: "Pola Nyata · Mengamankan kontak & izin HP", url: "/belajar?tab=modul&module=m10", badge: "Modul" },
+  { id: "mod-11", type: "modul", title: "Modul · Cara Lapor Jika Jadi Korban", subtitle: "Setelah Kejadian · Bank, IASC & OJK", url: "/belajar?tab=modul&module=m11", badge: "Modul" },
+  { id: "mod-12", type: "modul", title: "Modul · Dampingi Keluarga Korban", subtitle: "Setelah Kejadian · Komunikasi tanpa menyalahkan", url: "/belajar?tab=modul&module=m12", badge: "Modul" },
+
+  // 10 Istilah Kamus
+  { id: "kam-1", type: "kamus", title: "Kamus · Sniffing APK", subtitle: "Pencurian SMS OTP berkedok file .apk", url: "/belajar?tab=kamus&q=Sniffing", badge: "Kamus" },
+  { id: "kam-2", type: "kamus", title: "Kamus · Social Engineering", subtitle: "Manipulasi psikologis panik & rasa bersalah", url: "/belajar?tab=kamus&q=Social+Engineering", badge: "Kamus" },
+  { id: "kam-3", type: "kamus", title: "Kamus · Phishing & Typosquatting", subtitle: "Situs tiruan dengan kemiripan domain", url: "/belajar?tab=kamus&q=Phishing", badge: "Kamus" },
+  { id: "kam-4", type: "kamus", title: "Kamus · Caller ID Spoofing", subtitle: "Memanipulasi nomor panggilan masuk bank", url: "/belajar?tab=kamus&q=Spoofing", badge: "Kamus" },
+  { id: "kam-5", type: "kamus", title: "Kamus · OTP Hijacking", subtitle: "Teknik mencuri kode otorisasi 6 digit", url: "/belajar?tab=kamus&q=OTP", badge: "Kamus" },
+  { id: "kam-6", type: "kamus", title: "Kamus · Pig Butchering Scam", subtitle: "Kedekatan emosional sebelum disedot investasinya", url: "/belajar?tab=kamus&q=Pig+Butchering", badge: "Kamus" },
+  { id: "kam-7", type: "kamus", title: "Kamus · Fake Job Scam", subtitle: "Loker admin WFH yang memeras uang deposit", url: "/belajar?tab=kamus&q=Loker", badge: "Kamus" },
+  { id: "kam-8", type: "kamus", title: "Kamus · SIM Swap Fraud", subtitle: "Pembajakan nomor kartu SIM operator", url: "/belajar?tab=kamus&q=SIM+Swap", badge: "Kamus" },
+  { id: "kam-9", type: "kamus", title: "Kamus · Quishing (QR Phishing)", subtitle: "Kode QR palsu yang ditempel di kasir/ATM", url: "/belajar?tab=kamus&q=QR", badge: "Kamus" },
+  { id: "kam-10", type: "kamus", title: "Kamus · Account Takeover (ATO)", subtitle: "Pengambilalihan akun perbankan & sosmed", url: "/belajar?tab=kamus&q=Account+Takeover", badge: "Kamus" },
+];
+
+function getRandomRecommendations(pool: SearchItem[], count = 5): SearchItem[] {
+  const shuffled = [...pool].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
 export default function Layout() {
   const { user, isAuthenticated, logout, openLoginModal } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [recommendations, setRecommendations] = useState<SearchItem[]>([]);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Tutup drawer sidebar mobile otomatis saat rute berpindah
+  // Tutup drawer sidebar mobile & dropdown search saat rute berpindah
   useEffect(() => {
     setSidebarOpen(false);
+    setIsSearchOpen(false);
   }, [location.pathname]);
+
+  // Listener klik di luar search box untuk menutup dropdown rekomendasi
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const closeSidebar = () => setSidebarOpen(false);
 
@@ -44,9 +115,38 @@ export default function Layout() {
     logout();
   };
 
+  // Saat input search diklik/fokus: buka dropdown dan refresh 5 rekomendasi acak baru
+  const handleSearchFocus = () => {
+    setIsSearchOpen(true);
+    setRecommendations(getRandomRecommendations(SEARCH_POOL, 5));
+  };
+
+  const handleSelectRecommendation = (item: SearchItem) => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+    navigate(item.url);
+  };
+
+  // Filter hasil saat mengetik, atau tampilkan 5 rekomendasi acak saat kosong
+  const displayedItems = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return recommendations.slice(0, 5);
+    }
+    const q = searchQuery.toLowerCase().trim();
+    return SEARCH_POOL.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.subtitle.toLowerCase().includes(q) ||
+        item.badge.toLowerCase().includes(q)
+    ).slice(0, 5);
+  }, [searchQuery, recommendations]);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
+    if (displayedItems.length > 0) {
+      handleSelectRecommendation(displayedItems[0]);
+    } else if (searchQuery.trim()) {
+      setIsSearchOpen(false);
       navigate(`/belajar?tab=kamus&q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
@@ -318,19 +418,102 @@ export default function Layout() {
             </NavLink>
           </div>
 
-          {/* Search Input Bar (di Desktop dan Tablet) */}
-          <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-md items-center">
-            <div className="relative w-full">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari modul, istilah, atau modus penipuan..."
-                className="w-full rounded-full border border-[#9DB2BF]/70 bg-[#DDE6ED]/50 px-4 py-2 pl-10 pr-4 text-xs sm:text-sm text-[#27374D] placeholder:text-[#526D82]/70 focus:border-[#526D82] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#526D82]/20 transition-all shadow-inner"
-              />
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#526D82]" />
-            </div>
-          </form>
+          {/* Search Input Bar & Dropdown Rekomendasi (di Desktop dan Tablet) */}
+          <div ref={searchContainerRef} className="relative hidden md:flex flex-1 max-w-md items-center">
+            <form onSubmit={handleSearchSubmit} className="w-full">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={handleSearchFocus}
+                  placeholder="Cari modul, istilah, atau modus penipuan..."
+                  className="w-full rounded-full border border-[#9DB2BF]/70 bg-[#DDE6ED]/50 px-4 py-2 pl-10 pr-4 text-xs sm:text-sm text-[#27374D] placeholder:text-[#526D82]/70 focus:border-[#526D82] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#526D82]/20 transition-all shadow-inner"
+                />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#526D82]" />
+              </div>
+            </form>
+
+            {/* Dropdown Rekomendasi (Maks. 5 item, selalu refresh/acak saat dibuka kembali) */}
+            {isSearchOpen && (
+              <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-2xl border border-[#9DB2BF]/60 bg-white p-2.5 shadow-2xl space-y-2 animate-in fade-in zoom-in-95 duration-150">
+                {/* Header Dropdown */}
+                <div className="flex items-center justify-between px-2 pt-1 pb-1 border-b border-[#9DB2BF]/30">
+                  <span className="text-[11px] font-bold text-[#526D82] uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                    {searchQuery.trim() ? "Hasil Pencarian Cepat" : "Rekomendasi Eksplorasi (Maks. 5)"}
+                  </span>
+                  {!searchQuery.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => setRecommendations(getRandomRecommendations(SEARCH_POOL, 5))}
+                      className="inline-flex items-center gap-1 text-[10px] font-bold text-[#526D82] hover:text-[#27374D] bg-[#DDE6ED]/60 hover:bg-[#DDE6ED] px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+                    >
+                      <RefreshCw className="h-3 w-3" />
+                      <span>Acak Lagi</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Daftar Maksimal 5 Rekomendasi */}
+                <div className="space-y-1">
+                  {displayedItems.length > 0 ? (
+                    displayedItems.map((item) => {
+                      const Icon =
+                        item.type === "simulator"
+                          ? Smartphone
+                          : item.type === "modul"
+                          ? BookOpen
+                          : HelpCircle;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleSelectRecommendation(item)}
+                          className="w-full text-left p-2.5 rounded-xl hover:bg-[#DDE6ED]/50 transition-all flex items-center justify-between group cursor-pointer"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div
+                              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-xs ${
+                                item.type === "simulator"
+                                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                                  : item.type === "modul"
+                                  ? "bg-slate-100 text-[#27374D] border-[#9DB2BF]/50"
+                                  : "bg-emerald-50 text-emerald-800 border-emerald-200"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-[#27374D] group-hover:text-[#526D82] transition-colors truncate">
+                                {item.title}
+                              </div>
+                              <div className="text-[10px] text-[#526D82] truncate">{item.subtitle}</div>
+                            </div>
+                          </div>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[9px] font-extrabold border shrink-0 ${
+                              item.type === "simulator"
+                                ? "bg-amber-50 text-amber-800 border-amber-300"
+                                : item.type === "modul"
+                                ? "bg-slate-100 text-[#27374D] border-[#9DB2BF]/60"
+                                : "bg-emerald-50 text-emerald-800 border-emerald-300"
+                            }`}
+                          >
+                            {item.badge}
+                          </span>
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="p-3 text-center text-xs text-[#526D82]">
+                      Tidak ada hasil yang cocok. Tekan Enter untuk cari di Kamus.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Right Header Controls (Notifikasi, Pesan, User Profile) */}
           <div className="flex items-center gap-2 sm:gap-4">
