@@ -43,6 +43,7 @@ import {
   Pause,
   Maximize2,
   Minimize2,
+  Sliders,
 } from "lucide-react";
 import { Card, Button, Disclaimer } from "../components/ui";
 import { FakeChatSimulator } from "../components/simulator/FakeChatSimulator";
@@ -1091,8 +1092,16 @@ export const LEARNING_MODULES: LearningModule[] = [
 // -----------------------------------------------------------------------------
 interface TriageDrillItem {
   id: string;
+  channel: "sms" | "whatsapp" | "email" | "call" | "app";
   source: string;
+  senderName: string;
+  senderAddress: string;
+  timeString: string;
   text: string;
+  linkText?: string;
+  attachmentName?: string;
+  attachmentSize?: string;
+  question: string;
   isScam: boolean;
   explanation: string;
 }
@@ -1100,73 +1109,128 @@ interface TriageDrillItem {
 const TRIAGE_DRILL_ITEMS: TriageDrillItem[] = [
   {
     id: "t1",
+    channel: "sms",
     source: "SMS dari +62 821-9988-1234",
+    senderName: "+62 821-9988-1234",
+    senderAddress: "+62 821-9988-1234",
+    timeString: "10:14",
     text: "Pemberitahuan: Akun Bank Mandiri Anda diblokir sementara. Klik http://mandiri-verifikasi.xyz/unblock untuk verifikasi ulang PIN Anda.",
+    linkText: "http://mandiri-verifikasi.xyz/unblock",
+    question: "Apakah pesan SMS perbankan di atas terindikasi penipuan?",
     isScam: true,
-    explanation: "Curiga! Domain mandiri-verifikasi.xyz bukan situs resmi Bank Mandiri (bankmandiri.co.id). Bank tidak pernah meminta PIN lewat tautan web.",
+    explanation: "Curiga! Domain mandiri-verifikasi.xyz bukan situs resmi Bank Mandiri (bankmandiri.co.id). Bank tidak pernah meminta verifikasi PIN lewat tautan web.",
   },
   {
     id: "t2",
+    channel: "sms",
     source: "SMS dari 'GOJEK'",
+    senderName: "GOJEK",
+    senderAddress: "Official Sender ID",
+    timeString: "14:22",
     text: "Kode verifikasi (OTP) login akun Gojek Anda adalah: 8492. JANGAN BERIKAN KODE INI KEPADA SIAPAPUN, termasuk pihak Gojek.",
+    question: "Apakah pesan SMS kode OTP di atas terindikasi penipuan?",
     isScam: false,
-    explanation: "Pesan Biasa. Ini adalah pesan OTP resmi dengan peringatan tegas untuk tidak membagikan kode kepada siapapun.",
+    explanation: "Bukan penipuan (Resmi). Ini adalah SMS OTP resmi dari Gojek dengan peringatan tegas untuk tidak membagikan kode rahasia kepada siapapun.",
   },
   {
     id: "t3",
+    channel: "whatsapp",
     source: "WhatsApp dari Kontak Tak Dikenal",
+    senderName: "Admin Hadiah Shopee",
+    senderAddress: "+62 831-4455-8899",
+    timeString: "09:30",
     text: "Halo kak, kami dari Shopee. Selamat kamu memenangkan giveaway iPhone 15 Pro Max! Mohon transfer biaya asuransi Rp 150.000 ke rek BNI 0829182392 a.n. Slamet.",
+    question: "Apakah pesan chat undian hadiah di atas terindikasi penipuan?",
     isScam: true,
-    explanation: "Curiga! Shopee tidak pernah memungut biaya asuransi atau pajak undian ke rekening pribadi perorangan.",
+    explanation: "Curiga! Shopee tidak pernah memungut biaya asuransi, ongkos kirim, atau pajak undian ke rekening pribadi perorangan.",
   },
   {
     id: "t4",
+    channel: "whatsapp",
     source: "WhatsApp dari Nomor Kurir",
-    text: "Selamat siang kak, ini foto resi paket dokumen yang kami antar: Cek_Paket_JNE.apk. Mohon diinstall untuk cek detail paket.",
+    senderName: "Kurir Ekspedisi JNE",
+    senderAddress: "+62 877-1234-5678",
+    timeString: "11:05",
+    text: "Selamat siang kak, ini foto resi paket dokumen yang kami antar. Mohon dibuka untuk cek detail paket:",
+    attachmentName: "Cek_Paket_JNE.apk",
+    attachmentSize: "5.2 MB",
+    question: "Apakah kiriman file paket pada chat di atas terindikasi penipuan / malware?",
     isScam: true,
-    explanation: "Curiga! File berekstensi .apk yang dikirim via chat adalah malware Sniffer pencuri SMS OTP.",
+    explanation: "Curiga! Berkas berekstensi .apk yang dikirim via chat adalah malware Sniffer pencuri SMS OTP perbankan.",
   },
   {
     id: "t5",
+    channel: "email",
     source: "Email dari 'no-reply@accounts.google.com'",
-    text: "Peringatan Keamanan: Ada perangkat Windows baru yang login ke Akun Google Anda. Jika ini bukan Anda, tinjau aktivitas perangkat Anda di https://myaccount.google.com.",
+    senderName: "Google Accounts",
+    senderAddress: "no-reply@accounts.google.com",
+    timeString: "08:15",
+    text: "Peringatan Keamanan: Ada perangkat Windows baru yang login ke Akun Google Anda. Jika ini bukan Anda, tinjau aktivitas perangkat Anda di situs resmi.",
+    linkText: "https://myaccount.google.com",
+    question: "Apakah email peringatan login baru di atas terindikasi penipuan?",
     isScam: false,
-    explanation: "Pesan Biasa. Tautan mengarah langsung ke domain resmi Google (google.com) untuk audit keamanan mandiri.",
+    explanation: "Bukan penipuan (Resmi). Email dikirim dari alamat resmi Google (@accounts.google.com) dan tautan mengarah langsung ke domain resmi google.com.",
   },
   {
     id: "t6",
-    source: "Panggilan Tak Terjawab +62 21-1500888",
-    text: "[Voice Phishing] Penelepon mengaku dari Fraud BCA mengabarkan kartu kredit Anda terpakai Rp 12 juta di luar negeri dan meminta membacakan 3 angka CVV di belakang kartu.",
+    channel: "call",
+    source: "Panggilan Suara +62 21-1500888",
+    senderName: "Fraud BCA",
+    senderAddress: "+62 21-1500888 (Panggilan Masuk)",
+    timeString: "13:40",
+    text: "Penelepon mengaku staf Fraud BCA: 'Kartu kredit Anda terpakai Rp 12 juta di luar negeri. Mohon sebutkan 3 angka CVV di belakang kartu Anda untuk pembatalan sekarang juga.'",
+    question: "Apakah panggilan telepon perbankan di atas terindikasi penipuan?",
     isScam: true,
-    explanation: "Curiga! Caller ID bisa dipalsukan (Spoofing). Petugas bank asli tidak pernah meminta nomor CVV atau kode OTP.",
+    explanation: "Curiga! Nomor telepon pemanggil bisa dipalsukan (Caller ID Spoofing). Petugas bank resmi dilarang keras meminta kode CVV atau PIN rahasia nasabah.",
   },
   {
     id: "t7",
+    channel: "sms",
     source: "SMS dari 'TELKOMSEL'",
-    text: "Paket Internet Combo Sakti 25GB Anda akan berakhir besok. Perpanjang melalui *363# atau aplikasi MyTelkomsel.",
+    senderName: "TELKOMSEL",
+    senderAddress: "Official Sender ID",
+    timeString: "16:00",
+    text: "Paket Internet Combo Sakti 25GB Anda akan berakhir besok. Perpanjang melalui *363# atau aplikasi MyTelkomsel sebelum masa aktif habis.",
+    question: "Apakah SMS notifikasi paket kuota di atas terindikasi penipuan?",
     isScam: false,
-    explanation: "Pesan Biasa. Notifikasi resmi masa aktif paket tanpa tautan mencurigakan, mengarahkan ke USSD resmi *363#.",
+    explanation: "Bukan penipuan (Resmi). Pesan pengingat masa aktif tanpa tautan asing, mengarahkan ke menu USSD resmi *363#.",
   },
   {
     id: "t8",
+    channel: "whatsapp",
     source: "WhatsApp dari +62 895-3412-9812",
-    text: "Mamah minta tolong belikan pulsa Rp 100.000 ke nomor ini ya nak, nomor mamah yang lama sedang gangguan dan perlu hubungi teman arisan.",
+    senderName: "+62 895-3412-9812",
+    senderAddress: "+62 895-3412-9812",
+    timeString: "19:10",
+    text: "Mamah minta tolong belikan pulsa Rp 100.000 ke nomor ini ya nak, nomor mamah yang lama sedang gangguan dan perlu hubungi teman arisan darurat.",
+    question: "Apakah pesan WhatsApp permintaan pulsa di atas terindikasi penipuan?",
     isScam: true,
     explanation: "Curiga! Modus klasik 'Mamah Minta Pulsa' memanfaatkan rasa bakti anak. Selalu hubungi nomor lama langsung atau verifikasi dengan Sandi Keluarga.",
   },
   {
     id: "t9",
+    channel: "whatsapp",
     source: "WhatsApp Grup Komunitas",
+    senderName: "Grup Info Warga RT",
+    senderAddress: "Diteruskan berkali-kali",
+    timeString: "15:20",
     text: "Guys, ada promo subsidi pulsa pemerintah Rp 500.000 untuk semua operator! Daftarnya klik di sini ya: https://subsidi-pulsa-kominfo.free-claim.top",
+    linkText: "https://subsidi-pulsa-kominfo.free-claim.top",
+    question: "Apakah pesan tautan subsidi kuota di atas terindikasi penipuan?",
     isScam: true,
     explanation: "Curiga! Domain .free-claim.top adalah situs jebakan phishing penjerat data identitas. Informasi resmi pemerintah hanya memakai domain .go.id.",
   },
   {
     id: "t10",
+    channel: "app",
     source: "Notifikasi Aplikasi Bank Mandiri",
+    senderName: "Livin' by Mandiri",
+    senderAddress: "Notifikasi Mutasi Rekening",
+    timeString: "14:20",
     text: "Pembayaran QRIS di Kopi Kenangan sebesar Rp 28.000 berhasil pada 04/11/2026 14:20 WIB. Saldo rekening Anda telah disesuaikan.",
+    question: "Apakah notifikasi mutasi transaksi QRIS di atas terindikasi penipuan?",
     isScam: false,
-    explanation: "Pesan Biasa. Notifikasi mutasi resmi in-app dari aplikasi bank setelah transaksi mandiri.",
+    explanation: "Bukan penipuan (Resmi). Notifikasi mutasi resmi in-app dari aplikasi perbankan setelah transaksi pembayaran mandiri.",
   },
 ];
 
@@ -1315,6 +1379,7 @@ export default function Belajar() {
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(() => searchParams.get("scenario") || null);
   const [activeModuleId, setActiveModuleId] = useState<string | null>(() => searchParams.get("module") || null);
   const [kilatMode, setKilatMode] = useState<"cover" | "drill">("cover");
+  const [kilatDuration, setKilatDuration] = useState<number>(120);
   const [activeGlossaryId, setActiveGlossaryId] = useState<string | null>(null);
 
   // Status modul yang sudah dibaca (disimpan di localStorage, default m3 dan m6 sesuai referensi)
@@ -1528,9 +1593,14 @@ export default function Belajar() {
         {activeTab === "kilat" && (
           <div>
             {kilatMode === "cover" ? (
-              <KilatCover onStart={() => setKilatMode("drill")} />
+              <KilatCover
+                duration={kilatDuration}
+                onSelectDuration={setKilatDuration}
+                onStart={() => setKilatMode("drill")}
+              />
             ) : (
               <KilatPage
+                initialTime={kilatDuration}
                 onExit={() => setKilatMode("cover")}
                 onNavigateTab={handleTabChange}
               />
@@ -1689,17 +1759,12 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
                   </p>
                 </div>
 
-                {/* Bagian Bawah: Durasi & Tombol Aksi Kapsul "Mulai →" (Kompak & Rapi Bebas Line-Break) */}
-                <div className="pt-2.5 flex items-center justify-between border-t border-[#E7DFD5] mt-2.5 gap-2">
-                  <div className="flex flex-col shrink-0 min-w-0">
-                    <span className="text-[9px] font-bold text-[#526D82] uppercase tracking-wider leading-none">
-                      Estimasi
-                    </span>
-                    <div className="text-xs font-extrabold text-[#27374D] flex items-center gap-1 whitespace-nowrap mt-1 leading-none">
-                      <Clock className="h-3 w-3 text-amber-500 shrink-0" />
-                      <span>~{sc.duration}</span>
-                    </div>
-                  </div>
+                {/* Bagian Bawah: Durasi & Tombol Aksi Kapsul "Mulai →" */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-[#526D82] mt-2.5 gap-2">
+                  <span className="flex items-center gap-1 font-medium whitespace-nowrap">
+                    <Clock className="h-3 w-3 text-[#526D82] shrink-0" />
+                    <span>~{sc.duration}</span>
+                  </span>
 
                   {/* Tombol Kapsul Proporsional persis referensi "Buy Now →" */}
                   <div className="inline-flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-full bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md shrink-0 whitespace-nowrap">
@@ -2826,75 +2891,499 @@ function ModulPage({
 // SUB-KOMPONEN 3: COVER & PAGE KILAT 2 MENIT (BAGIAN 3)
 // =============================================================================
 
-function KilatCover({ onStart }: { onStart: () => void }) {
+interface KilatDifficulty {
+  id: string;
+  name: string;
+  duration: number;
+  timeLabel: string;
+  badge: string;
+  badgeClass: string;
+  pace: string;
+  desc: string;
+}
+
+const KILAT_DIFFICULTIES: KilatDifficulty[] = [
+  {
+    id: "santai",
+    name: "Santai",
+    duration: 180,
+    timeLabel: "180 Detik",
+    badge: "Pemula",
+    badgeClass: "bg-[#DDE6ED] text-[#27374D] border-[#9DB2BF]/60",
+    pace: "18 dtk / soal",
+    desc: "Waktu longgar untuk membaca detail pesan dan mencermati tanda manipulasi.",
+  },
+  {
+    id: "standar",
+    name: "Standar",
+    duration: 120,
+    timeLabel: "120 Detik",
+    badge: "Rekomendasi",
+    badgeClass: "bg-[#27374D] text-white border-transparent",
+    pace: "12 dtk / soal",
+    desc: "Waktu seimbang menguji refleks insting alami menghadapi pesan harian.",
+  },
+  {
+    id: "kilat",
+    name: "Ekstrem",
+    duration: 60,
+    timeLabel: "60 Detik",
+    badge: "Tantangan Kilat",
+    badgeClass: "bg-rose-100 text-rose-800 border-rose-300",
+    pace: "6 dtk / soal",
+    desc: "Uji kecepatan tinggi! Pacu insting mengambil keputusan seketika tanpa ragu.",
+  },
+];
+
+function KilatCover({
+  duration,
+  onSelectDuration,
+  onStart,
+}: {
+  duration: number;
+  onSelectDuration: (duration: number) => void;
+  onStart: () => void;
+}) {
+  const currentDiff =
+    KILAT_DIFFICULTIES.find((d) => d.duration === duration) ||
+    KILAT_DIFFICULTIES[1];
+
   return (
-    <div className="space-y-6">
-      {/* Tampilan Standby Cover Tantangan Kilat */}
-      <div className="mx-auto max-w-xl text-center">
-        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-[#27374D] text-white p-8 sm:p-10 shadow-lg space-y-6">
-          <div className="space-y-2">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-[#9DB2BF]">
-              Tantangan Kilat
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      {/* Kolom Kiri: Tantangan Kilat Card */}
+      <div className="lg:col-span-5 flex flex-col">
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-[#27374D] text-white p-7 sm:p-9 shadow-lg flex flex-col justify-between h-full space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#9DB2BF]">
+                Tantangan Kilat
+              </span>
+              <span
+                className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${currentDiff.badgeClass}`}
+              >
+                Mode {currentDiff.name}
+              </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-              120 Detik
-            </h2>
-            <p className="text-sm sm:text-base text-[#DDE6ED]/90 max-w-md mx-auto leading-relaxed">
-              Asah refleks insting membedakan pesan biasa vs manipulasi sebelum kamu tertipu!
-            </p>
+
+            <div className="space-y-2">
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+                {currentDiff.timeLabel}
+              </h2>
+              <p className="text-sm text-[#DDE6ED]/90 leading-relaxed">
+                Asah refleks insting membedakan pesan biasa vs manipulasi sebelum kamu tertipu!
+              </p>
+            </div>
+
+            {/* Pills Indikator */}
+            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-semibold text-[#DDE6ED]">
+              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
+                <Clock className="h-3.5 w-3.5 text-amber-300" />
+                {currentDiff.timeLabel} Timer
+              </span>
+              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
+                <ListChecks className="h-3.5 w-3.5 text-sky-300" />
+                10 Soal Uji Visual
+              </span>
+              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" />
+                Pilihan Yes / No
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3 text-xs font-semibold text-[#DDE6ED] pt-2">
-            <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full">
-              <Clock className="h-3.5 w-3.5 text-amber-300" />
-              120 Detik Timer
-            </span>
-            <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full">
-              <ListChecks className="h-3.5 w-3.5 text-sky-300" />
-              10 Pesan Uji
-            </span>
-            <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" />
-              On-Device
-            </span>
-          </div>
-
-          <div className="pt-2">
+          <div className="pt-4 border-t border-white/10 space-y-2">
             <button
               type="button"
               onClick={onStart}
-              className="w-full sm:w-auto rounded-2xl bg-[#DDE6ED] px-8 py-3.5 text-sm font-black text-[#27374D] hover:bg-white active:scale-98 transition-all shadow-md cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#DDE6ED] px-6 py-3.5 text-sm font-black text-[#27374D] hover:bg-white active:scale-[0.99] transition-all shadow-md cursor-pointer group"
             >
-              Mulai Sekarang
+              <span>Mulai Sekarang</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
+            <p className="text-center text-[11px] text-[#9DB2BF]">
+              Estimasi: {currentDiff.pace} · Siap uji refleksmu?
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Petunjuk Tambahan */}
-      <div className="mx-auto max-w-xl rounded-2xl bg-white p-5 border border-[#9DB2BF]/40 space-y-2 text-xs text-[#526D82]">
-        <span className="font-bold text-[#27374D] block">Aturan Main Tantangan:</span>
-        <ul className="list-disc list-inside space-y-1">
-          <li>Kamu akan dihadapkan pada 10 pesan yang masuk secara berurutan.</li>
-          <li>Tentukan dengan cepat apakah pesan tersebut adalah "Pesan Biasa" atau "Curiga".</li>
-          <li>Waktu terus berjalan selama 120 detik. Asah refleks insting pertahananmu!</li>
-        </ul>
+      {/* Kolom Kanan: Aturan Main + Pengaturan Tingkat Kesulitan */}
+      <div className="lg:col-span-7 flex flex-col space-y-5">
+        {/* Card 1: Aturan Main Tantangan */}
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
+          <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
+            <ListChecks className="h-4 w-4 text-[#526D82]" />
+            <span>Aturan Main Tantangan:</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#526D82]">
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  1
+                </span>
+                <span>10 Tangkapan Layar</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Kamu akan mengamati 10 tangkapan layar simulasi (SMS, WhatsApp, Email, Panggilan, dan Notifikasi).
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  2
+                </span>
+                <span>Pilihan Yes atau No</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Tentukan dengan cepat: pilih <strong>Yes</strong> bila terindikasi penipuan, atau <strong>No</strong> bila aman/resmi.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  3
+                </span>
+                <span>Waktu Berjalan Mundur</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Timer terus berjalan sesuai durasi yang dipilih ({currentDiff.timeLabel}). Asah intuisi tanpa overthinking!
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  4
+                </span>
+                <span>Evaluasi & Bedah Kasus</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Dapatkan skor akurasi insting serta ulasan red flag mendalam di akhir sesi uji.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Pengaturan Tingkat Kesulitan */}
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
+              <Sliders className="h-4 w-4 text-[#526D82]" />
+              <span>Pilih Tingkat Kesulitan:</span>
+            </div>
+            <span className="text-xs text-[#526D82] hidden sm:inline">
+              Klik opsi untuk mengatur durasi tantangan
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {KILAT_DIFFICULTIES.map((diff) => {
+              const isSelected = diff.duration === duration;
+              return (
+                <button
+                  key={diff.id}
+                  type="button"
+                  onClick={() => onSelectDuration(diff.duration)}
+                  className={`text-left rounded-2xl p-4 border transition-all cursor-pointer relative flex flex-col justify-between space-y-3 ${
+                    isSelected
+                      ? "border-[#27374D] bg-[#27374D]/5 ring-2 ring-[#27374D] shadow-sm"
+                      : "border-[#9DB2BF]/40 bg-white hover:border-[#526D82] hover:bg-[#DDE6ED]/20"
+                  }`}
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#27374D]">
+                        {diff.name}
+                      </span>
+                      {isSelected ? (
+                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#27374D] text-white">
+                          <Check className="h-2.5 w-2.5 stroke-[3]" />
+                        </span>
+                      ) : (
+                        <span className="h-4 w-4 rounded-full border border-[#9DB2BF]" />
+                      )}
+                    </div>
+                    <div className="text-lg font-black text-[#27374D]">
+                      {diff.timeLabel}
+                    </div>
+                    <span className="inline-block text-[10px] font-semibold text-[#526D82] bg-white px-2 py-0.5 rounded-md border border-[#9DB2BF]/40">
+                      {diff.pace}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-[#DDE6ED]">
+                    {diff.desc}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// SUB-KOMPONEN BANTU: PRATINJAU VISUAL TANGKAPAN LAYAR SOAL DRILL KILAT
+// =============================================================================
+
+function DrillVisualMockup({ item }: { item: TriageDrillItem }) {
+  if (item.channel === "sms") {
+    return (
+      <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+        {/* SMS Phone Header */}
+        <div className="bg-[#27374D] text-white px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Mail className="h-3.5 w-3.5 text-sky-300" />
+            <span className="text-xs font-bold text-[#DDE6ED]">SMS Pesan Masuk</span>
+          </div>
+          <span className="text-[10px] text-[#9DB2BF] font-mono">{item.timeString}</span>
+        </div>
+
+        {/* Sender Info Bar */}
+        <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded-full bg-[#526D82]/20 flex items-center justify-center text-[#27374D] font-bold text-xs">
+              {item.senderName.slice(0, 1)}
+            </div>
+            <div>
+              <div className="font-bold text-[#27374D] text-xs leading-none">
+                {item.senderName}
+              </div>
+              <div className="text-[10px] text-[#526D82] mt-0.5">
+                {item.senderAddress}
+              </div>
+            </div>
+          </div>
+          <span className="text-[10px] bg-slate-200 text-[#27374D] font-semibold px-2 py-0.5 rounded-full">
+            SIM 1
+          </span>
+        </div>
+
+        {/* SMS Bubble */}
+        <div className="p-4 bg-slate-50/50 space-y-2">
+          <div className="rounded-2xl bg-white border border-slate-200 p-3.5 shadow-2xs space-y-2 text-xs text-[#27374D] leading-relaxed">
+            <p className="whitespace-pre-wrap">{item.text}</p>
+            {item.linkText && (
+              <div className="pt-2 border-t border-slate-100 text-[11px] text-blue-600 font-mono font-medium underline flex items-center gap-1">
+                <ExternalLink className="h-3 w-3 shrink-0" />
+                <span className="break-all">{item.linkText}</span>
+              </div>
+            )}
+          </div>
+          <div className="text-[10px] text-slate-400 text-right pr-1">
+            Diterima {item.timeString}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (item.channel === "whatsapp") {
+    return (
+      <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+        {/* WhatsApp Top Bar */}
+        <div className="bg-[#1E2B3D] text-white px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">
+              {item.senderName.slice(0, 1)}
+            </div>
+            <div>
+              <div className="font-bold text-xs leading-none text-white">
+                {item.senderName}
+              </div>
+              <div className="text-[10px] text-emerald-300 mt-0.5">
+                {item.senderAddress}
+              </div>
+            </div>
+          </div>
+          <Smartphone className="h-4 w-4 text-slate-300" />
+        </div>
+
+        {/* WhatsApp Chat Area */}
+        <div className="p-4 bg-[#EFEAE2]/60 space-y-2">
+          <div className="flex justify-center">
+            <span className="text-[10px] bg-white/80 text-slate-500 font-medium px-2.5 py-0.5 rounded-md shadow-2xs">
+              HARI INI
+            </span>
+          </div>
+
+          <div className="rounded-2xl rounded-tl-xs bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-2 text-xs text-[#27374D] max-w-[90%]">
+            <p className="whitespace-pre-wrap leading-relaxed">{item.text}</p>
+
+            {item.attachmentName && (
+              <div className="rounded-xl border border-rose-200 bg-rose-50/80 p-2.5 flex items-center gap-2.5 mt-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500 text-white shrink-0">
+                  <FileCode className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold text-rose-950 text-xs truncate">
+                    {item.attachmentName}
+                  </div>
+                  <div className="text-[10px] text-rose-700">
+                    {item.attachmentSize || "Installer Android"}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {item.linkText && (
+              <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 space-y-1 mt-2">
+                <div className="text-[10px] font-bold text-sky-800 uppercase tracking-wide">
+                  Pratinjau Tautan Web
+                </div>
+                <div className="text-[11px] text-blue-600 font-mono underline break-all">
+                  {item.linkText}
+                </div>
+              </div>
+            )}
+
+            <div className="text-[10px] text-slate-400 text-right mt-1">
+              {item.timeString}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (item.channel === "email") {
+    return (
+      <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+        {/* Email Header */}
+        <div className="bg-[#27374D] text-white px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Mail className="h-4 w-4 text-amber-300" />
+            <span className="font-bold text-xs">Pesan Email Masuk</span>
+          </div>
+          <span className="text-[10px] text-[#9DB2BF] font-mono">{item.timeString}</span>
+        </div>
+
+        {/* Sender details */}
+        <div className="p-3.5 bg-slate-50 border-b border-slate-100 space-y-1 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-[#27374D]">{item.senderName}</span>
+            <span className="text-[10px] text-slate-400">Pukul {item.timeString}</span>
+          </div>
+          <div className="text-[11px] text-slate-500">
+            Dari: &lt;{item.senderAddress}&gt;
+          </div>
+          <div className="text-[11px] text-slate-500">Kepada: saya</div>
+        </div>
+
+        {/* Body */}
+        <div className="p-4 bg-white space-y-3 text-xs text-[#27374D]">
+          <div className="flex items-center gap-2 font-bold text-sm text-[#27374D] border-b border-slate-100 pb-2">
+            <ShieldAlert className="h-4 w-4 text-amber-500" />
+            <span>Pemberitahuan Sistem Akun</span>
+          </div>
+          <p className="leading-relaxed whitespace-pre-wrap">{item.text}</p>
+          {item.linkText && (
+            <div className="pt-2">
+              <span className="inline-block rounded-lg bg-[#27374D] text-white text-[11px] font-bold px-3 py-1.5 shadow-2xs">
+                Tinjau Aktivitas &rarr;
+              </span>
+              <div className="text-[10px] text-slate-400 mt-1 font-mono break-all">
+                URL: {item.linkText}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (item.channel === "call") {
+    return (
+      <div className="w-full max-w-xs mx-auto rounded-3xl bg-[#0F172A] text-white p-5 shadow-lg text-center space-y-4">
+        <div className="space-y-1">
+          <div className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400">
+            Panggilan Masuk
+          </div>
+          <div className="h-14 w-14 rounded-full bg-slate-700/80 mx-auto flex items-center justify-center text-white my-2 border-2 border-slate-600">
+            <PhoneCall className="h-6 w-6 text-white" />
+          </div>
+          <div className="text-base font-black text-white">{item.senderName}</div>
+          <div className="text-xs text-slate-400">{item.senderAddress}</div>
+        </div>
+
+        <div className="rounded-xl bg-white/10 p-3 text-left text-xs text-slate-200 border border-white/10">
+          <div className="text-[10px] font-bold uppercase text-amber-300 mb-1">
+            Percakapan Penelepon:
+          </div>
+          <p className="text-[11px] leading-relaxed italic">{item.text}</p>
+        </div>
+
+        <div className="flex items-center justify-center gap-8 pt-1">
+          <div className="flex flex-col items-center gap-1">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-600 text-white shadow-md">
+              <PhoneCall className="h-4 w-4 rotate-[135deg]" />
+            </span>
+            <span className="text-[10px] text-slate-400">Tolak</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-md">
+              <PhoneCall className="h-4 w-4" />
+            </span>
+            <span className="text-[10px] text-slate-400">Terima</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // App notification / receipt
+  return (
+    <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+      <div className="bg-[#27374D] text-white px-4 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Bell className="h-3.5 w-3.5 text-amber-300" />
+          <span className="font-bold text-xs">{item.senderName}</span>
+        </div>
+        <span className="text-[10px] text-[#9DB2BF] font-mono">{item.timeString}</span>
+      </div>
+
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+            <CheckCircle2 className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-[#27374D]">
+              Mutasi Rekening Berhasil
+            </div>
+            <div className="text-[11px] text-[#526D82]">
+              {item.senderAddress}
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-1 text-xs text-[#27374D]">
+          <p className="leading-relaxed">{item.text}</p>
+        </div>
       </div>
     </div>
   );
 }
 
 function KilatPage({
+  initialTime = 120,
   onExit,
   onNavigateTab,
 }: {
+  initialTime?: number;
   onExit: () => void;
   onNavigateTab: (tab: TabType) => void;
 }) {
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(initialTime);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, "biasa" | "curiga">>({});
+  const [answers, setAnswers] = useState<Record<string, "yes" | "no">>({});
   const [isFinished, setIsFinished] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   // Timer Countdown
   useEffect(() => {
@@ -2913,7 +3402,7 @@ function KilatPage({
     return () => clearInterval(timer);
   }, [isFinished, timeLeft]);
 
-  const handleAnswer = (choice: "biasa" | "curiga") => {
+  const handleAnswer = (choice: "yes" | "no") => {
     const currentItem = TRIAGE_DRILL_ITEMS[currentIndex];
     const newAnswers = { ...answers, [currentItem.id]: choice };
     setAnswers(newAnswers);
@@ -2932,8 +3421,8 @@ function KilatPage({
       const userChoice = answers[item.id];
       if (userChoice) {
         const isUserCorrect =
-          (userChoice === "curiga" && item.isScam) ||
-          (userChoice === "biasa" && !item.isScam);
+          (userChoice === "yes" && item.isScam) ||
+          (userChoice === "no" && !item.isScam);
         if (isUserCorrect) correct++;
       }
     });
@@ -2965,207 +3454,481 @@ function KilatPage({
   const currentItem = TRIAGE_DRILL_ITEMS[currentIndex];
 
   const handleRestart = () => {
-    setTimeLeft(120);
+    setTimeLeft(initialTime);
     setCurrentIndex(0);
     setAnswers({});
     setIsFinished(false);
+    setIsZoomed(false);
   };
 
   return (
     <div className="space-y-6">
-      {/* Top Bar Header Drill */}
-      <div className="flex items-center justify-between border-b border-[#9DB2BF]/40 pb-3">
-        <button
-          type="button"
-          onClick={onExit}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526D82] hover:text-[#27374D] cursor-pointer"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Keluar dari Tantangan</span>
-        </button>
+      {/* Top Bar Header Drill (Hanya Tampil Saat Sesi Soal Aktif) */}
+      {!isFinished && (
+        <div className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-3.5 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={onExit}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#9DB2BF]/60 bg-white hover:bg-slate-50 text-xs font-bold text-[#27374D] transition-all shadow-2xs cursor-pointer group"
+          >
+            <ArrowLeft className="h-4 w-4 text-[#526D82] group-hover:-translate-x-0.5 transition-transform" />
+            <span>Keluar dari Tantangan</span>
+          </button>
 
-        {!isFinished && (
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-[#526D82]">
-              Soal {currentIndex + 1} dari {TRIAGE_DRILL_ITEMS.length}
-            </span>
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Indikator Jumlah Soal & Navigasi Cepat */}
+            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-[#9DB2BF]/60 text-xs font-bold text-[#27374D] shadow-2xs">
+              <ListChecks className="h-4 w-4 text-[#526D82]" />
+              <span>
+                Soal{" "}
+                <span className="text-sky-700 font-black text-sm">
+                  {currentIndex + 1}
+                </span>{" "}
+                <span className="text-[#9DB2BF]">/</span> {TRIAGE_DRILL_ITEMS.length}
+              </span>
+
+              {/* Tombol Mini Navigasi Soal Sebelumnya & Setelahnya */}
+              <div className="flex items-center gap-0.5 pl-1.5 border-l border-slate-200 ml-1">
+                <button
+                  type="button"
+                  onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+                  disabled={currentIndex === 0}
+                  className="p-1 rounded-lg text-slate-500 hover:text-[#27374D] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all"
+                  title="Soal Sebelumnya"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      Math.min(TRIAGE_DRILL_ITEMS.length - 1, prev + 1)
+                    )
+                  }
+                  disabled={currentIndex === TRIAGE_DRILL_ITEMS.length - 1}
+                  className="p-1 rounded-lg text-slate-500 hover:text-[#27374D] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all"
+                  title="Soal Setelahnya"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Tombol & Indikator Timer yang Jelas dan Kontras */}
             <div
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-mono font-black shadow-xs transition-colors ${
                 timeLeft <= 20
-                  ? "bg-rose-100 text-rose-800 animate-pulse"
+                  ? "bg-rose-600 text-white animate-pulse ring-2 ring-rose-400"
                   : "bg-[#27374D] text-white"
               }`}
             >
-              <Clock className="h-3.5 w-3.5" />
+              <Clock className="h-4 w-4 text-amber-300" />
               <span>
-                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
+                Sisa Waktu:{" "}
+                <span className="text-sm sm:text-base tracking-wider">
+                  {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
+                </span>
               </span>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Tampilan Pertanyaan Aktif */}
+      {/* Tampilan Pertanyaan Aktif (2 Kolom Berdampingan Persis Sketsa User) */}
       {!isFinished && currentItem && (
-        <div className="mx-auto max-w-xl space-y-6">
-          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-sm space-y-5">
-            <div className="flex items-center justify-between border-b border-[#DDE6ED] pb-3">
-              <span className="text-xs font-bold text-[#526D82]">{currentItem.source}</span>
-              <span className="text-[10px] font-semibold text-[#526D82] bg-slate-100 px-2 py-0.5 rounded-full">
-                Uji Refleks #{currentIndex + 1}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Kolom Kiri: Tangkapan Layar Soal (Mockup Gambar) */}
+          <div className="lg:col-span-7 xl:col-span-7 flex flex-col">
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-slate-50/70 p-5 sm:p-7 shadow-xs relative flex flex-col justify-center h-full min-h-[400px]">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                <span className="text-xs font-bold text-[#526D82] flex items-center gap-1.5">
+                  <Smartphone className="h-3.5 w-3.5" />
+                  <span>Tangkapan Layar Pesan #{currentIndex + 1}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsZoomed(true)}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#526D82] hover:text-[#27374D] bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-2xs hover:bg-slate-50 transition-all cursor-pointer"
+                  title="Perbesar Tampilan"
+                >
+                  <Maximize2 className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Perbesar</span>
+                </button>
+              </div>
+
+              {/* Visual Mockup Tangkapan Layar */}
+              <div className="py-2 flex-1 flex items-center justify-center">
+                <DrillVisualMockup item={currentItem} />
+              </div>
+            </div>
+          </div>
+
+          {/* Kolom Kanan: Soal, Yes, No (Tersusun Vertikal Sesuai Sketsa User) */}
+          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-between gap-4">
+            {/* Box 1: Soal */}
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">
+                  Pertanyaan #{currentIndex + 1}
+                </span>
+                <span className="text-[11px] font-semibold text-[#526D82]">
+                  Pilih Yes / No
+                </span>
+              </div>
+
+              <h3 className="text-base sm:text-lg font-black text-[#27374D] leading-snug pt-1">
+                {currentItem.question}
+              </h3>
+
+              <p className="text-xs text-[#526D82] leading-relaxed pt-1 border-t border-slate-100">
+                Amati tanda kejanggalan pengirim, ekstensi berkas, atau tautan pada gambar di sebelah kiri.
+              </p>
+            </div>
+
+            {/* Box 2: Tombol Yes */}
+            <button
+              type="button"
+              onClick={() => handleAnswer("yes")}
+              className="w-full text-left rounded-3xl border-2 border-slate-200 bg-white p-5 sm:p-6 flex items-center gap-4 transition-all hover:border-[#27374D] hover:bg-slate-50/80 active:scale-[0.99] cursor-pointer group shadow-xs"
+            >
+              <span className="h-6 w-6 rounded-full border-2 border-slate-300 group-hover:border-[#27374D] flex items-center justify-center shrink-0 transition-colors">
+                {answers[currentItem.id] === "yes" && (
+                  <span className="h-3 w-3 rounded-full bg-[#27374D]" />
+                )}
               </span>
-            </div>
+              <div className="space-y-0.5">
+                <div className="text-xl font-black text-[#27374D]">Yes</div>
+                <div className="text-xs text-[#526D82]">
+                  Pesan ini mencurigakan / terindikasi penipuan
+                </div>
+              </div>
+            </button>
 
-            <div className="rounded-2xl bg-slate-50 p-5 border border-slate-200 text-xs sm:text-sm text-[#27374D] leading-relaxed font-medium">
-              "{currentItem.text}"
-            </div>
+            {/* Box 3: Tombol No */}
+            <button
+              type="button"
+              onClick={() => handleAnswer("no")}
+              className="w-full text-left rounded-3xl border-2 border-slate-200 bg-white p-5 sm:p-6 flex items-center gap-4 transition-all hover:border-[#27374D] hover:bg-slate-50/80 active:scale-[0.99] cursor-pointer group shadow-xs"
+            >
+              <span className="h-6 w-6 rounded-full border-2 border-slate-300 group-hover:border-[#27374D] flex items-center justify-center shrink-0 transition-colors">
+                {answers[currentItem.id] === "no" && (
+                  <span className="h-3 w-3 rounded-full bg-[#27374D]" />
+                )}
+              </span>
+              <div className="space-y-0.5">
+                <div className="text-xl font-black text-[#27374D]">No</div>
+                <div className="text-xs text-[#526D82]">
+                  Pesan ini resmi / aman / wajar
+                </div>
+              </div>
+            </button>
 
-            <p className="text-[11px] text-[#526D82] text-center">
-              Apakah pesan di atas adalah pesan biasa atau manipulasi mencurigakan?
-            </p>
-
-            {/* 2 Pilihan Tombol Keputusan */}
-            <div className="grid grid-cols-2 gap-4 pt-2">
+            {/* Box 4: Tombol Navigasi Soal Sebelumnya & Setelahnya */}
+            <div className="flex items-center justify-between gap-3 pt-1">
               <button
                 type="button"
-                onClick={() => handleAnswer("biasa")}
-                className="rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 p-4 text-center font-bold text-emerald-900 hover:bg-emerald-100 hover:border-emerald-600 transition-all cursor-pointer flex flex-col items-center gap-2 group shadow-xs"
+                onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+                disabled={currentIndex === 0}
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border text-xs font-bold transition-all shadow-2xs ${
+                  currentIndex === 0
+                    ? "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-50"
+                    : "border-[#9DB2BF]/60 bg-white text-[#27374D] hover:bg-slate-50 hover:border-[#27374D] cursor-pointer active:scale-98"
+                }`}
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white group-hover:scale-105 transition-transform">
-                  <CheckCircle2 className="h-5 w-5" />
-                </div>
-                <span className="text-xs sm:text-sm">Pesan Biasa</span>
+                <ChevronLeft className="h-4 w-4" />
+                <span>Soal Sebelumnya</span>
               </button>
 
+              {currentIndex < TRIAGE_DRILL_ITEMS.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      Math.min(TRIAGE_DRILL_ITEMS.length - 1, prev + 1)
+                    )
+                  }
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#27374D] text-white text-xs font-bold hover:bg-[#1e2b3d] transition-all shadow-xs active:scale-98 cursor-pointer"
+                >
+                  <span>Soal Setelahnya</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsFinished(true)}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-all shadow-xs active:scale-98 cursor-pointer"
+                >
+                  <span>Selesai & Evaluasi</span>
+                  <Check className="h-4 w-4 stroke-[3]" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Zoom Tangkapan Layar */}
+      {isZoomed && currentItem && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="relative max-w-xl w-full bg-white rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span className="text-xs font-bold text-[#27374D]">
+                Detail Tangkapan Layar Soal #{currentIndex + 1}
+              </span>
               <button
                 type="button"
-                onClick={() => handleAnswer("curiga")}
-                className="rounded-2xl border-2 border-rose-500 bg-rose-50/50 p-4 text-center font-bold text-rose-900 hover:bg-rose-100 hover:border-rose-600 transition-all cursor-pointer flex flex-col items-center gap-2 group shadow-xs"
+                onClick={() => setIsZoomed(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-[#27374D] hover:bg-slate-100 transition-all cursor-pointer"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-600 text-white group-hover:scale-105 transition-transform">
-                  <OctagonAlert className="h-5 w-5" />
-                </div>
-                <span className="text-xs sm:text-sm">Curiga (Manipulasi)</span>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="py-2">
+              <DrillVisualMockup item={currentItem} />
+            </div>
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={() => setIsZoomed(false)}
+                className="text-xs font-bold text-[#526D82] hover:text-[#27374D] underline cursor-pointer"
+              >
+                Tutup Pratinjau
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tampilan Selesai & Hasil Evaluasi */}
+      {/* Tampilan Selesai & Hasil Evaluasi (Dijabarkan Penuh, Bukan Kotak Sempit di Tengah) */}
       {isFinished && (
-        <div className="mx-auto max-w-2xl space-y-6">
-          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-sm text-center space-y-6">
-            <div className="flex justify-center">
-              <div
-                className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
-                  scoreResult.percentage >= 80
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-amber-100 text-amber-700"
-                }`}
-              >
-                <Award className="h-8 w-8" />
-              </div>
-            </div>
+        <div className="w-full space-y-6">
+          {/* Top Bar Kembali & Navigasi */}
+          <div className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-3.5 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={onExit}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#9DB2BF]/60 bg-white hover:bg-slate-50 text-xs font-bold text-[#27374D] transition-all shadow-2xs cursor-pointer group"
+            >
+              <ArrowLeft className="h-4 w-4 text-[#526D82] group-hover:-translate-x-0.5 transition-transform" />
+              <span>Kembali ke Beranda Belajar</span>
+            </button>
 
-            <div className="space-y-1">
-              <div className="text-xs font-bold uppercase tracking-wider text-[#526D82]">
-                Hasil Evaluasi Tantangan Kilat
-              </div>
-              <h2 className="text-3xl font-black text-[#27374D]">
-                Skor: {scoreResult.correct} dari {scoreResult.total} Tepat
-              </h2>
-              <p className="text-xs text-[#526D82]">
-                Tingkat Akurasi Refleks: {scoreResult.percentage}%
-              </p>
-            </div>
-
-            {/* Ulasan Jawaban per Soal */}
-            <div className="text-left space-y-3 pt-3 border-t border-[#DDE6ED]">
-              <span className="text-xs font-bold text-[#27374D] block">
-                Ulasan Refleks Keputusanmu:
-              </span>
-              <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-                {TRIAGE_DRILL_ITEMS.map((item, idx) => {
-                  const userChoice = answers[item.id];
-                  const isCorrect =
-                    (userChoice === "curiga" && item.isScam) ||
-                    (userChoice === "biasa" && !item.isScam);
-                  return (
-                    <div
-                      key={item.id}
-                      className={`rounded-2xl p-4 border text-xs space-y-2 ${
-                        isCorrect
-                          ? "bg-emerald-50/60 border-emerald-300"
-                          : "bg-rose-50/60 border-rose-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between font-bold">
-                        <span className="text-[#27374D]">
-                          #{idx + 1} · {item.source}
-                        </span>
-                        <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            isCorrect
-                              ? "bg-emerald-100 text-emerald-800"
-                              : "bg-rose-100 text-rose-800"
-                          }`}
-                        >
-                          {isCorrect ? (
-                            <>
-                              <Check className="h-2.5 w-2.5 stroke-[3]" />
-                              <span>Keputusan Tepat</span>
-                            </>
-                          ) : (
-                            <>
-                              <X className="h-2.5 w-2.5 stroke-[3]" />
-                              <span>Kurang Tepat</span>
-                            </>
-                          )}
-                        </span>
-                      </div>
-                      <p className="text-[#27374D] font-medium leading-relaxed">
-                        "{item.text}"
-                      </p>
-                      <p className="text-[#526D82] text-[11px] leading-relaxed pt-1 border-t border-slate-200">
-                        {item.explanation}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Tombol Aksi Akhir */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#DDE6ED]">
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleRestart}
-                className="w-full sm:w-auto text-xs"
+                className="text-xs font-bold"
               >
                 <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
                 Ulangi Tantangan
               </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => onNavigateTab("kamus")}
+                className="text-xs"
+              >
+                Pelajari di Kamus
+              </Button>
+            </div>
+          </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => onNavigateTab("kamus")}
-                  className="flex-1 sm:flex-none text-xs"
+          {/* Hero Card Hasil Evaluasi Skor (Full Width Grid) */}
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Kolom Kiri: Skor & Narasi Evaluasi */}
+              <div className="lg:col-span-8 flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+                <div
+                  className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl shadow-xs ${
+                    scoreResult.percentage >= 80
+                      ? "bg-emerald-100 text-emerald-700"
+                      : scoreResult.percentage >= 50
+                      ? "bg-amber-100 text-amber-700"
+                      : "bg-rose-100 text-rose-700"
+                  }`}
                 >
-                  Pelajari di Kamus
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={onExit}
-                  className="flex-1 sm:flex-none text-xs font-bold"
-                >
-                  Kembali ke Menu Utama
-                </Button>
+                  <Award className="h-10 w-10" />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#526D82]">
+                      Hasil Evaluasi Tantangan Kilat
+                    </span>
+                    <span
+                      className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                        scoreResult.percentage >= 80
+                          ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                          : scoreResult.percentage >= 50
+                          ? "bg-amber-50 text-amber-800 border-amber-300"
+                          : "bg-rose-50 text-rose-800 border-rose-300"
+                      }`}
+                    >
+                      Akurasi {scoreResult.percentage}%
+                    </span>
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">
+                    Skor: {scoreResult.correct} dari {scoreResult.total} Tepat
+                  </h2>
+
+                  <p className="text-xs sm:text-sm text-[#526D82] max-w-xl leading-relaxed">
+                    {scoreResult.percentage >= 80
+                      ? "Refleks keamananmu sangat tanggap dan tajam! Kamu mampu membedakan pesan biasa dengan pola rekayasa sosial manipulatif secara cepat."
+                      : scoreResult.percentage >= 50
+                      ? "Refleks keamananmu cukup baik. Namun masih ada beberapa pesan jebakan yang lolos verifikasi. Cermati ulasan red flags tiap soal di bawah."
+                      : "Kamu masih sering terjebak pesan manipulatif. Sangat disarankan meninjau ulasan tanda peringatan di bawah dan membuka Modul Belajar."}
+                  </p>
+                </div>
               </div>
+
+              {/* Kolom Kanan: Rincian Angka Ringkas */}
+              <div className="lg:col-span-4 grid grid-cols-2 gap-3 border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6">
+                <div className="rounded-2xl bg-emerald-50/70 border border-emerald-200 p-3.5 text-center">
+                  <div className="text-[11px] font-bold uppercase text-emerald-700">Tepat</div>
+                  <div className="text-2xl font-black text-emerald-800 mt-0.5">
+                    {scoreResult.correct}
+                  </div>
+                  <div className="text-[10px] text-emerald-600">dari 10 Soal</div>
+                </div>
+
+                <div className="rounded-2xl bg-rose-50/70 border border-rose-200 p-3.5 text-center">
+                  <div className="text-[11px] font-bold uppercase text-rose-700">Kurang Tepat</div>
+                  <div className="text-2xl font-black text-rose-800 mt-0.5">
+                    {scoreResult.total - scoreResult.correct}
+                  </div>
+                  <div className="text-[10px] text-rose-600">dari 10 Soal</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bagian Ulasan 10 Soal Dijabarkan Terbuka (2 Kolom Grid) */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
+                <ListChecks className="h-4 w-4 text-[#526D82]" />
+                <span>Ulasan Detail Refleks Keputusanmu (10 Soal):</span>
+              </div>
+              <span className="text-xs text-[#526D82] hidden sm:inline">
+                Pelajari tanda kejanggalan (*red flags*) dari tiap pesan
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {TRIAGE_DRILL_ITEMS.map((item, idx) => {
+                const userChoice = answers[item.id];
+                const isCorrect =
+                  (userChoice === "yes" && item.isScam) ||
+                  (userChoice === "no" && !item.isScam);
+                return (
+                  <div
+                    key={item.id}
+                    className={`rounded-3xl p-5 border text-xs space-y-3 transition-all ${
+                      isCorrect
+                        ? "bg-white border-emerald-300 shadow-2xs hover:shadow-xs"
+                        : "bg-white border-rose-300 shadow-2xs hover:shadow-xs"
+                    }`}
+                  >
+                    {/* Header Soal & Status Badge */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#526D82]">
+                          Soal #{idx + 1} · {item.source}
+                        </span>
+                        <h4 className="font-bold text-[#27374D] text-xs leading-snug">
+                          {item.question}
+                        </h4>
+                      </div>
+
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 ${
+                          isCorrect
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                            : "bg-rose-100 text-rose-800 border border-rose-300"
+                        }`}
+                      >
+                        {isCorrect ? (
+                          <>
+                            <Check className="h-2.5 w-2.5 stroke-[3]" />
+                            <span>Tepat</span>
+                          </>
+                        ) : (
+                          <>
+                            <X className="h-2.5 w-2.5 stroke-[3]" />
+                            <span>Kurang Tepat</span>
+                          </>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Kutipan Teks Pesan */}
+                    <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] text-[#27374D] leading-relaxed italic">
+                      "{item.text}"
+                    </div>
+
+                    {/* Perbandingan Pilihan Jawaban */}
+                    <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] border-t border-slate-100">
+                      <span className="text-[#526D82]">
+                        Pilihanmu:{" "}
+                        <strong
+                          className={`uppercase font-bold ${
+                            isCorrect ? "text-emerald-700" : "text-rose-700"
+                          }`}
+                        >
+                          {userChoice || "-"}
+                        </strong>
+                      </span>
+                      <span className="text-[#9DB2BF]">&bull;</span>
+                      <span className="text-[#526D82]">
+                        Kunci:{" "}
+                        <strong className="text-[#27374D] font-bold">
+                          {item.isScam ? "Yes (Penipuan)" : "No (Bukan Penipuan)"}
+                        </strong>
+                      </span>
+                    </div>
+
+                    {/* Pembahasan / Penjelasan */}
+                    <div className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-slate-100">
+                      <strong className="text-[#27374D] block mb-0.5">Penjelasan & Red Flags:</strong>
+                      {item.explanation}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Tombol Aksi Bawah */}
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={handleRestart}
+              className="w-full sm:w-auto text-xs font-bold"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Ulangi Tantangan
+            </Button>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => onNavigateTab("kamus")}
+                className="flex-1 sm:flex-none text-xs"
+              >
+                Pelajari Istilah di Kamus
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={onExit}
+                className="flex-1 sm:flex-none text-xs font-black"
+              >
+                Kembali ke Menu Utama
+              </Button>
             </div>
           </div>
         </div>

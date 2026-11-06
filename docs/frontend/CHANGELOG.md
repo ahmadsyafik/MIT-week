@@ -53,6 +53,36 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Menghilangkan badge pill tingkat risiko (*Level Waspada*, *Risiko Tinggi*, *Risiko Sangat Tinggi*) di pojok kanan atas kartu modul beranda (`MODULE_SHORTCUTS`) untuk tampilan kartu yang lebih bersih dan minimalis.
       - Menghilangkan badge pill kategori (*Malware Android*, *Manipulasi Sosial*, dll.) pada kartu kamus dan halaman detail istilah (`Belajar.tsx`).
       - Menghapus tautan redundan *"Pelajari Modus >"* di baris atas kartu kamus istilah (`Belajar.tsx`) agar tata letak kartu menjadi ringkas dan terfokus pada nama istilah, penjelasan, serta tombol aksi *"Buka Detail →"* di bagian bawah.
+    - **Pembaruan Layout 2-Kolom & Pengaturan Tingkat Kesulitan Tantangan Kilat (Belajar.tsx)**:
+      - **Tata Letak 2 Kolom Seimbang**: Mengubah tata letak cover Tantangan Kilat dari tumpukan satu kolom menjadi grid 2 kolom (`grid-cols-1 lg:grid-cols-12 gap-6 items-stretch`).
+      - **Kolom Kiri (Kartu Hero Gelap - `lg:col-span-5`)**: Kartu biru dongker (`#27374D`) dengan header dinamis `TANTANGAN KILAT`, badge mode (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`), judul waktu dinamis (`180 Detik`, `120 Detik`, `60 Detik`), pill timer, 10 pesan uji, indikator on-device, tombol *"Mulai Sekarang"*, dan estimasi kecepatan menjawab.
+      - **Kolom Kanan (Kartu Terstruktur - `lg:col-span-7`)**:
+        - **Aturan Main Tantangan**: Kartu putih terstruktur dengan grid 2x2 yang rapi dan teratur (1. 10 Pesan Berurutan, 2. Refleks Putusan Cepat, 3. Waktu Berjalan Mundur, 4. Evaluasi & Bedah Kasus).
+        - **Pengaturan Tingkat Kesulitan Interaktif**: Wadah kartu putih pemilih durasi tantangan dengan 3 kartu opsi interaktif:
+          - **Santai**: 180 Detik (~18 dtk/soal) untuk pemula yang ingin membaca detail pesan tanpa terburu-buru.
+          - **Standar**: 120 Detik (~12 dtk/soal) sebagai mode rekomendasi default untuk menguji refleks insting alami.
+          - **Ekstrem**: 60 Detik (~6 dtk/soal) tantangan kecepatan tinggi untuk keputusan instan tanpa ragu.
+        - Memilih opsi kesulitan secara real-time memperbarui tampilan kartu hero di sebelah kiri dan meneruskan durasi waktu (`initialTime`) ke halaman tantangan (`KilatPage`), termasuk saat tombol ulangi tantangan ditekan.
+    - **Pembaruan Tampilan Tantangan Kilat Berbasis Gambar & Pilihan Yes / No (Belajar.tsx)**:
+      - **Tata Letak 2 Kolom Berdampingan Sesuai Sketsa**: Membagi layar soal drill menjadi 2 kolom seimbang (`grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch`):
+        - **Kolom Kiri (`lg:col-span-7`)**: Kotak tangkapan layar simulasi realistis (`DrillVisualMockup` untuk SMS, WhatsApp, Email, Panggilan, dan Notifikasi) lengkap dengan tombol perbesar modal.
+        - **Kolom Kanan (`lg:col-span-5`)**: Tersusun vertikal teratur terdiri dari 3 kartu: **1. Soal** (pertanyaan singkat berbobot), **2. Tombol Yes** (terindikasi manipulasi/penipuan), dan **3. Tombol No** (pesan resmi/aman/wajar) dengan indikator radio circle besar dan deskripsi konteks.
+      - **Penegasan Top Bar Header (Timer & Nomor Soal)**:
+        - Kotak kartu putih mandiri dengan tombol berbingkai *"Keluar dari Tantangan"*.
+        - Lencana jumlah soal beraksen kontras: `Soal X / 10` lengkap dengan ikon `ListChecks`.
+        - Tombol/badge timer hitungan mundur yang tegas dan tebal dengan font monospace, ikon jam amber, dan mode pulsa merah menyala otomatis saat waktu tersisa <= 20 detik.
+      - **Tombol Zoom & Pratinjau Modal**: Tombol `Maximize2` di sudut kanan atas kartu visual untuk memperbesar pratinjau tangkapan layar dalam modal perbesaran responsif.
+      - **Format Soal Singkat Bernomor**: Menampilkan pertanyaan singkat dan terarah per soal (contoh: *1. Apakah pesan SMS perbankan di atas terindikasi penipuan?*) dengan label teks bersih *"PERTANYAAN #X"* tanpa bingkai kotak/pill background.
+      - **Tombol Navigasi Soal Sebelumnya & Setelahnya**:
+        - Tombol berbingkai *"Soal Sebelumnya"* dengan ikon panah kiri `ChevronLeft` (nonaktif saat di soal 1).
+        - Tombol kontras *"Soal Setelahnya"* dengan ikon panah kanan `ChevronRight`, serta tombol *"Selesai & Evaluasi"* saat berada di soal ke-10.
+        - Tombol mini panah kiri/kanan di dalam lencana `Soal X / 10` pada top bar untuk penjelajahan cepat antar soal.
+      - **Penjabaran Penuh Layar Hasil Evaluasi Tantangan Kilat**:
+        - Mengubah wadah evaluasi dari kotak sempit di tengah (`mx-auto max-w-2xl`) menjadi bentang penuh (`w-full`) selaras dengan kartu header dan halaman utama.
+        - Menghapus pembatas scroll sempit (`max-h-80 overflow-y-auto`) dan menjabarkan seluruh 10 kartu ulasan soal secara terbuka dalam grid responsif 2 kolom (`grid-cols-1 lg:grid-cols-2`).
+        - Menambahkan hero card skor evaluasi 12-kolom dengan piala capaian, narasi hasil refleks, serta kartu ringkasan jumlah tepat vs kurang tepat.
+        - Menyembunyikan bilah navigasi drill atas (*Top Bar Header Drill*: Keluar dari Tantangan, counter soal, dan timer) saat berada di layar hasil evaluasi agar hanya tampil pada saat sesi soal aktif berlangsung, menghindari kotak bar kosong di atas layar evaluasi.
+        - Memperbarui bilah aksi atas dan bawah dengan tombol ulangi tantangan, buka kamus istilah, dan kembali ke beranda belajar.
     - **Pembaruan Desain & Tata Letak Halaman Cek Indikasi Tipuan Digital (Cek.tsx)**:
       - **Header & Tab Navigasi Minimalis**: Penambahan badge merek Siaga, tipografi judul yang tebal dan tegas, serta tab navigasi garis bawah (*Pesan*, *Tautan*, *Berkas & Izin*) dengan indikator aktif solid.
       - **Banner Peringatan Privasi Elegan**: Kotak pendar emas/amber lembut (`#FFFBF0`, border `#FDE68A`) dengan ikon perisai dan penegasan anonimitas data.
@@ -73,8 +103,8 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Mengganti simbol teks mentah seperti unicode star `★` dan checkmark `✓`/`✕` di `Belajar.tsx` dan `Lindungi.tsx` dengan komponen ikon vektor SVG berstandar desain sistem (`<Star />`, `<Check />`, `<X />`).
       - Membersihkan sapaan dan balasan chat skenario di `fiveStepScenarios.ts` dari emoji berlebihan (`🙏`, `💐`, `📦`, `😅`, `💕`, `🥺`, `😢`, `🥹`, dll.) untuk menghasilkan gaya komunikasi yang serius, realistis, dan berkelas.
     - **Penyempurnaan & Kompaksi Baris Bawah Kartu Skenario Simulator (Belajar.tsx)**:
-      - Menata ulang proporsi baris estimasi dan tombol aksi di bagian bawah kartu skenario (`SimulatorCover`) agar tidak lagi terpotong atau terbungkus menjadi 2 baris (*anti-wrapping*).
-      - Menambahkan `whitespace-nowrap` dan `leading-none` pada durasi `~2 Mnt` serta ikon jam mikro (`h-3 w-3`) sehingga label estimasi tampil rapi dalam 1 baris.
+      - Menghapus label tumpuk uppercase `Estimasi` dan menyelaraskan baris durasi kartu skenario simulator agar identik dengan kartu modul: satu baris horizontal bersih (`<Clock /> ~{sc.duration}`) dengan warna slate (`text-[#526D82]`), tipografi font-medium, dan ukuran `text-[11px]` sejajar dengan tombol aksi kapsul `Mulai`.
+      - Menambahkan `whitespace-nowrap` dan `leading-none` pada durasi `~2 Mnt` serta menyelaraskan warna ikon jam mikro menjadi abu-abu netral (`text-[#526D82]`) menggantikan warna oranye/amber agar serasi dengan palet desain sistem.
       - Menyesuaikan teks tombol kapsul aksi menjadi `Mulai` dengan ikon panah di lingkaran putih (persis referensi Nike), mencegah teks tombol terputus menjadi dua baris dan menjaga perbandingan ruang tetap proporsional pada grid 4 kolom.
     - **Penyederhanaan Lencana Media Kartu Skenario Simulator (Belajar.tsx)**:
       - Menghapus lencana rating `4.9` di pojok kanan atas kartu yang tidak relevan dengan skenario keamanan.
