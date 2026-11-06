@@ -44,6 +44,8 @@ import {
   Maximize2,
   Minimize2,
   Sliders,
+  Zap,
+  Sparkles,
 } from "lucide-react";
 import { Card, Button, Disclaimer } from "../components/ui";
 import { FakeChatSimulator } from "../components/simulator/FakeChatSimulator";
@@ -2988,6 +2990,98 @@ function KilatCover({
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" />
                 Pilihan Yes / No
               </span>
+            </div>
+          </div>
+
+          {/* Pratinjau Visual Soal + Header Viral "QUIZ KILAT" */}
+          <div className="relative my-1 py-5 px-3 rounded-2xl bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-transparent border border-white/15 overflow-hidden flex flex-col items-center justify-center min-h-[220px] sm:min-h-[250px] shadow-inner group">
+            {/* Ambient Radial Lights */}
+            <div className="absolute -top-10 -left-10 w-36 h-36 bg-sky-400/25 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-10 -right-10 w-36 h-36 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-24 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Background Layer: Kartu Visual Tangkapan Layar Soal (SMS & WhatsApp Phishing) */}
+            <div className="w-full relative flex items-center justify-center -space-x-10 sm:-space-x-8 opacity-80 group-hover:opacity-95 transition-all duration-500">
+              {/* Kartu Soal 1: SMS Phishing Bank Mandiri */}
+              <div className="w-44 sm:w-52 rounded-xl bg-white text-[#27374D] p-2.5 shadow-2xl border border-slate-200 transform -rotate-6 -translate-y-2 group-hover:-rotate-3 group-hover:-translate-y-3 transition-all duration-300 shrink-0 pointer-events-none select-none">
+                <div className="flex items-center justify-between text-[9px] pb-1 border-b border-slate-100">
+                  <span className="font-bold text-sky-800 flex items-center gap-1">
+                    <Mail className="h-2.5 w-2.5" /> SMS Bank
+                  </span>
+                  <span className="text-[8px] font-mono text-slate-400">10:14</span>
+                </div>
+                <div className="mt-1 space-y-0.5 text-[9px] text-slate-700 leading-tight">
+                  <p className="line-clamp-2 italic">"Akun Anda diblokir sementara. Verifikasi PIN:"</p>
+                  <span className="text-[8px] text-blue-600 font-mono underline block truncate">
+                    http://mandiri-verifikasi.xyz
+                  </span>
+                </div>
+                <div className="mt-1.5 pt-1 border-t border-slate-100 flex items-center justify-between text-[8px]">
+                  <span className="text-slate-400">Soal #1</span>
+                  <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold flex items-center gap-0.5">
+                    <AlertTriangle className="h-2 w-2" /> YES (SCAM)
+                  </span>
+                </div>
+              </div>
+
+              {/* Kartu Soal 2: WhatsApp Malware APK Kurir Paket */}
+              <div className="w-44 sm:w-52 rounded-xl bg-white text-[#27374D] p-2.5 shadow-2xl border border-slate-200 transform rotate-6 translate-y-3 group-hover:rotate-3 group-hover:translate-y-4 transition-all duration-300 shrink-0 pointer-events-none select-none">
+                <div className="flex items-center justify-between text-[9px] pb-1 border-b border-slate-100">
+                  <span className="font-bold text-emerald-800 flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> WA Kurir
+                  </span>
+                  <span className="text-[8px] font-mono text-slate-400">11:05</span>
+                </div>
+                <div className="mt-1 rounded-md bg-rose-50 border border-rose-200 p-1 flex items-center gap-1.5 text-[9px]">
+                  <FileCode className="h-3 w-3 text-rose-600 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="font-bold text-rose-950 truncate block text-[8.5px]">Cek_Paket_JNE.apk</span>
+                    <span className="text-[7.5px] text-rose-600">5.2 MB</span>
+                  </div>
+                </div>
+                <div className="mt-1.5 pt-1 border-t border-slate-100 flex items-center justify-between text-[8px]">
+                  <span className="text-slate-400">Soal #4</span>
+                  <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold flex items-center gap-0.5">
+                    <AlertTriangle className="h-2 w-2" /> YES (SCAM)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Foreground Centerpiece: Viral Styled Typography "QUIZ KILAT" */}
+            <div className="relative z-10 -mt-10 sm:-mt-12 text-center flex flex-col items-center">
+              {/* Badge Viral Kicker */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1E2B3D]/95 border border-amber-300/50 shadow-2xl backdrop-blur-md mb-1.5 hover:scale-105 transition-transform duration-300">
+                <Zap className="h-3.5 w-3.5 text-amber-300 fill-amber-300 animate-bounce" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-100 to-amber-300">
+                  REFLEKS DIGITAL
+                </span>
+                <Sparkles className="h-3 w-3 text-sky-300" />
+              </div>
+
+              {/* Header Utama "QUIZ KILAT" dengan Model Font Viral */}
+              <div className="relative group/title">
+                {/* Dynamic Back-Glow Aura */}
+                <div className="absolute -inset-x-6 -inset-y-2 blur-xl bg-gradient-to-r from-sky-400/40 via-amber-300/50 to-orange-400/40 -z-10 rounded-full opacity-70 group-hover/title:opacity-100 transition-opacity" />
+
+                <h3 className="text-4xl sm:text-5xl font-black uppercase italic tracking-tighter leading-none select-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-sky-200">
+                    QUIZ
+                  </span>{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-amber-300 via-yellow-200 to-orange-400 drop-shadow-[0_0_24px_rgba(251,191,36,0.7)]">
+                    KILAT
+                  </span>
+                </h3>
+              </div>
+
+              {/* Tagline Viral di Bawah Header */}
+              <div className="mt-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-[#DDE6ED] bg-[#1E2B3D]/80 px-2.5 py-0.5 rounded-full border border-white/10 shadow-sm backdrop-blur-xs">
+                <span>10 Soal Cepat</span>
+                <span className="text-amber-400">&bull;</span>
+                <span>Yes / No</span>
+                <span className="text-amber-400">&bull;</span>
+                <span className="text-sky-300">Uji Refleksmu</span>
+              </div>
             </div>
           </div>
 

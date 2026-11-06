@@ -55,7 +55,12 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Menghapus tautan redundan *"Pelajari Modus >"* di baris atas kartu kamus istilah (`Belajar.tsx`) agar tata letak kartu menjadi ringkas dan terfokus pada nama istilah, penjelasan, serta tombol aksi *"Buka Detail →"* di bagian bawah.
     - **Pembaruan Layout 2-Kolom & Pengaturan Tingkat Kesulitan Tantangan Kilat (Belajar.tsx)**:
       - **Tata Letak 2 Kolom Seimbang**: Mengubah tata letak cover Tantangan Kilat dari tumpukan satu kolom menjadi grid 2 kolom (`grid-cols-1 lg:grid-cols-12 gap-6 items-stretch`).
-      - **Kolom Kiri (Kartu Hero Gelap - `lg:col-span-5`)**: Kartu biru dongker (`#27374D`) dengan header dinamis `TANTANGAN KILAT`, badge mode (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`), judul waktu dinamis (`180 Detik`, `120 Detik`, `60 Detik`), pill timer, 10 pesan uji, indikator on-device, tombol *"Mulai Sekarang"*, dan estimasi kecepatan menjawab.
+      - **Kolom Kiri (Kartu Hero Gelap - `lg:col-span-5`)**:
+        - Kartu biru dongker (`#27374D`) dengan header dinamis `TANTANGAN KILAT`, badge mode (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`), judul waktu dinamis (`180 Detik`, `120 Detik`, `60 Detik`), pill timer, 10 pesan uji, indikator on-device, tombol *"Mulai Sekarang"*, dan estimasi kecepatan menjawab.
+        - **Pratinjau Visual Soal & Tipografi Header Viral "QUIZ KILAT"**:
+          - Mengisi area tengah kartu hero yang sebelumnya kosong dengan wadah visual interaktif berlatar belakang pencahayaan ambient radial glow (sky, amber, indigo).
+          - Menyajikan kartu tangkapan layar simulasi nyata dari soal kuis (SMS Phishing perbankan dengan tautan palsu dan WhatsApp kurir pengirim malware `.apk`) yang dimiringkan bersilangan (`-rotate-6` dan `rotate-6`) dengan respons hover dinamis.
+          - Menempatkan tipografi display viral di tengah: lencana atas `REFLEKS DIGITAL` berkilau dengan ikon `Zap`, judul besar bertingkat **QUIZ KILAT** dengan model font display viral modern (kombinasi icy gradient chrome `QUIZ` dan electric amber neon `KILAT` ber-drop shadow 3D), serta subtitle kapsul `10 Soal Cepat · Yes / No · Uji Refleksmu`.
       - **Kolom Kanan (Kartu Terstruktur - `lg:col-span-7`)**:
         - **Aturan Main Tantangan**: Kartu putih terstruktur dengan grid 2x2 yang rapi dan teratur (1. 10 Pesan Berurutan, 2. Refleks Putusan Cepat, 3. Waktu Berjalan Mundur, 4. Evaluasi & Bedah Kasus).
         - **Pengaturan Tingkat Kesulitan Interaktif**: Wadah kartu putih pemilih durasi tantangan dengan 3 kartu opsi interaktif:
