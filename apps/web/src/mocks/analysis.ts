@@ -6,7 +6,7 @@ export const EXAMPLE_MESSAGE =
 
 export function mockAnalyze(_input: AnalyzeInput): AnalysisResult {
   return {
-    score: 85,
+    score: 92,
     band: "sangat_tinggi",
     modus: ["loker_palsu"],
     malwareTypes: [],

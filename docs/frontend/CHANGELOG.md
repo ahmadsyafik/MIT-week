@@ -47,10 +47,24 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Membagi layout dashboard pengguna menjadi 2 baris grid terkoordinasi (`items-stretch`):
         - **Baris 1**: Kolom kiri (*Welcome Back* + *Modul Pembelajaran*) dan kolom kanan (*Pintasan Simulator*). Wadah *Welcome Back* diperbesar secara vertikal dengan padding proporsional (`p-7 sm:p-8 lg:p-9`) dan ilustrasi terpusat, mengeliminasi sela kosong di atas *Modul Pembelajaran*. Wadah *Pintasan Simulator* meregang penuh (`h-full justify-between`) dengan preview chat responsif (`min-h-[160px] max-h-[220px]`), sehingga ujung garis bawahnya sejajar presisi dengan ujung bawah kartu *Modul Pembelajaran*.
         - **Baris 2**: Kolom kiri (*Activities* – Grafik Pembelajaran Mingguan) dan kolom kanan (*Kamus & Modus Populer*). Wadah *Kamus & Modus Populer* menyajikan 4 istilah populer (*Sniffing APK*, *Social Engineering*, *SIM Swap Fraud*, dan *Phishing Website*) dengan jarak antar item rapat dan proporsional (`space-y-2.5`, padding `p-2.5 sm:p-3`), menghapus peregangan berlebih akibat `justify-between`, serta tombol tautan footer tetap sejajar rapi di bagian bawah.
-    - **Pembersihan Lencana Badge Pill & Tautan Redundan (Beranda.tsx & Belajar.tsx)**:
+    - **Penyelarasan Kotak Putih Header Halaman (Cek.tsx & Belajar.tsx)**:
+      - Membungkus header judul, deskripsi, dan tab navigasi pada halaman **Cek Indikasi Tipuan Digital** (`Cek.tsx`) ke dalam kotak kartu putih berbingkai lembut (`rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs`) agar kontras, solid, dan tidak tenggelam di latar belakang `#DDE6ED`.
+      - Membungkus header judul, deskripsi, dan 4 tab navigasi utama pada halaman **Belajar** (`Belajar.tsx`) ke dalam kotak kartu putih serupa yang selaras dengan gaya kartu `Lindungi.tsx` dan `Beranda.tsx`.
       - Menghilangkan badge pill tingkat risiko (*Level Waspada*, *Risiko Tinggi*, *Risiko Sangat Tinggi*) di pojok kanan atas kartu modul beranda (`MODULE_SHORTCUTS`) untuk tampilan kartu yang lebih bersih dan minimalis.
       - Menghilangkan badge pill kategori (*Malware Android*, *Manipulasi Sosial*, dll.) pada kartu kamus dan halaman detail istilah (`Belajar.tsx`).
       - Menghapus tautan redundan *"Pelajari Modus >"* di baris atas kartu kamus istilah (`Belajar.tsx`) agar tata letak kartu menjadi ringkas dan terfokus pada nama istilah, penjelasan, serta tombol aksi *"Buka Detail →"* di bagian bawah.
+    - **Pembaruan Desain & Tata Letak Halaman Cek Indikasi Tipuan Digital (Cek.tsx)**:
+      - **Header & Tab Navigasi Minimalis**: Penambahan badge merek Siaga, tipografi judul yang tebal dan tegas, serta tab navigasi garis bawah (*Pesan*, *Tautan*, *Berkas & Izin*) dengan indikator aktif solid.
+      - **Banner Peringatan Privasi Elegan**: Kotak pendar emas/amber lembut (`#FFFBF0`, border `#FDE68A`) dengan ikon perisai dan penegasan anonimitas data.
+      - **Wadah Formulir & Tombol Aksi Kontras**: Kartu putih bersih dengan label uppercase terstruktur, penghitung karakter monospace, tombol primer hitam solid (`bg-black`), dan tombol sekunder outline bersih.
+      - **Kartu Hasil Analisis Hero Donut Gauge**:
+        - Kotak gelap arang (*charcoal* `#1E1E1E`) berbayang halus yang memuat pengukur donat SVG melingkar dengan angka skor presisi (`92 dari 100`) dan animasi rotasi halus.
+        - Lencana tingkat risiko dinamis bersinar (*glow pill*) serta narasi ringkasan indikasi rekayasa sosial yang berbobot.
+      - **Skala 4-Segmen Horizontal**: 4 bar status (*Aman*, *Waspada*, *Berisiko*, *Sangat Tinggi*) dengan pewarnaan aktif oranye/merah menyala dan label teks yang tegas.
+      - **Pratinjau Teks & Kartu Tanda Peringatan Berjenjang**:
+        - Kotak pratinjau teks font monospace dengan penyamaran data otomatis.
+        - Daftar kartu peringatan bertingkat (`TINGKAT L4`, `TINGKAT L2`, dll.) dengan alasan kejanggalan (`Kenapa mencurigakan:`) dan kotak putih inset rekomendasi aksi (`Cara verifikasi:`).
+        - Catatan penafian (*disclaimer*) transparan di bagian bawah.
     - **Pembersihan Total Emoticon & Emoji Slop (Anti-Slop Cleanliness)**:
       - Menghapus 100% karakter emoji, emotikon, dan simbol unicode slop di seluruh antarmuka web, komponen simulator, panduan tindakan, serta data skenario (total 38 kemunculan dieliminasi hingga tersisa 0).
       - Menghilangkan badge emoji pada halaman Keterbatasan (`⚡`, `🛡️`, `🔍`, `🧪`) dan menggantinya dengan teks clean berbobot profesional.

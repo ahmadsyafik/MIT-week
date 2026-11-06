@@ -1390,89 +1390,91 @@ export default function Belajar() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* ===================================================================== */}
-      {/* HEADER UTAMA HALAMAN BELAJAR (SESUAI DOKUMEN & REFERENSI VISUAL)      */}
+      {/* HEADER UTAMA HALAMAN BELAJAR (KOTAK PUTIH PERSIS REFERENSI)           */}
       {/* ===================================================================== */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-black text-[#27374D] tracking-tight">Belajar</h1>
-        <p className="text-xs sm:text-sm text-[#526D82] max-w-2xl leading-relaxed">
-          Gabungan Modul, Kilat 2 Menit, dan Kamus dalam satu tempat — supaya navigasinya ringkas di layar kecil.
-        </p>
-      </div>
+      <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-5">
+        <div className="space-y-1.5">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">Belajar</h1>
+          <p className="text-xs sm:text-sm text-[#526D82] max-w-3xl leading-relaxed">
+            Gabungan Modul, Kilat 2 Menit, dan Kamus dalam satu tempat — supaya navigasinya ringkas di layar kecil.
+          </p>
+        </div>
 
-      {/* ===================================================================== */}
-      {/* HORIZONTAL TAB BAR (4 TAB UTAMA)                                      */}
-      {/* ===================================================================== */}
-      <div className="border-b border-[#9DB2BF]/40">
-        <nav
-          aria-label="Pilihan Tab Belajar"
-          className="flex items-center gap-6 overflow-x-auto no-scrollbar py-1"
-        >
-          {/* Tab 1: Simulator */}
-          <button
-            type="button"
-            onClick={() => handleTabChange("simulator")}
-            className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-              activeTab === "simulator"
-                ? "text-[#27374D] font-black"
-                : "text-[#526D82] hover:text-[#27374D]"
-            }`}
+        {/* ===================================================================== */}
+        {/* HORIZONTAL TAB BAR (4 TAB UTAMA)                                      */}
+        {/* ===================================================================== */}
+        <div className="border-b border-[#9DB2BF]/30 pt-1">
+          <nav
+            aria-label="Pilihan Tab Belajar"
+            className="flex items-center gap-6 overflow-x-auto no-scrollbar py-0.5"
           >
-            <span>Simulator</span>
-            {activeTab === "simulator" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
-            )}
-          </button>
+            {/* Tab 1: Simulator */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("simulator")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
+                activeTab === "simulator"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+              }`}
+            >
+              <span>Simulator</span>
+              {activeTab === "simulator" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
 
-          {/* Tab 2: Modul */}
-          <button
-            type="button"
-            onClick={() => handleTabChange("modul")}
-            className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-              activeTab === "modul"
-                ? "text-[#27374D] font-black"
-                : "text-[#526D82] hover:text-[#27374D]"
-            }`}
-          >
-            <span>Modul</span>
-            {activeTab === "modul" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
-            )}
-          </button>
+            {/* Tab 2: Modul */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("modul")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
+                activeTab === "modul"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+              }`}
+            >
+              <span>Modul</span>
+              {activeTab === "modul" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
 
-          {/* Tab 3: Kilat 2 Menit */}
-          <button
-            type="button"
-            onClick={() => handleTabChange("kilat")}
-            className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-              activeTab === "kilat"
-                ? "text-[#27374D] font-black"
-                : "text-[#526D82] hover:text-[#27374D]"
-            }`}
-          >
-            <span>Kilat 2 Menit</span>
-            {activeTab === "kilat" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
-            )}
-          </button>
+            {/* Tab 3: Kilat 2 Menit */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("kilat")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
+                activeTab === "kilat"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+              }`}
+            >
+              <span>Kilat 2 Menit</span>
+              {activeTab === "kilat" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
 
-          {/* Tab 4: Kamus */}
-          <button
-            type="button"
-            onClick={() => handleTabChange("kamus")}
-            className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-              activeTab === "kamus"
-                ? "text-[#27374D] font-black"
-                : "text-[#526D82] hover:text-[#27374D]"
-            }`}
-          >
-            <span>Kamus</span>
-            {activeTab === "kamus" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
-            )}
-          </button>
-        </nav>
+            {/* Tab 4: Kamus */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("kamus")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
+                activeTab === "kamus"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+              }`}
+            >
+              <span>Kamus</span>
+              {activeTab === "kamus" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
+          </nav>
+        </div>
       </div>
 
       {/* ===================================================================== */}
