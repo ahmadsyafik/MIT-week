@@ -639,14 +639,9 @@ export default function Beranda() {
           {/* 2. PINTASAN SIMULATOR AKTIF (SELARAS PERSIS UJUNG BAWAH MODUL)   */}
           {/* --------------------------------------------------------------- */}
           <div className="relative overflow-hidden rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs flex flex-col justify-between h-full space-y-4">
-            {/* Header Pintasan */}
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50 shadow-xs">
-                <Smartphone className="h-4 w-4" />
-              </span>
-              <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                Pintasan Simulator
-              </span>
+            {/* Header Pintasan (Selaras dengan font judul Kamus & Modus Populer) */}
+            <div>
+              <h3 className="text-base font-bold text-[#27374D]">Pintasan Simulator</h3>
             </div>
 
             {/* Gambar Cuplikan Chat Skenario K1 */}

@@ -53,6 +53,24 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Menghilangkan badge pill tingkat risiko (*Level Waspada*, *Risiko Tinggi*, *Risiko Sangat Tinggi*) di pojok kanan atas kartu modul beranda (`MODULE_SHORTCUTS`) untuk tampilan kartu yang lebih bersih dan minimalis.
       - Menghilangkan badge pill kategori (*Malware Android*, *Manipulasi Sosial*, dll.) pada kartu kamus dan halaman detail istilah (`Belajar.tsx`).
       - Menghapus tautan redundan *"Pelajari Modus >"* di baris atas kartu kamus istilah (`Belajar.tsx`) agar tata letak kartu menjadi ringkas dan terfokus pada nama istilah, penjelasan, serta tombol aksi *"Buka Detail →"* di bagian bawah.
+      - Menghapus label *kicker* redundan `"DAFTAR PERIKSA BERURUTAN"` di atas judul panduan tindakan darurat pada halaman **Panduan Lindungi** (`Lindungi.tsx`), dan menambahkan teks deskripsi pendukung ringkas langsung di bawah judul kondisi (`activeGuide.title`), seperti *"Pesan / Tautan Mencurigakan Baru Diterima (Belum Diklik)"*, agar hierarki tipografi lebih bersih, seimbang, dan informatif.
+      - Menyelaraskan tipografi header **Pintasan Simulator** di Dashboard Beranda (`Beranda.tsx`): menghapus ikon smartphone dalam kotak dan format huruf besar tracking lebar, menggantinya dengan gaya font judul clean (`text-base font-bold text-[#27374D] Pintasan Simulator`) yang serasi dengan kartu *Kamus & Modus Populer* dan *Activities*.
+    - **Penerapan Logo Resmi JagaRuang**:
+      - Memproses dan menetapkan aset visual logo perisai geometris emas (*gold geometric shield*) resmi ke dalam direktori publik dan aset aplikasi (`/logo.png`).
+      - Mengganti teks/lencana inisial `JR` sebelumnya di seluruh antarmuka aplikasi:
+        - Navbar Landing Page publik (`Layout.tsx`).
+        - Header atas Sidebar Dashboard (`Layout.tsx`).
+        - Top bar navigasi mobile (`Layout.tsx`).
+        - Header modal dialog Masuk / Login (`LoginModal.tsx`).
+        - Favicon peramban web (`index.html`).
+    - **Pembaruan Sandi Rahasia Keluarga & Rekomendasi 2x2 Sandi Campuran (Sandi.tsx)**:
+      - Menghapus pill teks pengingat di dalam kotak tampilan sandi besar sesuai instruksi pengguna, menjaga tampilan visual sandi utama bersih dan fokus.
+      - Menghapus tombol toggle visibilitas sandi (*Rahasiakan Sandi* / *Rahasiakan*) dari kotak sandi utama maupun header rekomendasi sesuai permintaan pengguna, sehingga teks sandi selalu terlihat jelas dan langsung dapat disalin atau ditetapkan.
+      - Menghapus lencana pill berlebih (*[OPSI X]* dan *[Kapital + Angka di Tengah]*) pada item rekomendasi untuk tampilan minimalis.
+      - Menata 4 rekomendasi sandi campuran ke dalam **tata letak grid 2x2 (2 atas, 2 bawah) dengan border radius tipis (`rounded-xl` / `rounded-lg`)**:
+        - Memadukan huruf kapital, huruf kecil, dan angka (misalnya `Lentera79Samudra`, `kopi88Garuda`, `Elang2026Rembulan`, dan `99KasturiLembah`).
+        - Dilengkapi tombol interaktif **Tetapkan Sandi** (berubah menjadi `[✓ Ditetapkan]` saat aktif) untuk menetapkan pilihan ke kotak utama dengan satu klik.
+        - Tombol **Acak Opsi Baru** (`RefreshCw`) untuk menghasilkan 4 kombinasi campuran baru secara instan kapan saja.
     - **Pembaruan Layout 2-Kolom & Pengaturan Tingkat Kesulitan Tantangan Kilat (Belajar.tsx)**:
       - **Tata Letak 2 Kolom Seimbang**: Mengubah tata letak cover Tantangan Kilat dari tumpukan satu kolom menjadi grid 2 kolom (`grid-cols-1 lg:grid-cols-12 gap-6 items-stretch`).
       - **Kolom Kiri (Kartu Hero Gelap - `lg:col-span-5`)**:
@@ -60,7 +78,7 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
         - **Pratinjau Visual Soal & Tipografi Header Viral "QUIZ KILAT"**:
           - Mengisi area tengah kartu hero yang sebelumnya kosong dengan wadah visual interaktif berlatar belakang pencahayaan ambient radial glow (sky, amber, indigo).
           - Menyajikan kartu tangkapan layar simulasi nyata dari soal kuis (SMS Phishing perbankan dengan tautan palsu dan WhatsApp kurir pengirim malware `.apk`) yang dimiringkan bersilangan (`-rotate-6` dan `rotate-6`) dengan respons hover dinamis.
-          - Menempatkan tipografi display viral di tengah: lencana atas `REFLEKS DIGITAL` berkilau dengan ikon `Zap`, judul besar bertingkat **QUIZ KILAT** dengan model font display viral modern (kombinasi icy gradient chrome `QUIZ` dan electric amber neon `KILAT` ber-drop shadow 3D), serta subtitle kapsul `10 Soal Cepat · Yes / No · Uji Refleksmu`.
+          - Menempatkan tipografi display viral di tengah: judul besar bertingkat **QUIZ KILAT** dengan model font display viral modern (kombinasi icy gradient chrome `QUIZ` dan electric amber neon `KILAT` ber-drop shadow 3D) serta subtitle kapsul `10 Soal Cepat · Yes / No · Uji Refleksmu` tanpa lencana atas yang berlebih.
       - **Kolom Kanan (Kartu Terstruktur - `lg:col-span-7`)**:
         - **Aturan Main Tantangan**: Kartu putih terstruktur dengan grid 2x2 yang rapi dan teratur (1. 10 Pesan Berurutan, 2. Refleks Putusan Cepat, 3. Waktu Berjalan Mundur, 4. Evaluasi & Bedah Kasus).
         - **Pengaturan Tingkat Kesulitan Interaktif**: Wadah kartu putih pemilih durasi tantangan dengan 3 kartu opsi interaktif:

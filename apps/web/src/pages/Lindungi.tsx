@@ -24,6 +24,19 @@ import {
 } from "../lib/coreClient";
 import type { ActionCondition, ActionGuide, ReportChannel } from "@jagaruang/contracts";
 
+const GUIDE_SUBTITLES: Record<ActionCondition, string> = {
+  belum_klik:
+    "Langkah pencegahan cepat sebelum membuka tautan atau mengunduh berkas mencurigakan.",
+  sudah_install:
+    "Tindakan isolasi darurat untuk memutus jaringan dan menghapus aplikasi berbahaya dari ponsel.",
+  sudah_transfer:
+    "Panduan cepat menghubungi bank dan mengamankan bukti transaksi untuk pembekuan rekening penampung.",
+  akun_diretas:
+    "Langkah pemulihan kendali akun, penggantian kredensial, dan peringatan darurat ke kontak terdekat.",
+  orang_dekat_hampir_kena:
+    "Panduan mendampingi kerabat secara tenang untuk memverifikasi kebenaran pesan sebelum bertindak.",
+};
+
 export default function Lindungi() {
   const [guides, setGuides] = useState<ActionGuide[]>([]);
   const [channels, setChannels] = useState<ReportChannel[]>([]);
@@ -344,13 +357,14 @@ export default function Lindungi() {
       {activeGuide && (
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#9DB2BF]/30 pb-4">
-            <div className="space-y-1">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#526D82]">
-                Daftar Periksa Berurutan
-              </span>
+            <div className="space-y-1 max-w-xl">
               <h3 className="text-lg sm:text-xl font-black text-[#27374D]">
                 {activeGuide.title}
               </h3>
+              <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">
+                {GUIDE_SUBTITLES[selectedCondition] ||
+                  "Ikuti langkah pencegahan berikut secara runtut demi keamanan akun dan perangkatmu."}
+              </p>
             </div>
 
             <div className="flex items-center gap-3">

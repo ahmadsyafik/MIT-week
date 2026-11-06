@@ -12,12 +12,73 @@ import {
   CheckCircle2,
   Lock,
   HelpCircle,
+  ArrowRight,
 } from "lucide-react";
 import { Button, Disclaimer } from "../components/ui";
 import { generateSafeword, storage } from "../lib/coreClient";
 
+interface MixedSafewordRec {
+  id: string;
+  password: string;
+}
+
+const BASE_WORDS = [
+  "Lentera",
+  "Samudra",
+  "Cempaka",
+  "Guntur",
+  "Elang",
+  "Rembulan",
+  "Kasturi",
+  "Lembah",
+  "Garuda",
+  "Mentari",
+  "Ombak",
+  "Bintang",
+  "Pelangi",
+  "Melati",
+  "Angin",
+  "Kopi",
+  "Danau",
+  "Pohon",
+  "Pusaka",
+];
+
+function generateMixedRecommendations(): MixedSafewordRec[] {
+  const shuffle = () => [...BASE_WORDS].sort(() => 0.5 - Math.random());
+  const w1 = shuffle();
+  const w2 = shuffle();
+  const w3 = shuffle();
+  const w4 = shuffle();
+
+  // Pattern 1: Kata1 + 2 Digit Angka + Kata2 (Kapital + Angka di Tengah)
+  const num1 = Math.floor(10 + Math.random() * 89);
+  const p1 = `${w1[0]}${num1}${w1[1]}`;
+
+  // Pattern 2: kata1(lowercase) + 2 Digit Angka + Kata2 (Huruf Kecil + Angka + Kapital)
+  const num2 = Math.floor(10 + Math.random() * 89);
+  const p2 = `${w2[0].toLowerCase()}${num2}${w2[1]}`;
+
+  // Pattern 3: Kata1 + Tahun 2026 + Kata2 (Kapital + 4 Angka)
+  const p3 = `${w3[0]}2026${w3[1]}`;
+
+  // Pattern 4: 2 Digit Angka + Kata1 + Kata2 (Angka di Awal + Kapital)
+  const num4 = Math.floor(10 + Math.random() * 89);
+  const p4 = `${num4}${w4[0]}${w4[1]}`;
+
+  return [
+    { id: "rec-1", password: p1 },
+    { id: "rec-2", password: p2 },
+    { id: "rec-3", password: p3 },
+    { id: "rec-4", password: p4 },
+  ];
+}
+
 export default function Sandi() {
   const [wordCount, setWordCount] = useState<2 | 3>(3);
+  const [recommendations, setRecommendations] = useState<MixedSafewordRec[]>(() =>
+    generateMixedRecommendations()
+  );
   const [currentSafeword, setCurrentSafeword] = useState<string>("");
   const [savedSafeword, setSavedSafeword] = useState<{ word: string; createdAt: string } | null>(null);
   const [allowSaveLocal, setAllowSaveLocal] = useState<boolean>(false); // DEFAULT MATI sesuai kontrak FE-5.2
@@ -32,13 +93,44 @@ export default function Sandi() {
       setCurrentSafeword(progress.safeword.word);
       setAllowSaveLocal(true);
     } else {
-      // Inisialisasi kata pertama saat membuka halaman
-      setCurrentSafeword(generateSafeword(3));
+      // Inisialisasi kata pertama dengan rekomendasi sandi campuran kuat yang tidak mudah ditebak
+      const initial = recommendations[0] ? recommendations[0].password : "Lentera79Samudra";
+      setCurrentSafeword(initial);
     }
   }, []);
 
+  const handleRefreshRecommendations = () => {
+    const newRecs = generateMixedRecommendations();
+    setRecommendations(newRecs);
+    setSaveStatusMessage("4 opsi rekomendasi sandi campuran baru berhasil dibuat.");
+    setTimeout(() => setSaveStatusMessage(null), 2500);
+  };
+
+  const handleSelectRecommendation = (word: string) => {
+    setCurrentSafeword(word);
+    setCopyFeedback(false);
+    setSaveStatusMessage("Sandi rekomendasi berhasil ditetapkan sebagai sandi keluarga!");
+    setTimeout(() => setSaveStatusMessage(null), 3000);
+
+    if (allowSaveLocal) {
+      const progress = storage.load();
+      const updatedSafeword = {
+        word,
+        createdAt: new Date().toISOString(),
+      };
+      storage.save({
+        ...progress,
+        safeword: updatedSafeword,
+      });
+      setSavedSafeword(updatedSafeword);
+    }
+  };
+
   const handleGenerateNew = () => {
-    const newWord = generateSafeword(wordCount);
+    const shuffle = () => [...BASE_WORDS].sort(() => 0.5 - Math.random());
+    const words = shuffle();
+    const num = Math.floor(10 + Math.random() * 89);
+    const newWord = `${words[0]}${num}${words[1]}`;
     setCurrentSafeword(newWord);
     setCopyFeedback(false);
     setSaveStatusMessage(null);
@@ -190,8 +282,8 @@ export default function Sandi() {
             Kata Sandi Rahasia Keluarga Kamu:
           </div>
 
-          <div className="text-2xl sm:text-4xl md:text-5xl font-black text-[#27374D] tracking-tight selection:bg-[#526D82] selection:text-white">
-            {currentSafeword || "Garuda Ombak Melompat"}
+          <div className="text-2xl sm:text-4xl md:text-5xl font-black font-mono text-[#27374D] tracking-tight selection:bg-[#526D82] selection:text-white py-1">
+            {currentSafeword || "Lentera79Samudra"}
           </div>
 
           <p className="text-xs text-[#526D82] max-w-md mx-auto leading-relaxed">
@@ -228,6 +320,81 @@ export default function Sandi() {
                 </>
               )}
             </Button>
+          </div>
+        </div>
+
+        {/* =================================================================== */}
+        {/* REKOMENDASI SANDI CAMPURAN: 2X2 DENGAN RADIUS TIPIS                 */}
+        {/* =================================================================== */}
+        <div className="space-y-3 pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#DDE6ED] pb-3">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-[#526D82]" />
+                <h3 className="text-sm sm:text-base font-bold text-[#27374D]">
+                  Pilihan Rekomendasi Sandi Campuran (Huruf & Angka)
+                </h3>
+              </div>
+              <p className="text-xs text-[#526D82]">
+                Kombinasi acak huruf kapital, huruf kecil, dan angka yang sulit ditebak. Klik <strong>Tetapkan Sandi</strong> pada opsi yang kamu pilih.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={handleRefreshRecommendations}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9DB2BF]/60 bg-white hover:bg-slate-50 text-[11px] font-bold text-[#27374D] cursor-pointer shadow-2xs"
+                title="Dapatkan 4 rekomendasi kombinasi baru"
+              >
+                <RefreshCw className="h-3 w-3 text-[#526D82]" />
+                <span>Acak Opsi Baru</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Rekomendasi 2x2 (2 Atas, 2 Bawah) dengan Radius Tipis */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {recommendations.map((rec) => {
+              const isSelected = currentSafeword === rec.password;
+              return (
+                <div
+                  key={rec.id}
+                  className={`flex items-center justify-between gap-3 p-3.5 sm:px-5 sm:py-3.5 rounded-xl border transition-all ${
+                    isSelected
+                      ? "bg-[#27374D]/5 border-[#27374D] ring-2 ring-[#27374D] shadow-sm"
+                      : "bg-white border-[#9DB2BF]/50 hover:border-[#526D82] hover:bg-[#DDE6ED]/20 shadow-2xs"
+                  }`}
+                >
+                  {/* Teks Sandi Campuran Bersih (Monospace Bold) */}
+                  <div className="font-mono font-black text-sm sm:text-base text-[#27374D] tracking-wider select-all truncate">
+                    {rec.password}
+                  </div>
+
+                  {/* Tombol Aksi Tetapkan dengan Radius Tipis */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectRecommendation(rec.password)}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs ${
+                      isSelected
+                        ? "bg-[#27374D] text-white ring-1 ring-[#27374D]"
+                        : "bg-white border border-[#9DB2BF]/60 text-[#27374D] hover:bg-[#27374D] hover:text-white"
+                    }`}
+                  >
+                    {isSelected ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 stroke-[3]" />
+                        <span>Ditetapkan</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Tetapkan Sandi</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 

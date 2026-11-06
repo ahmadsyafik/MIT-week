@@ -60,9 +60,11 @@ export default function LoginModal() {
 
         {/* Header Modal */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#526D82] text-white font-extrabold shadow-sm border border-[#9DB2BF]/30">
-            JR
-          </div>
+          <img
+            src="/logo.png"
+            alt="Logo JagaRuang"
+            className="h-11 w-11 object-contain shrink-0"
+          />
           <div>
             <h2 id="login-modal-title" className="text-xl font-bold text-[#27374D]">
               Masuk ke JagaRuang

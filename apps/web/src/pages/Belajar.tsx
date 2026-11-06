@@ -3014,15 +3014,6 @@ function KilatCover({
 
             {/* Foreground Centerpiece: Viral Styled Typography "QUIZ KILAT" */}
             <div className="relative z-10 -mt-10 sm:-mt-12 text-center flex flex-col items-center">
-              {/* Badge Viral Kicker */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1E2B3D]/95 border border-amber-300/50 shadow-2xl backdrop-blur-md mb-1.5 hover:scale-105 transition-transform duration-300">
-                <Zap className="h-3.5 w-3.5 text-amber-300 fill-amber-300 animate-bounce" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-100 to-amber-300">
-                  REFLEKS DIGITAL
-                </span>
-                <Sparkles className="h-3 w-3 text-sky-300" />
-              </div>
-
               {/* Header Utama "QUIZ KILAT" dengan Model Font Viral */}
               <div className="relative group/title">
                 {/* Dynamic Back-Glow Aura */}

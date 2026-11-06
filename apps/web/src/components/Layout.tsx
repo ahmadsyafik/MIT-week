@@ -167,14 +167,16 @@ export default function Layout() {
         {/* Top Header Navbar untuk Landing Page (Persis seperti di video referensi) */}
         <header className="sticky top-0 z-40 border-b border-[#9DB2BF]/40 bg-white/95 backdrop-blur-md shadow-xs">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
-            {/* Logo Brand Camply / JagaRuang. */}
+            {/* Logo Brand JagaRuang */}
             <NavLink
               to="/"
               className="flex items-center gap-2.5 font-bold text-[#27374D] text-lg hover:text-[#526D82] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] rounded-md transition-colors"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#526D82] text-white font-black text-sm shadow-sm">
-                JR
-              </span>
+              <img
+                src="/logo.png"
+                alt="Logo JagaRuang"
+                className="h-9 w-9 object-contain shrink-0"
+              />
               <div className="flex items-baseline gap-0.5">
                 <span className="leading-tight font-black text-xl tracking-tight text-[#27374D]">
                   JagaRuang
@@ -299,9 +301,11 @@ export default function Layout() {
               onClick={closeSidebar}
               className="flex items-center gap-3 font-bold text-white hover:text-[#DDE6ED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-lg transition-colors"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#27374D] text-[#DDE6ED] font-extrabold text-sm shadow-md border border-[#9DB2BF]/40">
-                JR
-              </span>
+              <img
+                src="/logo.png"
+                alt="Logo JagaRuang"
+                className="h-9 w-9 object-contain shrink-0 drop-shadow-sm"
+              />
               <div className="flex flex-col">
                 <span className="leading-tight font-extrabold text-base tracking-tight text-white">JagaRuang</span>
                 <span className="text-[10px] font-medium text-[#DDE6ED]/80">Guardians of Digital</span>
@@ -394,9 +398,11 @@ export default function Layout() {
             </button>
 
             <NavLink to="/" className="flex items-center gap-2 font-bold text-[#27374D] text-base">
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#526D82] text-white font-extrabold text-xs">
-                JR
-              </span>
+              <img
+                src="/logo.png"
+                alt="Logo JagaRuang"
+                className="h-7 w-7 object-contain shrink-0"
+              />
               <span>JagaRuang</span>
             </NavLink>
           </div>
