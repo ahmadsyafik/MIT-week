@@ -5,12 +5,10 @@ import {
   FileCheck,
   ShieldAlert,
   AlertCircle,
-  HelpCircle,
   Check,
-  Info,
 } from "lucide-react";
-import { INPUT_MAX_CHARS, type AnalysisResult, type AnalyzeInput, type Band, type Level } from "@jagaruang/contracts";
-import { analyze, USE_MOCK } from "../lib/coreClient";
+import { INPUT_MAX_CHARS, type AnalysisResult, type AnalyzeInput, type Band } from "@jagaruang/contracts";
+import { analyze } from "../lib/coreClient";
 import { EXAMPLE_MESSAGE } from "../mocks/analysis";
 
 type TabKind = "message" | "link" | "file";
@@ -30,21 +28,6 @@ function formatCategoryName(category: string): string {
     .split("_")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
-}
-
-function getLevelBadgeBg(level: Level): string {
-  switch (level) {
-    case "L5":
-      return "bg-[#991B1B] text-white";
-    case "L4":
-      return "bg-[#B91C1C] text-white";
-    case "L3":
-    case "L2":
-      return "bg-[#D97706] text-white";
-    case "L1":
-    default:
-      return "bg-slate-600 text-white";
-  }
 }
 
 function getGaugeColor(band: Band): string {
@@ -422,9 +405,10 @@ export default function Cek() {
       {result && bandInfo && (
         <div className="rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-xs space-y-6">
           {/* Header Kartu Hasil Analisis */}
-          <div className="flex items-center justify-between text-xs text-slate-400">
-            <span className="font-bold uppercase tracking-wider">INDIKASI RISIKO</span>
-            <span>Dianalisis baru saja</span>
+          <div>
+            <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">
+              INDIKASI RISIKO
+            </span>
           </div>
 
           {/* Hero Box Charcoal Gelap (Donut Gauge + Status Badge & Deskripsi) */}
@@ -548,51 +532,33 @@ export default function Cek() {
             </div>
           </div>
 
-          {/* Teks yang Dianalisis */}
-          {result.displayText && (
-            <div className="rounded-xl bg-[#FAF9F5] p-3.5 sm:p-4 border border-slate-200/80 space-y-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                TEKS YANG DIANALISIS
-              </span>
-              <p className="font-mono text-xs text-slate-700 break-words leading-relaxed">
-                {result.displayText}
-              </p>
-            </div>
-          )}
-
-          {/* Daftar Tanda Peringatan Ditemukan */}
+          {/* Daftar Tanda Peringatan Ditemukan (Grid 2 Kolom) */}
           <div className="space-y-3 pt-2">
             <h3 className="text-base font-bold text-slate-900">
               Tanda Peringatan Ditemukan ({result.flags.length})
             </h3>
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
               {result.flags.map((flag, idx) => (
                 <div
                   key={flag.ruleId || idx}
-                  className="rounded-2xl border border-amber-200/60 bg-[#FFFDF9] p-4 sm:p-5 space-y-3 shadow-2xs"
+                  className="rounded-2xl border border-amber-200/60 bg-[#FFFDF9] p-4 sm:p-5 space-y-3 shadow-2xs flex flex-col justify-between"
                 >
-                  {/* Baris Atas: Badge Tingkat & Label Kategori */}
-                  <div className="flex items-center justify-between text-xs">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${getLevelBadgeBg(flag.level)}`}>
-                      TINGKAT {flag.level}
-                    </span>
-                    <span className="text-slate-400 text-xs">
-                      Kategori: {formatCategoryName(flag.category)}
-                    </span>
-                  </div>
+                  <div className="space-y-2.5">
+                    {/* Baris Atas: Label Kategori */}
+                    <div className="text-xs text-slate-400">
+                      Kategori: <span className="font-medium text-slate-600">{formatCategoryName(flag.category)}</span>
+                    </div>
 
-                  {/* Kenapa Mencurigakan */}
-                  <div className="flex items-start gap-2 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                    <HelpCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
-                    <div>
+                    {/* Kenapa Mencurigakan */}
+                    <div className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                       <strong className="font-bold text-slate-900">Kenapa mencurigakan: </strong>
                       <span>{flag.why}</span>
                     </div>
                   </div>
 
                   {/* Cara Verifikasi (White Inset Box) */}
-                  <div className="rounded-xl bg-white border border-slate-100 p-3 sm:p-3.5 flex items-start gap-2 text-xs sm:text-sm text-slate-700 leading-relaxed shadow-2xs">
+                  <div className="rounded-xl bg-white border border-slate-100 p-3 sm:p-3.5 flex items-start gap-2 text-xs sm:text-sm text-slate-700 leading-relaxed shadow-2xs mt-auto">
                     <Check className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
                     <div>
                       <strong className="font-bold text-slate-900">Cara verifikasi: </strong>
@@ -603,21 +569,7 @@ export default function Cek() {
               ))}
             </div>
           </div>
-
-          {/* Footer Disclaimer */}
-          <div className="flex items-start gap-2 pt-3 border-t border-slate-100 text-[11px] text-slate-400 leading-relaxed">
-            <Info className="h-3.5 w-3.5 shrink-0 text-slate-400 mt-0.5" />
-            <p>
-              Hasil ini hanya indikator berbasis aturan dan bias kalimat. Tidak adanya tanda bahaya bukan jaminan bahwa sebuah pesan, tautan, atau file terpercaya. Verifikasi lewat kanal resmi.
-            </p>
-          </div>
         </div>
-      )}
-
-      {USE_MOCK && (
-        <p className="text-xs text-slate-400 text-center">
-          Mode data tiruan (mock) aktif — aman digunakan selama modul logika inti Backend sedang disiapkan.
-        </p>
       )}
     </div>
   );

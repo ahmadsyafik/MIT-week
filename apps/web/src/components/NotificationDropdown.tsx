@@ -224,13 +224,6 @@ export default function NotificationDropdown() {
               ))
             )}
           </div>
-
-          {/* Footer Popover */}
-          <div className="border-t border-[#9DB2BF]/30 p-2.5 text-center bg-slate-50/50 rounded-b-2xl">
-            <span className="text-[10px] text-[#526D82]">
-              Notifikasi privasi disimpan 100% lokal di perangkatmu
-            </span>
-          </div>
         </div>
       )}
     </div>

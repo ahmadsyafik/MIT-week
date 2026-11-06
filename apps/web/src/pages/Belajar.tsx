@@ -1761,16 +1761,10 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
                   </p>
                 </div>
 
-                {/* Bagian Bawah: Durasi & Tombol Aksi Kapsul "Mulai →" */}
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-[#526D82] mt-2.5 gap-2">
-                  <span className="flex items-center gap-1 font-medium whitespace-nowrap">
-                    <Clock className="h-3 w-3 text-[#526D82] shrink-0" />
-                    <span>~{sc.duration}</span>
-                  </span>
-
-                  {/* Tombol Kapsul Proporsional persis referensi "Buy Now →" */}
-                  <div className="inline-flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-full bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md shrink-0 whitespace-nowrap">
-                    <span className="text-[11px] font-bold tracking-wide leading-none">Mulai</span>
+                {/* Bagian Bawah: Tombol Aksi Kapsul "Mulai →" Diperpanjang & Terpusat */}
+                <div className="pt-2.5 border-t border-slate-100 flex items-center justify-center mt-2.5 w-full">
+                  <div className="w-full sm:w-[85%] inline-flex items-center justify-between pl-4 pr-1.5 py-1.5 rounded-full bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md shrink-0 cursor-pointer">
+                    <span className="text-xs font-bold tracking-wide leading-none pl-1">Mulai</span>
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#27374D] group-hover:translate-x-0.5 transition-transform shadow-2xs shrink-0">
                       <ArrowRight className="h-2.5 w-2.5" />
                     </span>
@@ -2596,12 +2590,8 @@ function ModulCover({
                 </div>
               </div>
 
-              {/* Footer: Waktu Baca */}
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-[#526D82]">
-                <span className="flex items-center gap-1 font-medium">
-                  <Clock className="h-3 w-3" />
-                  <span>{m.duration}</span>
-                </span>
+              {/* Footer: Aksi Baca */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-[11px] text-[#526D82]">
                 <span className="text-[11px] font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
                   Baca Modul <ChevronRight className="h-3 w-3" />
                 </span>

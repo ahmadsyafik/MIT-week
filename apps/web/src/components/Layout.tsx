@@ -9,7 +9,6 @@ import {
   ShieldAlert,
   BookOpen,
   KeyRound,
-  ShieldCheck,
   ChevronRight,
   ChevronDown,
   RefreshCw,
@@ -363,23 +362,8 @@ export default function Layout() {
           {/* Spacer */}
           <div className="flex-1 min-h-4" />
 
-          {/* Bagian Footer Sidebar: Keterbatasan & Logout */}
-          <div className="p-3 border-t border-[#9DB2BF]/30 space-y-1 shrink-0">
-            <NavLink
-              to="/keterbatasan"
-              onClick={closeSidebar}
-              className={({ isActive }) =>
-                `flex min-h-[40px] items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-                  isActive
-                    ? "bg-[#27374D]/40 text-white font-semibold"
-                    : "text-[#DDE6ED]/80 hover:bg-[#27374D]/30 hover:text-white"
-                }`
-              }
-            >
-              <ShieldCheck className="h-4 w-4 text-[#DDE6ED]/70 shrink-0" />
-              <span>Keterbatasan & Privasi</span>
-            </NavLink>
-
+          {/* Bagian Footer Sidebar: Logout */}
+          <div className="p-3 border-t border-[#9DB2BF]/30 shrink-0">
             <button
               type="button"
               onClick={handleLogout}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X, ShieldCheck, UserCheck, ArrowRight } from "lucide-react";
+import { X, UserCheck, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginModal() {
@@ -111,14 +111,6 @@ export default function LoginModal() {
             </button>
           </div>
         </form>
-
-        {/* Informasi Privasi */}
-        <div className="mt-5 rounded-2xl bg-[#DDE6ED]/60 border border-[#9DB2BF]/50 p-3 text-xs text-[#526D82] flex items-start gap-2.5">
-          <ShieldCheck className="h-4 w-4 text-[#526D82] shrink-0 mt-0.5" />
-          <span className="leading-relaxed">
-            <strong className="text-[#27374D]">100% On-Device:</strong> Data sesi hanya disimpan di memori peramban lokalmu. Tidak ada server, email, password, ataupun pelacak data.
-          </span>
-        </div>
       </div>
     </div>
   );

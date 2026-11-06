@@ -19,7 +19,6 @@ import {
   Star,
   Lock,
   ExternalLink,
-  Clock,
   Globe,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -631,12 +630,8 @@ export default function Beranda() {
                       </div>
                     </div>
 
-                    {/* Footer: Waktu Baca & Aksi */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-[#526D82]">
-                      <span className="flex items-center gap-1 font-medium">
-                        <Clock className="h-3 w-3" />
-                        <span>{m.duration}</span>
-                      </span>
+                    {/* Footer: Aksi */}
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-[11px] text-[#526D82]">
                       <span className="text-[11px] font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
                         Baca Modul <ChevronRight className="h-3 w-3" />
                       </span>
@@ -852,9 +847,6 @@ export default function Beranda() {
                           {term.term}
                         </h4>
                         <p className="text-[10px] text-[#526D82] truncate">{term.desc}</p>
-                        <p className="text-[9px] text-[#9DB2BF] font-semibold mt-0.5">
-                          {term.category} · {term.date}
-                        </p>
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 text-[#9DB2BF] group-hover:text-[#27374D] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />

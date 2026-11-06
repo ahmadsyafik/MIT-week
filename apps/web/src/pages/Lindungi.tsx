@@ -13,7 +13,6 @@ import {
   RotateCcw,
   PhoneCall,
   Globe,
-  Clock,
   Sparkles,
 } from "lucide-react";
 import { Button, Disclaimer } from "../components/ui";
@@ -192,7 +191,7 @@ export default function Lindungi() {
                 : "bg-white text-[#27374D] border-[#9DB2BF]/50 hover:border-[#526D82]"
             }`}
           >
-            <div className="flex items-center justify-between w-full mb-2">
+            <div className="mb-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${
                   selectedCondition === "belum_klik"
@@ -202,15 +201,6 @@ export default function Lindungi() {
               >
                 <ShieldCheck className="h-4 w-4" />
               </div>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  selectedCondition === "belum_klik"
-                    ? "bg-white/20 text-white"
-                    : "bg-emerald-100 text-emerald-800"
-                }`}
-              >
-                Waspada
-              </span>
             </div>
             <div className="text-xs font-extrabold leading-snug">Belum Diklik</div>
             <p
@@ -232,7 +222,7 @@ export default function Lindungi() {
                 : "bg-white text-[#27374D] border-[#9DB2BF]/50 hover:border-[#526D82]"
             }`}
           >
-            <div className="flex items-center justify-between w-full mb-2">
+            <div className="mb-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${
                   selectedCondition === "sudah_install"
@@ -242,15 +232,6 @@ export default function Lindungi() {
               >
                 <Smartphone className="h-4 w-4" />
               </div>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  selectedCondition === "sudah_install"
-                    ? "bg-white/20 text-white"
-                    : "bg-amber-100 text-amber-800"
-                }`}
-              >
-                Darurat
-              </span>
             </div>
             <div className="text-xs font-extrabold leading-snug">Sudah Pasang APK</div>
             <p
@@ -272,7 +253,7 @@ export default function Lindungi() {
                 : "bg-white text-[#27374D] border-[#9DB2BF]/50 hover:border-[#526D82]"
             }`}
           >
-            <div className="flex items-center justify-between w-full mb-2">
+            <div className="mb-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${
                   selectedCondition === "sudah_transfer"
@@ -282,15 +263,6 @@ export default function Lindungi() {
               >
                 <OctagonAlert className="h-4 w-4" />
               </div>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  selectedCondition === "sudah_transfer"
-                    ? "bg-white/20 text-white"
-                    : "bg-rose-100 text-rose-800"
-                }`}
-              >
-                Kritis
-              </span>
             </div>
             <div className="text-xs font-extrabold leading-snug">Sudah Transfer</div>
             <p
@@ -312,7 +284,7 @@ export default function Lindungi() {
                 : "bg-white text-[#27374D] border-[#9DB2BF]/50 hover:border-[#526D82]"
             }`}
           >
-            <div className="flex items-center justify-between w-full mb-2">
+            <div className="mb-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${
                   selectedCondition === "akun_diretas"
@@ -322,15 +294,6 @@ export default function Lindungi() {
               >
                 <KeyRound className="h-4 w-4" />
               </div>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  selectedCondition === "akun_diretas"
-                    ? "bg-white/20 text-white"
-                    : "bg-purple-100 text-purple-800"
-                }`}
-              >
-                Pemulihan
-              </span>
             </div>
             <div className="text-xs font-extrabold leading-snug">Akun Diretas</div>
             <p
@@ -352,7 +315,7 @@ export default function Lindungi() {
                 : "bg-white text-[#27374D] border-[#9DB2BF]/50 hover:border-[#526D82]"
             }`}
           >
-            <div className="flex items-center justify-between w-full mb-2">
+            <div className="mb-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${
                   selectedCondition === "orang_dekat_hampir_kena"
@@ -362,15 +325,6 @@ export default function Lindungi() {
               >
                 <Users className="h-4 w-4" />
               </div>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  selectedCondition === "orang_dekat_hampir_kena"
-                    ? "bg-white/20 text-white"
-                    : "bg-sky-100 text-sky-800"
-                }`}
-              >
-                Edukasi
-              </span>
             </div>
             <div className="text-xs font-extrabold leading-snug">Bantu Kerabat</div>
             <p
@@ -455,28 +409,10 @@ export default function Lindungi() {
                     </button>
 
                     <div className="flex-1 space-y-2">
-                      <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex items-center gap-2">
                         <span className="font-extrabold text-xs text-[#27374D]">
                           Langkah {step.order}
                         </span>
-
-                        {/* Urgency Badge */}
-                        {step.urgency === "segera" && (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-800 border border-rose-200">
-                            <Clock className="h-2.5 w-2.5" />
-                            Wajib Segera
-                          </span>
-                        )}
-                        {step.urgency === "hari_ini" && (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 border border-amber-200">
-                            Hari Ini
-                          </span>
-                        )}
-                        {step.urgency === "minggu_ini" && (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-800 border border-sky-200">
-                            Minggu Ini
-                          </span>
-                        )}
                       </div>
 
                       <p
@@ -546,12 +482,6 @@ export default function Lindungi() {
               className="rounded-2xl border border-[#9DB2BF]/50 bg-[#DDE6ED]/30 p-4 space-y-3 flex flex-col justify-between"
             >
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-[#526D82]">
-                    Terverifikasi: {chan.verifiedAt}
-                  </span>
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-500" title="Kanal Resmi Aktif" />
-                </div>
                 <h4 className="text-xs sm:text-sm font-bold text-[#27374D]">{chan.name}</h4>
                 {chan.contact && (
                   <p className="text-[11px] text-[#526D82] font-medium leading-relaxed">

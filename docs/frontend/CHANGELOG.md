@@ -15,7 +15,7 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - **Mode Pengunjung (Belum Login):** Tampilan Landing Page bersih tanpa sidebar/navbar menu; hanya logo JR dan tombol **Masuk**.
     - **Mode Pengguna (Sudah Login):** Navigasi vertikal berbasis **Sidebar** di sisi kiri untuk desktop (w-64 fixed) dengan ikon intuitif, profil pengguna, dan link cepat; serta drawer samping geser responsif (off-canvas) untuk perangkat seluler dengan tombol hamburger, backdrop blur, dan target sentuh >= 44 px.
     - Tetap mempertahankan link permanen Keterbatasan & Privasi serta tombol **Keluar dari Sesi**.
-  - `LoginModal`: Modal login cepat dengan nama samaran/tamu ramah privasi (100% on-device).
+  - `LoginModal`: Modal login cepat dengan nama samaran/tamu ramah privasi (100% on-device). Pembersihan kotak informasi privasi bawah sesuai permintaan perampingan modal.
   - `ProtectedRoute`: Proteksi rute internal aplikasi dengan gerbang ramah jika belum login.
   - **Redesain Dashboard Pengguna Sesuai Referensi & Pembaruan Palet Warna**:
     - Penyesuaian palet warna: `#DDE6ED` (background utama aplikasi), `#27374D` (font/tipografi utama berkontras tinggi), `#526D82` (background sidebar navigasi), dan `#9DB2BF` (warna kontras tambahan, border, aksen halus).
@@ -246,3 +246,37 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - Keputusan 5: Aman -> **Ending D** (Lapor Bank Cepat / Terlambat Sadar Tetap Bertindak, Skor 35 Pemula); Berisiko -> **Ending E** (Kerugian Penuh, Skor 10 Pemula).
     - **Investigasi 4 Bukti Red Flags**: Tombol inspeksi 4 tanda bahaya di top bar chat yang memberikan pemahaman awal (+40 poin).
     - **Debrief Lengkap & Nasihat Mentor Jaga**: Setiap ending memuat tabel rincian skor, narasi keputusan pemain, evaluasi red flags yang dipelajari, quote nasihat ideal dari mentor Jaga, dan tombol salin kode flag penyelesaian (`TRUST{...}`).
+  - **Penyederhanaan Tampilan Modal Login (`LoginModal.tsx`)**:
+    - Menghapus kotak info privasi on-device di bagian bawah modal login sesuai permintaan perampingan tampilan.
+  - **Pembersihan & Perampingan Hasil Analisis Indikasi (`Cek.tsx`)**:
+    - **Penghapusan Box Teks**: Menghapus kotak pratinjau *"TEKS YANG DIANALISIS"* pada kartu hasil analisis untuk mengeliminasi redundansi visual teks yang telah dimasukkan pengguna.
+    - **Pembersihan Ikon Tanda Tanya**: Menghapus ikon lingkaran tanda tanya (`HelpCircle`) di samping label *"Kenapa mencurigakan:"* pada setiap kartu tanda peringatan bahaya, sehingga tampilan penjelasan menjadi lebih bersih dan fokus pada teks edukasi.
+    - **Penghapusan Badge Tingkat L (Foto 1)**: Menghapus badge pill `TINGKAT L{level}` dari setiap kartu tanda peringatan bahaya.
+    - **Tata Letak 2 Kolom Grid Kartu Peringatan (Foto 2)**: Mengubah kontainer daftar tanda bahaya dari deret vertikal panjang 1-kolom menjadi grid 2-kolom (`grid-cols-1 md:grid-cols-2`), sehingga kartu tampil sebagai kotak proporsional yang rapi dan terstruktur seimbang.
+    - **Penghapusan Teks Mock Data (Foto 3)**: Menghilangkan teks pemberitahuan *"Mode data tiruan (mock) aktif — aman digunakan selama modul logika inti Backend sedang disiapkan."*.
+    - **Penghapusan Footer Disclaimer (Foto 4)**: Menghilangkan kotak teks catatan kaki *"Hasil ini hanya indikator berbasis aturan dan bias kalimat..."*.
+    - **Penegasan Tipografi INDIKASI RISIKO (Foto 5)**: Mempertebal tipografi header *"INDIKASI RISIKO"* menjadi `font-black text-slate-900` dengan kontras tinggi yang tegas dan tajam.
+    - **Pembersihan Waktu Analisis (Foto 1 - `Cek.tsx`)**: Menghilangkan teks status *"Dianalisis baru saja"* pada header hasil analisis.
+    - **Pembersihan Durasi & Penataan Tombol Mulai (Foto 2 & 3 - `Belajar.tsx`)**: Menghilangkan label estimasi waktu durasi (`~2 Mnt`) pada cover kartu skenario simulator serta memperpanjang dan memusatkan tombol aksi kapsul *"Mulai →"* (`w-full sm:w-[85%]`, `justify-center`) agar seimbang dan proporsional.
+    - **Pembersihan Badge Kondisi Darurat (Foto 4 - `Lindungi.tsx`)**: Menghapus badge pill tingkat status (*Darurat*, *Waspada*, *Kritis*, *Pemulihan*, *Edukasi*) pada tombol opsi kondisi skenario darurat untuk tampilan minimalis dan seragam.
+    - **Pembersihan Badge Urgensi Langkah (Foto 5 - `Lindungi.tsx`)**: Menghapus badge urgensi (*Wajib Segera*, *Hari Ini*, *Minggu Ini*) pada daftar langkah panduan mitigasi agar fokus langsung pada urutan tindakan.
+    - **Pembersihan Status Terverifikasi (Foto 1 - `Lindungi.tsx`)**: Menghilangkan baris status *"Terverifikasi: {tanggal}"* beserta indikator bulatan hijau pada kartu portal kanal lapor resmi.
+    - **Pembersihan Ikon Mikrofon Merah (Foto 2 - `Sandi.tsx`)**: Menghapus ikon `Mic` merah pada header sesi penjelasan AI Voice Cloning.
+    - **Pembersihan Estimasi Waktu Baca (Foto 3 - `Belajar.tsx` & `Beranda.tsx`)**: Menghilangkan label durasi waktu baca (*"4 menit baca"*, dll.) pada kartu modul pembelajaran di Hub Belajar dan Beranda.
+    - **Pembersihan Kategori & Tanggal Istilah (Foto 4 - `Beranda.tsx`)**: Menghilangkan baris meta *"Penipuan Web · 16 Nov 2026"* pada daftar Kamus & Modus Populer di Beranda.
+    - **Pembersihan Footer Popover Notifikasi (Foto 5 - `NotificationDropdown.tsx`)**: Menghapus banner footer *"Notifikasi privasi disimpan 100% lokal di perangkatmu"* dari popover notifikasi.
+    - **Pembersihan Footer Modal Lightbox (Foto 1 - `FakeChatSimulator.tsx`)**: Menghilangkan footer modal inspeksi bukti (*"Inspeksi Forensik Kasus"* dan nama berkas) agar tampilan gambar bersih.
+    - **Pembersihan Badge Opsi Pilihan (Foto 2 - `FakeChatSimulator.tsx`)**: Menghapus badge pill *"Opsi A / B / C"* pada setiap kartu pilihan keputusan.
+    - **Pembersihan Teks Pertimbangan (Foto 3 - `FakeChatSimulator.tsx`)**: Menghilangkan teks pertimbangan (*"Pertimbangan: '...' "*) di bawah label opsi keputusan.
+    - **Pembersihan Petunjuk Langkah (Foto 4 - `FakeChatSimulator.tsx`)**: Menghilangkan teks bantuan *"Pilih langkah yang menurutmu paling tepat (tanpa petunjuk warna)"* di header pilihan keputusan.
+    - **Pembersihan Sub-Banner Riwayat & Modus (Foto 5 - `FakeChatSimulator.tsx`)**: Menghilangkan bilah sub-banner atas (*ikon kompas + judul modus + "Scroll ke atas untuk memeriksa riwayat"*) sehingga jendela simulator langsung mengalir ke area percakapan chat.
+    - **Pembersihan Header Berkas & Mode (Foto 1 - `FakeChatSimulator.tsx`)**: Menghapus pita label *"BERKAS #{id}"* dan badge *"Mode Simulasi Kasus Nyata"* di atas bilah navigasi simulator.
+    - **Pembersihan Tombol & Drawer Bukti Investigasi (Foto 2 & 3 - `FakeChatSimulator.tsx`)**: Menghapus tombol *"4 Tanda Kejanggalan (+40 Poin)"* beserta drawer catatan investigasi 4 bukti red flags untuk menjaga antarmuka simulasi tetap imersif dan tidak membocorkan petunjuk kasus.
+    - **Penyederhanaan Separator Tanggal Chat (Foto 4 - `FakeChatSimulator.tsx`)**: Menghilangkan teks imbuhan *"· Simulasi Kasus Nyata"* pada gelembung pemisah tanggal di thread percakapan chat, menyisakan label natural *"Hari ini"*.
+    - **Pembersihan Badge Rank Hasil Ending (Foto 5 - `FakeChatSimulator.tsx`)**: Menghilangkan badge pill rank (*PEMULA*, *PENJAGA*, *GUARDIAN*) di atas judul evaluasi ending kasus.
+    - **Pembersihan Ikon & Elemen Keterbatasan serta Sidebar (Foto 1 s.d 5 - `Keterbatasan.tsx` & `Layout.tsx`)**:
+      - **Pembersihan Ikon Bagian Transparansi (Foto 1 - `Keterbatasan.tsx`)**: Menghapus ikon perisai hijau (`ShieldCheck`) pada judul Bagian 3 Transparansi Uji Analyzer agar tipografi judul rapi dan seragam.
+      - **Pembersihan Sumber Dokumen (Foto 2 - `Keterbatasan.tsx`)**: Menghilangkan badge pill sumber *"Sumber: docs/backend/CHANGELOG.md"* di samping judul Transparansi Uji Analyzer.
+      - **Pembersihan Ikon Penyimpanan Lokal (Foto 3 - `Keterbatasan.tsx`)**: Menghapus ikon hard drive (`HardDrive`) pada judul Bagian 4 Pengelolaan Penyimpanan Lokal (serta ikon `EyeOff` dan `AlertTriangle` pada Bagian 1 & 2 untuk konsistensi tipografi).
+      - **Pembersihan Menu Keterbatasan di Sidebar (Foto 4 - `Layout.tsx`)**: Menghapus tautan menu *"Keterbatasan & Privasi"* pada bagian bawah sidebar navigasi desktop & mobile (tautan permanen tetap terjaga di footer aplikasi).
+      - **Pembersihan Badge Kebijakan Header (Foto 5 - `Keterbatasan.tsx`)**: Menghilangkan badge pill *"Transparansi & Kebijakan Sistem"* dengan ikon gembok pada header banner halaman Keterbatasan & Kebijakan Privasi.

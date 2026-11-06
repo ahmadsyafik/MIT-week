@@ -9,7 +9,6 @@ import {
   Trash2,
   AlertTriangle,
   Users,
-  Mic,
   PhoneOff,
   CheckCircle2,
   Lock,
@@ -352,8 +351,7 @@ export default function Sandi() {
       {/* ANATOMI ANCAMAN: BAGAIMANA AI VOICE CLONING BEKERJA                  */}
       {/* ===================================================================== */}
       <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
-        <div className="flex items-center gap-2">
-          <Mic className="h-5 w-5 text-rose-600" />
+        <div>
           <h3 className="text-base sm:text-lg font-bold text-[#27374D]">
             Mengapa Suara di Telepon Bisa Terdengar Begitu Mirip?
           </h3>

@@ -1,18 +1,11 @@
 import { useState } from "react";
 import {
-  ShieldCheck,
-  HardDrive,
-  EyeOff,
-  AlertTriangle,
   Trash2,
   CheckCircle2,
-  Lock,
   Globe2,
   FileCode2,
   UserCheck,
   Cpu,
-  HelpCircle,
-  Sparkles,
 } from "lucide-react";
 import { storage } from "../lib/coreClient";
 import { useAuth } from "../context/AuthContext";
@@ -115,11 +108,6 @@ export default function Keterbatasan() {
       {/* Header Banner Halaman */}
       <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col gap-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#9DB2BF]/60 bg-[#DDE6ED]/60 px-3.5 py-1 text-xs font-bold text-[#27374D] w-fit">
-            <Lock className="h-3.5 w-3.5 text-[#526D82]" />
-            <span>Transparansi & Kebijakan Sistem</span>
-          </div>
-
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#27374D]">
             Keterbatasan & Kebijakan Privasi
           </h1>
@@ -153,9 +141,8 @@ export default function Keterbatasan() {
       {/* 1. Empat Pilar Perlindungan Privasi (Grid 2x2 Modern) */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-[#27374D] flex items-center gap-2">
-            <EyeOff className="h-5 w-5 text-[#526D82]" />
-            <span>1. Perlindungan Privasi (100% On-Device)</span>
+          <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
+            1. Perlindungan Privasi (100% On-Device)
           </h2>
           <p className="text-xs text-[#526D82] mt-0.5">
             Komitmen keamanan arsitektur: data pengguna tidak pernah meninggalkan peramban.
@@ -192,9 +179,8 @@ export default function Keterbatasan() {
       {/* 2. Keterbatasan Teknis Analisis Berbasis Aturan */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-[#27374D] flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-600" />
-            <span>2. Keterbatasan Teknis & Sifat Analisis</span>
+          <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
+            2. Keterbatasan Teknis & Sifat Analisis
           </h2>
           <p className="text-xs text-[#526D82] mt-0.5">
             Pahami batasan heuristik agar tidak salah mengartikan hasil indikasi sebagai garansi mutlak.
@@ -252,19 +238,13 @@ export default function Keterbatasan() {
 
       {/* 3. Transparansi Uji Analyzer */}
       <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-          <div>
-            <h2 className="text-base sm:text-lg font-bold text-[#27374D] flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-emerald-600" />
-              <span>3. Transparansi Uji Analyzer</span>
-            </h2>
-            <p className="text-xs text-[#526D82] mt-0.5">
-              Hasil pengujian langsung terhadap set uji kalimat fiktif untuk akuntabilitas sistem.
-            </p>
-          </div>
-          <span className="text-[11px] font-semibold text-[#526D82] bg-white px-3 py-1 rounded-full border border-[#9DB2BF]/50 w-fit">
-            Sumber: <code>docs/backend/CHANGELOG.md</code>
-          </span>
+        <div>
+          <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
+            3. Transparansi Uji Analyzer
+          </h2>
+          <p className="text-xs text-[#526D82] mt-0.5">
+            Hasil pengujian langsung terhadap set uji kalimat fiktif untuk akuntabilitas sistem.
+          </p>
         </div>
 
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white shadow-xs overflow-hidden">
@@ -311,9 +291,8 @@ export default function Keterbatasan() {
       {/* 4. Pengelolaan Penyimpanan Lokal & Reset */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-[#27374D] flex items-center gap-2">
-            <HardDrive className="h-5 w-5 text-[#526D82]" />
-            <span>4. Pengelolaan Penyimpanan Lokal (Kendali Pengguna)</span>
+          <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
+            4. Pengelolaan Penyimpanan Lokal (Kendali Pengguna)
           </h2>
           <p className="text-xs text-[#526D82] mt-0.5">
             Anda memiliki kendali 100% untuk memeriksa atau menghapus seluruh jejak latihan di browser ini.
