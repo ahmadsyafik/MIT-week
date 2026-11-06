@@ -588,7 +588,6 @@ export default function Beranda() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {LEARNING_MODULES.slice(0, 3).map((m) => {
-                const Icon = m.icon;
                 const isRead = readModules.includes(m.id);
                 return (
                   <Link
@@ -597,12 +596,8 @@ export default function Beranda() {
                     className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer space-y-4"
                   >
                     <div className="space-y-3">
-                      {/* Baris Atas: Ikon di kiri, Status Baca di kanan */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-[#526D82] border border-slate-200 group-hover:bg-[#DDE6ED]/60 group-hover:text-[#27374D] transition-colors">
-                          <Icon className="h-4 w-4" />
-                        </div>
-
+                      {/* Baris Atas: Status Baca di kanan */}
+                      <div className="flex items-center justify-end">
                         {isRead ? (
                           <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200/60">
                             Sudah dibaca
@@ -612,11 +607,6 @@ export default function Beranda() {
                             Belum dibaca
                           </span>
                         )}
-                      </div>
-
-                      {/* Kategori Modul (Huruf Kapital Ringkas) */}
-                      <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#526D82]">
-                        {m.category}
                       </div>
 
                       {/* Judul & Deskripsi */}

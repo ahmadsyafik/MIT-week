@@ -117,21 +117,6 @@ export default function Keterbatasan() {
             yang beroperasi secara <strong>100% On-Device</strong>, tanpa pengumpulan data pribadi, tanpa pelacak, dan
             mengutamakan keselamatan privasi pengguna.
           </p>
-
-          <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              Tanpa Server Aplikasi
-            </span>
-            <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              Zero Cookies & Analytics
-            </span>
-            <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              22 Aturan Heuristik L1–L5
-            </span>
-            <span className="rounded-xl bg-[#DDE6ED]/70 px-3 py-1 font-semibold text-[#27374D] border border-[#9DB2BF]/40">
-              Contoh & Skenario Fiktif
-            </span>
-          </div>
         </div>
       </div>
 
@@ -158,13 +143,8 @@ export default function Keterbatasan() {
                 className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col justify-between space-y-3"
               >
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <span className="rounded-full bg-[#DDE6ED]/50 border border-[#9DB2BF]/40 px-2.5 py-0.5 text-[10px] font-bold text-[#526D82]">
-                      {p.highlight}
-                    </span>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/50">
+                    <Icon className="h-5 w-5" />
                   </div>
 
                   <h3 className="text-sm font-bold text-[#27374D] pt-1">{p.title}</h3>
@@ -190,8 +170,7 @@ export default function Keterbatasan() {
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="rounded-2xl bg-[#DDE6ED]/30 p-4 border border-[#9DB2BF]/40 space-y-1.5">
-              <h4 className="text-xs font-bold text-[#27374D] flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-amber-500" />
+              <h4 className="text-xs font-bold text-[#27374D]">
                 Hasil Adalah Indikasi Probabilistik
               </h4>
               <p className="text-xs text-[#526D82] leading-relaxed">
@@ -201,8 +180,7 @@ export default function Keterbatasan() {
             </div>
 
             <div className="rounded-2xl bg-[#DDE6ED]/30 p-4 border border-[#9DB2BF]/40 space-y-1.5">
-              <h4 className="text-xs font-bold text-[#27374D] flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#526D82]" />
+              <h4 className="text-xs font-bold text-[#27374D]">
                 Bukan Bukti Bebas Risiko
               </h4>
               <p className="text-xs text-[#526D82] leading-relaxed">
@@ -212,8 +190,7 @@ export default function Keterbatasan() {
             </div>
 
             <div className="rounded-2xl bg-[#DDE6ED]/30 p-4 border border-[#9DB2BF]/40 space-y-1.5">
-              <h4 className="text-xs font-bold text-[#27374D] flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-rose-500" />
+              <h4 className="text-xs font-bold text-[#27374D]">
                 Bukan Antivirus & Bukan Saluran Lapor
               </h4>
               <p className="text-xs text-[#526D82] leading-relaxed">
@@ -223,8 +200,7 @@ export default function Keterbatasan() {
             </div>
 
             <div className="rounded-2xl bg-[#DDE6ED]/30 p-4 border border-[#9DB2BF]/40 space-y-1.5">
-              <h4 className="text-xs font-bold text-[#27374D] flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              <h4 className="text-xs font-bold text-[#27374D]">
                 Semua Contoh Bersifat Fiktif
               </h4>
               <p className="text-xs text-[#526D82] leading-relaxed">

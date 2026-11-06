@@ -7,7 +7,6 @@ import {
   Check,
   RefreshCw,
   Trash2,
-  AlertTriangle,
   Users,
   PhoneOff,
   CheckCircle2,
@@ -126,10 +125,9 @@ export default function Sandi() {
 
         {/* Peringatan Utama: Sepakati Langsung Lisan */}
         <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 sm:p-5 text-amber-950 space-y-2 shadow-2xs">
-          <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-amber-900">
-            <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
-            <span>Aturan Emas Sandi Keluarga: Jangan Kirim Melalui Chat Digital</span>
-          </div>
+          <h4 className="font-bold text-xs sm:text-sm text-amber-900">
+            Aturan Emas Sandi Keluarga: Jangan Kirim Melalui Chat Digital
+          </h4>
           <p className="text-xs text-amber-900/90 leading-relaxed">
             Sepakati kata sandi ini <strong>secara langsung (tatap muka / lisan)</strong> bersama orang tua atau anak.
             <strong> Jangan pernah mengirimkan kata sandi ini melalui pesan teks WhatsApp, SMS, atau media sosial</strong> yang rentan diretas atau diintip.
@@ -252,7 +250,6 @@ export default function Sandi() {
               </label>
               <p className="text-[11px] text-[#526D82] leading-relaxed">
                 Secara bawaan privasi, sandi <strong>tidak disimpan sama sekali</strong> di perangkat untuk mencegah orang lain melihatnya.
-                Bila opsi ini diaktifkan, sandi akan disimpan di memori lokal (localStorage) browser ini.
               </p>
             </div>
           </div>

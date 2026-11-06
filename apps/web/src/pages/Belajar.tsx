@@ -2548,7 +2548,6 @@ function ModulCover({
       {/* Grid 12 Kartu Modul Pembelajaran (3 Kolom persis gambar) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
         {filteredModules.map((m) => {
-          const Icon = m.icon;
           const isRead = readModules.includes(m.id);
           return (
             <div
@@ -2557,12 +2556,8 @@ function ModulCover({
               className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-4"
             >
               <div className="space-y-3">
-                {/* Baris Atas: Ikon di kiri, Status Baca di kanan */}
-                <div className="flex items-center justify-between">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-[#526D82] border border-slate-200 group-hover:bg-[#DDE6ED]/60 group-hover:text-[#27374D] transition-colors">
-                    <Icon className="h-4 w-4" />
-                  </div>
-
+                {/* Baris Atas: Status Baca di kanan */}
+                <div className="flex items-center justify-end">
                   {isRead ? (
                     <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200/60">
                       Sudah dibaca
@@ -2572,11 +2567,6 @@ function ModulCover({
                       Belum dibaca
                     </span>
                   )}
-                </div>
-
-                {/* Kategori Modul (Huruf Kapital Ringkas) */}
-                <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#526D82]">
-                  {m.category}
                 </div>
 
                 {/* Judul & Deskripsi */}
@@ -2618,7 +2608,6 @@ function ModulPage({
   onNavigateTab: (tab: TabType) => void;
 }) {
   const m = LEARNING_MODULES.find((mod) => mod.id === moduleId) || LEARNING_MODULES[0];
-  const Icon = m.icon;
 
   // Checklist interaktif yang tersimpan lokal
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
@@ -2689,10 +2678,6 @@ function ModulPage({
         </button>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs text-[#526D82] flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" />
-            {m.duration}
-          </span>
           <button
             type="button"
             onClick={onToggleRead}
@@ -2718,19 +2703,9 @@ function ModulPage({
       <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-8">
         {/* Header Bab Modul */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/60">
-              <Icon className="h-5 w-5" />
-            </div>
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#526D82]">
-                {m.category}
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] leading-tight">
-                {m.title}
-              </h1>
-            </div>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] leading-tight">
+            {m.title}
+          </h1>
           <p className="text-sm text-[#526D82] leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-200">
             {m.summary}
           </p>
@@ -2782,8 +2757,7 @@ function ModulPage({
           </h2>
           <ul className="pl-8 space-y-2 text-xs sm:text-sm text-[#27374D]">
             {m.redFlags.map((flag, idx) => (
-              <li key={idx} className="flex items-start gap-2 rounded-xl bg-amber-50/70 p-3 border border-amber-200">
-                <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+              <li key={idx} className="rounded-xl bg-amber-50/70 p-3.5 border border-amber-200">
                 <span className="leading-relaxed">{flag}</span>
               </li>
             ))}
