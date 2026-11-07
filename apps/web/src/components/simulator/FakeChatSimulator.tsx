@@ -331,7 +331,14 @@ export function FakeChatSimulator({
   }, [activeId]);
 
   useEffect(() => {
-    scrollToBottom(false, true);
+    if (currentDecisionId || activeEnding) {
+      const timer = setTimeout(() => {
+        scrollToBottom(true, true);
+      }, 60);
+      return () => clearTimeout(timer);
+    } else {
+      scrollToBottom(false, true);
+    }
   }, [messages, isTyping, currentDecisionId, activeEnding]);
 
   // Eksekusi Pilihan A, B, atau C dengan percakapan dua arah yang mengalir
@@ -566,25 +573,13 @@ export function FakeChatSimulator({
 
             {/* Nama & Status Kontak */}
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-xs sm:text-sm text-white tracking-wide truncate max-w-[200px] sm:max-w-none">
-                  {currentScenario.senderName}
-                </span>
-                <span className="rounded-full bg-rose-500/25 text-rose-300 border border-rose-400/30 px-1.5 py-0.2 text-[9px] font-bold uppercase tracking-wider">
-                  Nomor Asing
-                </span>
-              </div>
+              <span className="font-bold text-xs sm:text-sm text-white tracking-wide truncate max-w-[200px] sm:max-w-none">
+                {currentScenario.senderName}
+              </span>
               <span className="text-[11px] text-[#DDE6ED]/70 flex items-center gap-1 font-mono">
                 <span>{currentScenario.senderAddress}</span>
               </span>
             </div>
-          </div>
-
-          {/* Sisi Kanan Header: Info Skenario */}
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="text-xs font-bold text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/30">
-              {currentScenario.id.toUpperCase()} · 5 Titik Keputusan
-            </span>
           </div>
         </div>
 
@@ -592,7 +587,7 @@ export function FakeChatSimulator({
         <div
           ref={chatScrollContainerRef}
           onScroll={handleScroll}
-          className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[500px] sm:max-h-[580px] bg-[#EFEAE2] overscroll-contain relative"
+          className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[580px] sm:max-h-[660px] bg-[#EFEAE2] overscroll-contain relative"
           style={{
             backgroundImage: `url('/simulator/chat-doodle-pattern.svg')`,
             backgroundRepeat: "repeat",
@@ -945,17 +940,14 @@ export function FakeChatSimulator({
             </div>
           )}
 
-          <div ref={chatEndRef} />
-        </div>
-
-        {/* =================================================================== */}
-        {/* BOTTOM INTERACTIVE CHOICES DOCK (TITIK KEPUTUSAN NETRAL A, B, C)    */}
-        {/* =================================================================== */}
-        <div className="relative border-t border-[#9DB2BF]/50 bg-[#F8FAFC] p-4 sm:p-5 shadow-lg">
-          {/* Aksen Label Tape Kasual (Jangan Terlalu Kaku) */}
-          <div className="absolute -top-3 left-6 px-3 py-0.5 rounded-sm bg-amber-100/95 border border-amber-300 text-[10px] font-black text-[#526D82] uppercase tracking-wider rotate-[-1deg] shadow-2xs">
-            Giliranmu Menentukan Tindakan
-          </div>
+          {/* =================================================================== */}
+          {/* BOTTOM INTERACTIVE CHOICES DOCK (TITIK KEPUTUSAN NETRAL A, B, C)    */}
+          {/* =================================================================== */}
+          <div className="relative -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 mt-6 border-t border-[#9DB2BF]/50 bg-[#F8FAFC] p-4 sm:p-5 shadow-lg">
+            {/* Aksen Label Tape Kasual (Jangan Terlalu Kaku) */}
+            <div className="absolute -top-3 left-6 px-3 py-0.5 rounded-sm bg-amber-100/95 border border-amber-300 text-[10px] font-black text-[#526D82] uppercase tracking-wider rotate-[-1deg] shadow-2xs">
+              Giliranmu Menentukan Tindakan
+            </div>
 
           {currentDecisionId && !activeEnding && !isTyping && (
             <div className="space-y-3 pt-1.5 animate-fadeIn">
@@ -1057,7 +1049,37 @@ export function FakeChatSimulator({
             </div>
           )}
         </div>
+
+        <div ref={chatEndRef} className="h-0 w-full" />
       </div>
+
+      {/* Bilah Navigasi Smartphone / Dekorasi Tombol Home HP (Non-clickable, Visual Saja) */}
+      <div
+        aria-hidden="true"
+        className="bg-[#1e2b3d] text-white/50 px-6 py-2 sm:py-2.5 flex items-center justify-center select-none pointer-events-none border-t border-white/10 shrink-0"
+      >
+        <div className="w-full max-w-xs flex items-center justify-between px-6">
+          {/* Tombol Back / Kembali */}
+          <div className="flex items-center justify-center w-6 h-6">
+            <svg className="w-3.5 h-3.5 fill-current opacity-70" viewBox="0 0 24 24">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+            </svg>
+          </div>
+
+          {/* Tombol Home Utama (Lingkaran Navigasi HP) */}
+          <div className="flex items-center justify-center w-7 h-7">
+            <div className="w-4 h-4 rounded-full border-2 border-white/70 flex items-center justify-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
+            </div>
+          </div>
+
+          {/* Tombol Recent Apps / Multitasking */}
+          <div className="flex items-center justify-center w-6 h-6">
+            <div className="w-3 h-3 rounded-xs border-2 border-white/70" />
+          </div>
+        </div>
+      </div>
+    </div>
 
       {/* Lightbox Modal untuk Memeriksa Foto / Dokumen Pendukung Penipu */}
       {activeLightboxImage && (

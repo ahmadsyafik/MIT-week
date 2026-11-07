@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   /* Palet warna brand: DDE6ED background, 27374D font/teks, 526D82 sidebar, 9DB2BF kontras tambahan */
   --color-brand-bg: #dde6ed;
   --color-brand-font: #27374d;
@@ -28,11 +28,12 @@
 }
 
 html {
-  font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   scroll-behavior: smooth;
 }
 
 body {
+  font-family: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   background-color: #dde6ed;
   color: #27374d;
   -webkit-font-smoothing: antialiased;

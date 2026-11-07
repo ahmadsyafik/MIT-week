@@ -236,7 +236,7 @@ export default function Sandi() {
             Sandi Verifikasi Keluarga
           </h1>
           <p className="text-xs sm:text-sm text-[#526D82] max-w-3xl leading-relaxed">
-            Antisipasi kejahatan kloning suara AI (*AI Voice Cloning*) dan telepon rekayasa darurat
+            Antisipasi kejahatan kloning suara AI dan telepon rekayasa darurat
             dengan menyepakati kata sandi rahasia keluarga secara lisan.
           </p>
         </div>
@@ -276,11 +276,10 @@ export default function Sandi() {
                 const nw = generateSafeword(2);
                 setCurrentSafeword(nw);
               }}
-              className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
-                wordCount === 2
-                  ? "bg-[#27374D] text-white shadow-xs"
-                  : "text-[#526D82] hover:text-[#27374D]"
-              }`}
+              className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${wordCount === 2
+                ? "bg-[#27374D] text-white shadow-xs"
+                : "text-[#526D82] hover:text-[#27374D]"
+                }`}
             >
               2 Kata
             </button>
@@ -291,11 +290,10 @@ export default function Sandi() {
                 const nw = generateSafeword(3);
                 setCurrentSafeword(nw);
               }}
-              className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
-                wordCount === 3
-                  ? "bg-[#27374D] text-white shadow-xs"
-                  : "text-[#526D82] hover:text-[#27374D]"
-              }`}
+              className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${wordCount === 3
+                ? "bg-[#27374D] text-white shadow-xs"
+                : "text-[#526D82] hover:text-[#27374D]"
+                }`}
             >
               3 Kata (Disarankan)
             </button>
@@ -386,11 +384,10 @@ export default function Sandi() {
               return (
                 <div
                   key={rec.id}
-                  className={`flex items-center justify-between gap-3 p-3.5 sm:px-5 sm:py-3.5 rounded-xl border transition-all ${
-                    isSelected
-                      ? "bg-[#27374D]/5 border-[#27374D] ring-2 ring-[#27374D] shadow-sm"
-                      : "bg-white border-[#9DB2BF]/50 hover:border-[#526D82] hover:bg-[#DDE6ED]/20 shadow-2xs"
-                  }`}
+                  className={`flex items-center justify-between gap-3 p-3.5 sm:px-5 sm:py-3.5 rounded-xl border transition-all ${isSelected
+                    ? "bg-[#27374D]/5 border-[#27374D] ring-2 ring-[#27374D] shadow-sm"
+                    : "bg-white border-[#9DB2BF]/50 hover:border-[#526D82] hover:bg-[#DDE6ED]/20 shadow-2xs"
+                    }`}
                 >
                   {/* Teks Sandi Campuran Bersih (Monospace Bold) */}
                   <div className="font-mono font-black text-sm sm:text-base text-[#27374D] tracking-wider select-all truncate">
@@ -401,11 +398,10 @@ export default function Sandi() {
                   <button
                     type="button"
                     onClick={() => handleSelectRecommendation(rec.password)}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs ${
-                      isSelected
-                        ? "bg-[#27374D] text-white ring-1 ring-[#27374D]"
-                        : "bg-white border border-[#9DB2BF]/60 text-[#27374D] hover:bg-[#27374D] hover:text-white"
-                    }`}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs ${isSelected
+                      ? "bg-[#27374D] text-white ring-1 ring-[#27374D]"
+                      : "bg-white border border-[#9DB2BF]/60 text-[#27374D] hover:bg-[#27374D] hover:text-white"
+                      }`}
                   >
                     {isSelected ? (
                       <>
@@ -507,9 +503,8 @@ export default function Sandi() {
                     <span>{item.title}</span>
                   </span>
                   <ChevronRight
-                    className={`h-4 w-4 text-[#526D82] shrink-0 transition-transform duration-200 ${
-                      isOpen ? "rotate-90" : ""
-                    }`}
+                    className={`h-4 w-4 text-[#526D82] shrink-0 transition-transform duration-200 ${isOpen ? "rotate-90" : ""
+                      }`}
                   />
                 </button>
                 {isOpen && (

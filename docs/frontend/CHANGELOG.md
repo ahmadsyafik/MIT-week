@@ -3,6 +3,36 @@
 Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TASK_GUIDE.md).
 
 ## [Belum dirilis]
+### Pembersihan & Penyederhanaan Tampilan (UI Cleanup)
+- **Lindungi.tsx**:
+  - Menghapus badge pill `*Cek ulang keaslian alamat di situs resmi` pada header Kanal Lapor Resmi.
+  - Menghapus ikon `Share2` pada label judul "Kartu Peringatan untuk Orang Sekitar".
+  - Menghapus teks bawaan `*Teks aman dibagikan karena tidak memuat data pribadi.` agar area umpan balik status salin/bagi lebih bersih dan minimalis.
+  - Memperbarui isi draf teks pesan pada Kartu Peringatan Keluarga (*warning card*) dengan salinan pesan edukatif terbaru (*"JagaRuang: Yuk, Jaga Keluarga dari Penipuan Digital!"*).
+  - Menghapus teks deskripsi header *"Teks ringkas siap salin tanpa memuat data pribadi untuk memperingatkan orang tua dan grup pertemanan."* pada Kartu Peringatan.
+- **Beranda.tsx**:
+  - Menghapus teks label *"Diperbarui Mingguan"* di samping judul Kamus & Modus Populer.
+- **Sandi.tsx**:
+  - Menghapus teks `(*AI Voice Cloning*)` pada deskripsi subtitle header Sandi Verifikasi Keluarga.
+- **FakeChatSimulator.tsx**:
+  - Menyatukan *Bottom Interactive Choices Dock* (tombol pilihan A, B, C dan status percakapan) ke dalam kontainer gulir utama obrolan (*scroll container*), sehingga scrollbar vertikal memanjang hingga ke bagian paling bawah pilihan dan pilihan dapat digulir langsung secara mulus dari dalam area chat.
+  - Menambahkan bilah navigasi dekoratif di bagian bawah bingkai smartphone yang memuat tombol Home HP (bersama tombol Back dan Recents) bersifat visual murni (`pointer-events-none`) agar area bawah ponsel proporsional, autentik, dan tidak kosong.
+  - Menghapus badge label *"Nomor Asing"* di samping nama kontak dan badge info skenario *"KX · 5 Titik Keputusan"* di header simulator chat agar tampilan bilah atas obrolan tampak bersih, realistis, dan seperti aplikasi pesan asli.
+- **Belajar.tsx**:
+  - Menghapus ikon `Sliders` pada judul "Pilih Tingkat Kesulitan:" di kartu tantangan Kilat 2 Menit dan membersihkan import yang tidak terpakai.
+  - Menghapus teks petunjuk *"Klik opsi untuk mengatur durasi tantangan"* di samping judul Pilih Tingkat Kesulitan.
+  - Memperbesar dan meratakan ukuran tombol aksi kapsul "Mulai →" pada kartu Skenario Simulator (`w-full`, padding `py-2.5`, teks `text-sm font-bold`, dan badge panah `h-7 w-7`) agar proporsional, seragam, dan selaras di seluruh kartu skenario.
+  - Memperbesar kotak pratinjau showcase visual *"QUIZ KILAT"* pada kartu Tantangan Kilat (tinggi `min-h-[280px]`, padding `py-9 px-6`, kartu soal melayang lebih besar `w-56`, tipografi `text-6xl`, dan pembagian grid seimbang `lg:col-span-6`) persis sesuai referensi tangkapan layar.
+  - Menghapus badge/kotak pembungkus (*square pill*) pada label mode tantangan (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`) dan mempertahankan tipografi serta diferensiasi warna teks murni: hijau (`text-emerald-400`) untuk Santai, polos (`text-white`) untuk Standar, dan merah (`text-rose-400`) untuk Ekstrem.
+  - Menghapus titik indikator warna pada kartu opsi pilihan tingkat kesulitan di sebelah kanan agar tampilan kartu opsi tetap polos dan bersih.
+  - Memastikan seluruh tipografi aplikasi seragam menggunakan font **Plus Jakarta Sans** (menginstal paket mandiri `@fontsource-variable/plus-jakarta-sans`, memperbarui konfigurasi `@theme` dan `html`/`body` di `index.css`), serta menghapus `font-mono` pada badge timer *"Sisa Waktu:"* di sesi Kilat 2 Menit agar selaras dan konsisten.
+  - Menghapus label petunjuk *"Pilih Yes / No"* pada header kartu pertanyaan kuis kilat agar kartu soal lebih rapi dan terfokus.
+  - Mengganti kotak medali pada kartu hasil evaluasi tantangan kilat dengan indikator lingkaran progres/donat persentase akurasi dinamis (misal `30%` saat benar 3 soal, berkode warna hijau/kuning/merah adaptif), serta menghapus badge pill *"Akurasi 30%"* di samping judul agar visual ringkas dan fokus.
+  - Mengubah daftar ulasan 10 soal hasil tantangan kilat menjadi kartu akordion ringkas yang menampilkan *"Soal X. [Isi Soal]"* dengan penanda garis tepi/stroke tegas (hijau `border-emerald-500` jika tepat dan merah `border-rose-500` jika salah), yang dapat diklik untuk membuka penjelasan detail & tanda kejanggalan (*red flags*) sehingga halaman tidak terlalu panjang.
+  - Menghapus teks petunjuk di samping header ulasan 10 soal (*"Pelajari tanda kejanggalan (red flags) dari tiap pesan"*) agar tampilan header lebih bersih dan minimalis.
+  - Menghapus dua kotak statistik rincian angka (*"Tepat X dari 10 Soal"* dan *"Kurang Tepat X dari 10 Soal"*) pada kartu hasil evaluasi kuis kilat, menyelaraskan tampilan kartu evaluasi menjadi satu layout terpadu yang bersih dan lega.
+  - Menyesuaikan kelengkungan border radius tombol *"Mulai →"* pada kartu Skenario Simulator dari sebelumnya `rounded-full` (kapsul lonjong) menjadi `rounded-xl` (dengan badge panah `rounded-lg`) agar sudutnya lebih tegas, modern, dan tidak terlalu bulat.
+
 ### Ditambahkan
 - **FE-1.1**: Navigasi responsif (ramah mobile mulai 360 px dengan menu toggle), keyboard navigation & skip-link aksesibilitas, footer permanen dengan tautan Keterbatasan dan Privasi.
 - **FE-1.2**: Komponen dasar desain sistem (`Button`, `Card`, `LevelBadge`, `RiskMeter`, `Disclaimer`, `FlagList`) dengan aturan token warna `DESIGN_SYSTEM.md` (level terendah biru-abu, ikon info, tanpa klaim hijau/persentase penipuan).

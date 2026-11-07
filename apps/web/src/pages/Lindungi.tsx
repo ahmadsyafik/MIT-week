@@ -479,9 +479,6 @@ export default function Lindungi() {
               Daftar portal dan kontak bantuan resmi pemerintah dan regulator keuangan.
             </p>
           </div>
-          <span className="text-[11px] font-semibold text-[#526D82] bg-[#DDE6ED]/60 px-3 py-1 rounded-full">
-            *Cek ulang keaslian alamat di situs resmi
-          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -521,19 +518,15 @@ export default function Lindungi() {
       {/* GENERATOR KARTU PERINGATAN KELUARGA (FE-4.2)                          */}
       {/* ===================================================================== */}
       <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#9DB2BF]/30 pb-3">
+        <div className="border-b border-[#9DB2BF]/30 pb-3">
           <div className="space-y-0.5">
-            <div className="inline-flex items-center gap-1 text-[11px] font-bold text-[#526D82] uppercase tracking-wider">
-              <Share2 className="h-3.5 w-3.5 text-[#526D82]" />
+            <div className="text-[11px] font-bold text-[#526D82] uppercase tracking-wider">
               <span>Kartu Peringatan untuk Orang Sekitar</span>
             </div>
             <h3 className="text-base sm:text-lg font-bold text-[#27374D]">
               Bagikan Peringatan Singkat ke Grup Chat
             </h3>
           </div>
-          <p className="text-xs text-[#526D82] max-w-sm">
-            Teks ringkas siap salin tanpa memuat data pribadi untuk memperingatkan orang tua dan grup pertemanan.
-          </p>
         </div>
 
         {/* Tampilan Kotak Pesan Siap Salin */}
@@ -546,7 +539,7 @@ export default function Lindungi() {
         {/* Tombol Aksi: Salin & Share API */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
           <span className="text-[11px] text-[#526D82]">
-            {shareFeedback || "*Teks aman dibagikan karena tidak memuat data pribadi."}
+            {shareFeedback}
           </span>
 
           <div className="flex items-center gap-2">

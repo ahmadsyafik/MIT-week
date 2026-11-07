@@ -801,9 +801,8 @@ export default function Beranda() {
           {/* 3. RINGKASAN KAMUS KATA YANG POPULAR (SELARAS UJUNG ACTIVITIES)  */}
           {/* --------------------------------------------------------------- */}
           <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col h-full">
-            <div className="flex items-center justify-between mb-3.5">
+            <div className="mb-3.5">
               <h3 className="text-base font-bold text-[#27374D]">Kamus & Modus Populer</h3>
-              <span className="text-[11px] text-[#526D82]">Diperbarui Mingguan</span>
             </div>
 
             {/* List 4 Istilah Populer dengan Jarak Rapi & Proporsional */}

@@ -244,23 +244,33 @@ export function mockListReportChannels(): ReportChannel[] {
   return MOCK_REPORT_CHANNELS;
 }
 
-export function mockBuildWarningCard(analysis?: AnalysisResult): WarningCard {
-  const modusName = analysis?.modus && analysis.modus.length > 0
-    ? analysis.modus.join(", ")
-    : "Manipulasi Kontak / Rekayasa Sosial";
+export function mockBuildWarningCard(_analysis?: AnalysisResult): WarningCard {
+  const text = `JagaRuang: Yuk, Jaga Keluarga dari Penipuan Digital!
 
-  const text = `PERINGATAN WASPADA PENIPUAN DIGITAL (JagaRuang)
+Halo Keluarga & Sahabat tersayang,
 
-Halo keluarga & teman, harap waspada jika menerima pesan yang mendesak atau mencurigakan:
+Akhir-akhir ini makin banyak modus penipuan online yang menyasar siapa saja, termasuk orang-orang terdekat kita. Yuk, kenali tandanya bersama-sama.
 
-• Ciri Modus: ${modusName}
-• Tanda Bahaya: Meminta transfer dana terburu-buru, mengirim file berformat .apk, atau mengarahkan ke link web yang bukan situs resmi.
-• Langkah Aman:
-  1. JANGAN klik link atau pasang file yang dikirimkan.
-  2. JANGAN bagikan kode OTP, PIN, atau data perbankan.
-  3. Verifikasi mandiri ke nomor call center resmi atau tanyakan langsung secara tatap muka.
+Ciri-ciri Pesan Mencurigakan
 
-Hasil analisis ini diproses secara mandiri di perangkat tanpa kirim data ke server. Mari saling menjaga ruang digital kita!
+Biasanya pelaku berpura-pura jadi orang yang kita kenal atau pihak resmi seperti bank atau kurir, lalu:
+
+- Mendesak kita buru-buru transfer uang
+- Mengirim file aneh berformat .apk
+- Mengarahkan ke link yang bukan situs resmi
+
+Apa yang Harus Kita Lakukan?
+
+Pertama, jangan langsung klik link atau pasang file yang dikirim, sekalipun dari nomor yang kita kenal.
+
+Kedua, jangan pernah kasih tahu kode OTP, PIN, atau data rekening ke siapa pun, walau mengaku dari bank sekalipun.
+
+Ketiga, cek dulu baru percaya. Kalau ragu, telepon langsung ke call center resmi, atau tanya tatap muka ke orang yang bersangkutan.
+
+Semua pengecekan di JagaRuang diproses langsung di perangkatmu, datamu aman dan tidak dikirim ke mana-mana.
+
+Yuk saling ingatkan, karena menjaga satu sama lain dimulai dari hal kecil seperti ini.
+
 #JagaRuang #CekLatihLindungi #GuardiansOfTheDigitalSpace`;
 
   return { text };

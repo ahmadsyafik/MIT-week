@@ -15,6 +15,7 @@ import {
   ExternalLink,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   RefreshCw,
   RotateCcw,
   Award,
@@ -43,7 +44,6 @@ import {
   Pause,
   Maximize2,
   Minimize2,
-  Sliders,
   Zap,
   Sparkles,
 } from "lucide-react";
@@ -1481,11 +1481,10 @@ export default function Belajar() {
             <button
               type="button"
               onClick={() => handleTabChange("simulator")}
-              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-                activeTab === "simulator"
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "simulator"
                   ? "text-[#27374D] font-black"
                   : "text-[#526D82] hover:text-[#27374D]"
-              }`}
+                }`}
             >
               <span>Simulator</span>
               {activeTab === "simulator" && (
@@ -1497,11 +1496,10 @@ export default function Belajar() {
             <button
               type="button"
               onClick={() => handleTabChange("modul")}
-              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-                activeTab === "modul"
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "modul"
                   ? "text-[#27374D] font-black"
                   : "text-[#526D82] hover:text-[#27374D]"
-              }`}
+                }`}
             >
               <span>Modul</span>
               {activeTab === "modul" && (
@@ -1513,11 +1511,10 @@ export default function Belajar() {
             <button
               type="button"
               onClick={() => handleTabChange("kilat")}
-              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-                activeTab === "kilat"
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "kilat"
                   ? "text-[#27374D] font-black"
                   : "text-[#526D82] hover:text-[#27374D]"
-              }`}
+                }`}
             >
               <span>Kilat 2 Menit</span>
               {activeTab === "kilat" && (
@@ -1529,11 +1526,10 @@ export default function Belajar() {
             <button
               type="button"
               onClick={() => handleTabChange("kamus")}
-              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${
-                activeTab === "kamus"
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "kamus"
                   ? "text-[#27374D] font-black"
                   : "text-[#526D82] hover:text-[#27374D]"
-              }`}
+                }`}
             >
               <span>Kamus</span>
               {activeTab === "kamus" && (
@@ -1702,7 +1698,7 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
             <div
               key={sc.id}
               onClick={() => onSelectScenario(sc.id)}
-              className="group relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
+              className="group relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden h-full"
             >
               {/* Bagian Atas: Gambar / Media Preview Card */}
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-[#EAE4DC] flex items-center justify-center">
@@ -1756,17 +1752,17 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
                   <h3 className="text-sm sm:text-base font-bold text-[#27374D] group-hover:text-[#1e2b3d] line-clamp-1 tracking-tight leading-snug">
                     {sc.title}
                   </h3>
-                  <p className="text-[11px] sm:text-xs text-[#526D82] line-clamp-2 leading-relaxed min-h-[32px] mt-0.5 font-normal">
+                  <p className="text-[11px] sm:text-xs text-[#526D82] line-clamp-2 leading-relaxed min-h-[36px] mt-1 font-normal">
                     {sc.description}
                   </p>
                 </div>
 
-                {/* Bagian Bawah: Tombol Aksi Kapsul "Mulai →" Diperpanjang & Terpusat */}
-                <div className="pt-2.5 border-t border-slate-100 flex items-center justify-center mt-2.5 w-full">
-                  <div className="w-full sm:w-[85%] inline-flex items-center justify-between pl-4 pr-1.5 py-1.5 rounded-full bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md shrink-0 cursor-pointer">
-                    <span className="text-xs font-bold tracking-wide leading-none pl-1">Mulai</span>
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#27374D] group-hover:translate-x-0.5 transition-transform shadow-2xs shrink-0">
-                      <ArrowRight className="h-2.5 w-2.5" />
+                {/* Bagian Bawah: Tombol Aksi "Mulai →" (Radius Lebih Sedang/Kompak, Bukan Kapsul Full) */}
+                <div className="pt-3 border-t border-slate-200/70 mt-3 w-full">
+                  <div className="w-full inline-flex items-center justify-between pl-4 pr-2 py-2.5 rounded-xl bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md cursor-pointer">
+                    <span className="text-xs sm:text-sm font-bold tracking-wide leading-none pl-0.5">Mulai</span>
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#27374D] group-hover:translate-x-0.5 transition-transform shadow-2xs shrink-0">
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </span>
                   </div>
                 </div>
@@ -1898,11 +1894,10 @@ function DeskStorybookSimulator({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden select-none transition-all duration-300 ${
-        isFullscreen
+      className={`relative overflow-hidden select-none transition-all duration-300 ${isFullscreen
           ? "fixed inset-0 z-50 bg-[#1e1514] flex flex-col justify-between"
           : "w-full rounded-3xl border border-[#9DB2BF]/50 bg-[#1e1514] shadow-2xl aspect-[16/9] min-h-[520px] sm:min-h-[620px] flex flex-col justify-between"
-      }`}
+        }`}
     >
       {/* Layer 1: Background Meja Kerja Cozy (desk-template.jpg) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -1953,11 +1948,10 @@ function DeskStorybookSimulator({
             type="button"
             onClick={() => setIsAutoPlay((prev) => !prev)}
             title={isAutoPlay ? "Jeda tayangan otomatis" : "Mulai tayangan otomatis"}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border backdrop-blur-md transition-all cursor-pointer shadow-lg ${
-              isAutoPlay
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border backdrop-blur-md transition-all cursor-pointer shadow-lg ${isAutoPlay
                 ? "bg-amber-500 text-white border-amber-300 animate-pulse"
                 : "bg-black/60 hover:bg-black/80 text-white/90 border-white/20"
-            }`}
+              }`}
           >
             {isAutoPlay ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
             <span className="hidden lg:inline">{isAutoPlay ? "Otomatis" : "Putar"}</span>
@@ -2224,9 +2218,8 @@ function SimulatorPage({
         <div className="flex items-center justify-between border-b border-[#DDE6ED] pb-4">
           <div className="flex items-center gap-3">
             <span
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                step === "briefing" ? "bg-[#27374D] text-white" : "bg-emerald-100 text-emerald-800"
-              }`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === "briefing" ? "bg-[#27374D] text-white" : "bg-emerald-100 text-emerald-800"
+                }`}
             >
               1
             </span>
@@ -2235,13 +2228,12 @@ function SimulatorPage({
           <ChevronRight className="h-4 w-4 text-[#9DB2BF]" />
           <div className="flex items-center gap-3">
             <span
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                step === "investigasi"
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === "investigasi"
                   ? "bg-[#27374D] text-white"
                   : step === "debrief"
-                  ? "bg-emerald-100 text-emerald-800"
-                  : "bg-slate-100 text-[#526D82]"
-              }`}
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-slate-100 text-[#526D82]"
+                }`}
             >
               2
             </span>
@@ -2250,9 +2242,8 @@ function SimulatorPage({
           <ChevronRight className="h-4 w-4 text-[#9DB2BF]" />
           <div className="flex items-center gap-3">
             <span
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                step === "debrief" ? "bg-[#27374D] text-white" : "bg-slate-100 text-[#526D82]"
-              }`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === "debrief" ? "bg-[#27374D] text-white" : "bg-slate-100 text-[#526D82]"
+                }`}
             >
               3
             </span>
@@ -2347,18 +2338,16 @@ function SimulatorPage({
                       key={ev.id}
                       type="button"
                       onClick={() => toggleEvidence(ev.id)}
-                      className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-2.5 ${
-                        isSelected
+                      className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-2.5 ${isSelected
                           ? "border-[#526D82] bg-[#DDE6ED]/60 text-[#27374D] font-medium"
                           : "border-[#9DB2BF]/50 bg-white text-[#526D82] hover:border-[#526D82]"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${
-                          isSelected
+                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${isSelected
                             ? "border-[#526D82] bg-[#526D82] text-white"
                             : "border-[#9DB2BF]"
-                        }`}
+                          }`}
                       >
                         {isSelected && <Check className="h-2.5 w-2.5 stroke-[3]" />}
                       </div>
@@ -2395,11 +2384,10 @@ function SimulatorPage({
         {step === "debrief" && chosenOption && (
           <div className="space-y-6">
             <div
-              className={`rounded-2xl p-4 sm:p-5 border ${
-                chosenOption.isCorrect
+              className={`rounded-2xl p-4 sm:p-5 border ${chosenOption.isCorrect
                   ? "bg-emerald-50 border-emerald-300 text-emerald-900"
                   : "bg-rose-50 border-rose-300 text-rose-900"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2 font-bold text-sm">
                 {chosenOption.isCorrect ? (
@@ -2534,11 +2522,10 @@ function ModulCover({
             key={cat}
             type="button"
             onClick={() => setSelectedCategory(cat)}
-            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              selectedCategory === cat
+            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${selectedCategory === cat
                 ? "bg-[#27374D] text-white shadow-xs"
                 : "bg-white border border-[#9DB2BF]/50 text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
-            }`}
+              }`}
           >
             {cat}
           </button>
@@ -2675,11 +2662,10 @@ function ModulPage({
           <button
             type="button"
             onClick={onToggleRead}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              isRead
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${isRead
                 ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                 : "bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200"
-            }`}
+              }`}
           >
             {isRead ? (
               <>
@@ -2778,18 +2764,16 @@ function ModulPage({
                   key={idx}
                   type="button"
                   onClick={() => toggleCheck(idx)}
-                  className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-3 ${
-                    isChecked
+                  className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-3 ${isChecked
                       ? "bg-emerald-50/80 border-emerald-300 text-emerald-950 font-medium line-through opacity-85"
                       : "bg-white border-[#9DB2BF]/60 text-[#27374D] hover:border-[#526D82]"
-                  }`}
+                    }`}
                 >
                   <div
-                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${
-                      isChecked
+                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${isChecked
                         ? "bg-emerald-600 border-emerald-600 text-white"
                         : "border-[#9DB2BF]"
-                    }`}
+                      }`}
                   >
                     {isChecked && <Check className="h-2.5 w-2.5 stroke-[3]" />}
                   </div>
@@ -2869,7 +2853,7 @@ const KILAT_DIFFICULTIES: KilatDifficulty[] = [
     duration: 180,
     timeLabel: "180 Detik",
     badge: "Pemula",
-    badgeClass: "bg-[#DDE6ED] text-[#27374D] border-[#9DB2BF]/60",
+    badgeClass: "text-emerald-400",
     pace: "18 dtk / soal",
     desc: "Waktu longgar untuk membaca detail pesan dan mencermati tanda manipulasi.",
   },
@@ -2879,7 +2863,7 @@ const KILAT_DIFFICULTIES: KilatDifficulty[] = [
     duration: 120,
     timeLabel: "120 Detik",
     badge: "Rekomendasi",
-    badgeClass: "bg-[#27374D] text-white border-transparent",
+    badgeClass: "text-white",
     pace: "12 dtk / soal",
     desc: "Waktu seimbang menguji refleks insting alami menghadapi pesan harian.",
   },
@@ -2889,7 +2873,7 @@ const KILAT_DIFFICULTIES: KilatDifficulty[] = [
     duration: 60,
     timeLabel: "60 Detik",
     badge: "Tantangan Kilat",
-    badgeClass: "bg-rose-100 text-rose-800 border-rose-300",
+    badgeClass: "text-rose-400",
     pace: "6 dtk / soal",
     desc: "Uji kecepatan tinggi! Pacu insting mengambil keputusan seketika tanpa ragu.",
   },
@@ -2911,7 +2895,7 @@ function KilatCover({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
       {/* Kolom Kiri: Tantangan Kilat Card */}
-      <div className="lg:col-span-5 flex flex-col">
+      <div className="lg:col-span-6 flex flex-col">
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-[#27374D] text-white p-6 sm:p-7 shadow-lg flex flex-col justify-between h-full space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -2919,7 +2903,7 @@ function KilatCover({
                 Tantangan Kilat
               </span>
               <span
-                className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${currentDiff.badgeClass}`}
+                className={`text-xs font-bold tracking-wide ${currentDiff.badgeClass}`}
               >
                 Mode {currentDiff.name}
               </span>
@@ -2935,56 +2919,56 @@ function KilatCover({
             </div>
           </div>
 
-          {/* Pratinjau Visual Soal + Header Viral "QUIZ KILAT" */}
-          <div className="relative my-auto py-5 px-3 rounded-2xl bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-transparent border border-white/15 overflow-hidden flex flex-col items-center justify-center min-h-[190px] shadow-inner group">
+          {/* Pratinjau Visual Soal + Header Viral "QUIZ KILAT" - Ukuran Diperbesar Sesuai Referensi */}
+          <div className="relative my-auto py-7 sm:py-9 px-4 sm:px-6 rounded-3xl bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-transparent border border-white/15 overflow-hidden flex flex-col items-center justify-center min-h-[250px] sm:min-h-[280px] shadow-inner group">
             {/* Ambient Radial Lights */}
-            <div className="absolute -top-10 -left-10 w-36 h-36 bg-sky-400/25 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-10 -right-10 w-36 h-36 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-24 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-12 -left-12 w-44 h-44 bg-sky-400/25 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-12 -right-12 w-44 h-44 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-28 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
 
             {/* Background Layer: Kartu Visual Tangkapan Layar Soal (SMS & WhatsApp Phishing) */}
-            <div className="w-full relative flex items-center justify-center -space-x-10 sm:-space-x-8 opacity-80 group-hover:opacity-95 transition-all duration-500">
+            <div className="w-full relative flex items-center justify-center -space-x-8 sm:-space-x-6 opacity-85 group-hover:opacity-100 transition-all duration-500">
               {/* Kartu Soal 1: SMS Phishing Bank Mandiri */}
-              <div className="w-44 sm:w-52 rounded-xl bg-white text-[#27374D] p-2.5 shadow-2xl border border-slate-200 transform -rotate-6 -translate-y-2 group-hover:-rotate-3 group-hover:-translate-y-3 transition-all duration-300 shrink-0 pointer-events-none select-none">
-                <div className="flex items-center justify-between text-[9px] pb-1 border-b border-slate-100">
+              <div className="w-48 sm:w-56 rounded-2xl bg-white text-[#27374D] p-3 shadow-2xl border border-slate-200 transform -rotate-6 -translate-y-3 group-hover:-rotate-3 group-hover:-translate-y-4 transition-all duration-300 shrink-0 pointer-events-none select-none">
+                <div className="flex items-center justify-between text-[10px] pb-1 border-b border-slate-100">
                   <span className="font-bold text-sky-800 flex items-center gap-1">
-                    <Mail className="h-2.5 w-2.5" /> SMS Bank
+                    <Mail className="h-3 w-3" /> SMS Bank
                   </span>
-                  <span className="text-[8px] font-mono text-slate-400">10:14</span>
+                  <span className="text-[9px] font-mono text-slate-400">10:14</span>
                 </div>
-                <div className="mt-1 space-y-0.5 text-[9px] text-slate-700 leading-tight">
+                <div className="mt-1.5 space-y-0.5 text-[9.5px] text-slate-700 leading-tight">
                   <p className="line-clamp-2 italic">"Akun Anda diblokir sementara. Verifikasi PIN:"</p>
-                  <span className="text-[8px] text-blue-600 font-mono underline block truncate">
+                  <span className="text-[9px] text-blue-600 font-mono underline block truncate">
                     http://mandiri-verifikasi.xyz
                   </span>
                 </div>
-                <div className="mt-1.5 pt-1 border-t border-slate-100 flex items-center justify-between text-[8px]">
+                <div className="mt-2 pt-1 border-t border-slate-100 flex items-center justify-between text-[8.5px]">
                   <span className="text-slate-400">Soal #1</span>
                   <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold flex items-center gap-0.5">
-                    <AlertTriangle className="h-2 w-2" /> YES (SCAM)
+                    <AlertTriangle className="h-2.5 w-2.5" /> YES (SCAM)
                   </span>
                 </div>
               </div>
 
               {/* Kartu Soal 2: WhatsApp Malware APK Kurir Paket */}
-              <div className="w-44 sm:w-52 rounded-xl bg-white text-[#27374D] p-2.5 shadow-2xl border border-slate-200 transform rotate-6 translate-y-3 group-hover:rotate-3 group-hover:translate-y-4 transition-all duration-300 shrink-0 pointer-events-none select-none">
-                <div className="flex items-center justify-between text-[9px] pb-1 border-b border-slate-100">
+              <div className="w-48 sm:w-56 rounded-2xl bg-white text-[#27374D] p-3 shadow-2xl border border-slate-200 transform rotate-6 translate-y-4 group-hover:rotate-3 group-hover:translate-y-5 transition-all duration-300 shrink-0 pointer-events-none select-none">
+                <div className="flex items-center justify-between text-[10px] pb-1 border-b border-slate-100">
                   <span className="font-bold text-emerald-800 flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> WA Kurir
                   </span>
-                  <span className="text-[8px] font-mono text-slate-400">11:05</span>
+                  <span className="text-[9px] font-mono text-slate-400">11:05</span>
                 </div>
-                <div className="mt-1 rounded-md bg-rose-50 border border-rose-200 p-1 flex items-center gap-1.5 text-[9px]">
-                  <FileCode className="h-3 w-3 text-rose-600 shrink-0" />
+                <div className="mt-1.5 rounded-md bg-rose-50 border border-rose-200 p-1.5 flex items-center gap-1.5 text-[9.5px]">
+                  <FileCode className="h-3.5 w-3.5 text-rose-600 shrink-0" />
                   <div className="min-w-0">
-                    <span className="font-bold text-rose-950 truncate block text-[8.5px]">Cek_Paket_JNE.apk</span>
-                    <span className="text-[7.5px] text-rose-600">5.2 MB</span>
+                    <span className="font-bold text-rose-950 truncate block text-[9px]">Cek_Paket_JNE.apk</span>
+                    <span className="text-[8px] text-rose-600">5.2 MB</span>
                   </div>
                 </div>
-                <div className="mt-1.5 pt-1 border-t border-slate-100 flex items-center justify-between text-[8px]">
+                <div className="mt-2 pt-1 border-t border-slate-100 flex items-center justify-between text-[8.5px]">
                   <span className="text-slate-400">Soal #4</span>
                   <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold flex items-center gap-0.5">
-                    <AlertTriangle className="h-2 w-2" /> YES (SCAM)
+                    <AlertTriangle className="h-2.5 w-2.5" /> YES (SCAM)
                   </span>
                 </div>
               </div>
@@ -2995,9 +2979,9 @@ function KilatCover({
               {/* Header Utama "QUIZ KILAT" dengan Model Font Viral */}
               <div className="relative group/title">
                 {/* Dynamic Back-Glow Aura */}
-                <div className="absolute -inset-x-6 -inset-y-2 blur-xl bg-gradient-to-r from-sky-400/40 via-amber-300/50 to-orange-400/40 -z-10 rounded-full opacity-70 group-hover/title:opacity-100 transition-opacity" />
+                <div className="absolute -inset-x-8 -inset-y-3 blur-2xl bg-gradient-to-r from-sky-400/40 via-amber-300/50 to-orange-400/40 -z-10 rounded-full opacity-75 group-hover/title:opacity-100 transition-opacity" />
 
-                <h3 className="text-4xl sm:text-5xl font-black uppercase italic tracking-tighter leading-none select-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                <h3 className="text-5xl sm:text-6xl font-black uppercase italic tracking-tighter leading-none select-none drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
                   <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-sky-200">
                     QUIZ
                   </span>{" "}
@@ -3008,7 +2992,7 @@ function KilatCover({
               </div>
 
               {/* Tagline Viral di Bawah Header */}
-              <div className="mt-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-[#DDE6ED] bg-[#1E2B3D]/80 px-2.5 py-0.5 rounded-full border border-white/10 shadow-sm backdrop-blur-xs">
+              <div className="mt-3 flex items-center gap-2 text-[10.5px] sm:text-xs font-extrabold uppercase tracking-widest text-[#DDE6ED] bg-[#1E2B3D]/90 px-3.5 py-1 rounded-full border border-white/15 shadow-md backdrop-blur-xs">
                 <span>10 Soal Cepat</span>
                 <span className="text-amber-400">&bull;</span>
                 <span>Yes / No</span>
@@ -3035,7 +3019,7 @@ function KilatCover({
       </div>
 
       {/* Kolom Kanan: Aturan Main + Pengaturan Tingkat Kesulitan */}
-      <div className="lg:col-span-7 flex flex-col justify-between space-y-4 h-full">
+      <div className="lg:col-span-6 flex flex-col justify-between space-y-4 h-full">
         {/* Card 1: Aturan Main Tantangan */}
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
           <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
@@ -3097,13 +3081,9 @@ function KilatCover({
         {/* Card 2: Pengaturan Tingkat Kesulitan */}
         <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4 flex-1 flex flex-col justify-between">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
-                <Sliders className="h-4 w-4 text-[#526D82]" />
-                <span>Pilih Tingkat Kesulitan:</span>
-              </div>
-              <span className="text-xs text-[#526D82] hidden sm:inline">
-                Klik opsi untuk mengatur durasi tantangan
+            <div>
+              <span className="text-sm font-bold text-[#27374D]">
+                Pilih Tingkat Kesulitan:
               </span>
             </div>
 
@@ -3115,11 +3095,10 @@ function KilatCover({
                     key={diff.id}
                     type="button"
                     onClick={() => onSelectDuration(diff.duration)}
-                    className={`text-left rounded-2xl p-4 border transition-all cursor-pointer relative flex flex-col justify-between space-y-3 h-full ${
-                      isSelected
+                    className={`text-left rounded-2xl p-4 border transition-all cursor-pointer relative flex flex-col justify-between space-y-3 h-full ${isSelected
                         ? "border-[#27374D] bg-[#27374D]/5 ring-2 ring-[#27374D] shadow-sm"
                         : "border-[#9DB2BF]/40 bg-white hover:border-[#526D82] hover:bg-[#DDE6ED]/20"
-                    }`}
+                      }`}
                   >
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
@@ -3413,6 +3392,14 @@ function KilatPage({
   const [answers, setAnswers] = useState<Record<string, "yes" | "no">>({});
   const [isFinished, setIsFinished] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
+
+  const toggleQuestionExpand = (id: string) => {
+    setExpandedQuestions((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   // Timer Countdown
   useEffect(() => {
@@ -3488,6 +3475,7 @@ function KilatPage({
     setAnswers({});
     setIsFinished(false);
     setIsZoomed(false);
+    setExpandedQuestions({});
   };
 
   return (
@@ -3545,16 +3533,15 @@ function KilatPage({
 
             {/* Tombol & Indikator Timer yang Jelas dan Kontras */}
             <div
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-mono font-black shadow-xs transition-colors ${
-                timeLeft <= 20
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors ${timeLeft <= 20
                   ? "bg-rose-600 text-white animate-pulse ring-2 ring-rose-400"
                   : "bg-[#27374D] text-white"
-              }`}
+                }`}
             >
               <Clock className="h-4 w-4 text-amber-300" />
               <span>
                 Sisa Waktu:{" "}
-                <span className="text-sm sm:text-base tracking-wider">
+                <span className="text-sm sm:text-base font-extrabold tracking-wider">
                   {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
                 </span>
               </span>
@@ -3596,12 +3583,9 @@ function KilatPage({
           <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-between gap-4">
             {/* Box 1: Soal */}
             <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
+              <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">
                   Pertanyaan #{currentIndex + 1}
-                </span>
-                <span className="text-[11px] font-semibold text-[#526D82]">
-                  Pilih Yes / No
                 </span>
               </div>
 
@@ -3658,11 +3642,10 @@ function KilatPage({
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
                 disabled={currentIndex === 0}
-                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border text-xs font-bold transition-all shadow-2xs ${
-                  currentIndex === 0
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border text-xs font-bold transition-all shadow-2xs ${currentIndex === 0
                     ? "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-50"
                     : "border-[#9DB2BF]/60 bg-white text-[#27374D] hover:bg-slate-50 hover:border-[#27374D] cursor-pointer active:scale-98"
-                }`}
+                  }`}
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span>Soal Sebelumnya</span>
@@ -3763,166 +3746,191 @@ function KilatPage({
             </div>
           </div>
 
-          {/* Hero Card Hasil Evaluasi Skor (Full Width Grid) */}
+          {/* Hero Card Hasil Evaluasi Skor */}
           <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Kolom Kiri: Skor & Narasi Evaluasi */}
-              <div className="lg:col-span-8 flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-                <div
-                  className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl shadow-xs ${
-                    scoreResult.percentage >= 80
-                      ? "bg-emerald-100 text-emerald-700"
-                      : scoreResult.percentage >= 50
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-rose-100 text-rose-700"
-                  }`}
-                >
-                  <Award className="h-10 w-10" />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                    <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#526D82]">
-                      Hasil Evaluasi Tantangan Kilat
-                    </span>
-                    <span
-                      className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
-                        scoreResult.percentage >= 80
-                          ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                          : scoreResult.percentage >= 50
-                          ? "bg-amber-50 text-amber-800 border-amber-300"
-                          : "bg-rose-50 text-rose-800 border-rose-300"
-                      }`}
-                    >
-                      Akurasi {scoreResult.percentage}%
-                    </span>
-                  </div>
-
-                  <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">
-                    Skor: {scoreResult.correct} dari {scoreResult.total} Tepat
-                  </h2>
-
-                  <p className="text-xs sm:text-sm text-[#526D82] max-w-xl leading-relaxed">
-                    {scoreResult.percentage >= 80
-                      ? "Refleks keamananmu sangat tanggap dan tajam! Kamu mampu membedakan pesan biasa dengan pola rekayasa sosial manipulatif secara cepat."
-                      : scoreResult.percentage >= 50
-                      ? "Refleks keamananmu cukup baik. Namun masih ada beberapa pesan jebakan yang lolos verifikasi. Cermati ulasan red flags tiap soal di bawah."
-                      : "Kamu masih sering terjebak pesan manipulatif. Sangat disarankan meninjau ulasan tanda peringatan di bawah dan membuka Modul Belajar."}
-                  </p>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
+              {/* Indikator Persentase Donut Circular Gauge */}
+              <div className="relative flex h-20 w-20 sm:h-22 sm:w-22 shrink-0 items-center justify-center">
+                <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    stroke="#E2E8F0"
+                    strokeWidth="8"
+                    fill="none"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    stroke={
+                      scoreResult.percentage >= 80
+                        ? "#059669"
+                        : scoreResult.percentage >= 50
+                          ? "#D97706"
+                          : "#E11D48"
+                    }
+                    strokeWidth="8"
+                    strokeDasharray={2 * Math.PI * 38}
+                    strokeDashoffset={
+                      2 * Math.PI * 38 - (scoreResult.percentage / 100) * (2 * Math.PI * 38)
+                    }
+                    strokeLinecap="round"
+                    fill="none"
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center text-center">
+                  <span
+                    className={`text-lg sm:text-xl font-black tracking-tight ${
+                      scoreResult.percentage >= 80
+                        ? "text-emerald-700"
+                        : scoreResult.percentage >= 50
+                          ? "text-amber-700"
+                          : "text-rose-700"
+                    }`}
+                  >
+                    {scoreResult.percentage}%
+                  </span>
                 </div>
               </div>
 
-              {/* Kolom Kanan: Rincian Angka Ringkas */}
-              <div className="lg:col-span-4 grid grid-cols-2 gap-3 border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6">
-                <div className="rounded-2xl bg-emerald-50/70 border border-emerald-200 p-3.5 text-center">
-                  <div className="text-[11px] font-bold uppercase text-emerald-700">Tepat</div>
-                  <div className="text-2xl font-black text-emerald-800 mt-0.5">
-                    {scoreResult.correct}
-                  </div>
-                  <div className="text-[10px] text-emerald-600">dari 10 Soal</div>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#526D82]">
+                    Hasil Evaluasi Tantangan Kilat
+                  </span>
                 </div>
 
-                <div className="rounded-2xl bg-rose-50/70 border border-rose-200 p-3.5 text-center">
-                  <div className="text-[11px] font-bold uppercase text-rose-700">Kurang Tepat</div>
-                  <div className="text-2xl font-black text-rose-800 mt-0.5">
-                    {scoreResult.total - scoreResult.correct}
-                  </div>
-                  <div className="text-[10px] text-rose-600">dari 10 Soal</div>
-                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">
+                  Skor: {scoreResult.correct} dari {scoreResult.total} Tepat
+                </h2>
+
+                <p className="text-xs sm:text-sm text-[#526D82] max-w-2xl leading-relaxed">
+                  {scoreResult.percentage >= 80
+                    ? "Refleks keamananmu sangat tanggap dan tajam! Kamu mampu membedakan pesan biasa dengan pola rekayasa sosial manipulatif secara cepat."
+                    : scoreResult.percentage >= 50
+                      ? "Refleks keamananmu cukup baik. Namun masih ada beberapa pesan jebakan yang lolos verifikasi. Cermati ulasan red flags tiap soal di bawah."
+                      : "Kamu masih sering terjebak pesan manipulatif. Sangat disarankan meninjau ulasan tanda peringatan di bawah dan membuka Modul Belajar."}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Bagian Ulasan 10 Soal Dijabarkan Terbuka (2 Kolom Grid) */}
+          {/* Bagian Ulasan 10 Soal (Akordion Kompak Dengan Border Stroke Hijau/Merah) */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
-                <ListChecks className="h-4 w-4 text-[#526D82]" />
-                <span>Ulasan Detail Refleks Keputusanmu (10 Soal):</span>
-              </div>
-              <span className="text-xs text-[#526D82] hidden sm:inline">
-                Pelajari tanda kejanggalan (*red flags*) dari tiap pesan
-              </span>
+            <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
+              <ListChecks className="h-4 w-4 text-[#526D82]" />
+              <span>Ulasan Detail Refleks Keputusanmu (10 Soal):</span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
               {TRIAGE_DRILL_ITEMS.map((item, idx) => {
                 const userChoice = answers[item.id];
                 const isCorrect =
                   (userChoice === "yes" && item.isScam) ||
                   (userChoice === "no" && !item.isScam);
+                const isExpanded = !!expandedQuestions[item.id];
+
                 return (
                   <div
                     key={item.id}
-                    className={`rounded-3xl p-5 border text-xs space-y-3 transition-all ${
+                    className={`rounded-2xl border-2 transition-all overflow-hidden ${
                       isCorrect
-                        ? "bg-white border-emerald-300 shadow-2xs hover:shadow-xs"
-                        : "bg-white border-rose-300 shadow-2xs hover:shadow-xs"
+                        ? "bg-white border-emerald-500 shadow-2xs hover:shadow-xs"
+                        : "bg-white border-rose-500 shadow-2xs hover:shadow-xs"
                     }`}
                   >
-                    {/* Header Soal & Status Badge */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#526D82]">
-                          Soal #{idx + 1} · {item.source}
-                        </span>
-                        <h4 className="font-bold text-[#27374D] text-xs leading-snug">
+                    {/* Header Soal (Bisa Diklik Untuk Expand / Collapse) */}
+                    <button
+                      type="button"
+                      onClick={() => toggleQuestionExpand(item.id)}
+                      className="w-full p-4 sm:p-4.5 flex items-center justify-between gap-3 text-left hover:bg-slate-50/70 transition-colors cursor-pointer select-none"
+                    >
+                      <div className="flex-1 min-w-0 pr-1">
+                        <h4 className="font-bold text-[#27374D] text-xs sm:text-sm leading-snug">
+                          <span className="font-extrabold text-[#27374D] mr-1.5">
+                            Soal {idx + 1}.
+                          </span>
                           {item.question}
                         </h4>
                       </div>
 
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 ${
-                          isCorrect
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                            : "bg-rose-100 text-rose-800 border border-rose-300"
-                        }`}
-                      >
-                        {isCorrect ? (
-                          <>
-                            <Check className="h-2.5 w-2.5 stroke-[3]" />
-                            <span>Tepat</span>
-                          </>
-                        ) : (
-                          <>
-                            <X className="h-2.5 w-2.5 stroke-[3]" />
-                            <span>Kurang Tepat</span>
-                          </>
-                        )}
-                      </span>
-                    </div>
-
-                    {/* Kutipan Teks Pesan */}
-                    <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] text-[#27374D] leading-relaxed italic">
-                      "{item.text}"
-                    </div>
-
-                    {/* Perbandingan Pilihan Jawaban */}
-                    <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] border-t border-slate-100">
-                      <span className="text-[#526D82]">
-                        Pilihanmu:{" "}
-                        <strong
-                          className={`uppercase font-bold ${
-                            isCorrect ? "text-emerald-700" : "text-rose-700"
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                            isCorrect
+                              ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                              : "bg-rose-100 text-rose-800 border border-rose-300"
                           }`}
                         >
-                          {userChoice || "-"}
-                        </strong>
-                      </span>
-                      <span className="text-[#9DB2BF]">&bull;</span>
-                      <span className="text-[#526D82]">
-                        Kunci:{" "}
-                        <strong className="text-[#27374D] font-bold">
-                          {item.isScam ? "Yes (Penipuan)" : "No (Bukan Penipuan)"}
-                        </strong>
-                      </span>
-                    </div>
+                          {isCorrect ? (
+                            <>
+                              <Check className="h-2.5 w-2.5 stroke-[3]" />
+                              <span>Tepat</span>
+                            </>
+                          ) : (
+                            <>
+                              <X className="h-2.5 w-2.5 stroke-[3]" />
+                              <span>Kurang Tepat</span>
+                            </>
+                          )}
+                        </span>
 
-                    {/* Pembahasan / Penjelasan */}
-                    <div className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-slate-100">
-                      <strong className="text-[#27374D] block mb-0.5">Penjelasan & Red Flags:</strong>
-                      {item.explanation}
-                    </div>
+                        <div
+                          className={`flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-[#526D82] transition-transform duration-200 ${
+                            isExpanded ? "rotate-180" : ""
+                          }`}
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Konten Penjelasan Yang Muncul Saat Diklik */}
+                    {isExpanded && (
+                      <div className="p-4 sm:p-4.5 pt-0 border-t border-slate-100 space-y-3 mt-1">
+                        {/* Pratinjau Teks Pesan Asli */}
+                        <div className="mt-3 space-y-1.5">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#526D82]">
+                            Pratinjau Pesan ({item.source}):
+                          </span>
+                          <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] text-[#27374D] leading-relaxed italic">
+                            "{item.text}"
+                          </div>
+                        </div>
+
+                        {/* Perbandingan Pilihan Jawaban */}
+                        <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] border-t border-slate-100">
+                          <span className="text-[#526D82]">
+                            Pilihanmu:{" "}
+                            <strong
+                              className={`uppercase font-bold ${
+                                isCorrect ? "text-emerald-700" : "text-rose-700"
+                              }`}
+                            >
+                              {userChoice || "-"}
+                            </strong>
+                          </span>
+                          <span className="text-[#9DB2BF]">&bull;</span>
+                          <span className="text-[#526D82]">
+                            Kunci:{" "}
+                            <strong className="text-[#27374D] font-bold">
+                              {item.isScam ? "Yes (Penipuan)" : "No (Bukan Penipuan)"}
+                            </strong>
+                          </span>
+                        </div>
+
+                        {/* Pembahasan & Red Flags */}
+                        <div className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-slate-100">
+                          <strong className="text-[#27374D] block mb-0.5">
+                            Penjelasan & Red Flags:
+                          </strong>
+                          {item.explanation}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -4023,11 +4031,10 @@ function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                selectedCategory === cat
+              className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${selectedCategory === cat
                   ? "bg-[#27374D] text-white shadow-xs"
                   : "bg-white border border-[#9DB2BF]/50 text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
-              }`}
+                }`}
             >
               {cat}
             </button>

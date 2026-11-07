@@ -83,8 +83,36 @@ export function scoreTriage(
 export function generateSafeword(_wordCount?: 2 | 3): string {
   return notImplemented("BE-5.2 generateSafeword");
 }
-export function buildWarningCard(_result: AnalysisResult): WarningCard {
-  return notImplemented("BE-4.2 buildWarningCard");
+export function buildWarningCard(_result?: AnalysisResult): WarningCard {
+  return {
+    text: `JagaRuang: Yuk, Jaga Keluarga dari Penipuan Digital!
+
+Halo Keluarga & Sahabat tersayang,
+
+Akhir-akhir ini makin banyak modus penipuan online yang menyasar siapa saja, termasuk orang-orang terdekat kita. Yuk, kenali tandanya bersama-sama.
+
+Ciri-ciri Pesan Mencurigakan
+
+Biasanya pelaku berpura-pura jadi orang yang kita kenal atau pihak resmi seperti bank atau kurir, lalu:
+
+- Mendesak kita buru-buru transfer uang
+- Mengirim file aneh berformat .apk
+- Mengarahkan ke link yang bukan situs resmi
+
+Apa yang Harus Kita Lakukan?
+
+Pertama, jangan langsung klik link atau pasang file yang dikirim, sekalipun dari nomor yang kita kenal.
+
+Kedua, jangan pernah kasih tahu kode OTP, PIN, atau data rekening ke siapa pun, walau mengaku dari bank sekalipun.
+
+Ketiga, cek dulu baru percaya. Kalau ragu, telepon langsung ke call center resmi, atau tanya tatap muka ke orang yang bersangkutan.
+
+Semua pengecekan di JagaRuang diproses langsung di perangkatmu, datamu aman dan tidak dikirim ke mana-mana.
+
+Yuk saling ingatkan, karena menjaga satu sama lain dimulai dari hal kecil seperti ini.
+
+#JagaRuang #CekLatihLindungi #GuardiansOfTheDigitalSpace`,
+  };
 }
 
 /* Penyimpanan lokal */
