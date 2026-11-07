@@ -3,6 +3,18 @@
 Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TASK_GUIDE.md).
 
 ## [Belum dirilis]
+### Penyatuan Halaman Detail Kamus Menjadi 1 Section Utuh Tanpa Pembagian Kotak Terpisah (Belajar.tsx)
+- **apps/web/src/pages/Belajar.tsx**:
+  - Menggabungkan seluruh konten halaman detail istilah kamus penipuan (`KamusPage`) ke dalam **1 wadah section tunggal** (`<article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-8 sm:space-y-10">`) dan menghapus pembagian kotak-kotak kartu terpisah yang sebelumnya terpecah menjadi 5 elemen mengambang:
+    - **Baris Atas**:
+      - Sisi Kiri: Menampilkan judul istilah font besar (`text-3xl sm:text-4xl lg:text-5xl font-black`), watermark monogram huruf awal, lencana kategori, dan paragraf ringkasan definisi istilah secara menyatu.
+      - Sisi Kanan: Menampilkan rincian *"Cara Kerja & Titik Masuk"* dengan tipografi rapi, pembatas vertikal halus (`lg:border-l lg:border-slate-100 lg:pl-10`), dan badge *"Alur Modus"* tanpa kotak kartu pembungkus tersendiri.
+    - **Baris Bawah**:
+      - Sisi Kiri: Menampilkan *"Pertolongan Pertama Terpapar"* dengan header aksen merah lembut, ikon `OctagonAlert`, dan callout waktu mitigasi 15 menit.
+      - Sisi Kanan: Menampilkan *"Langkah Pencegahan Utama"* dengan header aksen hijau lembut, ikon `ShieldCheck`, dan pembatas vertikal halus (`lg:border-l lg:border-slate-100 lg:pl-10`).
+    - **Action Footer**: Tombol navigasi (*"Kembali ke Daftar Kamus"*, *"Uji Cek Pesan & Berkas"*, dan *"Latihan di Simulator"*) kini terintegrasi langsung di bagian bawah section dengan garis pembatas halus (`border-t border-[#DDE6ED]`).
+    - Hasil visual bersih, lapang, kohesif, dan mudah dibaca baik di layar ponsel maupun desktop.
+
 ### Revisi Menyeluruh Modul Edukasi "Apa Itu Rekayasa Sosial?" (Belajar.tsx & ModulRekayasaSosialPage.tsx)
 - **apps/web/src/data/modulRekayasaSosial.ts & components/modul/ModulRekayasaSosialPage.tsx**:
   - Merevisi total modul `m1` (*"Apa Itu Rekayasa Sosial?"*) dari teks statis menjadi modul pembelajaran interaktif berbobot 5-6 menit baca dengan gaya percakapan yang ramah (*"kamu"*):

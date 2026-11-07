@@ -4199,13 +4199,13 @@ function KamusPage({
         </button>
       </div>
 
-      {/* Main Container Halaman Khusus Istilah */}
-      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-8">
-        {/* Layout 1/3 Kiri (Judul Besar) & 2/3 Kanan (Teks Penjelasan & 4 Kotak Modus) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Kolom Kiri: 1/3 bagian (lg:col-span-4) dengan Font Besar */}
-          <div className="lg:col-span-4 relative flex flex-col justify-start lg:sticky lg:top-24 pt-2">
-            {/* Watermark Monogram */}
+      {/* Main Container Halaman Khusus Istilah: 1 Section Terpadu Tanpa Pembagian Kotak Terpisah */}
+      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-8 sm:space-y-10">
+        {/* Baris Atas: Judul Font Besar (Kiri) & Cara Kerja serta Titik Masuk (Kanan) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Sisi Atas Kiri: Judul Font Besar, Watermark, & Definisi Inti */}
+          <div className="relative flex flex-col justify-between space-y-5">
+            {/* Watermark Monogram Besar di Pojok Kiri Atas */}
             <span
               aria-hidden="true"
               className="absolute -top-10 -left-4 text-9xl sm:text-[140px] font-black text-[#526D82]/10 select-none pointer-events-none"
@@ -4213,69 +4213,127 @@ function KamusPage({
               {term.name.charAt(0).toUpperCase()}
             </span>
 
-            <div className="relative z-1 space-y-3">
+            <div className="relative z-1 space-y-3.5">
+              {/* Lencana Kategori */}
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold border ${term.tagColor}`}>
+                  {term.category}
+                </span>
+              </div>
+
+              {/* Judul Font Besar */}
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#27374D] leading-[1.15] tracking-tight">
                 {renderStyledTermTitle(term)}
                 <span className="text-blue-600 ml-1">.</span>
               </h1>
             </div>
+
+            {/* Paragraf Definisi Inti */}
+            <div className="relative z-1 pt-2">
+              <p className="text-sm sm:text-base text-[#526D82] leading-relaxed font-normal">
+                {term.meaning}
+              </p>
+            </div>
           </div>
 
-          {/* Kolom Kanan: 2/3 bagian (lg:col-span-8) Diisi Teks & 4 Kotak Modus */}
-          <div className="lg:col-span-8 flex flex-col space-y-6 pt-2 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-10">
-            {/* Paragraf Definisi (Gambar 2) */}
-            <p className="text-base sm:text-lg text-[#526D82] leading-relaxed font-normal">
-              {term.meaning}
-            </p>
-
-            {/* Bagian Uraian Modus (Only Teks Tanpa Kotak Sesuai Permintaan User) */}
-            <div className="space-y-5 pt-1">
-              {/* Section 1: Cara Kerja Modus */}
-              <div className="space-y-1.5">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-                  Tahapan Cara Kerja Modus:
+          {/* Sisi Atas Kanan: Cara Kerja Modus & Titik Masuk Utama */}
+          <div className="space-y-4 lg:border-l lg:border-slate-100 lg:pl-10">
+            <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-[#526D82]">
+                  <FileCode className="h-4 w-4" />
+                </div>
+                <h2 className="text-sm sm:text-base font-bold text-[#27374D]">
+                  Cara Kerja &amp; Titik Masuk
                 </h2>
-                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
-                  {term.howItWorks}
-                </p>
               </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                Alur Modus
+              </span>
+            </div>
 
-              {/* Section 2: Titik Masuk Utama */}
-              <div className="space-y-1.5">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-                  Titik Masuk Utama (Entry Point):
-                </h2>
-                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
-                  {term.entryPoint}
-                </p>
-              </div>
+            {/* Cara Kerja */}
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82]">
+                Tahapan Cara Kerja:
+              </span>
+              <p className="text-xs sm:text-sm text-[#27374D] leading-relaxed">
+                {term.howItWorks}
+              </p>
+            </div>
 
-              {/* Section 3: Pertolongan Pertama / Respons Cepat */}
-              <div className="space-y-1.5">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
-                  <OctagonAlert className="h-4 w-4" />
-                  <span>Pertolongan Pertama Jika Terlanjur Terpapar:</span>
-                </h2>
-                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
-                  {term.firstResponse}
-                </p>
-              </div>
-
-              {/* Section 4: Langkah Pencegahan Mandiri */}
-              <div className="space-y-1.5">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D] flex items-center gap-1.5">
-                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                  <span>Langkah Pencegahan Utama:</span>
-                </h2>
-                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
-                  {term.prevention}
-                </p>
-              </div>
+            {/* Titik Masuk Utama */}
+            <div className="space-y-1 pt-2 border-t border-slate-100">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                <span>Titik Masuk Utama (Entry Point):</span>
+              </span>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                {term.entryPoint}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Action Footer */}
+        {/* Garis Pembatas Halus Horizontal Antara Bagian Atas dan Bawah */}
+        <div className="border-t border-slate-100" />
+
+        {/* Baris Bawah: Pertolongan Pertama (Kiri) & Langkah Pencegahan (Kanan) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Sisi Bawah Kiri: Pertolongan Pertama Terpapar */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between pb-2.5 border-b border-rose-100">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-50 text-rose-700 border border-rose-100">
+                  <OctagonAlert className="h-4 w-4" />
+                </div>
+                <h2 className="text-sm sm:text-base font-bold text-rose-950">
+                  Pertolongan Pertama Terpapar
+                </h2>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-rose-800 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                Tindakan Cepat
+              </span>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              {term.firstResponse}
+            </p>
+
+            <div className="flex items-center gap-2 text-xs font-semibold text-rose-700 pt-1">
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+              <span>Lakukan tindakan mitigasi segera dalam 15 menit pertama.</span>
+            </div>
+          </div>
+
+          {/* Sisi Bawah Kanan: Langkah Pencegahan Utama */}
+          <div className="space-y-3 lg:border-l lg:border-slate-100 lg:pl-10">
+            <div className="flex items-center justify-between pb-2.5 border-b border-emerald-100">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  <ShieldCheck className="h-4 w-4" />
+                </div>
+                <h2 className="text-sm sm:text-base font-bold text-emerald-950">
+                  Langkah Pencegahan Utama
+                </h2>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Proteksi Mandiri
+              </span>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              {term.prevention}
+            </p>
+
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 pt-1">
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+              <span>Kunci proteksi paling efektif sebelum terjadi insiden.</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Footer di Dalam Satu Container Section yang Sama */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-[#DDE6ED]">
           <Button
             variant="outline"
@@ -4294,7 +4352,7 @@ function KamusPage({
               onClick={() => navigate("/cek")}
               className="flex-1 sm:flex-none text-xs"
             >
-              Uji Cek Pesan & Berkas
+              Uji Cek Pesan &amp; Berkas
             </Button>
             <Button
               variant="primary"
