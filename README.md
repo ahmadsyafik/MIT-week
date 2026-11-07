@@ -71,9 +71,9 @@ Prasyarat: Node.js 20+.
 ## 7. Tim & branch
 | Peran | Nama | Branch |
 |---|---|---|
-| Backend (logika & data) | Ahmad Syifa'ul Falakhul Khayyi | `backend` |
-| Frontend (tampilan) | _(isi)_ | `frontend` |
-| Integrasi & deploy | _(isi)_ | `development` -> `main` |
+| Backend (logika & data) | Ahmad Syafi'al Anam | `backend` |
+| Frontend (tampilan) | Ahmad Syifaul Falakhul Khayyi dan Mutiara Dewanda Prisvilla | `frontend` |
+| Integrasi & deploy | Raffi Azzaky Ramadhani | `development` -> `main` |
 
 ## 8. Dokumentasi
 [Indeks](docs/README.md) · [Git workflow](docs/universal/GIT_WORKFLOW.md) · [Kontrak](docs/universal/INTERFACES.md) · [Backend](docs/backend/README.md) · [Frontend](docs/frontend/README.md) · [Deploy](docs/development/DEPLOY.md)
