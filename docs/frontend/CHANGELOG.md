@@ -3,22 +3,70 @@
 Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TASK_GUIDE.md).
 
 ## [Belum dirilis]
+### Diferensiasi Analisis & Pengayaan Fitur Halaman Cek (/cek)
+- **Cek.tsx, analysis.ts, & api.ts**:
+  - **Diferensiasi Output Pemeriksaan:** Memisahkan logika evaluasi dan tampilan hasil analisis secara spesifik untuk masing-masing tab:
+    - **Pesan:** Evaluasi transfer dana, tekanan waktu, tawaran gaji/hadiah berlebihan, tautan pancingan, penyamaran PII otomatis (nomor telepon & rekening), dan permintaan OTP/PIN.
+    - **Tautan (URL):** Deteksi protokol tidak terenkripsi (HTTP), TLD berisiko tinggi (`.xyz`, `.top`, `.site`), pemalsuan merk perbankan/ekspedisi (*typosquatting*), jalur jebakan login/verifikasi akun, pemendek tautan (*URL shorteners*), dan unduhan langsung paket aplikasi mentah (`.apk`).
+    - **Berkas & Izin:** Deteksi ekstensi file aplikasi mentah (`.apk`), manipulasi ekstensi ganda (*double extension* seperti `.pdf.apk`), kata kunci pancingan rekayasa sosial (undangan, tilang, resi), sumber instalasi tidak resmi (*sideloading* via WhatsApp/Telegram), dan izin berbahaya Android.
+  - **Pemilih Izin Interaktif Android:** Menyediakan kartu centang (*checkbox chips*) interaktif di tab Berkas & Izin untuk memilih izin berbahaya seperti `RECEIVE_SMS` (baca OTP), `BIND_ACCESSIBILITY_SERVICE` (aksesibilitas penuh), `READ_CONTACTS`, dan `SYSTEM_ALERT_WINDOW` (screen overlay) dengan label tingkat risiko (*Kritis*, *Tinggi*, *Sedang*).
+  - **Tombol Contoh Tiap Tab:**
+    - Menyesuaikan narasi ringkasan risiko (*summary*) pada hero box kartu hitam agar relevan secara konteks dengan objek yang diperiksa (pesan, URL, atau file).
+    - Menambahkan tombol *"Coba tautan contoh"* dan *"Coba berkas contoh"* dengan data sampel fiktif yang realistis di samping *"Coba contoh fiktif"* untuk pesan.
+  - **Redesain Indikator Donut Meter 3D & Gradien Kuning -> Orange -> Merah:**
+    - Mengganti donat datar oranye dengan desain *3D Neumorphic Donut Gauge* persis referensi visual: lingkaran melengkung tebal dengan saluran track inset, lapisan kilau tubular 3D (*glossy highlight*), serta piringan tengah terangkat (*elevated central hub disc*) berbayangan lembut yang memuat angka skor dan label "DARI 100".
+    - Mengubah skema warna busur lingkaran menjadi gradasi bertahap **Kuning (`#FACC15`) -> Orange (`#F97316`) -> Merah (`#DC2626`)** yang kontras, dinamis, dan intuitif mencerminkan eskalasi risiko.
+    - Menghapus bilah 4-segmen skala horizontal (*Aman, Waspada, Berisiko, Sangat Tinggi*) di bawah hero box agar visual kartu hasil tetap bersih, fokus, dan tidak redundan dengan indikator utama.
+  - **Penyederhanaan UI Kartu Hasil & Tombol Cara Verifikasi Collapsible:**
+    - Menghapus elemen dekoratif yang berlebihan sesuai permintaan (kotak pratinjau target pemeriksaan, lencana objek teks/tautan/berkas di header, lingkaran merah penanda jumlah temuan, tag indikasi modus, dan badge level `L4 · Bahaya` pada kartu red flags).
+    - Pada kartu temuan mencurigakan (*red flags*), secara bawaan hanya mencantumkan kategori dan alasan *"Kenapa mencurigakan"*.
+    - Menambahkan tombol interaktif *"Cara verifikasi"* (dengan ikon `ChevronDown` / `ChevronUp`) pada masing-masing kartu, yang jika diklik akan membuka kotak panduan *"Cara verifikasi"* ke bawah secara responsif dan rapi.
+  - **Status Bersih & Pembersihan Riwayat Saat Pindah Tab:** Menampilkan kartu hijau informatif (*"Tidak Ditemukan Tanda Bahaya Mencurigakan"*) saat tidak ada *red flags* terdeteksi, serta mereset hasil dan error saat berganti tab agar hasil pemeriksaan tidak tercampur.
+  - **Menu Dropdown Profil Interaktif (`UserProfileDropdown.tsx`):**
+    - Mengubah tombol profil pill di pojok kanan atas top bar menjadi tombol interaktif dengan animasi rotasi panah chevron saat terbuka.
+    - Menampilkan panel dropdown melayang (*floating dropdown*) yang memuat informasi akun ringkas, indikator status sesi on-device aktif, tautan cepat ke Keterbatasan & Privasi, serta tombol aksi **Keluar dari Sesi (Logout)**.
+    - Dilengkapi dukungan interaktivitas penuh: menutup otomatis saat klik di luar area (*click-outside listener*) atau saat tombol `Escape` ditekan, serta mengarahkan pengguna kembali ke halaman utama secara mulus saat keluar dari sesi.
+
+### Redesain Tata Letak Editorial Kamus Istilah Digital
+- **Belajar.tsx**:
+  - Mengubah tampilan kartu Kamus Istilah Jebakan & Modus Digital mengikuti gaya tipografi editorial modern persis referensi visual:
+    - **Contoh Kata Besar (Display Typography di Kiri):** Menampilkan nama istilah dalam tipografi besar (`text-3xl lg:text-4xl font-black`) dengan penekanan kata kunci berwana aksen dinamis (`renderStyledTermTitle`), tanda titik aksen, badge kategori pill, nomor urut seri `#01-#10`, serta monogram huruf awal semi-transparan sebagai watermark artistik di latar belakang.
+    - **Teks Penjelasan Lengkap (Samping Kanan):** Menampilkan paragraf definisi yang leluasa dan mudah dibaca, kotak catatan titik masuk jebakan, serta tombol aksi bertautan `→ Pelajari Anatomi Modus & Pertolongan Pertama` yang responsif.
+    - Penyesuaian layout serupa pada halaman detail `KamusPage` sehingga transisi antara daftar istilah dan bedah modus terasa konsisten dan menyatu.
+
+### Komponen Navigasi Mobile Gelembung Melayang (Curved Bubble Bottom Bar)
+- **MobileCurvedBottomNav.tsx & Layout.tsx**:
+  - Mengimplementasikan desain bilah navigasi bawah ponsel modern (*curved bubble bottom navigation bar*) persis referensi video interaksi:
+    - **Floating Active Bubble:** Gelembung lingkaran aktif bergradasi `#27374D` & `#526D82` dengan efek ring putih, bayangan halus, dan kilau refleksi yang melayang di atas bilah navigasi dan memuat ikon halaman aktif.
+    - **Curved Notch Scoop:** Cekungan lekukan organik (*curved scoop*) yang diukir halus di tepi atas bilah putih, bergerak mulus (*smooth fluid slide*) mengikuti posisi item aktif menggunakan transisi kurva pegas `cubic-bezier(0.34, 1.35, 0.64, 1)`.
+    - **Transisi Ikon & Label:** Ikon halaman tidak aktif terpasang rapi di bilah navigasi; saat suatu modul aktif, ikonnya bertransformasi naik ke dalam gelembung dengan animasi pop-in (`zoom-in-75`), sementara label modul tetap terbaca tebal di bagian bawah dok.
+    - Responsif di seluruh lebar layar ponsel (distribusi seimbang $20\%$ per modul) dengan area sentuh nyaman (*touch target* $> 44\text{px}$).
+
 ### Pembersihan & Penyederhanaan Tampilan (UI Cleanup)
+- **Layout.tsx**:
+  - **Pemberhentian Hamburger Menu Mobile & Penyeragaman Navigasi Bawah:** Menghapus tombol hamburger menu (`Menu` icon) dan drawer sidebar geser pada tampilan layar ponsel (`md:hidden`). Navigasi pada perangkat mobile kini difokuskan sepenuhnya melalui bilah navigasi bawah (*bottom navigation bar*) yang sudah memuat 5 halaman utama secara mudah dijangkau satu tangan (*thumb-friendly*), sementara sidebar tetap aktif khusus pada tampilan layar tablet dan desktop (`md:flex`).
 - **Lindungi.tsx**:
   - Menghapus badge pill `*Cek ulang keaslian alamat di situs resmi` pada header Kanal Lapor Resmi.
   - Menghapus ikon `Share2` pada label judul "Kartu Peringatan untuk Orang Sekitar".
   - Menghapus teks bawaan `*Teks aman dibagikan karena tidak memuat data pribadi.` agar area umpan balik status salin/bagi lebih bersih dan minimalis.
   - Memperbarui isi draf teks pesan pada Kartu Peringatan Keluarga (*warning card*) dengan salinan pesan edukatif terbaru (*"JagaRuang: Yuk, Jaga Keluarga dari Penipuan Digital!"*).
+  - Merapikan struktur paragraf dan jarak baris (*line-height* `leading-normal`) pada pesan peringatan: menyatukan butir daftar (*bullet points* & penomoran langkah) tanpa jeda baris kosong ganda yang terlalu renggang, sehingga pesan tersaji padat, rapi, dan mengalir seperti siaran chat pesan singkat yang natural.
   - Menghapus teks deskripsi header *"Teks ringkas siap salin tanpa memuat data pribadi untuk memperingatkan orang tua dan grup pertemanan."* pada Kartu Peringatan.
 - **Beranda.tsx**:
   - Menghapus teks label *"Diperbarui Mingguan"* di samping judul Kamus & Modus Populer.
 - **Sandi.tsx**:
+  - Menghapus tombol toggle segmented pill *"2 Kata"* vs *"3 Kata (Disarankan)"* pada header pembuatan sandi. Generator kata sandi kini secara default langsung menghasilkan kombinasi 3 kata bahasa Indonesia acak yang kuat dan mudah dihafal secara lisan.
   - Menghapus teks `(*AI Voice Cloning*)` pada deskripsi subtitle header Sandi Verifikasi Keluarga.
 - **FakeChatSimulator.tsx**:
+  - Menghapus tombol atas *"Ulangi Kasus"* (`RotateCcw`) pada bilah navigasi atas di atas simulator smartphone agar bilah navigasi tampil ringkas hanya dengan tombol kembali ke daftar skenario.
+  - **Pembersihan Elemen Akhir Skenario & Label Tape:**
+    - Menghapus tampilan `Kode Bukti: TRUST{...} Salin` pada kartu evaluasi akhir skenario (Foto 1).
+    - Menghapus lencana pita kuning *"GILIRANMU MENENTUKAN TINDAKAN"* di atas bilah keputusan, serta menyembunyikan bilah bawah redundan (*Kasus selesai... Selesai / Coba Alur Lain*) saat skenario berakhir sehingga kartu evaluasi akhir menjadi satu-satunya fokus ringkasan penyelesaian (Foto 2).
   - Menyatukan *Bottom Interactive Choices Dock* (tombol pilihan A, B, C dan status percakapan) ke dalam kontainer gulir utama obrolan (*scroll container*), sehingga scrollbar vertikal memanjang hingga ke bagian paling bawah pilihan dan pilihan dapat digulir langsung secara mulus dari dalam area chat.
   - Menambahkan bilah navigasi dekoratif di bagian bawah bingkai smartphone yang memuat tombol Home HP (bersama tombol Back dan Recents) bersifat visual murni (`pointer-events-none`) agar area bawah ponsel proporsional, autentik, dan tidak kosong.
   - Menghapus badge label *"Nomor Asing"* di samping nama kontak dan badge info skenario *"KX · 5 Titik Keputusan"* di header simulator chat agar tampilan bilah atas obrolan tampak bersih, realistis, dan seperti aplikasi pesan asli.
 - **Belajar.tsx**:
+  - **Penyederhanaan Animasi Hover Kartu Skenario Simulator:** Menghapus efek animasi hover internal (`group-hover:scale-105`, `group-hover:scale-110`, perubahan warna font teks judul, dan translasi panah tombol `Mulai →`) pada elemen dalam kartu. Animasi hover kini terisolasi murni pada kontainer kartu (*card lift & shadow* `hover:-translate-y-1 hover:shadow-xl`), menjaga gambar pratinjau dan tipografi di dalam kartu tetap stabil dan tidak bergerak saat dihover.
   - Menghapus ikon `Sliders` pada judul "Pilih Tingkat Kesulitan:" di kartu tantangan Kilat 2 Menit dan membersihkan import yang tidak terpakai.
   - Menghapus teks petunjuk *"Klik opsi untuk mengatur durasi tantangan"* di samping judul Pilih Tingkat Kesulitan.
   - Memperbesar dan meratakan ukuran tombol aksi kapsul "Mulai →" pada kartu Skenario Simulator (`w-full`, padding `py-2.5`, teks `text-sm font-bold`, dan badge panah `h-7 w-7`) agar proporsional, seragam, dan selaras di seluruh kartu skenario.

@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
-  Menu,
-  X,
   LogOut,
   LayoutDashboard,
   Search,
@@ -18,6 +16,8 @@ import {
 import { useAuth } from "../context/AuthContext";
 import LoginModal from "./LoginModal";
 import NotificationDropdown from "./NotificationDropdown";
+import UserProfileDropdown from "./UserProfileDropdown";
+import MobileCurvedBottomNav from "./MobileCurvedBottomNav";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", shortLabel: "Dashboard", icon: LayoutDashboard, end: true },
@@ -81,7 +81,6 @@ function getRandomRecommendations(pool: SearchItem[], count = 5): SearchItem[] {
 
 export default function Layout() {
   const { user, isAuthenticated, logout, openLoginModal } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [recommendations, setRecommendations] = useState<SearchItem[]>([]);
@@ -89,9 +88,8 @@ export default function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Tutup drawer sidebar mobile & dropdown search saat rute berpindah
+  // Tutup dropdown search saat rute berpindah
   useEffect(() => {
-    setSidebarOpen(false);
     setIsSearchOpen(false);
   }, [location.pathname]);
 
@@ -106,10 +104,7 @@ export default function Layout() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const closeSidebar = () => setSidebarOpen(false);
-
   const handleLogout = () => {
-    closeSidebar();
     logout();
   };
 
@@ -266,36 +261,19 @@ export default function Layout() {
         Lewati ke konten utama
       </a>
 
-      {/* Backdrop Overlay untuk Mobile Sidebar Drawer */}
-      {sidebarOpen && (
-        <div
-          role="button"
-          tabIndex={0}
-          aria-label="Tutup menu sidebar"
-          onClick={closeSidebar}
-          onKeyDown={(e) => {
-            if (e.key === "Escape" || e.key === "Enter") closeSidebar();
-          }}
-          className="fixed inset-0 z-40 bg-[#27374D]/60 backdrop-blur-xs md:hidden transition-opacity"
-        />
-      )}
-
       {/* ===================================================================== */}
-      {/* SIDEBAR: WARNA 526D82 SESUAI INSTRUKSI                                */}
+      {/* SIDEBAR: DESKTOP ONLY (PADA MOBILE SUDAH DIGANTIKAN BOTTOM NAVIGATION) */}
       {/* ===================================================================== */}
       <aside
         id="app-sidebar"
         aria-label="Navigasi sidebar utama"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col justify-between bg-[#526D82] text-white transition-transform duration-200 ease-in-out md:sticky md:top-0 md:h-screen md:translate-x-0 shadow-lg md:shadow-none border-r border-[#9DB2BF]/30 shrink-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className="hidden md:flex md:w-64 md:flex-col justify-between bg-[#526D82] text-white md:sticky md:top-0 md:h-screen border-r border-[#9DB2BF]/30 shrink-0"
       >
         <div className="flex flex-col h-full overflow-y-auto">
           {/* Header Sidebar Brand: Logo & Title (Posisi Gelap: Logo Putih) */}
           <div className="flex h-16 items-center justify-between border-b border-[#9DB2BF]/30 px-5 shrink-0 bg-[#526D82]">
             <NavLink
               to="/"
-              onClick={closeSidebar}
               className="flex items-center gap-3 font-bold text-white hover:text-[#DDE6ED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-lg transition-colors"
             >
               <img
@@ -308,16 +286,6 @@ export default function Layout() {
                 <span className="text-[10px] font-medium text-[#DDE6ED]/80">Guardians of Digital</span>
               </div>
             </NavLink>
-
-            {/* Tombol Tutup Sidebar di Mobile */}
-            <button
-              type="button"
-              onClick={closeSidebar}
-              className="flex md:hidden h-10 w-10 items-center justify-center rounded-lg text-[#DDE6ED] hover:bg-[#27374D]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              aria-label="Tutup sidebar"
-            >
-              <X className="h-5 w-5" />
-            </button>
           </div>
 
           {/* Menu Navigasi Utama di Sidebar */}
@@ -329,7 +297,6 @@ export default function Layout() {
                   key={item.to}
                   to={item.to}
                   end={item.end}
-                  onClick={closeSidebar}
                   className={({ isActive }) =>
                     `group flex min-h-[44px] items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
                       isActive
@@ -383,24 +350,15 @@ export default function Layout() {
       <div className="flex flex-1 flex-col min-w-0 min-h-screen bg-[#DDE6ED]">
         {/* Top Header Bar di atas Dashboard */}
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#9DB2BF]/40 bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-2xs">
-          {/* Mobile Hamburger + Title */}
-          <div className="flex items-center gap-3 md:hidden">
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(true)}
-              className="flex h-11 w-11 items-center justify-center rounded-lg text-[#526D82] hover:bg-[#DDE6ED] hover:text-[#27374D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82]"
-              aria-label="Buka navigasi sidebar"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-
+          {/* Mobile Brand / Logo (Hamburger menu dihilangkan, navigasi mobile menggunakan bottom bar) */}
+          <div className="flex items-center gap-2 md:hidden">
             <NavLink to="/" className="flex items-center gap-2 font-bold text-[#27374D] text-base">
               <img
                 src="/logo-blue.png"
                 alt="Logo JagaRuang"
                 className="h-7 w-7 object-contain shrink-0"
               />
-              <span>JagaRuang</span>
+              <span className="tracking-tight">JagaRuang</span>
             </NavLink>
           </div>
 
@@ -507,18 +465,7 @@ export default function Layout() {
             <NotificationDropdown />
 
             {/* User Profile Pill Dropdown */}
-            <div className="flex items-center gap-2 rounded-full border border-[#9DB2BF]/60 bg-white py-1 pl-1 pr-3 shadow-2xs">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#526D82] text-white font-bold text-xs shadow-xs">
-                {user?.name?.slice(0, 1).toUpperCase() || "U"}
-              </div>
-              <div className="hidden sm:flex flex-col text-left">
-                <span className="text-xs font-bold text-[#27374D] max-w-[100px] truncate" title={user?.name}>
-                  {user?.name}
-                </span>
-                <span className="text-[10px] text-[#526D82] leading-none">Anggota On-Device</span>
-              </div>
-              <ChevronDown className="h-3.5 w-3.5 text-[#526D82]" />
-            </div>
+            <UserProfileDropdown />
           </div>
         </header>
 
@@ -531,7 +478,7 @@ export default function Layout() {
         <LoginModal />
 
         {/* Footer Permanen (diberi margin bawah di mobile agar tidak terpotong bottom nav) */}
-        <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto mb-16 md:mb-0">
+        <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto mb-20 md:mb-0">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 sm:px-6 sm:flex-row sm:items-center sm:justify-between text-xs text-[#526D82]">
             <p className="max-w-xl leading-relaxed">
               Hasil hanyalah indikasi berbasis aturan dan bisa keliru. Seluruh analisis berjalan langsung di
@@ -549,48 +496,10 @@ export default function Layout() {
         </footer>
 
         {/* =================================================================== */}
-        {/* BOTTOM NAVIGATION BAR UNTUK MOBILE (MD:HIDDEN)                      */}
+        {/* BOTTOM NAVIGATION BAR MOBILE DENGAN FLOATING BUBBLE & CURVED NOTCH  */}
         {/* 5 ITEM: DASHBOARD, BELAJAR, CEK, LINDUNGI, SANDI                    */}
         {/* =================================================================== */}
-        <nav
-          aria-label="Navigasi Bawah Mobile"
-          className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-[#9DB2BF]/40 bg-white/95 px-1 backdrop-blur-md shadow-[0_-2px_12px_rgba(0,0,0,0.08)] md:hidden"
-        >
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                className={({ isActive }) =>
-                  `flex flex-1 flex-col items-center justify-center py-1 min-h-[44px] transition-all ${
-                    isActive
-                      ? "text-[#27374D] font-extrabold"
-                      : "text-[#526D82] hover:text-[#27374D] font-medium"
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all ${
-                        isActive
-                          ? "bg-[#DDE6ED] text-[#27374D] shadow-2xs"
-                          : "text-[#526D82]"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <span className="text-[10px] leading-tight mt-0.5 tracking-tight truncate max-w-[62px]">
-                      {item.shortLabel}
-                    </span>
-                  </>
-                )}
-              </NavLink>
-            );
-          })}
-        </nav>
+        <MobileCurvedBottomNav items={NAV_ITEMS} />
       </div>
     </div>
   );

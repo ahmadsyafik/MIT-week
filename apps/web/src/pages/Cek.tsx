@@ -6,22 +6,71 @@ import {
   ShieldAlert,
   AlertCircle,
   Check,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
-import { INPUT_MAX_CHARS, type AnalysisResult, type AnalyzeInput, type Band } from "@jagaruang/contracts";
+import {
+  INPUT_MAX_CHARS,
+  type AnalysisResult,
+  type AnalyzeInput,
+  type Band,
+} from "@jagaruang/contracts";
 import { analyze } from "../lib/coreClient";
-import { EXAMPLE_MESSAGE } from "../mocks/analysis";
+import {
+  EXAMPLE_MESSAGE,
+  EXAMPLE_LINK,
+  EXAMPLE_FILE,
+} from "../mocks/analysis";
 
 type TabKind = "message" | "link" | "file";
+
+const AVAILABLE_PERMISSIONS = [
+  {
+    id: "android.permission.RECEIVE_SMS",
+    name: "Terima & Baca SMS (OTP)",
+    desc: "android.permission.RECEIVE_SMS",
+    badge: "Kritis",
+  },
+  {
+    id: "android.permission.BIND_ACCESSIBILITY_SERVICE",
+    name: "Layanan Aksesibilitas (Kontrol Otomatis)",
+    desc: "android.permission.BIND_ACCESSIBILITY_SERVICE",
+    badge: "Kritis",
+  },
+  {
+    id: "android.permission.READ_CONTACTS",
+    name: "Baca Kontak Pribadi Ponsel",
+    desc: "android.permission.READ_CONTACTS",
+    badge: "Sedang",
+  },
+  {
+    id: "android.permission.SYSTEM_ALERT_WINDOW",
+    name: "Tampil di Atas Aplikasi Lain (Screen Overlay)",
+    desc: "android.permission.SYSTEM_ALERT_WINDOW",
+    badge: "Tinggi",
+  },
+];
 
 function formatCategoryName(category: string): string {
   const map: Record<string, string> = {
     permintaan_uang: "Permintaan Uang",
     tekanan_waktu: "Tekanan Waktu",
     tawaran_berlebihan: "Tawaran Berlebihan",
-    tautan: "Tautan",
+    tautan: "Tautan Mencurigakan",
     urgensi: "Urgensi",
+    ekstensi_berkas: "Ekstensi Berkas",
     ekstensi_berbahaya: "Ekstensi Berkas",
+    ekstensi_ganda: "Ekstensi Ganda",
+    rekayasa_sosial: "Rekayasa Sosial",
+    sumber_pengunduhan: "Sumber Pengunduhan",
     izin_berbahaya: "Izin Aplikasi",
+    protokol_keamanan: "Protokol Keamanan",
+    domain_mencurigakan: "Domain Berisiko",
+    peniruan_domain: "Peniruan Merk / Domain",
+    halaman_jebakan: "Halaman Jebakan Login",
+    pemendek_tautan: "Pemendek Tautan",
+    unduhan_berbahaya: "Unduhan Langsung Berbahaya",
   };
   if (map[category]) return map[category];
   return category
@@ -33,55 +82,71 @@ function formatCategoryName(category: string): string {
 function getGaugeColor(band: Band): string {
   switch (band) {
     case "sangat_tinggi":
-      return "#EA580C";
+      return "#DC2626"; // Merah
     case "tinggi":
-      return "#F97316";
+      return "#F97316"; // Orange
     case "waspada":
-      return "#EAB308";
+      return "#EAB308"; // Kuning
     case "belum_terlihat":
     default:
-      return "#3B82F6";
+      return "#10B981"; // Emerald green
   }
 }
 
-function getRiskBandInfo(band: Band) {
+function getRiskBandInfo(band: Band, kind?: TabKind) {
   switch (band) {
     case "sangat_tinggi":
       return {
         title: "Risiko Sangat Tinggi",
-        badgeStyle: "bg-[#C2410C]/35 text-[#FB923C] border border-[#EA580C]/40",
-        activeColor: "text-[#EA580C]",
-        activeBg: "bg-[#EA580C]",
+        badgeStyle: "bg-red-500/20 text-red-300 border border-red-500/35",
+        activeColor: "text-red-400",
+        activeBg: "bg-red-500",
         summary:
-          "Pesan ini menunjukkan pola penipuan yang kuat: iming-iming kerja, tekanan waktu, dan permintaan transfer dana di muka.",
+          kind === "link"
+            ? "Tautan ini terindikasi sangat berbahaya: meniru domain institusi/bank resmi (typosquatting), memicu unduhan paket aplikasi mentah (.apk), atau mengarah ke laman phishing."
+            : kind === "file"
+            ? "Berkas ini terindikasi malware berbahaya tingkat tinggi: menggunakan format paket Android mentah (.apk) serta meminta izin kritis seperti penyadapan SMS/OTP dan kendali aksesibilitas."
+            : "Pesan ini menunjukkan pola penipuan yang sangat kuat: iming-iming imbalan berlebihan, desakan waktu, atau permintaan transfer dana di muka.",
       };
     case "tinggi":
       return {
         title: "Risiko Tinggi",
-        badgeStyle: "bg-[#EA580C]/25 text-[#FB923C] border border-[#EA580C]/40",
-        activeColor: "text-[#F97316]",
-        activeBg: "bg-[#F97316]",
+        badgeStyle: "bg-orange-500/20 text-orange-300 border border-orange-500/35",
+        activeColor: "text-orange-400",
+        activeBg: "bg-orange-500",
         summary:
-          "Pesan ini memiliki pola mencurigakan dengan indikasi manipulasi psikologis atau pengalihan rute akun.",
+          kind === "link"
+            ? "Tautan mencurigakan: menggunakan pemendek tautan untuk menyamarkan alamat asli, menggunakan TLD berisiko tinggi, atau memuat jalur pancingan login."
+            : kind === "file"
+            ? "Berkas berisiko: diterima melalui pesan langsung tanpa verifikasi toko aplikasi resmi (sideloading) atau meminta izin sensitif seperti kontak atau screen overlay."
+            : "Pesan ini memiliki pola mencurigakan dengan indikasi manipulasi psikologis, desakan waktu mendadak, atau rekayasa sosial.",
       };
     case "waspada":
       return {
         title: "Waspada",
-        badgeStyle: "bg-[#CA8A04]/25 text-[#FDE047] border border-[#EAB308]/40",
-        activeColor: "text-[#EAB308]",
-        activeBg: "bg-[#EAB308]",
+        badgeStyle: "bg-amber-500/20 text-amber-300 border border-amber-500/35",
+        activeColor: "text-amber-400",
+        activeBg: "bg-amber-500",
         summary:
-          "Ditemukan anomali bahasa atau permintaan yang tidak biasa. Lakukan verifikasi sebelum bertindak.",
+          kind === "link"
+            ? "Tautan perlu diwaspadai karena menggunakan protokol tanpa enkripsi (HTTP) atau alamat situs yang belum lazim. Verifikasi sebelum membukanya."
+            : kind === "file"
+            ? "Nama berkas memuat kata pancingan psikologis (undangan, resi, tilang) atau meminta izin tambahan yang perlu diperiksa kegunaannya."
+            : "Ditemukan anomali bahasa atau kata-kata yang tidak biasa. Lakukan verifikasi identitas pengirim sebelum bertindak.",
       };
     case "belum_terlihat":
     default:
       return {
         title: "Belum Terlihat Bahaya",
-        badgeStyle: "bg-slate-700/50 text-slate-300 border border-slate-600",
-        activeColor: "text-emerald-600",
-        activeBg: "bg-emerald-600",
+        badgeStyle: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/35",
+        activeColor: "text-emerald-400",
+        activeBg: "bg-emerald-500",
         summary:
-          "Tidak ditemukan indikasi manipulasi mencurigakan berdasarkan aturan saat ini. Tetap berhati-hati dalam membagikan informasi.",
+          kind === "link"
+            ? "Tidak ditemukan pola peniruan domain atau tautan berbahaya berdasarkan basis aturan saat ini. Tetap pastikan alamat situs sebelum memasukkan kata sandi."
+            : kind === "file"
+            ? "Ekstensi dan izin yang dicantumkan belum menunjukkan tanda bahaya khas paket malware. Tetap prioritaskan unduhan dari Google Play Store resmi."
+            : "Tidak ditemukan indikasi penipuan atau manipulasi mencurigakan berdasarkan aturan saat ini. Tetap jaga kerahasiaan data pribadimu.",
       };
   }
 }
@@ -94,10 +159,29 @@ export default function Cek() {
   const [source, setSource] = useState<"whatsapp" | "telegram" | "email" | "toko_resmi" | "lainnya">("whatsapp");
   const [permissions, setPermissions] = useState<string[]>([]);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [lastInput, setLastInput] = useState<AnalyzeInput | null>(null);
+  const [expandedFlags, setExpandedFlags] = useState<Record<number, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+
+  function toggleFlag(idx: number) {
+    setExpandedFlags((prev) => ({
+      ...prev,
+      [idx]: !prev[idx],
+    }));
+  }
+
+  function handleTabChange(tab: TabKind) {
+    setActiveTab(tab);
+    setError(null);
+    setResult(null);
+    setLastInput(null);
+    setExpandedFlags({});
+  }
 
   function handleAnalyze(input: AnalyzeInput) {
     setError(null);
+    setLastInput(input);
+    setExpandedFlags({});
     try {
       const res = analyze(input);
       setResult(res);
@@ -116,7 +200,7 @@ export default function Cek() {
 
   function handleCheckLink() {
     if (!url.trim()) {
-      setError("Masukkan tautan (URL) terlebih dahulu.");
+      setError("Masukkan tautan (URL) terlebih dahulu, atau gunakan tombol 'Coba tautan contoh'.");
       return;
     }
     handleAnalyze({ kind: "link", url });
@@ -124,7 +208,7 @@ export default function Cek() {
 
   function handleCheckFile() {
     if (!fileName.trim()) {
-      setError("Masukkan atau pilih nama berkas terlebih dahulu.");
+      setError("Masukkan atau pilih nama berkas terlebih dahulu, atau gunakan tombol 'Coba berkas contoh'.");
       return;
     }
     handleAnalyze({
@@ -135,24 +219,32 @@ export default function Cek() {
     });
   }
 
-  const loadExample = () => {
-    setActiveTab("message");
+  const loadExampleMessage = () => {
     setText(EXAMPLE_MESSAGE);
     handleAnalyze({ kind: "message", text: EXAMPLE_MESSAGE });
   };
 
-  const bandInfo = result ? getRiskBandInfo(result.band) : null;
-  const currentBandIdx = result
-    ? result.band === "belum_terlihat"
-      ? 0
-      : result.band === "waspada"
-      ? 1
-      : result.band === "tinggi"
-      ? 2
-      : 3
-    : -1;
+  const loadExampleLink = () => {
+    setUrl(EXAMPLE_LINK);
+    handleAnalyze({ kind: "link", url: EXAMPLE_LINK });
+  };
 
-  // Donut Gauge math
+  const loadExampleFile = () => {
+    setFileName(EXAMPLE_FILE.fileName);
+    setSource(EXAMPLE_FILE.source);
+    setPermissions(EXAMPLE_FILE.permissions);
+    handleAnalyze({
+      kind: "file",
+      fileName: EXAMPLE_FILE.fileName,
+      source: EXAMPLE_FILE.source,
+      permissions: EXAMPLE_FILE.permissions,
+    });
+  };
+
+  const currentKind: TabKind = lastInput?.kind || activeTab;
+  const bandInfo = result ? getRiskBandInfo(result.band, currentKind) : null;
+
+  // Donut Gauge math (radius 38, strokeWidth 11)
   const gaugeRadius = 38;
   const circumference = 2 * Math.PI * gaugeRadius; // ~238.76
   const gaugeOffset = result
@@ -168,7 +260,7 @@ export default function Cek() {
             Cek Indikasi Tipuan Digital
           </h1>
           <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">
-            Tempel pesan, tautan, atau periksa ekstensi berkas. Semua analisis diproses langsung di perangkatmu.
+            Tempel pesan, tautan, atau periksa ekstensi berkas. Semua analisis diproses langsung di perangkatmu tanpa kirim data ke server luar.
           </p>
         </div>
 
@@ -183,10 +275,7 @@ export default function Cek() {
                 ? "border-[#27374D] text-[#27374D]"
                 : "border-transparent text-[#526D82] hover:text-[#27374D]"
             }`}
-            onClick={() => {
-              setActiveTab("message");
-              setError(null);
-            }}
+            onClick={() => handleTabChange("message")}
           >
             <MessageSquare className="h-4 w-4" />
             <span>Pesan</span>
@@ -201,10 +290,7 @@ export default function Cek() {
                 ? "border-[#27374D] text-[#27374D]"
                 : "border-transparent text-[#526D82] hover:text-[#27374D]"
             }`}
-            onClick={() => {
-              setActiveTab("link");
-              setError(null);
-            }}
+            onClick={() => handleTabChange("link")}
           >
             <Link2 className="h-4 w-4" />
             <span>Tautan</span>
@@ -219,10 +305,7 @@ export default function Cek() {
                 ? "border-[#27374D] text-[#27374D]"
                 : "border-transparent text-[#526D82] hover:text-[#27374D]"
             }`}
-            onClick={() => {
-              setActiveTab("file");
-              setError(null);
-            }}
+            onClick={() => handleTabChange("file")}
           >
             <FileCheck className="h-4 w-4" />
             <span>Berkas & Izin</span>
@@ -230,13 +313,13 @@ export default function Cek() {
         </div>
       </div>
 
-      {/* Warning Privasi (Gold / Amber Banner Sesuai Gambar) */}
+      {/* Warning Privasi */}
       <div className="flex items-start gap-2.5 rounded-xl bg-[#FFFBF0] border border-[#FDE68A] p-3 sm:p-3.5 text-xs text-[#92400E] shadow-2xs">
         <div className="flex h-4 w-4 shrink-0 items-center justify-center text-amber-600 mt-0.5">
           <ShieldAlert className="h-4 w-4" />
         </div>
         <p className="leading-relaxed">
-          <strong className="font-bold text-[#78350F]">Perlindungan Privasi —</strong> Hindari memasukkan data sensitif (seperti password atau nomor kartu). Sistem ini menyamarkan nomor telepon dan rekening bank secara otomatis.
+          <strong className="font-bold text-[#78350F]">Perlindungan Privasi —</strong> Hindari memasukkan data sensitif (seperti password atau nomor kartu). Sistem ini menyamarkan nomor telepon dan rekening bank secara otomatis pada hasil deteksi.
         </p>
       </div>
 
@@ -267,13 +350,13 @@ export default function Cek() {
             <button
               type="button"
               onClick={handleCheckMessage}
-              className="rounded-xl bg-black px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-neutral-800 transition-colors shadow-xs cursor-pointer"
+              className="rounded-xl bg-[#27374D] px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-[#1E293B] transition-colors shadow-xs cursor-pointer"
             >
               Periksa Pesan
             </button>
             <button
               type="button"
-              onClick={loadExample}
+              onClick={loadExampleMessage}
               className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
             >
               Coba contoh fiktif
@@ -294,11 +377,11 @@ export default function Cek() {
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://loker-resmi.invalid/daftar"
+              placeholder="Contoh: http://mandiri-verifikasi.xyz/unblock-pin"
               className="w-full rounded-xl border border-slate-200 p-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
             />
             <p className="text-[11px] text-slate-500">
-              Tautan tidak akan dibuka atau dikunjungi oleh peramban. Sistem hanya memeriksa susunan teks domain.
+              Tautan tidak akan dibuka atau dikunjungi oleh peramban. Sistem menganalisis protokol, domain, pemendek link, dan kata kunci berbahaya secara luring.
             </p>
           </div>
 
@@ -306,17 +389,13 @@ export default function Cek() {
             <button
               type="button"
               onClick={handleCheckLink}
-              className="rounded-xl bg-black px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-neutral-800 transition-colors shadow-xs cursor-pointer"
+              className="rounded-xl bg-[#27374D] px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-[#1E293B] transition-colors shadow-xs cursor-pointer"
             >
               Periksa Tautan
             </button>
             <button
               type="button"
-              onClick={() => {
-                const sample = "http://undangan-nikah.example.com.apk-download.invalid";
-                setUrl(sample);
-                handleAnalyze({ kind: "link", url: sample });
-              }}
+              onClick={loadExampleLink}
               className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
             >
               Coba tautan contoh
@@ -327,8 +406,8 @@ export default function Cek() {
 
       {/* Input Tab: File & Izin */}
       {activeTab === "file" && (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="space-y-3">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs space-y-5">
+          <div className="space-y-4">
             <div className="space-y-1.5">
               <label htmlFor="file-name" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 NAMA BERKAS & EKSTENSI
@@ -342,7 +421,7 @@ export default function Cek() {
                 className="w-full rounded-xl border border-slate-200 p-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
               />
               <p className="text-[11px] text-slate-500">
-                Hanya membaca nama dan ekstensi berkas. Isi file tidak dibaca atau diunggah.
+                Hanya membaca nama dan ekstensi berkas. Isi file tidak dibaca atau diunggah ke server manapun.
               </p>
             </div>
 
@@ -356,11 +435,65 @@ export default function Cek() {
                 onChange={(e) => setSource(e.target.value as any)}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-white text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
               >
-                <option value="whatsapp">WhatsApp / Telegram (Pesan Langsung)</option>
+                <option value="whatsapp">WhatsApp / Telegram (Pesan Langsung / Sideload)</option>
                 <option value="email">Email</option>
-                <option value="toko_resmi">Toko Aplikasi Resmi (Play Store / App Store)</option>
-                <option value="lainnya">Situs Web / Lainnya</option>
+                <option value="toko_resmi">Toko Aplikasi Resmi (Google Play Store / App Store)</option>
+                <option value="lainnya">Situs Web / Unduhan Peramban</option>
               </select>
+            </div>
+
+            {/* Selector Izin Android */}
+            <div className="space-y-2 pt-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                IZIN APLIKASI YANG DIMINTA (PILIH YANG SESUAI)
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {AVAILABLE_PERMISSIONS.map((perm) => {
+                  const isChecked = permissions.includes(perm.id);
+                  return (
+                    <label
+                      key={perm.id}
+                      className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-all ${
+                        isChecked
+                          ? "border-[#27374D] bg-[#27374D]/5 text-[#27374D] shadow-2xs"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setPermissions([...permissions, perm.id]);
+                          } else {
+                            setPermissions(permissions.filter((p) => p !== perm.id));
+                          }
+                        }}
+                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#27374D] focus:ring-[#27374D]"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-semibold text-slate-900">{perm.name}</span>
+                          <span
+                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                              perm.badge === "Kritis"
+                                ? "bg-red-100 text-red-700"
+                                : perm.badge === "Tinggi"
+                                ? "bg-orange-100 text-orange-700"
+                                : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {perm.badge}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
+                          {perm.desc}
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -368,23 +501,13 @@ export default function Cek() {
             <button
               type="button"
               onClick={handleCheckFile}
-              className="rounded-xl bg-black px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-neutral-800 transition-colors shadow-xs cursor-pointer"
+              className="rounded-xl bg-[#27374D] px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-[#1E293B] transition-colors shadow-xs cursor-pointer"
             >
               Periksa Berkas
             </button>
             <button
               type="button"
-              onClick={() => {
-                setFileName("Surat_Tilang_Elektronik.apk");
-                setSource("whatsapp");
-                setPermissions(["android.permission.RECEIVE_SMS"]);
-                handleAnalyze({
-                  kind: "file",
-                  fileName: "Surat_Tilang_Elektronik.apk",
-                  source: "whatsapp",
-                  permissions: ["android.permission.RECEIVE_SMS"],
-                });
-              }}
+              onClick={loadExampleFile}
               className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
             >
               Coba berkas contoh
@@ -400,7 +523,7 @@ export default function Cek() {
       )}
 
       {/* =================================================================== */}
-      {/* HASIL ANALISIS (PERSIS TAMPILAN GAMBAR REFERENSI DESAIN)            */}
+      {/* HASIL ANALISIS                                                      */}
       {/* =================================================================== */}
       {result && bandInfo && (
         <div className="rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-xs space-y-6">
@@ -411,41 +534,86 @@ export default function Cek() {
             </span>
           </div>
 
-          {/* Hero Box Charcoal Gelap (Donut Gauge + Status Badge & Deskripsi) */}
+          {/* Hero Box Charcoal Gelap (Donut Gauge 3D + Status Badge & Deskripsi) */}
           <div className="rounded-2xl bg-[#1E1E1E] p-5 sm:p-6 text-white flex flex-col sm:flex-row items-center sm:items-center gap-5 sm:gap-6 shadow-md">
-            {/* Donut Circular Gauge */}
-            <div className="relative flex h-24 w-24 shrink-0 items-center justify-center">
+            {/* Donut Circular Gauge Gaya Neumorphic 3D (Gradien Kuning -> Orange -> Merah) */}
+            <div className="relative flex h-28 w-28 sm:h-32 sm:w-32 shrink-0 items-center justify-center">
               <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                {/* Track Lingkaran Abu Gelap */}
+                <defs>
+                  {/* Gradien Kuning -> Orange -> Merah */}
+                  <linearGradient id="scoreGaugeGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FACC15" />   {/* Kuning Cerah */}
+                    <stop offset="25%" stopColor="#F59E0B" />  {/* Kuning-Emas */}
+                    <stop offset="55%" stopColor="#FB923C" />  {/* Orange Terang */}
+                    <stop offset="75%" stopColor="#F97316" />  {/* Orange Menyala */}
+                    <stop offset="90%" stopColor="#EF4444" />  {/* Merah */}
+                    <stop offset="100%" stopColor="#DC2626" /> {/* Merah Pekat */}
+                  </linearGradient>
+
+                  {/* Lapisan Kilau Tubular 3D Halus (Glossy Highlight) */}
+                  <linearGradient id="tubularHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.35" />
+                    <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.06" />
+                    <stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
+                  </linearGradient>
+                </defs>
+
+                {/* Saluran Track Belakang (Inset Channel Cekung) */}
                 <circle
                   cx="50"
                   cy="50"
                   r={gaugeRadius}
-                  stroke="#2E2E32"
-                  strokeWidth="8"
+                  stroke="#2A2A2E"
+                  strokeWidth="11"
                   fill="none"
+                  className="opacity-75"
                 />
-                {/* Progress Lingkaran Oranye/Merah */}
+
+                {/* Progress Lingkaran: Gradien Kuning -> Orange -> Merah */}
                 <circle
                   cx="50"
                   cy="50"
                   r={gaugeRadius}
-                  stroke={getGaugeColor(result.band)}
-                  strokeWidth="8"
+                  stroke={result.band === "belum_terlihat" ? "#10B981" : "url(#scoreGaugeGradient)"}
+                  strokeWidth="11"
                   strokeDasharray={circumference}
                   strokeDashoffset={gaugeOffset}
                   strokeLinecap="round"
                   fill="none"
+                  style={{
+                    filter:
+                      result.band === "belum_terlihat"
+                        ? "drop-shadow(0 2px 4px rgba(16, 185, 129, 0.4))"
+                        : "drop-shadow(0 2px 8px rgba(249, 115, 22, 0.45))",
+                  }}
                   className="transition-all duration-1000 ease-out"
                 />
+
+                {/* Lapisan Kilau Tubular 3D untuk Efek Timbul Seperti Gambar Referensi */}
+                {result.band !== "belum_terlihat" && (
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={gaugeRadius}
+                    stroke="url(#tubularHighlight)"
+                    strokeWidth="9"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={gaugeOffset}
+                    strokeLinecap="round"
+                    fill="none"
+                    className="transition-all duration-1000 ease-out pointer-events-none"
+                  />
+                )}
               </svg>
 
-              {/* Angka Skor di Tengah Donut */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              {/* Plat Tengah Elevated (Central Hub Disc dengan Soft Bevel / Drop Shadow) */}
+              <div className="absolute inset-3 sm:inset-3.5 rounded-full bg-[#18181B] shadow-[inset_0_2px_4px_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.6)] border border-white/5 flex flex-col items-center justify-center text-center z-10">
                 <span className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tight">
                   {result.score}
                 </span>
-                <span className="text-[10px] text-neutral-400 font-medium mt-0.5">dari 100</span>
+                <span className="text-[9px] sm:text-[10px] text-neutral-400 font-semibold uppercase tracking-wider mt-1">
+                  dari 100
+                </span>
               </div>
             </div>
 
@@ -463,112 +631,91 @@ export default function Cek() {
             </div>
           </div>
 
-          {/* 4-Segment Scale Bar (Horizontal) */}
-          <div className="space-y-2 pt-1">
-            <div className="grid grid-cols-4 gap-2">
-              {/* Segment 1: Aman */}
-              <div className="space-y-1.5 text-center">
-                <div
-                  className={`h-1.5 sm:h-2 rounded-full transition-all ${
-                    currentBandIdx === 0 ? bandInfo.activeBg : "bg-slate-200"
-                  }`}
-                />
-                <span
-                  className={`text-[11px] block transition-colors ${
-                    currentBandIdx === 0 ? `font-bold ${bandInfo.activeColor}` : "text-slate-400 font-medium"
-                  }`}
-                >
-                  Aman
-                </span>
+          {/* Daftar Tanda Peringatan Ditemukan ATAU Kondisi Bersih */}
+          {result.flags.length === 0 ? (
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 text-center sm:text-left flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                <ShieldCheck className="h-6 w-6" />
               </div>
-
-              {/* Segment 2: Waspada */}
-              <div className="space-y-1.5 text-center">
-                <div
-                  className={`h-1.5 sm:h-2 rounded-full transition-all ${
-                    currentBandIdx === 1 ? bandInfo.activeBg : "bg-slate-200"
-                  }`}
-                />
-                <span
-                  className={`text-[11px] block transition-colors ${
-                    currentBandIdx === 1 ? `font-bold ${bandInfo.activeColor}` : "text-slate-400 font-medium"
-                  }`}
-                >
-                  Waspada
-                </span>
-              </div>
-
-              {/* Segment 3: Berisiko */}
-              <div className="space-y-1.5 text-center">
-                <div
-                  className={`h-1.5 sm:h-2 rounded-full transition-all ${
-                    currentBandIdx === 2 ? bandInfo.activeBg : "bg-slate-200"
-                  }`}
-                />
-                <span
-                  className={`text-[11px] block transition-colors ${
-                    currentBandIdx === 2 ? `font-bold ${bandInfo.activeColor}` : "text-slate-400 font-medium"
-                  }`}
-                >
-                  Berisiko
-                </span>
-              </div>
-
-              {/* Segment 4: Sangat Tinggi */}
-              <div className="space-y-1.5 text-center">
-                <div
-                  className={`h-1.5 sm:h-2 rounded-full transition-all ${
-                    currentBandIdx === 3 ? bandInfo.activeBg : "bg-slate-200"
-                  }`}
-                />
-                <span
-                  className={`text-[11px] block transition-colors ${
-                    currentBandIdx === 3 ? `font-bold ${bandInfo.activeColor}` : "text-slate-400 font-medium"
-                  }`}
-                >
-                  Sangat Tinggi
-                </span>
+              <div className="space-y-0.5">
+                <h4 className="text-sm font-bold text-emerald-950">
+                  Tidak Ditemukan Tanda Bahaya Mencurigakan
+                </h4>
+                <p className="text-xs text-emerald-800 leading-relaxed font-normal">
+                  Pemeriksaan aturan luring tidak mendeteksi indikator pemerasan, manipulasi teks, domain mencurigakan, atau paket aplikasi berisiko tinggi.
+                </p>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-3 pt-2">
+              <h3 className="text-base font-bold text-slate-900">
+                Tanda Peringatan Ditemukan
+              </h3>
 
-          {/* Daftar Tanda Peringatan Ditemukan (Grid 2 Kolom) */}
-          <div className="space-y-3 pt-2">
-            <h3 className="text-base font-bold text-slate-900">
-              Tanda Peringatan Ditemukan ({result.flags.length})
-            </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+                {result.flags.map((flag, idx) => {
+                  const isExpanded = !!expandedFlags[idx];
+                  return (
+                    <div
+                      key={flag.ruleId || idx}
+                      className="rounded-2xl border border-amber-200/70 bg-[#FFFDF9] p-4 sm:p-5 space-y-3 shadow-2xs flex flex-col justify-between transition-all"
+                    >
+                      <div className="space-y-2.5">
+                        {/* Baris Atas: Label Kategori */}
+                        <div className="text-xs text-slate-400">
+                          Kategori:{" "}
+                          <span className="font-medium text-slate-600">
+                            {formatCategoryName(flag.category)}
+                          </span>
+                        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
-              {result.flags.map((flag, idx) => (
-                <div
-                  key={flag.ruleId || idx}
-                  className="rounded-2xl border border-amber-200/60 bg-[#FFFDF9] p-4 sm:p-5 space-y-3 shadow-2xs flex flex-col justify-between"
-                >
-                  <div className="space-y-2.5">
-                    {/* Baris Atas: Label Kategori */}
-                    <div className="text-xs text-slate-400">
-                      Kategori: <span className="font-medium text-slate-600">{formatCategoryName(flag.category)}</span>
+                        {/* Kenapa Mencurigakan */}
+                        <div className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                          <strong className="font-bold text-slate-900">Kenapa mencurigakan: </strong>
+                          <span>{flag.why}</span>
+                        </div>
+                      </div>
+
+                      {/* Tombol Tampilkan / Sembunyikan Cara Verifikasi & Konten Collapsible */}
+                      <div className="pt-1 mt-auto">
+                        <button
+                          type="button"
+                          onClick={() => toggleFlag(idx)}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-3 py-1.5 transition-all shadow-2xs cursor-pointer"
+                          aria-expanded={isExpanded}
+                        >
+                          <span>{isExpanded ? "Tutup cara verifikasi" : "Cara verifikasi"}</span>
+                          {isExpanded ? (
+                            <ChevronUp className="h-3.5 w-3.5 text-slate-500" />
+                          ) : (
+                            <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
+                          )}
+                        </button>
+
+                        {/* Konten Cara Verifikasi yang Muncul ke Bawah Setelah Diklik */}
+                        {isExpanded && (
+                          <div className="rounded-xl bg-white border border-slate-100 p-3 sm:p-3.5 flex items-start gap-2 text-xs sm:text-sm text-slate-700 leading-relaxed shadow-2xs mt-2.5 transition-all animate-in fade-in slide-in-from-top-1 duration-200">
+                            <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                            <div>
+                              <strong className="font-bold text-slate-900">Cara verifikasi: </strong>
+                              <span>{flag.verify}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-
-                    {/* Kenapa Mencurigakan */}
-                    <div className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                      <strong className="font-bold text-slate-900">Kenapa mencurigakan: </strong>
-                      <span>{flag.why}</span>
-                    </div>
-                  </div>
-
-                  {/* Cara Verifikasi (White Inset Box) */}
-                  <div className="rounded-xl bg-white border border-slate-100 p-3 sm:p-3.5 flex items-start gap-2 text-xs sm:text-sm text-slate-700 leading-relaxed shadow-2xs mt-auto">
-                    <Check className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="font-bold text-slate-900">Cara verifikasi: </strong>
-                      <span>{flag.verify}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Disclaimer Wajib di Bawah */}
+          {result.disclaimer && (
+            <p className="text-[11px] text-slate-400 text-center leading-relaxed pt-2 border-t border-slate-100">
+              {result.disclaimer}
+            </p>
+          )}
         </div>
       )}
     </div>

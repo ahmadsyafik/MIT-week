@@ -531,7 +531,7 @@ export default function Lindungi() {
 
         {/* Tampilan Kotak Pesan Siap Salin */}
         <div className="rounded-2xl border border-[#9DB2BF]/60 bg-[#DDE6ED]/40 p-4 sm:p-5">
-          <pre className="font-sans text-xs text-[#27374D] whitespace-pre-wrap leading-relaxed select-all">
+          <pre className="font-sans text-xs text-[#27374D] whitespace-pre-wrap leading-normal select-all">
             {warningCard.text}
           </pre>
         </div>

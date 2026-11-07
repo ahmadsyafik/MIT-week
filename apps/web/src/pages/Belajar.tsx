@@ -1698,7 +1698,7 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
             <div
               key={sc.id}
               onClick={() => onSelectScenario(sc.id)}
-              className="group relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden h-full"
+              className="relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden h-full"
             >
               {/* Bagian Atas: Gambar / Media Preview Card */}
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-[#EAE4DC] flex items-center justify-center">
@@ -1707,14 +1707,14 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
                     <img
                       src={sc.centerImage}
                       alt={sc.title}
-                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-cover object-top"
                     />
                   </div>
                 ) : (
                   <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden p-4">
                     {/* Background template halus dengan blur lembut */}
                     <div
-                      className="absolute inset-0 bg-cover bg-center filter blur-[1.5px] brightness-90 scale-105 transition-transform duration-500 group-hover:scale-110"
+                      className="absolute inset-0 bg-cover bg-center filter blur-[1.5px] brightness-90"
                       style={{
                         backgroundImage: `url('/simulator/desk-template.jpg'), linear-gradient(135deg, #27374D 0%, #526D82 100%)`,
                       }}
@@ -1723,7 +1723,7 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
 
                     {/* Floating Center Icon Pill */}
                     <div className="relative z-1 flex flex-col items-center justify-center space-y-1.5">
-                      <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 text-white shadow-md transition-all duration-300 group-hover:scale-110 group-hover:bg-white/40">
+                      <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 text-white shadow-md">
                         <Icon className="h-6 w-6 text-white drop-shadow-md" />
                       </div>
                     </div>
@@ -1749,7 +1749,7 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
               {/* Bagian Tengah: Judul & Deskripsi Skenario */}
               <div className="pt-3 pb-0.5 px-0.5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#27374D] group-hover:text-[#1e2b3d] line-clamp-1 tracking-tight leading-snug">
+                  <h3 className="text-sm sm:text-base font-bold text-[#27374D] line-clamp-1 tracking-tight leading-snug">
                     {sc.title}
                   </h3>
                   <p className="text-[11px] sm:text-xs text-[#526D82] line-clamp-2 leading-relaxed min-h-[36px] mt-1 font-normal">
@@ -1759,9 +1759,9 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
 
                 {/* Bagian Bawah: Tombol Aksi "Mulai →" (Radius Lebih Sedang/Kompak, Bukan Kapsul Full) */}
                 <div className="pt-3 border-t border-slate-200/70 mt-3 w-full">
-                  <div className="w-full inline-flex items-center justify-between pl-4 pr-2 py-2.5 rounded-xl bg-[#27374D] group-hover:bg-[#1e2b3d] text-white transition-all shadow-xs group-hover:shadow-md cursor-pointer">
+                  <div className="w-full inline-flex items-center justify-between pl-4 pr-2 py-2.5 rounded-xl bg-[#27374D] text-white shadow-xs">
                     <span className="text-xs sm:text-sm font-bold tracking-wide leading-none pl-0.5">Mulai</span>
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#27374D] group-hover:translate-x-0.5 transition-transform shadow-2xs shrink-0">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#27374D] shadow-2xs shrink-0">
                       <ArrowRight className="h-3.5 w-3.5" />
                     </span>
                   </div>
@@ -2364,17 +2364,23 @@ function SimulatorPage({
                 Langkah 2: Tentukan keputusan tindakanmu:
               </div>
               <div className="space-y-2">
-                {sc.choices.map((choice) => (
-                  <button
-                    key={choice.id}
-                    type="button"
-                    onClick={() => handleSelectChoice(choice)}
-                    className="w-full text-left rounded-xl border border-[#9DB2BF]/50 bg-white p-3.5 text-xs font-semibold text-[#27374D] hover:bg-[#DDE6ED]/50 hover:border-[#526D82] transition-all cursor-pointer flex items-center justify-between group"
-                  >
-                    <span>{choice.label}</span>
-                    <ChevronRight className="h-4 w-4 text-[#526D82] group-hover:translate-x-0.5 transition-transform shrink-0" />
-                  </button>
-                ))}
+                {sc.choices.map((choice, cIdx) => {
+                  const letter = String.fromCharCode(65 + cIdx);
+                  return (
+                    <button
+                      key={choice.id}
+                      type="button"
+                      onClick={() => handleSelectChoice(choice)}
+                      className="group relative w-full text-left rounded-2xl border-2 border-[#9DB2BF]/50 bg-white hover:bg-[#27374D] hover:border-[#27374D] text-[#27374D] hover:text-white p-3.5 sm:p-4 text-xs font-bold transition-all duration-250 ease-out cursor-pointer flex items-center gap-3.5 shadow-xs hover:shadow-xl hover:shadow-[#27374D]/30 hover:scale-[1.02] hover:-translate-y-1 active:scale-[0.98] z-0 hover:z-10"
+                    >
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/40 group-hover:bg-white group-hover:text-[#27374D] group-hover:border-white text-xs font-black transition-all duration-200 shadow-2xs group-hover:shadow-md shrink-0">
+                        {letter}
+                      </span>
+                      <span className="flex-1 leading-snug">{choice.label}</span>
+                      <ChevronRight className="h-4 w-4 text-white opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shrink-0" />
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -3978,6 +3984,84 @@ function KilatPage({
 // SUB-KOMPONEN 4: COVER & PAGE KAMUS JEBAKAN (BAGIAN 4)
 // =============================================================================
 
+function renderStyledTermTitle(term: GlossaryTerm) {
+  switch (term.id) {
+    case "sniffing-apk":
+      return (
+        <>
+          <span>Sniffing </span>
+          <span className="text-blue-600">APK</span>
+        </>
+      );
+    case "social-engineering":
+      return (
+        <>
+          <span>Social </span>
+          <span className="text-amber-600">Engineering</span>
+        </>
+      );
+    case "sim-swap":
+      return (
+        <>
+          <span>SIM Swap </span>
+          <span className="text-rose-600">Fraud</span>
+        </>
+      );
+    case "phishing":
+      return (
+        <>
+          <span className="text-blue-600">Phishing </span>
+          <span>Website</span>
+        </>
+      );
+    case "quishing":
+      return (
+        <>
+          <span className="text-purple-600">Quishing </span>
+          <span className="text-[#526D82] text-xl sm:text-2xl font-bold">(QR Phishing)</span>
+        </>
+      );
+    case "smishing":
+      return (
+        <>
+          <span className="text-sky-600">Smishing </span>
+          <span className="text-[#526D82] text-xl sm:text-2xl font-bold">(SMS Phishing)</span>
+        </>
+      );
+    case "typosquatting":
+      return (
+        <>
+          <span className="text-indigo-600">Typo</span>
+          <span>squatting</span>
+        </>
+      );
+    case "account-takeover":
+      return (
+        <>
+          <span>Account </span>
+          <span className="text-rose-600">Takeover </span>
+          <span className="text-[#526D82] text-xl sm:text-2xl font-bold">(ATO)</span>
+        </>
+      );
+    case "ransomware":
+      return (
+        <>
+          <span className="text-rose-600">Ransom</span>
+          <span>ware</span>
+        </>
+      );
+    case "loker-deposit":
+      return (
+        <>
+          <span className="text-amber-600">Deposit Loker </span>
+          <span>Palsu</span>
+        </>
+      );
+    default:
+      return <span>{term.name}</span>;
+  }
+}
+
 function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
@@ -4042,30 +4126,87 @@ function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
         </div>
       </div>
 
-      {/* Grid Kartu Istilah Kamus */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {filteredTerms.map((term) => (
-          <div
-            key={term.id}
-            onClick={() => onSelectTerm(term.id)}
-            className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-3"
-          >
-            <div className="space-y-2">
-              <h3 className="text-base font-bold text-[#27374D] group-hover:text-blue-900 transition-colors">
-                {term.name}
-              </h3>
-              <p className="text-xs text-[#526D82] leading-relaxed line-clamp-3">
-                {term.meaning}
-              </p>
-            </div>
+      {/* List Kartu Kamus Editorial Modern Sesuai Referensi Visual (Kata Besar di Kiri & Penjelasan di Kanan) */}
+      {filteredTerms.length > 0 ? (
+        <div className="space-y-5">
+          {filteredTerms.map((term, index) => {
+            const watermarkLetter = term.name.charAt(0).toUpperCase();
 
-            <div className="pt-2 border-t border-[#DDE6ED] flex items-center justify-between text-[11px] text-[#526D82]">
-              <span className="truncate">Titik Masuk: {term.entryPoint.slice(0, 35)}...</span>
-              <span className="text-[#27374D] font-bold shrink-0">Buka Detail →</span>
-            </div>
-          </div>
-        ))}
-      </div>
+            return (
+              <div
+                key={term.id}
+                onClick={() => onSelectTerm(term.id)}
+                className="group relative rounded-3xl sm:rounded-[32px] border border-[#9DB2BF]/40 bg-white p-6 sm:p-8 lg:p-9 shadow-xs hover:border-[#526D82] hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+                  {/* Sisi Kiri: Contoh Kata Besar & Tipografi Berani (Display Typography) */}
+                  <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[140px] sm:min-h-[160px]">
+                    {/* Decorative Monogram Watermark di Latar Belakang */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute -top-6 -left-3 text-8xl sm:text-9xl font-black text-[#526D82]/10 select-none pointer-events-none transition-transform duration-500 group-hover:scale-105"
+                    >
+                      {watermarkLetter}
+                    </span>
+
+                    <div className="relative z-1 space-y-3">
+                      {/* Badge Kategori Modus & Nomor Urut */}
+                      <div className="flex items-center gap-2">
+                        <span className={`rounded-full px-3 py-1 text-[11px] font-bold border shadow-2xs ${term.tagColor}`}>
+                          {term.category}
+                        </span>
+                        <span className="text-[11px] font-mono text-[#9DB2BF] font-semibold">
+                          #{String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+
+                      {/* Kata / Istilah Ukuran Besar Persis Referensi */}
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#27374D] leading-[1.15] tracking-tight">
+                        {renderStyledTermTitle(term)}
+                        <span className="text-blue-600 ml-0.5">.</span>
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Sisi Kanan: Teks Penjelasan Mendalam & Aksi Tautan */}
+                  <div className="lg:col-span-7 flex flex-col justify-between space-y-3.5 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-8">
+                    {/* Teks Penjelasan Definisi */}
+                    <p className="text-sm sm:text-base text-[#526D82] leading-relaxed font-normal">
+                      {term.meaning}
+                    </p>
+
+                    {/* Ringkasan Titik Masuk Utama */}
+                    <div className="rounded-xl bg-[#DDE6ED]/40 p-3 sm:p-3.5 border border-[#9DB2BF]/30 text-xs text-[#27374D] leading-relaxed">
+                      <strong className="font-bold text-[#27374D] block mb-0.5">Titik Masuk Jebakan:</strong>
+                      <span className="text-[#526D82]">{term.entryPoint}</span>
+                    </div>
+
+                    {/* Tombol Tautan Aksi (Persis Gaya "-> View our work") */}
+                    <div className="pt-1.5 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-blue-600 group-hover:text-blue-700 transition-colors">
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        <span>Pelajari Anatomi Modus & Pertolongan Pertama</span>
+                      </span>
+                      <span className="hidden sm:inline-block text-[11px] font-medium text-[#9DB2BF]">
+                        Klik kartu untuk detail
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-[#9DB2BF]/40 bg-white p-12 text-center space-y-2">
+          <p className="text-sm font-bold text-[#27374D]">
+            Tidak ada istilah yang cocok dengan "{searchTerm}"
+          </p>
+          <p className="text-xs text-[#526D82]">
+            Coba cari dengan kata kunci lain atau pilih kategori "Semua".
+          </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -4097,15 +4238,37 @@ function KamusPage({
       </div>
 
       {/* Main Container Halaman Khusus Istilah */}
-      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
-        <div className="space-y-2">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-[#526D82]">
-            Kamus Jebakan Digital
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#27374D]">{term.name}</h1>
-          <p className="text-xs sm:text-sm text-[#27374D] leading-relaxed bg-[#DDE6ED]/40 p-4 rounded-2xl border border-[#9DB2BF]/40">
-            {term.meaning}
-          </p>
+      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 lg:p-10 shadow-xs space-y-8">
+        {/* Header Hero Editorial: Kata Besar di Kiri & Penjelasan di Kanan */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center pb-6 border-b border-[#9DB2BF]/30">
+          <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[140px]">
+            {/* Watermark Monogram */}
+            <span
+              aria-hidden="true"
+              className="absolute -top-6 -left-3 text-8xl sm:text-9xl font-black text-[#526D82]/10 select-none pointer-events-none"
+            >
+              {term.name.charAt(0).toUpperCase()}
+            </span>
+
+            <div className="relative z-1 space-y-3">
+              <span className={`inline-block rounded-full px-3 py-1 text-[11px] font-bold border shadow-2xs ${term.tagColor}`}>
+                {term.category}
+              </span>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#27374D] leading-[1.12] tracking-tight">
+                {renderStyledTermTitle(term)}
+                <span className="text-blue-600 ml-0.5">.</span>
+              </h1>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 space-y-3 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-8">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82]">
+              Definisi & Pengertian Utama
+            </span>
+            <p className="text-sm sm:text-base text-[#27374D] leading-relaxed font-normal bg-[#DDE6ED]/30 p-4 sm:p-5 rounded-2xl border border-[#9DB2BF]/40">
+              {term.meaning}
+            </p>
+          </div>
         </div>
 
         {/* Section 1: Cara Kerja Modus */}

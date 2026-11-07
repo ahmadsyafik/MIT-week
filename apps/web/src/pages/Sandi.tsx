@@ -94,7 +94,6 @@ const SOP_STEPS = [
 ];
 
 export default function Sandi() {
-  const [wordCount, setWordCount] = useState<2 | 3>(3);
   const [recommendations, setRecommendations] = useState<MixedSafewordRec[]>(() =>
     generateMixedRecommendations()
   );
@@ -119,8 +118,8 @@ export default function Sandi() {
       setCurrentSafeword(progress.safeword.word);
       setAllowSaveLocal(true);
     } else {
-      // Inisialisasi kata pertama dengan rekomendasi sandi campuran kuat yang tidak mudah ditebak
-      const initial = recommendations[0] ? recommendations[0].password : "Lentera79Samudra";
+      // Inisialisasi kata pertama dengan rekomendasi sandi 3 kata
+      const initial = generateSafeword(3);
       setCurrentSafeword(initial);
     }
   }, []);
@@ -153,10 +152,7 @@ export default function Sandi() {
   };
 
   const handleGenerateNew = () => {
-    const shuffle = () => [...BASE_WORDS].sort(() => 0.5 - Math.random());
-    const words = shuffle();
-    const num = Math.floor(10 + Math.random() * 89);
-    const newWord = `${words[0]}${num}${words[1]}`;
+    const newWord = generateSafeword(3);
     setCurrentSafeword(newWord);
     setCopyFeedback(false);
     setSaveStatusMessage(null);
@@ -173,7 +169,7 @@ export default function Sandi() {
         safeword: updatedSafeword,
       });
       setSavedSafeword(updatedSafeword);
-      setSaveStatusMessage("Sandi baru berhasil diperbarui dan disimpan secara lokal.");
+      setSaveStatusMessage("Sandi baru 3 kata berhasil diperbarui dan disimpan secara lokal.");
       setTimeout(() => setSaveStatusMessage(null), 3000);
     }
   };
@@ -257,7 +253,7 @@ export default function Sandi() {
       {/* GENERATOR KATA SANDI KELUARGA                                         */}
       {/* ===================================================================== */}
       <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#9DB2BF]/30 pb-4">
+        <div className="border-b border-[#9DB2BF]/30 pb-4">
           <div className="space-y-1">
             <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
               Buat Kata Sandi Rahasia
@@ -265,38 +261,6 @@ export default function Sandi() {
             <p className="text-xs text-[#526D82]">
               Pilih kombinasi kata bahasa Indonesia yang mudah dihafal dan unik.
             </p>
-          </div>
-
-          {/* Opsi Jumlah Kata: 2 Kata vs 3 Kata */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-[#9DB2BF]/60 bg-[#DDE6ED]/50 p-1 self-start sm:self-auto">
-            <button
-              type="button"
-              onClick={() => {
-                setWordCount(2);
-                const nw = generateSafeword(2);
-                setCurrentSafeword(nw);
-              }}
-              className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${wordCount === 2
-                ? "bg-[#27374D] text-white shadow-xs"
-                : "text-[#526D82] hover:text-[#27374D]"
-                }`}
-            >
-              2 Kata
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setWordCount(3);
-                const nw = generateSafeword(3);
-                setCurrentSafeword(nw);
-              }}
-              className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${wordCount === 3
-                ? "bg-[#27374D] text-white shadow-xs"
-                : "text-[#526D82] hover:text-[#27374D]"
-                }`}
-            >
-              3 Kata (Disarankan)
-            </button>
           </div>
         </div>
 
@@ -307,7 +271,7 @@ export default function Sandi() {
           </div>
 
           <div className="text-2xl sm:text-4xl md:text-5xl font-black font-mono text-[#27374D] tracking-tight selection:bg-[#526D82] selection:text-white py-1">
-            {currentSafeword || "Lentera79Samudra"}
+            {currentSafeword || "Lentera Samudra Cempaka"}
           </div>
 
           <p className="text-xs text-[#526D82] max-w-md mx-auto leading-relaxed">

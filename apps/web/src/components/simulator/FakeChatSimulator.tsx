@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft,
-  RotateCcw,
   ShieldCheck,
   ShieldAlert,
   AlertTriangle,
@@ -12,8 +11,8 @@ import {
   FileCode,
   Download,
   AlertOctagon,
-  Check,
   ChevronDown,
+  ChevronRight,
   Award,
   Send,
   Smartphone,
@@ -96,7 +95,6 @@ export function FakeChatSimulator({
   const [isTyping, setIsTyping] = useState(false);
   const [typingText, setTypingText] = useState("Pengirim sedang mengetik...");
   const [showScrollDown, setShowScrollDown] = useState(false);
-  const [copiedFlag, setCopiedFlag] = useState(false);
   const [activeLightboxImage, setActiveLightboxImage] = useState<{
     src: string;
     caption?: string;
@@ -170,7 +168,6 @@ export function FakeChatSimulator({
     setIsTyping(false);
     isNearBottomRef.current = true;
     setShowScrollDown(false);
-    setCopiedFlag(false);
     setDecisionHistory([]);
 
     const initialSystemMsg: ChatMessage = {
@@ -498,14 +495,6 @@ export function FakeChatSimulator({
     }, 5300);
   };
 
-  const handleCopyFlag = () => {
-    if (currentScenario.flagCode) {
-      navigator.clipboard?.writeText(currentScenario.flagCode);
-      setCopiedFlag(true);
-      setTimeout(() => setCopiedFlag(false), 2000);
-    }
-  };
-
   // Ikon kanal
   const ChannelIcon =
     currentScenario.channelType === "voice_call"
@@ -532,18 +521,6 @@ export function FakeChatSimulator({
           <ArrowLeft className="h-4 w-4" />
           <span>Kembali ke Daftar Skenario</span>
         </button>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={initChat}
-            title="Ulangi simulasi dari awal"
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-[#526D82] hover:text-[#27374D] bg-white border border-[#9DB2BF]/50 hover:bg-[#DDE6ED]/50 transition-all cursor-pointer shadow-xs"
-          >
-            <RotateCcw className="h-3 w-3" />
-            <span className="hidden sm:inline">Ulangi Kasus</span>
-          </button>
-        </div>
       </div>
 
       {/* Main Container Simulator (Mockup Layar Smartphone Nyata) */}
@@ -885,22 +862,8 @@ export function FakeChatSimulator({
                   </p>
                 </div>
 
-                {/* Kode Bukti Kasus & Tombol Aksi Bersih */}
-                <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-2.5 border-t border-[#9DB2BF]/20">
-                  <div className="flex items-center gap-2 text-xs text-[#526D82]">
-                    <span className="font-bold text-[#27374D]">Kode Bukti:</span>
-                    <code className="bg-[#DDE6ED] px-2 py-0.5 rounded text-[11px] font-mono text-[#27374D] font-bold">
-                      {currentScenario.flagCode}
-                    </code>
-                    <button
-                      type="button"
-                      onClick={handleCopyFlag}
-                      className="text-[11px] text-amber-600 hover:text-amber-700 font-bold underline cursor-pointer"
-                    >
-                      {copiedFlag ? "Tersalin!" : "Salin"}
-                    </button>
-                  </div>
-
+                {/* Tombol Aksi Bersih */}
+                <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[#9DB2BF]/20">
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                       type="button"
@@ -943,112 +906,84 @@ export function FakeChatSimulator({
           {/* =================================================================== */}
           {/* BOTTOM INTERACTIVE CHOICES DOCK (TITIK KEPUTUSAN NETRAL A, B, C)    */}
           {/* =================================================================== */}
-          <div className="relative -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 mt-6 border-t border-[#9DB2BF]/50 bg-[#F8FAFC] p-4 sm:p-5 shadow-lg">
-            {/* Aksen Label Tape Kasual (Jangan Terlalu Kaku) */}
-            <div className="absolute -top-3 left-6 px-3 py-0.5 rounded-sm bg-amber-100/95 border border-amber-300 text-[10px] font-black text-[#526D82] uppercase tracking-wider rotate-[-1deg] shadow-2xs">
-              Giliranmu Menentukan Tindakan
-            </div>
+          {!activeEnding && (
+            <div className="relative -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 mt-6 border-t border-[#9DB2BF]/50 bg-[#F8FAFC] p-4 sm:p-5 shadow-lg">
+              {currentDecisionId && !isTyping && (
+                <div className="space-y-3 pt-1.5 animate-fadeIn">
+                  <div>
+                    <span className="text-xs font-black text-[#27374D] uppercase tracking-wider">
+                      {currentScenario.decisions[currentDecisionId]?.stepTitle}: Tentukan Keputusanmu
+                    </span>
+                  </div>
 
-          {currentDecisionId && !activeEnding && !isTyping && (
-            <div className="space-y-3 pt-1.5 animate-fadeIn">
-              <div>
-                <span className="text-xs font-black text-[#27374D] uppercase tracking-wider">
-                  {currentScenario.decisions[currentDecisionId]?.stepTitle}: Tentukan Keputusanmu
-                </span>
-              </div>
+                  {/* Grid Pilihan Netral (Mendukung 2 atau 3 Pilihan Tanpa Clue Merah / Hijau) */}
+                  {(() => {
+                    const dec = currentScenario.decisions[currentDecisionId];
+                    if (!dec) return null;
+                    const availableKeys = (["A", "B", "C"] as const).filter(
+                      (key) => dec.options[key] !== undefined
+                    );
+                    const gridClass =
+                      availableKeys.length === 3
+                        ? "grid grid-cols-1 md:grid-cols-3 gap-3.5"
+                        : "grid grid-cols-1 sm:grid-cols-2 gap-3.5";
 
-              {/* Grid Pilihan Netral (Mendukung 2 atau 3 Pilihan Tanpa Clue Merah / Hijau) */}
-              {(() => {
-                const dec = currentScenario.decisions[currentDecisionId];
-                if (!dec) return null;
-                const availableKeys = (["A", "B", "C"] as const).filter(
-                  (key) => dec.options[key] !== undefined
-                );
-                const gridClass =
-                  availableKeys.length === 3
-                    ? "grid grid-cols-1 md:grid-cols-3 gap-3.5"
-                    : "grid grid-cols-1 sm:grid-cols-2 gap-3.5";
+                    return (
+                      <div className={gridClass}>
+                        {availableKeys.map((key) => {
+                          const opt = dec.options[key]!;
+                          const cleanLabel = cleanOptionLabel(opt.label);
 
-                return (
-                  <div className={gridClass}>
-                    {availableKeys.map((key) => {
-                      const opt = dec.options[key]!;
-                      const cleanLabel = cleanOptionLabel(opt.label);
-
-                      return (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => handleSelectOption(key)}
-                          className="group text-left p-4 rounded-2xl border-2 border-[#9DB2BF]/60 bg-white hover:bg-[#DDE6ED]/40 hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-2.5 active:scale-[0.99] shadow-xs"
-                        >
-                          <div className="space-y-2">
-                            <div>
-                              <span className="inline-flex items-center justify-center h-6 w-6 rounded-lg bg-[#27374D] group-hover:bg-[#526D82] text-white text-xs font-black transition-colors shadow-xs">
+                          return (
+                            <button
+                              key={key}
+                              type="button"
+                              onClick={() => handleSelectOption(key)}
+                              className="group relative text-left p-4 sm:p-4.5 rounded-2xl border-2 border-[#9DB2BF]/50 bg-white hover:bg-[#27374D] hover:border-[#27374D] text-[#27374D] hover:text-white transition-all duration-250 ease-out cursor-pointer flex items-center gap-3.5 sm:gap-4 shadow-xs hover:shadow-xl hover:shadow-[#27374D]/30 hover:scale-[1.03] hover:-translate-y-1.5 active:scale-[0.98] z-0 hover:z-10"
+                            >
+                              {/* Badge Huruf Bulat (Lingkaran Putih saat Hover, persis Gambar 1) */}
+                              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/40 group-hover:bg-white group-hover:text-[#27374D] group-hover:border-white text-xs font-black transition-all duration-200 shadow-2xs group-hover:shadow-md shrink-0">
                                 {key}
                               </span>
-                            </div>
-                            <p className="text-xs sm:text-[13px] font-bold text-[#27374D] group-hover:text-[#1e2b3d] transition-colors leading-snug">
-                              {cleanLabel}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                );
-              })()}
-            </div>
-          )}
 
-          {(!currentDecisionId || isTyping) && !activeEnding && (
-            <div className="flex items-center justify-between py-2 px-1 text-xs text-[#526D82] animate-fadeIn">
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
-                <span className="font-semibold italic">
-                  {isTyping ? typingText : "Menunggu respons percakapan..."}
-                </span>
-              </div>
-              {fastForwardActionRef.current && (
-                <button
-                  type="button"
-                  onClick={handleFastForward}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all cursor-pointer shadow-2xs"
-                >
-                  <FastForward className="h-3.5 w-3.5 text-amber-700" />
-                  <span>Lewati Mengetik</span>
-                </button>
+                              {/* Teks Opsi Jawaban */}
+                              <p className="flex-1 text-xs sm:text-[13px] font-bold leading-snug transition-colors duration-200">
+                                {cleanLabel}
+                              </p>
+
+                              {/* Panah Indikator Halus saat Hover */}
+                              <ChevronRight className="h-4 w-4 text-white opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shrink-0" />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {(!currentDecisionId || isTyping) && (
+                <div className="flex items-center justify-between py-2 px-1 text-xs text-[#526D82] animate-fadeIn">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
+                    <span className="font-semibold italic">
+                      {isTyping ? typingText : "Menunggu respons percakapan..."}
+                    </span>
+                  </div>
+                  {fastForwardActionRef.current && (
+                    <button
+                      type="button"
+                      onClick={handleFastForward}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all cursor-pointer shadow-2xs"
+                    >
+                      <FastForward className="h-3.5 w-3.5 text-amber-700" />
+                      <span>Lewati Mengetik</span>
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           )}
-
-          {activeEnding && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#526D82] py-0.5 animate-fadeIn">
-              <span className="flex items-center gap-2 font-medium">
-                <Check className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span>
-                  Kasus selesai ({activeEnding.title}). Riwayat obrolan di atas tetap tersimpan dan dapat kamu baca kembali kapan saja.
-                </span>
-              </span>
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={onBack}
-                  className="px-4 py-1.5 rounded-xl bg-[#27374D] text-white hover:bg-[#1e2b3d] text-xs font-bold transition-all cursor-pointer shadow-xs"
-                >
-                  Selesai
-                </button>
-                <button
-                  type="button"
-                  onClick={initChat}
-                  className="px-3 py-1.5 rounded-xl bg-white border border-[#9DB2BF]/60 text-[#526D82] hover:text-[#27374D] text-xs font-semibold transition-all cursor-pointer"
-                >
-                  Coba Alur Lain
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
 
         <div ref={chatEndRef} className="h-0 w-full" />
       </div>
