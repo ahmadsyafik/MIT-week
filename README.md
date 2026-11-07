@@ -4,7 +4,7 @@
 
 Studi kasus **The Trust Trap: Navigating Digital Deception** · **MIT-Week 2026** · Tema: *Guardians of the Digital Space*.
 
-- 🔗 **Live:** _(isi tautan Vercel)_
+- 🔗 **Live:** _(jagaruang.vercel.app)_
 - 🎬 **Video demo:** _(isi tautan)_
 - 📄 **PRD:** [`docs/universal/PRD_JagaRuang.pdf`](docs/universal/PRD_JagaRuang.pdf)
 
