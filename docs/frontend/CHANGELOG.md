@@ -365,6 +365,12 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
   - Menghapus teks petunjuk di samping header ulasan 10 soal (*"Pelajari tanda kejanggalan (red flags) dari tiap pesan"*) agar tampilan header lebih bersih dan minimalis.
   - Menghapus dua kotak statistik rincian angka (*"Tepat X dari 10 Soal"* dan *"Kurang Tepat X dari 10 Soal"*) pada kartu hasil evaluasi kuis kilat, menyelaraskan tampilan kartu evaluasi menjadi satu layout terpadu yang bersih dan lega.
   - Menyesuaikan kelengkungan border radius tombol *"Mulai →"* pada kartu Skenario Simulator dari sebelumnya `rounded-full` (kapsul lonjong) menjadi `rounded-xl` (dengan badge panah `rounded-lg`) agar sudutnya lebih tegas, modern, dan tidak terlalu bulat.
+  - **Pembersihan Elemen Halaman Detail Kamus (`KamusPage` di `Belajar.tsx`)**:
+    - **Pembersihan Lencana Kategori (Foto 1)**: Menghapus badge pill kategori (seperti *"Malware Android"*) di atas judul besar istilah.
+    - **Pembersihan Wadah Ikon Sub-Header (Foto 2)**: Menghapus kotak wadah ikon (`OctagonAlert`, `FileCode`, `ShieldCheck`) pada sub-header *Pertolongan Pertama Terpapar*, *Cara Kerja & Titik Masuk*, dan *Langkah Pencegahan Utama*.
+    - **Pembersihan Badge Kapsul Sub-Header (Foto 3)**: Menghapus badge pill dekoratif (*"Proteksi Mandiri"*, *"Alur Modus"*, *"Tindakan Cepat"*) di sisi kanan masing-masing sub-header.
+    - **Pembersihan Ikon Segitiga Peringatan (Foto 4)**: Menghapus ikon `AlertTriangle` merah pada catatan mitigasi pertolongan pertama.
+    - **Pembersihan Baris Kunci Proteksi (Foto 5)**: Menghapus baris teks penutup *"Kunci proteksi paling efektif sebelum terjadi insiden."* beserta ikon centang hijau di bawah langkah pencegahan utama.
 
 ### Ditambahkan
 - **FE-1.1**: Navigasi responsif (ramah mobile mulai 360 px dengan menu toggle), keyboard navigation & skip-link aksesibilitas, footer permanen dengan tautan Keterbatasan dan Privasi.
@@ -678,3 +684,63 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
       - **Pembersihan Ikon Segitiga Peringatan Red Flags (Foto 3 - `Belajar.tsx`)**: Menghapus deretan ikon `AlertTriangle` amber pada daftar poin tanda kejanggalan (*Red Flags*) di halaman detail modul.
       - **Pembersihan Wadah Ikon Modul (Foto 4 - `Belajar.tsx` & `Beranda.tsx`)**: Menghilangkan wadah ikon pada setiap kartu modul pembelajaran di Hub Belajar dan Beranda (serta header halaman detail modul).
       - **Pembersihan Label Kategori Huruf Kapital (Foto 5 - `Belajar.tsx` & `Beranda.tsx`)**: Menghapus label kategori (*"DASAR KEAMANAN"*, *"CHECKLIST PRAKTIS"*, dll.) dari kartu modul pembelajaran di Hub Belajar dan Beranda.
+
+  - **Pembaruan Komprehensif Seri Modul Pembelajaran Interaktif (Batch m2, m3, m4, m5, m6, m7)**:
+    - **Modul m2: Anatomi Sebuah Penipuan (`ModulAnatomiPenipuanPage.tsx` & `modulAnatomiPenipuan.ts`)**:
+      - Membedah alur 5 fase dengan nama berbahasa awam (*Mengumpulkan Data*, *Memancing*, *Membangun Cerita*, *Menjebak*, *Menghilang*) lengkap dengan titik intervensi konkret *"Cara Berhenti di Titik Ini"*.
+      - Penandaan kesulitan: Fase 1–3 (*Masih Mudah Berhenti*) vs Fase 4–5 (*Kritis / Jalur Mitigasi*).
+      - Studi kasus utuh interaktif langkah demi langkah: SMS paket tertahan fiktif -> link -> APK -> saldo terkuras.
+      - 2 tab alur alternatif yang lebih pendek: Penipuan Hadiah/Undian Palsu dan Penipuan 'Ganti Nomor' Mengaku Keluarga.
+      - Kamus istilah awam inline popover: *Baiting*, *Pretexting*, *File APK Berbahaya*, dan *Rekening Penampung (Nominee)*.
+      - 6 red flags universal dan checklist 4 tindakan nyata mandiri tersimpan di `localStorage`.
+      - Protokol darurat langkah berurutan jika terlanjur mentransfer dana atau memasang APK.
+      - Latihan refleks cepat mini-kuis *"Ini Fase Berapa?"* dengan umpan balik instan.
+    - **Modul m3: Keamanan di WhatsApp (`ModulPerKanalPage.tsx` & `modulPerKanal.ts`)**:
+      - Menyediakan arsitektur generik per-kanal `ChannelModuleData` yang siap digunakan ulang untuk kanal lain.
+      - Penjelasan pembuka *"Kenapa penipu menyukai WhatsApp?"* (kepercayaan tinggi, enkripsi privat, kemudahan menyamar).
+      - Kartu komparasi berdampingan: *Kode SMS Registrasi (6 digit)* vs *PIN Verifikasi Dua Langkah (6 digit PIN rahasia)* dengan aturan emas mutlak bahwa kedua kode tidak boleh diberikan kepada siapa pun.
+      - Panduan verifikasi lencana centang hijau resmi vs emoji centang buatan penipu di nama kontak.
+      - 6 tab modus utama WhatsApp: Pencurian kode registrasi, Pembajakan via Linked Devices (WhatsApp Web QR), Berkas APK chat, Penyamaran identitas keluarga, Grup komisi tugas bodong, dan CS bank tiruan.
+      - Audit Keamanan WhatsApp 2 Menit dengan panduan jalur menu setelan dan penanda `// TODO: verifikasi manual`.
+      - Protokol darurat akun diambil alih / nomor dibajak dan kuis refleks *"Asli atau Palsu?"*.
+    - **Modul m4: Keamanan Email & Phishing (`ModulEmailPhishingPage.tsx` & `modulEmailPhishing.ts`)**:
+      - Pemisahan tegas dua kasus manipulasi teknis yang sering tertukar: *(a) Display Name Spoofing* vs *(b) Penyamaran URL dengan Karakter "@"* (di mana browser mengeksekusi domain setelah tanda "@").
+      - Penjelasan teknik tingkat lanjut *Homograph Attack* (karakter Unicode Cyrillic yang identik visual dengan huruf Latin).
+      - Penjelasan analogi awam indikator autentikasi teknis kotak masuk: SPF, DKIM, dan DMARC.
+      - Simulasi visual mock email phishing interaktif dengan penyorotan anotasi langsung (*Display name palsu*, *Urgensi sempit*, *Jebakan karakter '@'*, dan *Lampiran berbahaya .html*).
+      - Kuis perbandingan domain gaya picoCTF *"Mana yang Palsu?"* dan interactive checklist dengan lencana penghargaan.
+    - **Modul m5: Waspada Telepon Mengaku Bank (`ModulTeleponBankPage.tsx` & `modulTeleponBank.ts`)**:
+      - Banner kontras tinggi aturan emas: *"BANK RESMI TIDAK PERNAH MEMINTA KODE OTP, PIN, ATAU 3 ANGKA CVV/CVC"*.
+      - Diagram alur teknologi *Caller ID Spoofing* (Laptop VoIP pelaku -> Gateway VoIP / SIP Trunk -> Nomor bank palsu di layar ponsel korban).
+      - Aturan wajib verifikasi independen (nomor fisik di kartu ATM, aplikasi mobile banking resmi, bukan menelepon balik nomor dari SMS/Caller ID pemanggil).
+      - Penjelasan varian modern *WhatsApp Call* dan *Video Call Verifikasi Akun*.
+      - Penjelasan cara kerja aplikasi pelaporan komunitas (*Truecaller / GetContact*) beserta catatan batas privasi data.
+      - Simulasi percakapan telepon bertahap bergaya picoCTF dengan pilihan keputusan dan umpan balik langsung.
+    - **Modul m6: 10 Ciri Pesan Phishing yang Wajib Dicek (`ModulSepuluhCiriPage.tsx` & `modulSepuluhCiri.ts`)**:
+      - Modul Capstone yang mengompilasi 10 ciri red flag universal ke dalam 3 bagian collapsible (*Tekanan Emosional*, *Indikator Teknis & Tautan*, *Pola Bahasa*).
+      - Penegasan objektif domain berakhiran *.xyz, .top, .vip* sebagai faktor pendukung kecurigaan (bukan bukti tunggal).
+      - Aturan ambang batas: 1 Ciri = Waspada; 2 Ciri atau Lebih = Sangat Mencurigakan & Wajib Verifikasi Mandiri.
+      - Tantangan Capstone 5 pesan campuran lintas kanal (Email, WhatsApp, SMS) dengan evaluasi skor dan refleksi diagnostik ciri yang paling sering terlewat.
+      - Checklist terhubung langsung dengan fitur aktif `Cek Pesan & File` (`/cek`).
+    - **Modul m7: Checklist Sebelum Transfer (`ModulSebelumTransferPage.tsx` & `modulSebelumTransfer.ts`)**:
+      - Ditujukan untuk masyarakat awam dan lansia dengan bahasa lugas: *"Sebelum pencet 'Kirim', cek 5 hal ini dulu"*.
+      - Standardisasi terminologi: Menggunakan istilah *Rekening Penampung / Rekening Pinjaman* (menggantikan nominee).
+      - Penjelasan konkret manipulasi kode unik transfer (nominal tiket otomatis top-up e-wallet penipu).
+      - Nuansa red flag nama pemilik rekening berbeda dari nama toko (bisa terjadi pada UMKM sah, disarankan verifikasi).
+      - 5 modus transaksi tambahan: Bukti transfer struk editan, Ajakan pindah ke WhatsApp dari marketplace, Penipuan COD barang kosong, Kode unik e-wallet, dan Harga jauh di bawah pasar.
+      - Stepper alur jebakan transaksi (Tekanan -> Rekening asing -> Transfer -> Lenyap).
+      - Simulasi chat WhatsApp interaktif dengan kemampuan mengetuk gelembung mencurigakan.
+      - Studi kasus fiktif kamera murah, protokol darurat 4 langkah berurutan, FAQ interaktif, kuis refleks, serta tombol *"Bagikan Ringkasan ke Keluarga"*.
+
+    - **Modul m8: Pola Modus Penipuan Terbanyak di Indonesia (`ModulPolaModusNasionalPage.tsx` & `modulPolaModusNasional.ts`)**:
+      - Menghapus persentase lama yang tidak valid (38/27/21/14) dan menggantinya dengan dataset terstruktur resmi IASC / Satgas PASTI OJK (`asOf`, `period`, `source`, `sourceUrl`, `verified: false`).
+      - Seluruh persentase dihitung dinamis oleh fungsi kode (`calculateDynamicPercentage`) dari jumlah laporan mentah terhadap total laporan periode yang sama.
+      - Hero stats angka besar: Total Laporan (702.342 per 30 Sep 2026) dan Dana Diamankan (Rp 825,2 Miliar per 31 Okt 2026) dengan animasi counter yang menghormati `prefers-reduced-motion`.
+      - Accordion prinsip *"Cara Membaca Angka Ini"* (Laporan ≠ Seluruh Kasus, Laporan ≠ Kerugian, Angka Bergerak Tiap Periode, Alasan/Cerita vs Cara/Teknik).
+      - Kuis pembuka personal *"Pernah Menerima yang Mana?"* yang menyorot kartu modus relevan secara dinamis dan tersimpan di preferensi pengguna.
+      - Diagram batang horizontal interaktif yang membedakan visual dan pola *"Alasan/Cerita"* (Belanja, Investasi, Kerja) vs *"Cara/Teknik"* (Fake Call/Impersonation), lengkap dengan tabel alternatif teks `sr-only` untuk pembaca layar (screen reader).
+      - 4 kartu penjelasan modus teratas: Transaksi Belanja (77.740 laporan), Impersonation/Fake Call (47.269 laporan), Investasi Bodong (26.649 laporan), dan Penipuan Kerja (23.910 laporan), masing-masing dengan contoh pesan anonim, red flags khusus, cara berhenti, studi kasus fiktif, serta tombol *"Bagikan ke Keluarga"*.
+      - Kartu transversal khusus *"Teknik: APK Berbahaya"* yang menegaskan bahwa file APK adalah alat eksekusi pencuri SMS OTP yang bisa menyusup ke modus mana pun.
+      - Seksi khusus modus berbasis AI (1.379 laporan s.d. Juni 2026) dan aduan entitas keuangan ilegal Satgas PASTI (25.875 aduan) dengan penegasan pemisahan taksonomi dari data IASC.
+      - Red flags umum dengan perbaikan sinyal lemah akun jualan menutup komentar, latihan refleks *"Modus yang Mana?"*, interactive checklist 5 tindakan nyata, serta SOP darurat korban dengan penjelasan 2 jalur pelaporan.
+      - Validasi integritas dataset saat build (`validateModusData`) yang menggagalkan build bila ada set data tanpa `asOf` atau `source`.
