@@ -32,6 +32,7 @@ import {
   type FiveStepScenarioData,
   type ScenarioEnding,
 } from "../../mocks/fiveStepScenarios";
+import { PhoneCallSimulator } from "./PhoneCallSimulator";
 
 interface ChatMessage {
   id: string;
@@ -53,6 +54,16 @@ interface ChatMessage {
     title: string;
     body: string;
   };
+}
+
+interface FullscreenWarningData {
+  title: string;
+  body: string;
+  type: "warning" | "danger" | "info" | "success";
+  consequence?: string;
+  decisionIdToUnlock?: number | null;
+  endingToActivate?: ScenarioEnding | null;
+  systemName?: string;
 }
 
 interface FakeChatSimulatorProps {
@@ -89,6 +100,9 @@ export function FakeChatSimulator({
   };
 
   // State simulasi
+  const isVoiceCallScenario =
+    currentScenario.channelType === "voice_call" || activeId === "k4";
+  const [showPhoneCallOverlay, setShowPhoneCallOverlay] = useState(isVoiceCallScenario);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentDecisionId, setCurrentDecisionId] = useState<number | null>(null);
   const [activeEnding, setActiveEnding] = useState<ScenarioEnding | null>(null);
@@ -100,6 +114,7 @@ export function FakeChatSimulator({
     caption?: string;
     alt: string;
   } | null>(null);
+  const [activeFullscreenWarning, setActiveFullscreenWarning] = useState<FullscreenWarningData | null>(null);
   const [decisionHistory, setDecisionHistory] = useState<Array<{ decisionId: number; choice: "A" | "B" | "C" }>>([]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -107,6 +122,25 @@ export function FakeChatSimulator({
   const isNearBottomRef = useRef(true);
   const timeoutIdsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const fastForwardActionRef = useRef<(() => void) | null>(null);
+
+  // Fungsi untuk menutup peringatan selayar penuh HP & membuka keputusan berikutnya
+  const handleDismissFullscreenWarning = () => {
+    if (!activeFullscreenWarning) return;
+    const { decisionIdToUnlock, endingToActivate } = activeFullscreenWarning;
+    setActiveFullscreenWarning(null);
+
+    if (decisionIdToUnlock !== null && decisionIdToUnlock !== undefined) {
+      setCurrentDecisionId(decisionIdToUnlock);
+    } else if (endingToActivate) {
+      setActiveEnding(endingToActivate);
+      addNotification({
+        title: `${endingToActivate.title}: ${currentScenario.title}`,
+        message: `Simulasi tuntas! Skor: ${endingToActivate.score}/100 (${endingToActivate.rank}). ${endingToActivate.subtitle}.`,
+        type: endingToActivate.score >= 80 ? "sukses" : "waspada",
+        link: "/belajar?tab=simulator",
+      });
+    }
+  };
 
   // Helper pengatur timer yang aman terhadap unmount & reset
   const addTimeout = (fn: () => void, ms: number) => {
@@ -160,15 +194,178 @@ export function FakeChatSimulator({
     setShowScrollDown(distanceToBottom > 80);
   };
 
+  // Penanganan ketika simulasi telepon suara selesai diangkat & diputuskan
+  const handlePhoneCallComplete = (choice: "A" | "B" | "C", durationSec: number) => {
+    setShowPhoneCallOverlay(false);
+    clearAllTimeouts();
+
+    const decision1 = currentScenario.decisions[1];
+    const selectedOption = decision1?.options[choice];
+    if (!selectedOption) return;
+
+    const durMins = Math.floor(durationSec / 60)
+      .toString()
+      .padStart(2, "0");
+    const durSecs = (durationSec % 60).toString().padStart(2, "0");
+    const durationText = `${durMins}:${durSecs}`;
+
+    const isRisky = choice === "A" || selectedOption.type === "risky";
+
+    // 1. Pesan sistem ringkasan panggilan selesai
+    const initialSystemMsg: ChatMessage = {
+      id: "msg-0",
+      sender: "system",
+      timestamp: "09:40",
+      text: `Saluran komunikasi: Panggilan Telepon Seluler • ${currentScenario.senderAddress}. Berhati-hatilah terhadap permintaan kode OTP.`,
+    };
+
+    const callSummaryCard: ChatMessage = {
+      id: `call-summary-${Date.now()}`,
+      sender: "system",
+      timestamp: "09:41",
+      systemCard: {
+        type: choice === "C" ? "success" : choice === "B" ? "warning" : "danger",
+        title: "Panggilan Suara Masuk Selesai",
+        body: `Panggilan suara masuk dari ${currentScenario.senderName} (${currentScenario.senderAddress}) telah diakhiri. Durasi sambungan: ${durationText}. Respons: ${choice === "C" ? "Tolak & putus telepon langsung (Aman)" : choice === "B" ? "Minta ID resmi & verifikasi mandiri" : "Sebutkan kode OTP via telepon (Berisiko)"}.`,
+      },
+    };
+
+    // 2. Transkripsi suara apa yang dibicarakan penipu di awal telepon
+    const transcriptMsg: ChatMessage = {
+      id: `call-transcript-${Date.now()}`,
+      sender: "call",
+      timestamp: "09:41",
+      text: "Selamat siang Bapak/Ibu nasabah, saya dari Divisi Keamanan Bank X. Sistem kami mendeteksi anomali transfer mencurigakan sebesar Rp4.500.000 keluar dari rekening Anda. Demi membatalkan transaksi tidak sah ini, kami telah mengirimkan 6 digit kode OTP via SMS. Mohon sebutkan kodenya sekarang juga!",
+    };
+
+    // 3. Gambar pendukung (Surat notifikasi jika ada)
+    const supportingImageMsg: ChatMessage | null = currentScenario.briefing.supportingImage
+      ? {
+          id: `call-img-${Date.now()}`,
+          sender: "call",
+          timestamp: "09:41",
+          image: currentScenario.briefing.supportingImage,
+        }
+      : null;
+
+    // 4. Balasan ucapan pengguna
+    const userMsg: ChatMessage = {
+      id: `user-dec-1-${Date.now()}`,
+      sender: "user",
+      timestamp: "09:42",
+      text: selectedOption.userReply,
+    };
+
+    // 5. Reaksi penipu
+    const attackerReplyMsg: ChatMessage | null = selectedOption.attackerReply
+      ? {
+          id: `reply-dec-1-${Date.now()}`,
+          sender: "call",
+          timestamp: "09:42",
+          text: selectedOption.attackerReply,
+        }
+      : null;
+
+    // 6. Kartu konsekuensi edukatif
+    const consequenceMsg: ChatMessage = {
+      id: `conseq-dec-1-${Date.now()}`,
+      sender: "system",
+      timestamp: "09:43",
+      systemCard: {
+        type: isRisky ? "danger" : "success",
+        title: isRisky ? "Konsekuensi Tindakan Berisiko" : "Konsekuensi Tindakan Aman & Waspada",
+        body: selectedOption.consequence,
+      },
+    };
+
+    const initialMsgs: ChatMessage[] = [initialSystemMsg, callSummaryCard, transcriptMsg];
+    if (supportingImageMsg) initialMsgs.push(supportingImageMsg);
+    initialMsgs.push(userMsg);
+    if (attackerReplyMsg) initialMsgs.push(attackerReplyMsg);
+    initialMsgs.push(consequenceMsg);
+
+    setMessages(initialMsgs);
+    setDecisionHistory([{ decisionId: 1, choice }]);
+
+    const next = selectedOption.nextStep;
+
+    if (typeof next === "string" && currentScenario.endings[next]) {
+      const finalEnding = currentScenario.endings[next];
+      addTimeout(() => {
+        setActiveEnding(finalEnding);
+        addNotification({
+          title: `Simulasi Selesai: ${currentScenario.title}`,
+          message: `Skor Pertahanan: ${finalEnding.score}/100 — ${finalEnding.title}`,
+          type: finalEnding.score >= 80 ? "sukses" : "waspada",
+          link: "/belajar?tab=simulator",
+        });
+      }, 500);
+    } else if (typeof next === "number" && currentScenario.decisions[next]) {
+      const nextDecision = currentScenario.decisions[next];
+      addTimeout(() => {
+        if (nextDecision.senderRole === "system" || nextDecision.senderRole === "bank") {
+          const warningTitle =
+            nextDecision.senderRole === "bank"
+              ? "Notifikasi Kritis Keamanan Perbankan"
+              : "Peringatan Sistem Keamanan Akun";
+          const systemBadge =
+            nextDecision.senderRole === "bank"
+              ? "SISTEM NOTIFIKASI RESMI PERBANKAN"
+              : "KEAMANAN SISTEM OPERASI PERANGKAT";
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `sys-next-${next}-${Date.now()}`,
+              sender: (nextDecision.senderRole as "system" | "bank") || "system",
+              timestamp: "09:44",
+              text: nextDecision.scenarioPrompt,
+              systemCard: {
+                type: nextDecision.senderRole === "bank" ? "danger" : "warning",
+                title: warningTitle,
+                body: nextDecision.scenarioPrompt,
+              },
+            },
+          ]);
+          setActiveFullscreenWarning({
+            title: warningTitle,
+            body: nextDecision.scenarioPrompt,
+            type: nextDecision.senderRole === "bank" ? "danger" : "warning",
+            consequence: selectedOption.consequence,
+            decisionIdToUnlock: next,
+            systemName: systemBadge,
+          });
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `sms-next-${next}-${Date.now()}`,
+              sender: "attacker",
+              timestamp: "09:44",
+              text: nextDecision.scenarioPrompt,
+            },
+          ]);
+          setCurrentDecisionId(next);
+        }
+      }, 800);
+    }
+  };
+
   // Reset & inisialisasi chat dengan alur pembuka bertahap dan alami
   const initChat = () => {
     clearAllTimeouts();
     setCurrentDecisionId(null);
+    setActiveFullscreenWarning(null);
     setActiveEnding(null);
     setIsTyping(false);
     isNearBottomRef.current = true;
     setShowScrollDown(false);
     setDecisionHistory([]);
+
+    if (isVoiceCallScenario) {
+      setShowPhoneCallOverlay(true);
+      setMessages([]);
+      return;
+    }
 
     const initialSystemMsg: ChatMessage = {
       id: "msg-0",
@@ -405,25 +602,42 @@ export function FakeChatSimulator({
 
     // Prompt tambahan bila langkah berikutnya merupakan notifikasi sistem/bank
     let additionalPromptMsg: ChatMessage | null = null;
+    let warningTitle = "Peringatan Sistem Keamanan Perangkat";
+    let systemBadgeName = "KEAMANAN SISTEM PERANGKAT";
+
     if (
       nextDecision &&
       nextDecision.senderRole &&
       nextDecision.senderRole !== "attacker" &&
       nextDecision.senderRole !== role
     ) {
+      if (nextDecision.senderRole === "bank") {
+        warningTitle = "Notifikasi Kritis Keamanan Perbankan";
+        systemBadgeName = "SISTEM NOTIFIKASI RESMI PERBANKAN";
+      } else if (nextDecision.scenarioPrompt.toLowerCase().includes("play protect")) {
+        warningTitle = "Peringatan Google Play Protect";
+        systemBadgeName = "GOOGLE PLAY PROTECT • ANDROID";
+      } else if (
+        nextDecision.scenarioPrompt.toLowerCase().includes("browser") ||
+        nextDecision.scenarioPrompt.toLowerCase().includes("chrome")
+      ) {
+        warningTitle = "Peringatan Keamanan Browser";
+        systemBadgeName = "SISTEM DETEKSI PHISHING BROWSER";
+      } else {
+        warningTitle = "Peringatan Sistem Keamanan Perangkat";
+        systemBadgeName = "KEAMANAN SISTEM OPERASI PERANGKAT";
+      }
+
       additionalPromptMsg = {
         id: `prompt-dec-${next}-${Date.now()}`,
-        sender: nextDecision.senderRole,
+        sender: nextDecision.senderRole || "system",
         timestamp: "09:44",
         text: nextDecision.scenarioPrompt,
-        systemCard:
-          nextDecision.senderRole === "system"
-            ? {
-                type: "warning",
-                title: "Peringatan Sistem Keamanan Perangkat",
-                body: nextDecision.scenarioPrompt,
-              }
-            : undefined,
+        systemCard: {
+          type: nextDecision.senderRole === "bank" ? "danger" : "warning",
+          title: warningTitle,
+          body: nextDecision.scenarioPrompt,
+        },
       };
     }
 
@@ -439,7 +653,19 @@ export function FakeChatSimulator({
         return msgs;
       });
       setIsTyping(false);
-      if (typeof next === "number") {
+
+      if (additionalPromptMsg) {
+        // Tampilkan peringatan selayar penuh HP secara instan
+        setActiveFullscreenWarning({
+          title: warningTitle,
+          body: additionalPromptMsg.text || nextDecision?.scenarioPrompt || "Peringatan sistem terdeteksi.",
+          type: nextDecision?.senderRole === "bank" ? "danger" : "warning",
+          consequence: selectedOption.consequence,
+          decisionIdToUnlock: typeof next === "number" ? next : null,
+          endingToActivate: finalEnding,
+          systemName: systemBadgeName,
+        });
+      } else if (typeof next === "number") {
         setCurrentDecisionId(next);
       } else if (finalEnding) {
         setActiveEnding(finalEnding);
@@ -476,20 +702,36 @@ export function FakeChatSimulator({
         msgs.push(consequenceMsg);
         return msgs;
       });
+
+      // Jika langkah berikutnya adalah peringatan sistem atau bank, buka overlay selayar penuh HP!
+      if (additionalPromptMsg) {
+        setActiveFullscreenWarning({
+          title: warningTitle,
+          body: additionalPromptMsg.text || nextDecision?.scenarioPrompt || "Peringatan sistem terdeteksi.",
+          type: nextDecision?.senderRole === "bank" ? "danger" : "warning",
+          consequence: selectedOption.consequence,
+          decisionIdToUnlock: typeof next === "number" ? next : null,
+          endingToActivate: finalEnding,
+          systemName: systemBadgeName,
+        });
+      }
     }, 3800);
 
     // 4. Buka titik keputusan berikutnya atau tampilkan layar evaluasi akhir (5300ms)
+    // HANYA jika TIDAK ada overlay peringatan sistem (karena jika ada overlay, menunggu klik di mana saja oleh pengguna!)
     addTimeout(() => {
-      if (typeof next === "number") {
-        setCurrentDecisionId(next);
-      } else if (finalEnding) {
-        setActiveEnding(finalEnding);
-        addNotification({
-          title: `${finalEnding.title}: ${currentScenario.title}`,
-          message: `Simulasi tuntas! Skor: ${finalEnding.score}/100 (${finalEnding.rank}). ${finalEnding.subtitle}.`,
-          type: finalEnding.score >= 80 ? "sukses" : "waspada",
-          link: "/belajar?tab=simulator",
-        });
+      if (!additionalPromptMsg) {
+        if (typeof next === "number") {
+          setCurrentDecisionId(next);
+        } else if (finalEnding) {
+          setActiveEnding(finalEnding);
+          addNotification({
+            title: `${finalEnding.title}: ${currentScenario.title}`,
+            message: `Simulasi tuntas! Skor: ${finalEnding.score}/100 (${finalEnding.rank}). ${finalEnding.subtitle}.`,
+            type: finalEnding.score >= 80 ? "sukses" : "waspada",
+            link: "/belajar?tab=simulator",
+          });
+        }
       }
       fastForwardActionRef.current = null;
     }, 5300);
@@ -524,9 +766,13 @@ export function FakeChatSimulator({
       </div>
 
       {/* Main Container Simulator (Mockup Layar Smartphone Nyata) */}
-      <div className="rounded-[28px] sm:rounded-[36px] border-4 sm:border-[6px] border-[#27374D] bg-[#27374D] shadow-[0_20px_60px_rgba(39,55,77,0.25)] overflow-hidden flex flex-col">
+      <div
+        className={`relative rounded-[28px] sm:rounded-[36px] border-4 sm:border-[6px] border-[#27374D] bg-[#27374D] shadow-[0_20px_60px_rgba(39,55,77,0.25)] overflow-hidden flex flex-col ${
+          activeFullscreenWarning ? "min-h-[660px] sm:min-h-[740px]" : ""
+        }`}
+      >
         {/* Mock Phone Status Bar */}
-        <div className="bg-[#1e2b3d] text-white/70 px-5 py-1.5 flex items-center justify-between text-[11px] font-semibold border-b border-white/10 select-none">
+        <div className="bg-[#1e2b3d] text-white/70 px-5 py-1.5 flex items-center justify-between text-[11px] font-semibold border-b border-white/10 select-none shrink-0">
           <span className="font-mono text-[10px]">09:41</span>
           <div className="w-16 h-3 bg-black/60 rounded-full mx-auto flex items-center justify-center">
             <div className="w-2 h-2 rounded-full bg-white/10" />
@@ -537,28 +783,163 @@ export function FakeChatSimulator({
           </div>
         </div>
 
-        {/* Chat App Header Bar */}
-        <div className="bg-[#27374D] text-white px-4 py-3 sm:px-6 sm:py-3.5 flex items-center justify-between shadow-md z-10">
-          <div className="flex items-center gap-3">
-            {/* Avatar Pengirim */}
-            <div className="relative">
-              <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-gradient-to-tr from-amber-600 to-rose-500 flex items-center justify-center font-bold text-white text-sm shadow-md ring-2 ring-white/20">
-                <ChannelIcon className="h-5 w-5 text-white" />
+        {/* Full-Screen System Security Warning Overlay (Selayar Penuh HP Simulator) */}
+        {activeFullscreenWarning && (
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={handleDismissFullscreenWarning}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") handleDismissFullscreenWarning();
+            }}
+            className="absolute inset-0 z-40 bg-[#0c121e]/95 backdrop-blur-md text-white flex flex-col justify-between p-5 sm:p-7 cursor-pointer select-none animate-fadeIn overflow-y-auto"
+            title="Klik di mana saja pada layar HP untuk melanjutkan ke pilihan keputusan"
+          >
+            {/* Header Bilah Sistem Atas */}
+            <div className="flex items-center justify-between pt-2 pb-2.5 border-b border-white/10 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+                <span className="text-[10px] sm:text-[11px] font-mono tracking-wider font-black text-amber-300 uppercase">
+                  {activeFullscreenWarning.systemName || "PERINGATAN SISTEM KEAMANAN"}
+                </span>
               </div>
-              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-[#27374D]" />
+              <span className="text-[10px] text-white/50 font-mono">Peringatan Kritis OS</span>
             </div>
 
-            {/* Nama & Status Kontak */}
-            <div className="flex flex-col">
-              <span className="font-bold text-xs sm:text-sm text-white tracking-wide truncate max-w-[200px] sm:max-w-none">
-                {currentScenario.senderName}
-              </span>
-              <span className="text-[11px] text-[#DDE6ED]/70 flex items-center gap-1 font-mono">
-                <span>{currentScenario.senderAddress}</span>
-              </span>
+            {/* Area Tengah: Ikon Perisai Peringatan, Judul, & Pesan Sistem */}
+            <div className="flex-1 flex flex-col justify-center items-center text-center py-6 sm:py-8 space-y-5 max-w-md mx-auto w-full">
+              {/* Ikon Perisai Peringatan Berdenyut */}
+              <div className="relative">
+                <div
+                  className={`w-20 h-20 sm:w-22 sm:h-22 rounded-3xl flex items-center justify-center shadow-2xl transition-all ${
+                    activeFullscreenWarning.type === "danger"
+                      ? "bg-rose-500/20 border-2 border-rose-400/60 text-rose-400 shadow-[0_0_50px_rgba(244,63,94,0.4)]"
+                      : "bg-amber-500/20 border-2 border-amber-400/60 text-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.4)]"
+                  }`}
+                >
+                  {activeFullscreenWarning.type === "danger" ? (
+                    <AlertOctagon className="w-10 h-10 sm:w-11 sm:h-11 text-rose-400 animate-bounce-short" />
+                  ) : (
+                    <AlertTriangle className="w-10 h-10 sm:w-11 sm:h-11 text-amber-400 animate-bounce-short" />
+                  )}
+                </div>
+                <div
+                  className={`absolute -inset-2.5 rounded-3xl border animate-ping pointer-events-none opacity-40 ${
+                    activeFullscreenWarning.type === "danger"
+                      ? "border-rose-400"
+                      : "border-amber-400"
+                  }`}
+                />
+              </div>
+
+              {/* Judul Peringatan */}
+              <div className="space-y-1.5">
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug">
+                  {activeFullscreenWarning.title}
+                </h3>
+                <p className="text-xs text-white/70 max-w-xs mx-auto">
+                  Sistem operasi mendeteksi aktivitas mencurigakan yang memerlukan tindakanmu.
+                </p>
+              </div>
+
+              {/* Kotak Pesan Dialog Sistem (Persis Tampilan Peringatan di Screenshot) */}
+              <div
+                className={`w-full border-2 rounded-2xl p-4 sm:p-5 text-left shadow-2xl space-y-2.5 ${
+                  activeFullscreenWarning.type === "danger"
+                    ? "bg-rose-950/80 border-rose-400/50 text-rose-50"
+                    : "bg-[#1e293b]/95 border-amber-400/50 text-white"
+                }`}
+              >
+                <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
+                  <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Pesan Sistem Keamanan Perangkat:</span>
+                </div>
+                <p className="text-xs sm:text-[13px] leading-relaxed font-semibold text-white/95">
+                  {activeFullscreenWarning.body}
+                </p>
+              </div>
+
+              {/* Catatan Konsekuensi Tindakan Sebelumnya (jika ada) */}
+              {activeFullscreenWarning.consequence && (
+                <div className="w-full bg-black/40 border border-white/10 rounded-xl p-3 sm:p-3.5 text-left text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-300/90 text-[11px]">
+                    <AlertOctagon className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>Konsekuensi Tindakan Sebelumnya:</span>
+                  </div>
+                  <p className="text-white/80 text-[11px] sm:text-xs leading-relaxed">
+                    {activeFullscreenWarning.consequence}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Instruksi & Tombol Aksi di Bawah */}
+            <div className="space-y-3 pt-2 pb-2 shrink-0 text-center">
+              {/* Petunjuk Ketuk Di Mana Saja */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/90 text-xs font-medium shadow-md">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+                <span>Ketuk di mana saja pada layar HP untuk melanjutkan</span>
+              </div>
+
+              {/* Tombol Lanjutkan ke Pilihan Keputusan */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDismissFullscreenWarning();
+                }}
+                className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs sm:text-sm tracking-wide shadow-[0_10px_25px_rgba(245,158,11,0.35)] transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>Lanjutkan ke Pilihan Keputusan</span>
+                <ChevronRight className="w-4 h-4 text-slate-950" />
+              </button>
             </div>
           </div>
-        </div>
+        )}
+
+        {showPhoneCallOverlay && isVoiceCallScenario ? (
+          <PhoneCallSimulator
+            scenario={currentScenario}
+            onCompleteCall={handlePhoneCallComplete}
+            onDeclineCall={() => handlePhoneCallComplete("C", 0)}
+          />
+        ) : (
+          <>
+            {/* Chat App Header Bar */}
+            <div className="bg-[#27374D] text-white px-4 py-3 sm:px-6 sm:py-3.5 flex items-center justify-between shadow-md z-10 shrink-0">
+              <div className="flex items-center gap-3">
+                {/* Avatar Pengirim */}
+                <div className="relative">
+                  <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-gradient-to-tr from-amber-600 to-rose-500 flex items-center justify-center font-bold text-white text-sm shadow-md ring-2 ring-white/20">
+                    <ChannelIcon className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-[#27374D]" />
+                </div>
+
+                {/* Nama & Status Kontak */}
+                <div className="flex flex-col">
+                  <span className="font-bold text-xs sm:text-sm text-white tracking-wide truncate max-w-[200px] sm:max-w-none">
+                    {currentScenario.senderName}
+                  </span>
+                  <span className="text-[11px] text-[#DDE6ED]/70 flex items-center gap-1 font-mono">
+                    <span>{currentScenario.senderAddress}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Tombol Pintasan Buka Ulang Layar Telepon jika skenario telepon */}
+              {isVoiceCallScenario && (
+                <button
+                  type="button"
+                  onClick={() => setShowPhoneCallOverlay(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition-all cursor-pointer shadow-xs ml-auto"
+                  title="Tampilkan kembali simulasi layar telepon interaktif"
+                >
+                  <Phone className="h-3.5 w-3.5" />
+                  <span>Layar Telepon</span>
+                </button>
+              )}
+            </div>
 
         {/* Scrollable Chat Area dengan Wallpaper Doodle Realistis */}
         <div
@@ -582,37 +963,58 @@ export function FakeChatSimulator({
           {messages.map((msg) => {
             if (msg.sender === "system") {
               return (
-                <div key={msg.id} className="flex justify-center my-2">
+                <div key={msg.id} className="w-full my-2.5 animate-fadeIn">
                   {msg.systemCard ? (
                     <div
-                      className={`w-full max-w-lg rounded-2xl p-4 border text-xs shadow-md space-y-1.5 ${
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => {
+                        setActiveFullscreenWarning({
+                          title: msg.systemCard!.title,
+                          body: msg.systemCard!.body,
+                          type: msg.systemCard!.type === "call" || msg.systemCard!.type === "consequence" ? "warning" : msg.systemCard!.type,
+                          consequence: undefined,
+                          decisionIdToUnlock: null,
+                          systemName: "DETAIL PERINGATAN SISTEM",
+                        });
+                      }}
+                      className={`w-full rounded-2xl p-4 sm:p-5 border text-xs shadow-md space-y-2 cursor-pointer transition-all hover:ring-2 hover:ring-amber-400/40 hover:shadow-lg ${
                         msg.systemCard.type === "danger"
                           ? "bg-rose-50 border-rose-300 text-rose-900"
                           : msg.systemCard.type === "warning"
                           ? "bg-amber-50 border-amber-300 text-amber-900"
                           : "bg-emerald-50 border-emerald-300 text-emerald-900"
                       }`}
+                      title="Klik kartu ini untuk melihat peringatan selayar penuh HP"
                     >
-                      <div className="flex items-center gap-2 font-bold text-xs">
-                        {msg.systemCard.type === "danger" ? (
-                          <AlertOctagon className="h-4 w-4 text-rose-600 shrink-0" />
-                        ) : msg.systemCard.type === "warning" ? (
-                          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
-                        ) : (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                        )}
-                        <span>{msg.systemCard.title}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 font-bold text-xs sm:text-[13px]">
+                          {msg.systemCard.type === "danger" ? (
+                            <AlertOctagon className="h-4.5 w-4.5 text-rose-600 shrink-0" />
+                          ) : msg.systemCard.type === "warning" ? (
+                            <AlertTriangle className="h-4.5 w-4.5 text-amber-600 shrink-0" />
+                          ) : (
+                            <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
+                          )}
+                          <span>{msg.systemCard.title}</span>
+                        </div>
+                        <span className="text-[10px] opacity-75 font-mono inline-flex items-center gap-1 bg-white/40 px-2 py-0.5 rounded-full">
+                          <Eye className="w-3 h-3" />
+                          <span>Perbesar Layar</span>
+                        </span>
                       </div>
-                      <p className="leading-relaxed text-[11px] opacity-90 pl-6">
+                      <p className="leading-relaxed text-[11px] sm:text-xs opacity-90 pl-6.5">
                         {msg.systemCard.body}
                       </p>
                     </div>
                   ) : (
-                    <div className="max-w-md bg-white/90 backdrop-blur-xs rounded-xl px-3.5 py-1.5 border border-[#9DB2BF]/50 shadow-xs text-center">
-                      <span className="text-[11px] text-[#526D82] font-medium leading-relaxed flex items-center justify-center gap-1.5">
-                        <Lock className="h-3 w-3 text-amber-500 shrink-0 inline" />
-                        <span>{msg.text}</span>
-                      </span>
+                    <div className="flex justify-center">
+                      <div className="max-w-md bg-white/90 backdrop-blur-xs rounded-xl px-3.5 py-1.5 border border-[#9DB2BF]/50 shadow-xs text-center">
+                        <span className="text-[11px] text-[#526D82] font-medium leading-relaxed flex items-center justify-center gap-1.5">
+                          <Lock className="h-3 w-3 text-amber-500 shrink-0 inline" />
+                          <span>{msg.text}</span>
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -621,16 +1023,37 @@ export function FakeChatSimulator({
 
             if (msg.sender === "bank") {
               return (
-                <div key={msg.id} className="flex justify-center my-3">
-                  <div className="w-full max-w-lg rounded-2xl p-4 bg-red-950 text-white border-2 border-red-500 shadow-xl space-y-2 animate-bounce-short">
+                <div key={msg.id} className="w-full my-3 animate-bounce-short">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      setActiveFullscreenWarning({
+                        title: "Notifikasi SMS Resmi Perbankan",
+                        body: msg.text || "",
+                        type: "danger",
+                        consequence: undefined,
+                        decisionIdToUnlock: null,
+                        systemName: "SISTEM NOTIFIKASI RESMI PERBANKAN",
+                      });
+                    }}
+                    className="w-full rounded-2xl p-4 sm:p-5 bg-red-950 text-white border-2 border-red-500 shadow-xl space-y-2 cursor-pointer transition-all hover:ring-2 hover:ring-red-400/40 hover:shadow-2xl"
+                    title="Klik kartu ini untuk melihat peringatan selayar penuh HP"
+                  >
                     <div className="flex items-center justify-between border-b border-red-800 pb-2">
                       <span className="flex items-center gap-2 text-xs font-black text-rose-400 uppercase tracking-wider">
                         <AlertOctagon className="h-4 w-4 text-rose-400" />
                         NOTIFIKASI BANK: PERINGATAN MUTASI DANA
                       </span>
-                      <span className="text-[10px] text-rose-300 font-mono">{msg.timestamp}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-rose-300 font-mono">{msg.timestamp}</span>
+                        <span className="text-[10px] text-rose-300/80 font-mono inline-flex items-center gap-1 bg-red-900/50 px-2 py-0.5 rounded-full">
+                          <Eye className="w-3 h-3" />
+                          <span>Perbesar Layar</span>
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-xs text-rose-100 font-medium leading-relaxed">{msg.text}</p>
+                    <p className="text-xs sm:text-[13px] text-rose-100 font-medium leading-relaxed">{msg.text}</p>
                   </div>
                 </div>
               );
@@ -638,8 +1061,8 @@ export function FakeChatSimulator({
 
             if (msg.sender === "call") {
               return (
-                <div key={msg.id} className="flex justify-center my-3">
-                  <div className="w-full max-w-lg rounded-2xl p-4 bg-sky-950 text-white border-2 border-sky-400 shadow-xl space-y-2">
+                <div key={msg.id} className="w-full my-3">
+                  <div className="w-full rounded-2xl p-4 sm:p-5 bg-sky-950 text-white border-2 border-sky-400 shadow-xl space-y-2">
                     <div className="flex items-center justify-between border-b border-sky-800 pb-2">
                       <span className="flex items-center gap-2 text-xs font-black text-sky-300 uppercase tracking-wider">
                         <Phone className="h-4 w-4 text-sky-300 animate-pulse" />
@@ -647,7 +1070,7 @@ export function FakeChatSimulator({
                       </span>
                       <span className="text-[10px] text-sky-200 font-mono">{msg.timestamp}</span>
                     </div>
-                    <p className="text-xs text-sky-100 font-medium leading-relaxed">{msg.text}</p>
+                    <p className="text-xs sm:text-[13px] text-sky-100 font-medium leading-relaxed">{msg.text}</p>
                   </div>
                 </div>
               );
@@ -987,6 +1410,8 @@ export function FakeChatSimulator({
 
         <div ref={chatEndRef} className="h-0 w-full" />
       </div>
+    </>
+  )}
 
       {/* Bilah Navigasi Smartphone / Dekorasi Tombol Home HP (Non-clickable, Visual Saja) */}
       <div

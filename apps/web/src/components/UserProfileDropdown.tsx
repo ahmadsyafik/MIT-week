@@ -3,7 +3,6 @@ import { useNavigate, NavLink } from "react-router-dom";
 import {
   LogOut,
   ChevronDown,
-  ShieldCheck,
   ExternalLink,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -105,11 +104,6 @@ export default function UserProfileDropdown() {
 
           {/* Opsi Menu Tambahan */}
           <div className="py-1 space-y-0.5">
-            <div className="px-3 py-2 text-[11px] text-[#526D82] leading-relaxed flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>Privasi Terjaga: 100% data tersimpan di perangkat lokal.</span>
-            </div>
-
             <NavLink
               to="/keterbatasan"
               onClick={() => setIsOpen(false)}

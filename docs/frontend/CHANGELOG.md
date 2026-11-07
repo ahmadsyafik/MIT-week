@@ -3,6 +3,89 @@
 Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TASK_GUIDE.md).
 
 ## [Belum dirilis]
+### Layar Peringatan Keamanan Penuh HP & Interaksi Lanjut Keputusan (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Mengimplementasikan tampilan overlay peringatan keamanan sistem selayar penuh HP simulator (*Full-Screen System Security Warning Overlay*) untuk seluruh halaman simulator ketika skenario memicu notifikasi peringatan sistem perangkat (seperti *"Peringatan Sistem Keamanan Perangkat"*, Play Protect, izin kritis SMS/kontak, maupun notifikasi mutasi perbankan).
+  - Tampilan overlay didesain otentik meniru antarmuka peringatan darurat keamanan OS seluler:
+    - Lencana sistem aktif dengan indikator denyut (`PERINGATAN SISTEM KEAMANAN`).
+    - Ikon perisai besar bergelombang getar (*animated caution shield*).
+    - Judul peringatan tebal dan kotak dialog sistem kontras tinggi sesuai tangkapan layar referensi.
+    - Menampilkan ringkasan konsekuensi tindakan berisiko sebelumnya (jika ada) agar pengguna memahami konteks bahaya.
+  - **Interaktivitas Bebas Tap/Klik**:
+    - Seluruh layar overlay dapat diklik di bagian mana saja (`onClick`), didukung tombol aksi bawah *"Lanjutkan ke Pilihan Keputusan"*, untuk menutup overlay secara mulus dan langsung membuka opsi keputusan berikutnya di dock bawah.
+    - Kartu peringatan tetap terekam rapi di riwayat obrolan (chat log) dan dapat diklik kapan saja untuk dibuka kembali selayar penuh.
+
+### Isolasi Tinggi Ponsel Hanya untuk Sesi Telepon & Perbaikan Ruang Kosong Mode Chat (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Menghapus pembatas tinggi paksa (`min-h-[780px] sm:min-h-[850px]`) dari bingkai terluar simulator smartphone di `FakeChatSimulator.tsx`.
+  - Memperbaiki bug tampilan pada mode obrolan (chat) di mana bilah navigasi ponsel sempat mengambang di tengah dan menyisakan ruang kosong biru tua (`bg-[#27374D]`) yang masif di bawah bilah navigasi saat pesan obrolan masih sedikit.
+  - Sekarang mode chat membungkus konten dan dock input percakapan secara natural dan rapat dengan bilah navigasi ponsel menempel pas di bagian bawah bingkai tanpa celah kosong.
+  - Dimensi tinggi yang panjang (`min-h-[720px] sm:min-h-[790px]`) kini **hanya berlaku secara eksklusif untuk sesi panggilan telepon** (`PhoneCallSimulator.tsx`) sehingga tampilan telepon tetap panjang dan proporsional persis smartphone nyata saat panggilan berlangsung.
+
+### Penyederhanaan Visual Minimalis Layar Panggilan Masuk (PhoneCallSimulator.tsx)
+- **PhoneCallSimulator.tsx**:
+  - Menghapus elemen dekoratif yang mengganggu pada tampilan panggilan masuk sesuai permintaan visual pengguna:
+    - Menghapus lencana pill *"Panggilan Masuk..."* di bagian atas.
+    - Menghapus teks nomor dan keterangan tambahan `+62 821-9900-1122 (Panggilan Suara Masuk)` serta `Indonesia • Panggilan Seluler`.
+    - Menghapus avatar lingkaran riak getar di bagian tengah dan teks *"Menunggu Respons Kamu..."*.
+  - Menghasilkan tampilan antarmuka panggilan masuk yang jauh lebih bersih, modern, dan autentik persis referensi video (nama penelepon *Customer Security Bank X* tebal di bagian atas, ruang tengah lapang minimalis, tombol *Ingatkan Saya / Pesan*, serta kapsul interaktif *Ketuk untuk Menjawab* dan tombol *Tolak* di bagian bawah).
+### Penyelarasan Panjang & Proporsi Mockup Layar HP Simulator
+- **FakeChatSimulator.tsx & PhoneCallSimulator.tsx**:
+  - Menyelaraskan tinggi dan proporsi bingkai HP simulator agar layar panggilan telepon memiliki panjang yang presisi sama dengan panjang layar simulator chat (`min-h-[780px] sm:min-h-[850px]`):
+    - Memposisikan bilah status ponsel asli (*Mock Phone Status Bar* dengan waktu 09:41, notch kamera, 5G, dan 88%) permanen di bagian paling atas bingkai ponsel.
+    - Memposisikan bilah navigasi ponsel (*Bilah Navigasi Smartphone* dengan tombol Back, Home, dan Multitasking) permanen di bagian bawah bingkai ponsel.
+    - Mengubah wadah dalam `PhoneCallSimulator` menjadi `min-h-[720px] sm:min-h-[790px] flex-1` serta merelokasi dan memperluas jarak vertikal antar elemen (avatar riak berdenyut, tombol aksi cepat, kapsul geser/ketuk untuk menjawab, dan transkripsi panggilan) sehingga layar telepon tidak lagi tampak gepeng/pendek dan bertransisi mulus tanpa lonjakan tinggi saat berpindah ke obrolan chat.
+### Perbaikan Isolasi Audio Panggilan Telepon (PhoneCallSimulator.tsx)
+- **PhoneCallSimulator.tsx**:
+  - Memperbaiki bug kebocoran nada dering (*ringtone leak*) agar audio telepon **hanya berbunyi secara eksklusif selama sesi panggilan masuk**:
+    - Menambahkan mekanisme *guard flag* (`isRingingActive`) dan pembersihan otomatis `stopRinging()` sebelum interval baru dibuat untuk mencegah *interval timer* terduplikasi atau tertinggal di memori browser.
+    - Menambahkan fungsi pembersihan mendalam `cleanup()` yang menutup dan mendestruksi `AudioContext` serta membersihkan seluruh timer saat komponen *unmount* (ketika panggilan selesai dan kembali ke Fake Chat atau saat pengguna berpindah halaman).
+    - Memastikan dering langsung berhenti seketika (*instant mute*) saat panggilan diangkat (`callPhase === "active"`), panggilan ditolak/diputus (`callPhase === "ended"`), atau saat tab browser diminimalkan/tidak aktif (*visibilitychange listener*).
+### Penyesuaian Lebar Peringatan Selayar HP pada Simulator (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Mengubah seluruh kotak peringatan sistem (`systemCard`), kartu konsekuensi tindakan edukatif (*Konsekuensi Tindakan Berisiko / Konsekuensi Tindakan Aman & Waspada*), peringatan mutasi bank (*Bank Notification*), serta panggilan suara masuk agar tampil penuh selebar layar ponsel simulator (`w-full` dengan padding `p-4 sm:p-5` dan sudut `rounded-2xl`).
+  - Menghapus pembatas lebar sempit (`max-w-lg` 512px) dan pembungkus tengah (`flex justify-center`) yang sebelumnya membuat kartu peringatan tampak melayang sempit di tengah layar ponsel simulator pada layar tablet/desktop, sehingga sekarang kartu peringatan membentang proporsional memenuhi lebar layar HP simulator secara konsisten di seluruh skenario (K1 s.d. K8).
+### Simulasi Panggilan Telepon Interaktif Skenario K4 (Telepon Palsu Petugas Bank)
+- **PhoneCallSimulator.tsx & FakeChatSimulator.tsx**:
+  - Mengimplementasikan pengalaman simulasi panggilan telepon suara (*voice call*) interaktif penuh untuk **Skenario K4 (Telepon Palsu Petugas Bank)** dengan referensi desain ponsel modern (iOS call screen):
+    - **Layar Panggilan Masuk (Incoming Call):**
+      - Tampilan bertema gelap ramping (`#121214` / `#1C1C1E`) dengan ambient glow dan status bar ponsel (09:41, sinyal seluler, 5G, baterai).
+      - Menampilkan identitas penelepon: *Customer Security Bank X* (`+62 821-9900-1122`), status berdenyut *"Panggilan Masuk..."*, serta avatar lingkaran bergelombang getar (*animated ripple waves* & *shake*).
+      - Tombol aksi cepat atas (*Ingatkan Saya* dengan ikon `Clock` dan *Pesan* dengan ikon `MessageSquare`).
+      - Pengguna harus mengangkat panggilan sendiri secara interaktif (menunggu dipencet pengguna sebelum simulasi dimulai) melalui tombol hijau *"Angkat / Jawab"* atau kapsul beranimasi shimmer *"Ketuk untuk Menjawab"*, atau langsung menolak panggilan melalui tombol merah *"Tolak Panggilan"*.
+      - Dilengkapi audio synthesizer Web Audio API mandiri (100% on-device tanpa berkas eksternal) untuk nada dering dan nada putus panggilan, serta tombol sakelar dering senyap/nyala.
+    - **Layar Panggilan Aktif (Active Call):**
+      - Timer durasi panggilan mulai menghitung detik berjalan (`00:01`, `00:02`, dst.) dengan indikator equalizer gelombang audio (*live voice equalizer*).
+      - Menampilkan 6 tombol bundar in-call iOS (Mute/Bisu, Keypad interaktif, Speaker, Tambah Panggilan, FaceTime, dan Kontak).
+      - **Transkripsi Suara Langsung (*Live Speech-to-Text*):** Menampilkan teks dialog yang diucapkan oleh petugas bank gadungan secara bertahap dan jelas, menuntut kode OTP SMS dengan alasan transaksi darurat Rp4.500.000.
+      - **Pilihan Ganda Pop-Out (A, B, C):** Menyediakan 3 opsi respons bicaramu dengan desain kartu *elevated pop-out* (menonjol dan terangkat berbayangan lembut saat kursor menyentuh kartu dengan lencana lingkaran huruf A/B/C putih).
+      - Tombol merah bulat besar di bagian bawah (*End Call*) yang langsung memutus sambungan telepon sebagai respons aman (setara opsi C).
+    - **Panggilan Selesai & Kembali Otomatis ke Fake Chat:**
+      - Saat pengguna memilih respons atau mematikan telepon, layar menampilkan status *"Panggilan Berakhir"*, durasi total, ucapan respons pengguna, dan reaksi penelpon.
+      - Layar panggilan tertutup secara otomatis setelah jeda singkat (~1.8 detik), mengembalikan pengguna ke tampilan chat simulasi (*Fake Chat*) dengan riwayat percakapan, transkripsi telepon, konsekuensi keputusan, serta evaluasi skor pertahanan atau kelanjutan skenario.
+      - Tersedia tombol *"Layar Telepon"* di bilah header jika pengguna ingin membuka kembali antarmuka telepon kapan saja.
+### Pembaruan Gambar Cover Simulator Skenario dari Berkas Zip
+- **Belajar.tsx & public/simulator/covers/**:
+  - Mengintegrasikan seluruh aset gambar cover skenario simulator yang diekstrak dari `foto simulator.zip` serta foto unggahan undangan pernikahan ke dalam direktori publik `public/simulator/covers/`:
+    - **Kasus K1 (Undangan Pernikahan Digital.apk):** Menggunakan `undangan-digital.jpg` (tampilan landing page/website undangan pernikahan elegan *Wedding Venue & Inquiry Assessment*).
+    - **Kasus K2 (Lihat Foto Paket):** Menggunakan `paket.jpg` (foto interaktif seseorang membuka paket kardus).
+    - **Kasus K3 (Loker Admin WFH Palsu):** Menggunakan `work-from-home.jpg` (foto kerja remote di depan laptop meja).
+    - **Kasus K4 (Telepon Palsu Petugas Bank):** Menggunakan `bank.jpg` (antarmuka transfer dana perbankan digital di ponsel).
+    - **Kasus K5 (Kenalan Online -> Investasi Bodong):** Menggunakan `dating-apps.jpg` (tampilan aplikasi kencan daring "Find a Match").
+    - **Kasus K6 (Email Akun Akan Ditangguhkan):** Menggunakan `email.jpg` (tampilan kotak masuk email Google Mail).
+    - **Kasus K7 (Giveaway Palsu):** Menggunakan `giveaway.jpg` (grafis stempel hadiah kotak giveaway).
+    - **Kasus K8 (Toko Online Fiktif):** Menggunakan `toko-online.jpg` (tampilan keranjang belanja checkout belanja daring).
+  - Menyesuaikan penataan posisi objek gambar (`object-cover object-center`) pada wadah kartu rasio 4:3 agar fokus utama setiap skenario terpusat dan tidak terpotong.
+  - Menghapus elemen indikator titik carousel (*dots indicator*) di bagian bawah pratinjau kartu gambar skenario simulator (`Belajar.tsx`) agar tampilan foto cover bersih sepenuhnya tanpa elemen overlay titik putih.
+  - Meratakan warna putih pada aset `giveaway.jpg` dengan menghilangkan garis/letterbox abu-abu di bagian atas dan bawah menjadi putih murni (`#FFFFFF`) rata, serta menyelaraskan latar belakang pembungkus gambar menjadi putih bersih (`bg-white`) agar latar grafis menyatu sempurna dan tidak belang.
+
+### Redesain Tombol Aksi Mulai Simulator Skenario
+- **Belajar.tsx**:
+  - Mengubah desain tombol aksi pada seluruh kartu skenario simulator di halaman Belajar (`SimulatorCover`):
+    - **Model Stroke & Background Outline:** Mengadopsi model stroke kartu profil (latar belakang putih `bg-white`, garis tepi `border border-[#9DB2BF]/60`, bayangan halus `shadow-2xs`, dan transisi hover `hover:border-[#526D82] hover:bg-slate-50 text-[#27374D]`). Mengeliminasi blok warna gelap solid `#27374D` agar tampilan kartu terasa lebih bersih dan lapang.
+    - **Bentuk Square dengan Sudut Radius Sama:** Tetap mempertahankan bentuk rounded rectangle (`rounded-xl`) dengan sudut radius yang sama dengan kartu dan tombol pintasan (bukan bentuk kapsul/pill bulat penuh `rounded-full`).
+    - **Tipografi & Lokasi Selaras Pintasan Simulator:** Menyelaraskan tata letak tombol dengan tombol Pintasan Simulator (`w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm`), memposisikan teks aksi *"Mulai Simulasi"* dan ikon panah `ArrowRight` berdampingan rapi di tengah tanpa kotak terpisah di sisi kanan.
+
 ### Diferensiasi Analisis & Pengayaan Fitur Halaman Cek (/cek)
 - **Cek.tsx, analysis.ts, & api.ts**:
   - **Diferensiasi Output Pemeriksaan:** Memisahkan logika evaluasi dan tampilan hasil analisis secara spesifik untuk masing-masing tab:
@@ -26,13 +109,14 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
     - Mengubah tombol profil pill di pojok kanan atas top bar menjadi tombol interaktif dengan animasi rotasi panah chevron saat terbuka.
     - Menampilkan panel dropdown melayang (*floating dropdown*) yang memuat informasi akun ringkas, indikator status sesi on-device aktif, tautan cepat ke Keterbatasan & Privasi, serta tombol aksi **Keluar dari Sesi (Logout)**.
     - Dilengkapi dukungan interaktivitas penuh: menutup otomatis saat klik di luar area (*click-outside listener*) atau saat tombol `Escape` ditekan, serta mengarahkan pengguna kembali ke halaman utama secara mulus saat keluar dari sesi.
+    - Menghapus label catatan *"Privasi Terjaga: 100% data tersimpan di perangkat lokal"* dari dalam menu dropdown profil agar tampilan dropdown lebih ringkas dan fokus pada opsi navigasi & akun.
 
-### Redesain Tata Letak Editorial Kamus Istilah Digital
+### Penyesuaian Tata Letak Kamus Istilah Digital: Grid Daftar & Detail Editorial
 - **Belajar.tsx**:
-  - Mengubah tampilan kartu Kamus Istilah Jebakan & Modus Digital mengikuti gaya tipografi editorial modern persis referensi visual:
-    - **Contoh Kata Besar (Display Typography di Kiri):** Menampilkan nama istilah dalam tipografi besar (`text-3xl lg:text-4xl font-black`) dengan penekanan kata kunci berwana aksen dinamis (`renderStyledTermTitle`), tanda titik aksen, badge kategori pill, nomor urut seri `#01-#10`, serta monogram huruf awal semi-transparan sebagai watermark artistik di latar belakang.
-    - **Teks Penjelasan Lengkap (Samping Kanan):** Menampilkan paragraf definisi yang leluasa dan mudah dibaca, kotak catatan titik masuk jebakan, serta tombol aksi bertautan `→ Pelajari Anatomi Modus & Pertolongan Pertama` yang responsif.
-    - Penyesuaian layout serupa pada halaman detail `KamusPage` sehingga transisi antara daftar istilah dan bedah modus terasa konsisten dan menyatu.
+  - **Pengembalian Daftar Istilah Kamus ke Format Grid (`KamusCover`):** Mengembalikan daftar kartu pada halaman cover kamus ke format grid 2 kolom yang ringkas dan teratur (`grid-cols-1 md:grid-cols-2 gap-5`), memuat badge kategori, judul istilah, ringkasan arti 3 baris, dan pintasan `Buka Detail →` tanpa layout horizontal yang terlalu memanjang.
+  - **Penerapan Gaya Editorial Wolf & Whale pada Halaman Detail (`KamusPage`):** Menerapkan desain tipografi editorial modern persis referensi visual saat kartu istilah diklik untuk melihat detailnya:
+    - **Display Typography (Kiri):** Judul istilah ukuran besar (`text-3xl sm:text-4xl lg:text-5xl font-black`) dengan aksen warna dinamis (`renderStyledTermTitle`), tanda titik aksen, badge kategori pill, serta watermark monogram inisial di latar belakang.
+    - **Penjelasan Editorial & Aksi Tautan (Kanan):** Paragraf penjelasan definisi yang leluasa (`text-base sm:text-lg`) langsung di atas kanvas putih bersih, serta tombol tautan `→ Pelajari Anatomi Modus & Pertolongan Pertama` yang membawa langsung ke bagian tahapan modus, titik masuk jebakan, pertolongan pertama, dan pencegahan.
 
 ### Komponen Navigasi Mobile Gelembung Melayang (Curved Bubble Bottom Bar)
 - **MobileCurvedBottomNav.tsx & Layout.tsx**:
@@ -57,6 +141,10 @@ Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TAS
 - **Sandi.tsx**:
   - Menghapus tombol toggle segmented pill *"2 Kata"* vs *"3 Kata (Disarankan)"* pada header pembuatan sandi. Generator kata sandi kini secara default langsung menghasilkan kombinasi 3 kata bahasa Indonesia acak yang kuat dan mudah dihafal secara lisan.
   - Menghapus teks `(*AI Voice Cloning*)` pada deskripsi subtitle header Sandi Verifikasi Keluarga.
+- **FakeChatSimulator.tsx & Belajar.tsx**:
+  - **Efek Hover Pilihan Ganda Menonjol (Pop-out Selection):** Mengubah desain tombol opsi pilihan ganda keputusan (A, B, C) pada simulator sesuai referensi visual:
+    - Saat disentuh kursor (hover), opsi langsung **menonjol** secara nyata: membesar (`scale-[1.03]`), terangkat ke atas (`-translate-y-1.5`), memiliki bayangan pekat yang dalam (`shadow-xl shadow-[#27374D]/30`), dan latar belakang berubah menjadi warna primer solid (`bg-[#27374D]`).
+    - Lencana huruf opsi bertransformasi menjadi lingkaran putih bersih (`bg-white text-[#27374D] font-black shadow-md`) dengan teks opsi putih tebal dan panah chevron kanan yang meluncur mulus.
 - **FakeChatSimulator.tsx**:
   - Menghapus tombol atas *"Ulangi Kasus"* (`RotateCcw`) pada bilah navigasi atas di atas simulator smartphone agar bilah navigasi tampil ringkas hanya dengan tombol kembali ke daftar skenario.
   - **Pembersihan Elemen Akhir Skenario & Label Tape:**

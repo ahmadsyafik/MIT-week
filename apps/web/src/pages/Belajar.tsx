@@ -163,7 +163,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 3,
     icon: Mail,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k1-chat-snippet.svg",
+    centerImage: "/simulator/covers/undangan-digital.jpg",
     storyCards: K1_STORY_CARDS,
     description: "File .apk menyamar sebagai undangan pernikahan digital yang dikirimkan melalui ruang obrolan WhatsApp.",
     senderName: "Admin Undangan Palsu",
@@ -240,7 +240,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: FileCode,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k2-chat-snippet.svg",
+    centerImage: "/simulator/covers/paket.jpg",
     description: "File berkedok foto bukti paket dari kurir ekspedisi dengan ekstensi ganda berbahaya.",
     senderName: "Kurir Ekspedisi Paket",
     senderAddress: "+62 877-4409-1234",
@@ -316,7 +316,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: Users,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k3-chat-snippet.svg",
+    centerImage: "/simulator/covers/work-from-home.jpg",
     description: "Tawaran kerja admin work-from-home yang meminta transfer deposit/biaya di muka.",
     senderName: "HR Global Media Partner",
     senderAddress: "DM Instagram / Telegram: @hr_recruitment_id",
@@ -390,7 +390,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: PhoneCall,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k4-chat-snippet.svg",
+    centerImage: "/simulator/covers/bank.jpg",
     description: "Panggilan telepon mengaku staf keamanan bank meminta kode OTP dengan dalih pembatalan transaksi.",
     senderName: "Fraud Unit Bank (Palsu)",
     senderAddress: "Panggilan Suara: +62 21-1500888 (Spoofing)",
@@ -464,7 +464,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: Heart,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k5-chat-snippet.svg",
+    centerImage: "/simulator/covers/dating-apps.jpg",
     description: "Membangun kedekatan emosional bertahap, lalu mengajak investasi bersama di platform trading fiktif.",
     senderName: "Kenalan Online (Amanda / Kevin)",
     senderAddress: "Tinder / Bumble / Instagram DM",
@@ -538,7 +538,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: Mail,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k6-chat-snippet.svg",
+    centerImage: "/simulator/covers/email.jpg",
     description: "Email phishing mengaku penyedia layanan resmi, meminta klik tautan verifikasi kata sandi darurat.",
     senderName: "Pusat Keamanan Akun Google",
     senderAddress: "security@g00gle-accounts.verify-user.id",
@@ -612,7 +612,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 3,
     icon: Award,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k7-chat-snippet.svg",
+    centerImage: "/simulator/covers/giveaway.jpg",
     description: "Mengaku brand ternama mengumumkan pemenang giveaway, meminta biaya pajak hadiah di muka.",
     senderName: "Akun Giveaway Resmi Brand (Palsu)",
     senderAddress: "Instagram DM: @official_giveaway_brand2026",
@@ -686,7 +686,7 @@ const SCENARIOS: ScenarioCase[] = [
     stepsCount: 4,
     icon: CreditCard,
     bgImage: "/simulator/desk-template.jpg",
-    centerImage: "/simulator/k8-chat-snippet.svg",
+    centerImage: "/simulator/covers/toko-online.jpg",
     description: "Toko fiktif menjual barang elektronik murah jauh di bawah pasar, menolak rekber dan memaksa transfer langsung.",
     senderName: "Toko Elektronik Cuci Gudang",
     senderAddress: "WhatsApp / Chat Marketplace",
@@ -1698,16 +1698,16 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
             <div
               key={sc.id}
               onClick={() => onSelectScenario(sc.id)}
-              className="relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden h-full"
+              className="group relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden h-full"
             >
               {/* Bagian Atas: Gambar / Media Preview Card */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-[#EAE4DC] flex items-center justify-center">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-white flex items-center justify-center">
                 {sc.centerImage ? (
-                  <div className="w-full h-full relative overflow-hidden bg-[#27374D]/10">
+                  <div className="w-full h-full relative overflow-hidden bg-white">
                     <img
                       src={sc.centerImage}
                       alt={sc.title}
-                      className="w-full h-full object-cover object-top"
+                      className="w-full h-full object-cover object-center"
                     />
                   </div>
                 ) : (
@@ -1737,13 +1737,7 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
                   </span>
                 </div>
 
-                {/* Bottom Carousel / Card Dots Indicator (Persis Desain Referensi) */}
-                <div className="absolute bottom-2.5 inset-x-0 z-10 flex items-center justify-center gap-1.5 pointer-events-none">
-                  <span className="h-1.5 w-3.5 rounded-full bg-white shadow-xs" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-xs" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-xs" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-xs" />
-                </div>
+
               </div>
 
               {/* Bagian Tengah: Judul & Deskripsi Skenario */}
@@ -1757,13 +1751,11 @@ function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) =
                   </p>
                 </div>
 
-                {/* Bagian Bawah: Tombol Aksi "Mulai →" (Radius Lebih Sedang/Kompak, Bukan Kapsul Full) */}
+                {/* Bagian Bawah: Tombol Aksi "Mulai Simulasi →" (Model Stroke seperti Profil, Radius Square rounded-xl, Tata Letak seperti Pintasan) */}
                 <div className="pt-3 border-t border-slate-200/70 mt-3 w-full">
-                  <div className="w-full inline-flex items-center justify-between pl-4 pr-2 py-2.5 rounded-xl bg-[#27374D] text-white shadow-xs">
-                    <span className="text-xs sm:text-sm font-bold tracking-wide leading-none pl-0.5">Mulai</span>
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#27374D] shadow-2xs shrink-0">
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
+                  <div className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#9DB2BF]/60 bg-white text-[#27374D] shadow-2xs group-hover:border-[#526D82] group-hover:bg-slate-50 transition-all font-bold text-xs sm:text-sm">
+                    <span>Mulai Simulasi</span>
+                    <ArrowRight className="h-4 w-4 text-[#526D82] group-hover:text-[#27374D] shrink-0" />
                   </div>
                 </div>
               </div>
@@ -4126,76 +4118,39 @@ function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
         </div>
       </div>
 
-      {/* List Kartu Kamus Editorial Modern Sesuai Referensi Visual (Kata Besar di Kiri & Penjelasan di Kanan) */}
+      {/* Grid Kartu Istilah Kamus (Kembali ke Tata Letak Grid Responsif) */}
       {filteredTerms.length > 0 ? (
-        <div className="space-y-5">
-          {filteredTerms.map((term, index) => {
-            const watermarkLetter = term.name.charAt(0).toUpperCase();
-
-            return (
-              <div
-                key={term.id}
-                onClick={() => onSelectTerm(term.id)}
-                className="group relative rounded-3xl sm:rounded-[32px] border border-[#9DB2BF]/40 bg-white p-6 sm:p-8 lg:p-9 shadow-xs hover:border-[#526D82] hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-                  {/* Sisi Kiri: Contoh Kata Besar & Tipografi Berani (Display Typography) */}
-                  <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[140px] sm:min-h-[160px]">
-                    {/* Decorative Monogram Watermark di Latar Belakang */}
-                    <span
-                      aria-hidden="true"
-                      className="absolute -top-6 -left-3 text-8xl sm:text-9xl font-black text-[#526D82]/10 select-none pointer-events-none transition-transform duration-500 group-hover:scale-105"
-                    >
-                      {watermarkLetter}
-                    </span>
-
-                    <div className="relative z-1 space-y-3">
-                      {/* Badge Kategori Modus & Nomor Urut */}
-                      <div className="flex items-center gap-2">
-                        <span className={`rounded-full px-3 py-1 text-[11px] font-bold border shadow-2xs ${term.tagColor}`}>
-                          {term.category}
-                        </span>
-                        <span className="text-[11px] font-mono text-[#9DB2BF] font-semibold">
-                          #{String(index + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-
-                      {/* Kata / Istilah Ukuran Besar Persis Referensi */}
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#27374D] leading-[1.15] tracking-tight">
-                        {renderStyledTermTitle(term)}
-                        <span className="text-blue-600 ml-0.5">.</span>
-                      </h3>
-                    </div>
-                  </div>
-
-                  {/* Sisi Kanan: Teks Penjelasan Mendalam & Aksi Tautan */}
-                  <div className="lg:col-span-7 flex flex-col justify-between space-y-3.5 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-8">
-                    {/* Teks Penjelasan Definisi */}
-                    <p className="text-sm sm:text-base text-[#526D82] leading-relaxed font-normal">
-                      {term.meaning}
-                    </p>
-
-                    {/* Ringkasan Titik Masuk Utama */}
-                    <div className="rounded-xl bg-[#DDE6ED]/40 p-3 sm:p-3.5 border border-[#9DB2BF]/30 text-xs text-[#27374D] leading-relaxed">
-                      <strong className="font-bold text-[#27374D] block mb-0.5">Titik Masuk Jebakan:</strong>
-                      <span className="text-[#526D82]">{term.entryPoint}</span>
-                    </div>
-
-                    {/* Tombol Tautan Aksi (Persis Gaya "-> View our work") */}
-                    <div className="pt-1.5 flex items-center justify-between">
-                      <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-blue-600 group-hover:text-blue-700 transition-colors">
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                        <span>Pelajari Anatomi Modus & Pertolongan Pertama</span>
-                      </span>
-                      <span className="hidden sm:inline-block text-[11px] font-medium text-[#9DB2BF]">
-                        Klik kartu untuk detail
-                      </span>
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {filteredTerms.map((term) => (
+            <div
+              key={term.id}
+              onClick={() => onSelectTerm(term.id)}
+              className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-3"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${term.tagColor}`}>
+                    {term.category}
+                  </span>
                 </div>
+                <h3 className="text-base font-bold text-[#27374D] group-hover:text-blue-900 transition-colors">
+                  {term.name}
+                </h3>
+                <p className="text-xs text-[#526D82] leading-relaxed line-clamp-3">
+                  {term.meaning}
+                </p>
               </div>
-            );
-          })}
+
+              <div className="pt-2 border-t border-[#DDE6ED] flex items-center justify-between text-[11px] text-[#526D82]">
+                <span className="truncate max-w-[200px] sm:max-w-[240px]">
+                  Titik Masuk: {term.entryPoint}
+                </span>
+                <span className="text-[#27374D] font-bold shrink-0 flex items-center gap-1 group-hover:underline">
+                  Buka Detail →
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="rounded-3xl border border-[#9DB2BF]/40 bg-white p-12 text-center space-y-2">
@@ -4238,78 +4193,87 @@ function KamusPage({
       </div>
 
       {/* Main Container Halaman Khusus Istilah */}
-      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 lg:p-10 shadow-xs space-y-8">
-        {/* Header Hero Editorial: Kata Besar di Kiri & Penjelasan di Kanan */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center pb-6 border-b border-[#9DB2BF]/30">
-          <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[140px]">
+      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-10">
+        {/* Header Hero Editorial: Kata Besar di Kiri & Penjelasan di Kanan Persis Referensi */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pb-8 border-b border-[#9DB2BF]/30">
+          <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[160px] sm:min-h-[180px]">
             {/* Watermark Monogram */}
             <span
               aria-hidden="true"
-              className="absolute -top-6 -left-3 text-8xl sm:text-9xl font-black text-[#526D82]/10 select-none pointer-events-none"
+              className="absolute -top-10 -left-4 text-9xl sm:text-[140px] font-black text-[#526D82]/10 select-none pointer-events-none"
             >
               {term.name.charAt(0).toUpperCase()}
             </span>
 
             <div className="relative z-1 space-y-3">
-              <span className={`inline-block rounded-full px-3 py-1 text-[11px] font-bold border shadow-2xs ${term.tagColor}`}>
+              <span className={`inline-block rounded-full px-3.5 py-1 text-xs font-bold border shadow-2xs ${term.tagColor}`}>
                 {term.category}
               </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#27374D] leading-[1.12] tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#27374D] leading-[1.15] tracking-tight">
                 {renderStyledTermTitle(term)}
-                <span className="text-blue-600 ml-0.5">.</span>
+                <span className="text-blue-600 ml-1">.</span>
               </h1>
             </div>
           </div>
 
-          <div className="lg:col-span-7 space-y-3 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-8">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82]">
-              Definisi & Pengertian Utama
-            </span>
-            <p className="text-sm sm:text-base text-[#27374D] leading-relaxed font-normal bg-[#DDE6ED]/30 p-4 sm:p-5 rounded-2xl border border-[#9DB2BF]/40">
+          <div className="lg:col-span-7 flex flex-col justify-between space-y-5 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-10">
+            <p className="text-base sm:text-lg text-[#526D82] leading-relaxed font-normal">
               {term.meaning}
             </p>
+
+            <div>
+              <a
+                href="#bedah-modus"
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors group/cta"
+              >
+                <ArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-1" />
+                <span>Pelajari Anatomi Modus & Pertolongan Pertama</span>
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Section 1: Cara Kerja Modus */}
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-            Tahapan Cara Kerja Modus:
-          </h2>
-          <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200 text-xs text-[#27374D] leading-relaxed">
-            {term.howItWorks}
+        <div id="bedah-modus" className="space-y-6 pt-2">
+          {/* Section 1: Cara Kerja Modus */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
+              Tahapan Cara Kerja Modus:
+            </h2>
+            <div className="rounded-2xl bg-slate-50 p-4 sm:p-5 border border-slate-200 text-xs sm:text-sm text-[#27374D] leading-relaxed">
+              {term.howItWorks}
+            </div>
           </div>
-        </div>
 
-        {/* Section 2: Titik Masuk Utama */}
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-            Titik Masuk Utama (Entry Point):
-          </h2>
-          <div className="rounded-2xl bg-amber-50/70 p-4 border border-amber-200 text-xs text-amber-950 leading-relaxed">
-            {term.entryPoint}
+          {/* Section 2: Titik Masuk Utama */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
+              Titik Masuk Utama (Entry Point):
+            </h2>
+            <div className="rounded-2xl bg-amber-50/70 p-4 sm:p-5 border border-amber-200 text-xs sm:text-sm text-amber-950 leading-relaxed">
+              {term.entryPoint}
+            </div>
           </div>
-        </div>
 
-        {/* Section 3: Pertolongan Pertama / Respons Cepat */}
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
-            <OctagonAlert className="h-4 w-4" />
-            <span>Pertolongan Pertama Jika Terlanjur Terpapar:</span>
-          </h2>
-          <div className="rounded-2xl bg-rose-50/70 p-4 border border-rose-200 text-xs text-rose-950 leading-relaxed">
-            {term.firstResponse}
+          {/* Section 3: Pertolongan Pertama / Respons Cepat */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+              <OctagonAlert className="h-4 w-4" />
+              <span>Pertolongan Pertama Jika Terlanjur Terpapar:</span>
+            </h2>
+            <div className="rounded-2xl bg-rose-50/70 p-4 sm:p-5 border border-rose-200 text-xs sm:text-sm text-rose-950 leading-relaxed">
+              {term.firstResponse}
+            </div>
           </div>
-        </div>
 
-        {/* Section 4: Langkah Pencegahan Mandiri */}
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D] flex items-center gap-1.5">
-            <ShieldCheck className="h-4 w-4 text-emerald-600" />
-            <span>Langkah Pencegahan Utama:</span>
-          </h2>
-          <div className="rounded-2xl bg-emerald-50/70 p-4 border border-emerald-200 text-xs text-emerald-950 leading-relaxed">
-            {term.prevention}
+          {/* Section 4: Langkah Pencegahan Mandiri */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D] flex items-center gap-1.5">
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <span>Langkah Pencegahan Utama:</span>
+            </h2>
+            <div className="rounded-2xl bg-emerald-50/70 p-4 sm:p-5 border border-emerald-200 text-xs sm:text-sm text-emerald-950 leading-relaxed">
+              {term.prevention}
+            </div>
           </div>
         </div>
 

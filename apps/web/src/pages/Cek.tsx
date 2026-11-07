@@ -4,6 +4,7 @@ import {
   Link2,
   FileCheck,
   ShieldAlert,
+  AlertTriangle,
   AlertCircle,
   Check,
   ShieldCheck,
@@ -101,6 +102,7 @@ function getRiskBandInfo(band: Band, kind?: TabKind) {
         badgeStyle: "bg-red-500/20 text-red-300 border border-red-500/35",
         activeColor: "text-red-400",
         activeBg: "bg-red-500",
+        Icon: ShieldAlert,
         summary:
           kind === "link"
             ? "Tautan ini terindikasi sangat berbahaya: meniru domain institusi/bank resmi (typosquatting), memicu unduhan paket aplikasi mentah (.apk), atau mengarah ke laman phishing."
@@ -114,6 +116,7 @@ function getRiskBandInfo(band: Band, kind?: TabKind) {
         badgeStyle: "bg-orange-500/20 text-orange-300 border border-orange-500/35",
         activeColor: "text-orange-400",
         activeBg: "bg-orange-500",
+        Icon: AlertTriangle,
         summary:
           kind === "link"
             ? "Tautan mencurigakan: menggunakan pemendek tautan untuk menyamarkan alamat asli, menggunakan TLD berisiko tinggi, atau memuat jalur pancingan login."
@@ -127,6 +130,7 @@ function getRiskBandInfo(band: Band, kind?: TabKind) {
         badgeStyle: "bg-amber-500/20 text-amber-300 border border-amber-500/35",
         activeColor: "text-amber-400",
         activeBg: "bg-amber-500",
+        Icon: AlertCircle,
         summary:
           kind === "link"
             ? "Tautan perlu diwaspadai karena menggunakan protokol tanpa enkripsi (HTTP) atau alamat situs yang belum lazim. Verifikasi sebelum membukanya."
@@ -141,6 +145,7 @@ function getRiskBandInfo(band: Band, kind?: TabKind) {
         badgeStyle: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/35",
         activeColor: "text-emerald-400",
         activeBg: "bg-emerald-500",
+        Icon: ShieldCheck,
         summary:
           kind === "link"
             ? "Tidak ditemukan pola peniruan domain atau tautan berbahaya berdasarkan basis aturan saat ini. Tetap pastikan alamat situs sebelum memasukkan kata sandi."
@@ -243,13 +248,6 @@ export default function Cek() {
 
   const currentKind: TabKind = lastInput?.kind || activeTab;
   const bandInfo = result ? getRiskBandInfo(result.band, currentKind) : null;
-
-  // Donut Gauge math (radius 38, strokeWidth 11)
-  const gaugeRadius = 38;
-  const circumference = 2 * Math.PI * gaugeRadius; // ~238.76
-  const gaugeOffset = result
-    ? circumference - (circumference * Math.min(100, Math.max(0, result.score))) / 100
-    : circumference;
 
   return (
     <div className="space-y-6 w-full pb-12">
@@ -534,97 +532,80 @@ export default function Cek() {
             </span>
           </div>
 
-          {/* Hero Box Charcoal Gelap (Donut Gauge 3D + Status Badge & Deskripsi) */}
-          <div className="rounded-2xl bg-[#1E1E1E] p-5 sm:p-6 text-white flex flex-col sm:flex-row items-center sm:items-center gap-5 sm:gap-6 shadow-md">
-            {/* Donut Circular Gauge Gaya Neumorphic 3D (Gradien Kuning -> Orange -> Merah) */}
+          {/* Hero Box Charcoal Gelap (Visual Indikator Ikon & Persenan + Status Badge & Deskripsi) */}
+          <div className="rounded-2xl bg-[#1E1E1E] p-5 sm:p-6 text-white flex flex-col sm:flex-row items-center gap-5 sm:gap-6 shadow-md border border-white/5">
+            {/* Visual Indikator Skor Berbasis Ikon & Persenan (Tanpa Brush Mengganggu) */}
             <div className="relative flex h-28 w-28 sm:h-32 sm:w-32 shrink-0 items-center justify-center">
-              <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                <defs>
-                  {/* Gradien Kuning -> Orange -> Merah */}
-                  <linearGradient id="scoreGaugeGradient" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FACC15" />   {/* Kuning Cerah */}
-                    <stop offset="25%" stopColor="#F59E0B" />  {/* Kuning-Emas */}
-                    <stop offset="55%" stopColor="#FB923C" />  {/* Orange Terang */}
-                    <stop offset="75%" stopColor="#F97316" />  {/* Orange Menyala */}
-                    <stop offset="90%" stopColor="#EF4444" />  {/* Merah */}
-                    <stop offset="100%" stopColor="#DC2626" /> {/* Merah Pekat */}
-                  </linearGradient>
+              {/* Cincin Lingkaran Luar dengan Ambient Halo Sesuai Tingkat Risiko */}
+              <div
+                className={`absolute inset-0 rounded-full border-2 transition-all duration-500 ${
+                  result.band === "sangat_tinggi"
+                    ? "border-red-500/50 bg-red-950/20 shadow-[0_0_30px_rgba(239,68,68,0.3)]"
+                    : result.band === "tinggi"
+                    ? "border-orange-500/50 bg-orange-950/20 shadow-[0_0_30px_rgba(249,115,22,0.3)]"
+                    : result.band === "waspada"
+                    ? "border-amber-500/50 bg-amber-950/20 shadow-[0_0_30px_rgba(245,158,11,0.3)]"
+                    : "border-emerald-500/50 bg-emerald-950/20 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+                }`}
+              />
 
-                  {/* Lapisan Kilau Tubular 3D Halus (Glossy Highlight) */}
-                  <linearGradient id="tubularHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.35" />
-                    <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.06" />
-                    <stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
-                  </linearGradient>
-                </defs>
-
-                {/* Saluran Track Belakang (Inset Channel Cekung) */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={gaugeRadius}
-                  stroke="#2A2A2E"
-                  strokeWidth="11"
-                  fill="none"
-                  className="opacity-75"
+              {/* Plat Tengah Elevated Charcoal dengan Ikon & Persenan Bersih */}
+              <div className="absolute inset-1.5 sm:inset-2 rounded-full bg-[#18181B] shadow-[inset_0_2px_4px_rgba(255,255,255,0.08),0_6px_20px_rgba(0,0,0,0.6)] border border-white/10 flex flex-col items-center justify-center text-center z-10 p-2 select-none">
+                {/* Ikon Indikator Risiko */}
+                <bandInfo.Icon
+                  className={`h-6 w-6 sm:h-7 sm:w-7 mb-1 shrink-0 ${
+                    result.band === "sangat_tinggi"
+                      ? "text-red-400 animate-bounce-short"
+                      : result.band === "tinggi"
+                      ? "text-orange-400"
+                      : result.band === "waspada"
+                      ? "text-amber-400"
+                      : "text-emerald-400"
+                  }`}
                 />
 
-                {/* Progress Lingkaran: Gradien Kuning -> Orange -> Merah */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={gaugeRadius}
-                  stroke={result.band === "belum_terlihat" ? "#10B981" : "url(#scoreGaugeGradient)"}
-                  strokeWidth="11"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={gaugeOffset}
-                  strokeLinecap="round"
-                  fill="none"
-                  style={{
-                    filter:
-                      result.band === "belum_terlihat"
-                        ? "drop-shadow(0 2px 4px rgba(16, 185, 129, 0.4))"
-                        : "drop-shadow(0 2px 8px rgba(249, 115, 22, 0.45))",
-                  }}
-                  className="transition-all duration-1000 ease-out"
-                />
-
-                {/* Lapisan Kilau Tubular 3D untuk Efek Timbul Seperti Gambar Referensi */}
-                {result.band !== "belum_terlihat" && (
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r={gaugeRadius}
-                    stroke="url(#tubularHighlight)"
-                    strokeWidth="9"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={gaugeOffset}
-                    strokeLinecap="round"
-                    fill="none"
-                    className="transition-all duration-1000 ease-out pointer-events-none"
-                  />
-                )}
-              </svg>
-
-              {/* Plat Tengah Elevated (Central Hub Disc dengan Soft Bevel / Drop Shadow) */}
-              <div className="absolute inset-3 sm:inset-3.5 rounded-full bg-[#18181B] shadow-[inset_0_2px_4px_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.6)] border border-white/5 flex flex-col items-center justify-center text-center z-10">
-                <span className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tight">
-                  {result.score}
+                {/* Angka Skor dalam Persenan */}
+                <span className="text-xl sm:text-2xl font-black text-white leading-none tracking-tight">
+                  {result.score}%
                 </span>
-                <span className="text-[9px] sm:text-[10px] text-neutral-400 font-semibold uppercase tracking-wider mt-1">
-                  dari 100
+
+                {/* Label Subtitle */}
+                <span className="text-[8px] sm:text-[9px] text-neutral-400 font-bold uppercase tracking-wider mt-1">
+                  {result.band === "belum_terlihat" ? "Aman" : "Risiko"}
                 </span>
               </div>
             </div>
 
-            {/* Informasi Tingkat Risiko & Ringkasan Narasi */}
-            <div className="flex-1 space-y-2 text-center sm:text-left">
-              <div>
+            {/* Informasi Tingkat Risiko, Progress Meter Persenan & Ringkasan Narasi */}
+            <div className="flex-1 space-y-3 text-center sm:text-left w-full">
+              <div className="flex flex-wrap items-center justify-center sm:justify-between gap-2">
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${bandInfo.badgeStyle}`}>
-                  <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                  <bandInfo.Icon className="h-3.5 w-3.5 shrink-0" />
                   <span>{bandInfo.title}</span>
                 </span>
+                <span className="text-xs font-mono font-bold text-neutral-300">
+                  Tingkat Risiko: <strong className="text-white">{result.score}%</strong>
+                </span>
               </div>
+
+              {/* Bar Meter Persenan Ramping & Modern */}
+              <div className="space-y-1">
+                <div className="w-full h-2.5 bg-neutral-900 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner">
+                  <div
+                    className={`h-full rounded-full transition-all duration-1000 ${
+                      result.band === "sangat_tinggi"
+                        ? "bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 shadow-[0_0_12px_rgba(239,68,68,0.5)]"
+                        : result.band === "tinggi"
+                        ? "bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 shadow-[0_0_12px_rgba(249,115,22,0.5)]"
+                        : result.band === "waspada"
+                        ? "bg-gradient-to-r from-yellow-400 to-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]"
+                        : "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]"
+                    }`}
+                    style={{ width: `${Math.min(100, Math.max(0, result.score))}%` }}
+                  />
+                </div>
+              </div>
+
               <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
                 {bandInfo.summary}
               </p>
