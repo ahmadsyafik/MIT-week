@@ -2,13 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Bell,
-  CheckCheck,
-  Trash2,
-  OctagonAlert,
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  X,
+  Lightbulb,
+  TrendingUp,
+  Wrench,
+  ShieldAlert,
+  Sparkles,
   ExternalLink,
 } from "lucide-react";
 import {
@@ -19,8 +17,11 @@ import {
 
 export type { AppNotification };
 
+type NotificationTab = "today" | "this_week" | "earlier";
+
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<NotificationTab>("today");
   const [notifications, setNotifications] = useState<AppNotification[]>(() => getNotifications());
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -38,7 +39,7 @@ export default function NotificationDropdown() {
   // Simpan ke localStorage saat berubah
   useEffect(() => {
     try {
-      localStorage.setItem("jagaruang_notifications", JSON.stringify(notifications));
+      localStorage.setItem("jagaruang_notifications_v3", JSON.stringify(notifications));
     } catch {
       // Abaikan jika quota error
     }
@@ -73,12 +74,7 @@ export default function NotificationDropdown() {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
-  const clearAllNotifications = () => {
-    setNotifications([]);
-  };
-
   const handleNotificationClick = (item: AppNotification) => {
-    // Tandai sudah dibaca
     setNotifications((prev) =>
       prev.map((n) => (n.id === item.id ? { ...n, read: true } : n))
     );
@@ -97,18 +93,114 @@ export default function NotificationDropdown() {
     }
   };
 
-  const getIcon = (type: AppNotification["type"]) => {
-    switch (type) {
-      case "kritis":
-        return <OctagonAlert className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />;
-      case "waspada":
-        return <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />;
-      case "sukses":
-        return <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />;
-      default:
-        return <Info className="h-4 w-4 text-[#526D82] shrink-0 mt-0.5" />;
+  // Ikon lingkaran garis halus sesuai gambar referensi (Lightbulb, TrendingUp, Wrench, Shield)
+  const getItemIcon = (item: AppNotification) => {
+    const titleLower = item.title.toLowerCase();
+    const type = item.type;
+
+    if (
+      titleLower.includes("analysis") ||
+      titleLower.includes("analisis") ||
+      titleLower.includes("data") ||
+      titleLower.includes("report") ||
+      type === "sukses"
+    ) {
+      return <TrendingUp className="w-4 h-4 text-slate-700" />;
     }
+    if (
+      titleLower.includes("maintenance") ||
+      titleLower.includes("pemeliharaan") ||
+      titleLower.includes("system") ||
+      titleLower.includes("sistem") ||
+      type === "waspada"
+    ) {
+      return <Wrench className="w-4 h-4 text-slate-700" />;
+    }
+    if (
+      titleLower.includes("smarter") ||
+      titleLower.includes("ai") ||
+      titleLower.includes("smart") ||
+      titleLower.includes("rekomendasi") ||
+      titleLower.includes("belajar") ||
+      type === "info"
+    ) {
+      return <Lightbulb className="w-4 h-4 text-slate-700" />;
+    }
+    if (
+      type === "kritis" ||
+      titleLower.includes("malware") ||
+      titleLower.includes("threat") ||
+      titleLower.includes("peringatan")
+    ) {
+      return <ShieldAlert className="w-4 h-4 text-slate-700" />;
+    }
+    return <Sparkles className="w-4 h-4 text-slate-700" />;
   };
+
+  // Helper pemformat teks agar angka/metrik/waktu tercetak tebal (bold) persis gambar referensi
+  const renderFormattedMessage = (text: string) => {
+    const parts = text.split(
+      /(\d+%(?:\s+kritis)?|\d{1,3}(?:,\d{3})*\+?|\d{1,2}:\d{2}(?:\s*(?:AM|PM|UTC|WIB))?)/gi
+    );
+    return parts.map((part, i) => {
+      if (
+        /^(\d+%(?:\s+kritis)?|\d{1,3}(?:,\d{3})*\+?|\d{1,2}:\d{2}(?:\s*(?:AM|PM|UTC|WIB))?)$/i.test(
+          part
+        )
+      ) {
+        return (
+          <strong key={i} className="font-bold text-slate-800">
+            {part}
+          </strong>
+        );
+      }
+      return part;
+    });
+  };
+
+  // Filter notifikasi sesuai tab aktif
+  const filteredNotifications = notifications.filter((item) => {
+    const timeLower = item.time.toLowerCase();
+    if (activeTab === "today") {
+      return (
+        timeLower.includes("h ago") ||
+        timeLower.includes("m ago") ||
+        timeLower.includes("jam") ||
+        timeLower.includes("menit") ||
+        timeLower.includes("baru saja") ||
+        timeLower.includes("today") ||
+        timeLower.includes("hari ini")
+      );
+    }
+    if (activeTab === "this_week") {
+      return (
+        timeLower.includes("d ago") ||
+        timeLower.includes("hari") ||
+        timeLower.includes("kemarin") ||
+        timeLower.includes("yesterday")
+      );
+    }
+    if (activeTab === "earlier") {
+      return (
+        timeLower.includes("w ago") ||
+        timeLower.includes("minggu") ||
+        timeLower.includes("bulan") ||
+        timeLower.includes("earlier") ||
+        (!timeLower.includes("h ago") &&
+          !timeLower.includes("m ago") &&
+          !timeLower.includes("jam") &&
+          !timeLower.includes("menit") &&
+          !timeLower.includes("baru saja") &&
+          !timeLower.includes("today") &&
+          !timeLower.includes("hari ini") &&
+          !timeLower.includes("d ago") &&
+          !timeLower.includes("hari") &&
+          !timeLower.includes("kemarin") &&
+          !timeLower.includes("yesterday"))
+      );
+    }
+    return true;
+  });
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -128,98 +220,102 @@ export default function NotificationDropdown() {
         )}
       </button>
 
-      {/* Popover / Dropdown Menu */}
+      {/* Popover / Dropdown Menu Sesuai Referensi Gambar User */}
       {isOpen && (
         <div
           role="dialog"
-          aria-label="Panel Notifikasi"
-          className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-2xl border border-[#9DB2BF]/60 bg-white p-0 shadow-xl transition-all"
+          aria-label="AI Notification Center"
+          className="absolute right-0 top-12 z-50 w-80 sm:w-[380px] rounded-3xl border border-slate-200/90 bg-white shadow-2xl p-4 sm:p-5 text-left font-sans select-none animate-fadeIn"
         >
-          {/* Header Popover */}
-          <div className="flex items-center justify-between border-b border-[#9DB2BF]/30 px-4 py-3 bg-slate-50/80 rounded-t-2xl">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-[#27374D]">Notifikasi & Target</span>
-              {unreadCount > 0 && (
-                <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
-                  {unreadCount} baru
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-1">
-              {unreadCount > 0 && (
-                <button
-                  type="button"
-                  onClick={markAllAsRead}
-                  title="Tandai semua telah dibaca"
-                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-[#526D82] hover:bg-[#DDE6ED] hover:text-[#27374D] transition-colors cursor-pointer"
-                >
-                  <CheckCheck className="h-3.5 w-3.5" />
-                  <span>Baca Semua</span>
-                </button>
-              )}
-              {notifications.length > 0 && (
-                <button
-                  type="button"
-                  onClick={clearAllNotifications}
-                  title="Bersihkan semua notifikasi"
-                  className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                title="Tutup"
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
+          {/* Header: AI Notification Center & See All */}
+          <div className="flex items-center justify-between pb-3 sm:pb-3.5">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              AI Notification Center
+            </h3>
+            <button
+              type="button"
+              onClick={markAllAsRead}
+              className="text-xs font-semibold text-slate-500 hover:text-slate-800 bg-white border border-slate-200/90 hover:border-slate-300 rounded-lg px-2.5 py-1 transition-all shadow-2xs cursor-pointer"
+            >
+              See All
+            </button>
           </div>
 
-          {/* List Item Notifikasi */}
-          <div className="max-h-80 overflow-y-auto divide-y divide-[#DDE6ED]">
-            {notifications.length === 0 ? (
-              <div className="p-8 text-center text-xs text-[#526D82] space-y-1">
-                <p className="font-semibold text-[#27374D]">Belum ada notifikasi baru</p>
-                <p>Selesaikan skenario atau modul untuk menerima rekomendasi belajar.</p>
+          {/* Tab Filter: Today | This Week | Earlier */}
+          <div className="bg-slate-100/80 p-1 rounded-xl flex items-center justify-between gap-1 mb-3">
+            {(
+              [
+                { id: "today", label: "Today" },
+                { id: "this_week", label: "This Week" },
+                { id: "earlier", label: "Earlier" },
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 text-center py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === tab.id
+                    ? "bg-white text-slate-900 shadow-xs"
+                    : "text-slate-500 hover:text-slate-700 font-medium"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* List Notifikasi */}
+          <div className="max-h-[360px] overflow-y-auto divide-y divide-slate-100/90 pr-0.5">
+            {filteredNotifications.length === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-400 space-y-1">
+                <p className="font-semibold text-slate-700">
+                  No notifications in {activeTab === "today" ? "Today" : activeTab === "this_week" ? "This Week" : "Earlier"}
+                </p>
+                <p>All updates are processed.</p>
               </div>
             ) : (
-              notifications.map((item) => (
+              filteredNotifications.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => handleNotificationClick(item)}
-                  className={`flex items-start gap-3 p-3.5 text-left transition-colors cursor-pointer hover:bg-[#DDE6ED]/40 ${
-                    !item.read ? "bg-slate-50/70 font-medium" : "opacity-85"
+                  className={`flex items-start gap-3.5 py-3.5 cursor-pointer hover:bg-slate-50/70 -mx-1 px-1 rounded-xl transition-colors ${
+                    !item.read ? "bg-slate-50/40" : "opacity-90"
                   }`}
                 >
-                  {getIcon(item.type)}
+                  {/* Lingkaran Ikon Garis Halus */}
+                  <div className="w-10 h-10 rounded-full border border-slate-200/90 bg-white flex items-center justify-center text-slate-700 shrink-0 shadow-2xs mt-0.5">
+                    {getItemIcon(item)}
+                  </div>
+
+                  {/* Konten Notifikasi */}
                   <div className="flex-1 min-w-0 space-y-1">
+                    {/* Judul & Waktu */}
                     <div className="flex items-center justify-between gap-2">
-                      <h4
-                        className={`text-xs truncate ${
-                          !item.read ? "font-bold text-[#27374D]" : "text-[#526D82]"
-                        }`}
-                      >
-                        {item.title}
-                      </h4>
-                      <span className="text-[10px] text-[#9DB2BF] shrink-0">{item.time}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        {/* Titik Ungu Khas AI Notification Center */}
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0" />
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate leading-snug">
+                          {item.title}
+                        </h4>
+                      </div>
+                      <span className="text-[11px] sm:text-xs text-slate-400 font-medium shrink-0 tabular-nums">
+                        {item.time}
+                      </span>
                     </div>
-                    <p className="text-[11px] text-[#526D82] leading-relaxed line-clamp-2">
-                      {item.message}
+
+                    {/* Deskripsi Teks dengan Angka / Highlight Bold */}
+                    <p className="text-xs text-slate-500 leading-relaxed font-normal line-clamp-2">
+                      {renderFormattedMessage(item.message)}
                     </p>
+
                     {item.link && (
-                      <div className="inline-flex items-center gap-1 text-[10px] font-bold text-[#27374D] hover:underline pt-0.5">
-                        <span>Buka Tindakan</span>
+                      <div className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:underline pt-0.5">
+                        <span>Buka Detail</span>
                         <ExternalLink className="h-2.5 w-2.5" />
                       </div>
                     )}
                   </div>
-                  {!item.read && (
-                    <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0 mt-1.5" />
-                  )}
                 </div>
               ))
             )}

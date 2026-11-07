@@ -3,17 +3,191 @@
 Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TASK_GUIDE.md).
 
 ## [Belum dirilis]
-### Layar Peringatan Keamanan Penuh HP & Interaksi Lanjut Keputusan (FakeChatSimulator.tsx)
+### Revisi Menyeluruh Modul Edukasi "Apa Itu Rekayasa Sosial?" (Belajar.tsx & ModulRekayasaSosialPage.tsx)
+- **apps/web/src/data/modulRekayasaSosial.ts & components/modul/ModulRekayasaSosialPage.tsx**:
+  - Merevisi total modul `m1` (*"Apa Itu Rekayasa Sosial?"*) dari teks statis menjadi modul pembelajaran interaktif berbobot 5-6 menit baca dengan gaya percakapan yang ramah (*"kamu"*):
+    - **Pemisahan Data Konten**: Seluruh teks, skenario, data kuis, dan referensi dipisahkan ke file data mandiri `modulRekayasaSosial.ts` dengan metadata `terakhirDiperbarui` dan anotasi `// TODO: verifikasi manual` untuk nomor kontak & URL resmi.
+    - **Hook Skenario Pembuka**: Menghadirkan simulasi pesan SMS ancaman rekening diblokir dalam 1 jam dengan 3 opsi keputusan interaktif dan umpan balik langsung.
+    - **Prinsip Psikologis & Ragam Modus**: Akordion interaktif 5 prinsip psikologis manusia (Otoritas, Urgensi, Rasa Takut, Iming-iming, Rasa Percaya) serta 6 ragam modus rekayasa sosial di Indonesia (Phishing, Smishing, Vishing, Pretexting, Baiting APK, Impersonation).
+    - **Timeline Visual 4 Tahap**: Diagram alur tahapan penipuan dari Pancingan Awal hingga Eksploitasi & Pemutusan Jejak dengan indikator tingkat bahaya.
+    - **Spotter Red Flag Pesan Asli vs Palsu**: Komparasi visual berdampingan antara pesan resmi bank dan pesan penipu, dilengkapi area red flag yang dapat diklik untuk membuka penjelasan popover dan penghitung kejelian (*"X dari 4 Terungkap"*).
+    - **Checklist Perlindungan Berlandaskan Alasan**: 4 butir tindakan mandiri dengan label rekomendasi praktis/kewajiban mutlak, animasi centang, dan penyimpanan status lokal (`localStorage`).
+    - **Alur Mitigasi Darurat 5 Langkah**: Panduan pertolongan pertama berurutan jika terlanjur menjadi korban (Blokir bank, ganti kredensial, putuskan akses/mode pesawat, simpan bukti, lapor kanal resmi).
+    - **Mini Kuis 4 Soal**: Kuis evaluasi pemahaman dengan penilaian skor instan dan penghargaan lencana ringan *"Penjaga Anti-OTP"*.
+    - **UI/UX & Aksesibilitas**: Dilengkapi *Sticky Reading Progress Bar* tipis dengan persentase di atas, *Sticky Mini Table of Contents* di sisi kanan desktop untuk navigasi cepat, dan integrasi tombol aksi berurutan (*Uji Kasus di Simulator*, *Selesai & Catat Progres*, serta kartu modul berikutnya).
+
+### Penghapusan Navigasi "Daftar Skenario" pada Layar Marketplace (FakeChatSimulator.tsx)
 - **FakeChatSimulator.tsx**:
-  - Mengimplementasikan tampilan overlay peringatan keamanan sistem selayar penuh HP simulator (*Full-Screen System Security Warning Overlay*) untuk seluruh halaman simulator ketika skenario memicu notifikasi peringatan sistem perangkat (seperti *"Peringatan Sistem Keamanan Perangkat"*, Play Protect, izin kritis SMS/kontak, maupun notifikasi mutasi perbankan).
-  - Tampilan overlay didesain otentik meniru antarmuka peringatan darurat keamanan OS seluler:
-    - Lencana sistem aktif dengan indikator denyut (`PERINGATAN SISTEM KEAMANAN`).
-    - Ikon perisai besar bergelombang getar (*animated caution shield*).
-    - Judul peringatan tebal dan kotak dialog sistem kontras tinggi sesuai tangkapan layar referensi.
-    - Menampilkan ringkasan konsekuensi tindakan berisiko sebelumnya (jika ada) agar pengguna memahami konteks bahaya.
-  - **Interaktivitas Bebas Tap/Klik**:
-    - Seluruh layar overlay dapat diklik di bagian mana saja (`onClick`), didukung tombol aksi bawah *"Lanjutkan ke Pilihan Keputusan"*, untuk menutup overlay secara mulus dan langsung membuka opsi keputusan berikutnya di dock bawah.
-    - Kartu peringatan tetap terekam rapi di riwayat obrolan (chat log) dan dapat diklik kapan saja untuk dibuka kembali selayar penuh.
+  - Menghapus tombol navigasi internal `<- Daftar Skenario` di bilah paling atas layar katalog Facebook Marketplace.
+  - Tampilan layar katalog Facebook Marketplace kini langsung dibuka dengan header judul asli *"Marketplace"* dan ikon Messenger, Profil, serta Pencarian secara otentik menyerupai aplikasi Facebook ponsel sesungguhnya, tanpa elemen navigasi internal yang tumpang-tindih dengan navigasi halaman utama.
+
+### Pembaruan Foto Produk iPhone 14 Pro pada Marketplace Simulator (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Memperbarui aset foto produk untuk pilihan gadget *iPhone 14 Pro 128GB Deep Purple* (`/simulator/marketplace/iphone-14-pro.jpg`) menggunakan foto presisi berkualitas tinggi yang dikirimkan oleh pengguna.
+  - Foto tersebut kini otomatis tampil pada kartu katalog pilihan produk Facebook Marketplace dan pratinjau pesan di ruang obrolan obrolan Messenger saat pengguna memilih varian iPhone 14 Pro.
+
+### Penyederhanaan Pesan & Kotak Peringatan Sistem Ruang Obrolan (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Menyederhanakan teks pesan peringatan sistem pembuka yang sebelumnya berbelit-belit dan kaku:
+    - Skenario FB Marketplace: Dari *"Saluran komunikasi: Facebook Marketplace & Messenger • Mega Promo Gadget Murah Store. Waspadai ajakan transaksi atau transfer langsung di luar rekening bersama resmi."* menjadi kalimat ringkas satu baris: *"Waspadai transaksi langsung di luar rekening bersama resmi."*.
+    - Skenario Lainnya: Disederhanakan menjadi pesan keamanan langsung tanpa prefiks formal "Saluran komunikasi: ...".
+  - Mengubah desain kotak pembungkus pesan sistem menjadi bentuk kapsul membulat ramping (`rounded-full px-3.5 py-1`) dengan penataan sejajar ikon gembok kecil dalam satu baris horizontal rapi, menghindari tampilan kotak tebal multi-baris yang canggung.
+
+### Pembersihan Bilah Marketplace & Tombol Ganti Barang pada Chat Simulator FB (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Menghapus tombol navigasi biru `<- Marketplace` pada bilah header percakapan Facebook Messenger skenario K8.
+  - Menghapus bar atas *"Iklan Facebook Marketplace"* beserta tombol *"Ganti Pilihan Barang"* pada banner preview produk yang disematkan di bagian atas ruang obrolan.
+  - Tampilan kartu produk yang sedang ditanyakan kini tampil ringkas, bersih, dan fokus menyajikan foto HP, nama produk, potongan harga, serta spesifikasi tanpa tombol navigasi yang berulang.
+
+### Integrasi Gambar Cover Asli Simulator pada Kartu Modul Beranda (Beranda.tsx)
+- **Beranda.tsx**:
+  - Mengganti kotak placeholder abu-abu polos dan ikon kecil pada 3 kartu pilihan studi kasus beranda (*"Modul Simulasi Populer"*) dengan gambar cover asli dari masing-masing skenario simulator interaktif:
+    - Skenario 1 (*Undangan APK Palsu*): Menggunakan gambar cover asli `/simulator/covers/undangan-digital.jpg` dengan lencana kanal `WhatsApp`.
+    - Skenario 2 (*Kurir Paket & Foto Resi*): Menggunakan gambar cover asli `/simulator/covers/paket.jpg` dengan lencana kanal `WhatsApp`.
+    - Skenario 3 (*Loker WFH & Deposit*): Menggunakan gambar cover asli `/simulator/covers/work-from-home.jpg` dengan lencana kanal `Media Sosial`.
+  - Mengoptimalkan wadah rasio gambar kartu menjadi `aspect-[16/10]` dengan sudut melengkung `rounded-2xl`, efek transisi perbesaran halus (*hover zoom* `scale-105`), dan lencana kanal mengambang semi-transparan berlatar *backdrop-blur* selaras dengan desain kartu cover simulator di halaman Belajar.
+
+### Penghapusan Bagian Suara Komunitas & Navigasi Cerita Rekan (Beranda.tsx & Layout.tsx)
+- **Beranda.tsx & Layout.tsx**:
+  - Menghapus seksi testimonial *"Suara Komunitas — Dipercaya Rekan Muda Indonesia"* beserta ketiga kartu ulasan testimoni pengguna di [`Beranda.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/pages/Beranda.tsx).
+  - Menghapus tautan menu *"Cerita Rekan"* (`href="#testimoni"`) pada bilah navigasi header di [`Layout.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/components/Layout.tsx) agar susunan navigasi tetap bersih dan sinkron dengan konten halaman beranda.
+
+### Pembaruan Tampilan Dropdown AI Notification Center Sesuai Referensi Desain (NotificationDropdown.tsx)
+- **NotificationDropdown.tsx & notificationService.ts**:
+  - Mengubah desain kartu popover notifikasi agar persis mengikuti referensi desain modern **AI Notification Center**:
+    - **Header & Aksi**: Menampilkan judul `AI Notification Center` dengan tombol `See All` bergaris tepi halus untuk menandai semua notifikasi telah dibaca.
+    - **Segmented Tab Pill**: Menambahkan kontrol tab segmentasi (`Today` | `This Week` | `Earlier`) dalam wadah pil abu-abu muda lembut (`bg-slate-100/80 p-1 rounded-xl`) dengan tombol aktif berlatar putih timbul (`bg-white shadow-xs font-bold`).
+    - **Lingkaran Ikon Garis Halus**: Ikon bundar bergaris tepi halus (`w-10 h-10 rounded-full border border-slate-200/90 bg-white`) dengan ikon representatif (`Lightbulb` bohlam, `TrendingUp` grafik tren, `Wrench` kunci pas, dan `ShieldAlert` perisai).
+    - **Titik Indikator Ungu/Indigo**: Menyematkan titik bulat ungu (`bg-purple-500`) tepat di samping judul notifikasi sesuai estetika antarmuka AI pada referensi.
+    - **Tipografi Data & Metrik Tebal**: Pemformat pesan otomatis mencetak tebal (*bold*) angka metrik, persentase (seperti `27%`, `99.4%`), kuantitas (`10,000+`), dan waktu (`2:00 AM UTC`) untuk hierarki baca yang profesional dan meyakinkan.
+
+### Isolasi Tinggi Kartu Akordion pada Grid (Cek.tsx & Belajar.tsx)
+- **Cek.tsx & Belajar.tsx**:
+  - Memperbaiki perilaku perataan grid pada kartu-kartu akordion yang dapat dibuka-tutup (*collapsible*):
+    - Pada bagian **"Tanda Peringatan Ditemukan"** ([`Cek.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/pages/Cek.tsx)): Menambahkan `items-start` pada container grid 2 kolom dan menetapkan tinggi kartu alami (`h-fit`). Ketika salah satu kartu dibuka tombol *"Cara verifikasi"*-nya, kartu di sebelahnya tetap mempertahankan tinggi aslinya yang ringkas tanpa ikut tertarik molor (*stretch*) atau menyisakan ruang kosong putih yang canggung.
+    - Pada bagian **"Ulasan Detail Refleks Keputusanmu"** ([`Belajar.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/pages/Belajar.tsx)): Menambahkan `items-start` dan `h-fit` pada grid 10 soal evaluasi latihan kilat. Saat salah satu soal dibuka penjelasannya, kartu soal di sampingnya tetap tertutup rapi dan tidak lagi meregang mengikuti tinggi soal yang terbuka.
+
+### Pengacakan Posisi Opsi Pilihan Jawaban pada Semua Simulator (FakeChatSimulator.tsx & PhoneCallSimulator.tsx)
+- **FakeChatSimulator.tsx & PhoneCallSimulator.tsx**:
+  - Mengimplementasikan pengacakan posisi (*Fisher-Yates shuffle*) pada opsi pilihan jawaban interaktif (baik skenario dengan 3 pilihan maupun 2 pilihan) sehingga posisi jawaban aman, ragu-ragu, dan berisiko tampil acak di setiap langkah keputusan dan sesi simulasi.
+  - Menghilangkan pola tebakan posisi (seperti pola lama di mana opsi ke-3 selalu aman dan opsi ke-1 selalu berisiko/salah), sehingga peserta simulasi dituntut membaca dan menganalisis konteks pesan secara kritis.
+  - Label huruf tampilan (A, B, C) tetap disajikan secara urut dan rapi dari atas ke bawah untuk kenyamanan navigasi, sementara pemetaan aksi di belakang layar terhubung ke data opsi yang telah diacak secara dinamis.
+  - Evaluasi tingkat risiko pada simulasi chat kini murni didasarkan pada atribut tipe opsi (`selectedOption.type === "risky"`) bukan indeks huruf statis.
+  - Tombol pintasan refleks aman pada simulator panggilan suara (tombol tutup telepon merah) kini secara dinamis mencari dan mengeksekusi opsi bertipe aman (`type === "safe"`).
+
+### Pembersihan Ikon Sparkle & Badge pada Banner Match Dating App K5 (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Menghapus ikon kilau kuning (*Sparkles*) di samping teks judul *"Kalian Berdua Saling Cocok!"*.
+  - Menghapus kedua lencana badge (*"Dating App Verified"* dan *"98% Kecocokan"*) pada banner kartu ucapan kecocokan Dating App di ruang obrolan, sehingga tampilan kartu awal chat tampil bersih dan minimalis.
+
+### Penataan Ulang Tata Letak Halaman Detail Istilah Kamus 1/3 Kiri & 2/3 Kanan (Belajar.tsx)
+- **Belajar.tsx**:
+  - Mengubah struktur halaman detail istilah (`KamusPage`) menjadi tata letak proporsional terpadu **1/3 bagian kiri** dan **2/3 bagian kanan**:
+    - **Sisi Kiri (Skala 1/3 — `lg:col-span-4`)**: Menampilkan judul istilah dengan ukuran font besar (`text-3xl sm:text-4xl lg:text-5xl font-black`), watermark monogram huruf kapital di belakangnya, dan efek sticky pada desktop agar tetap terlihat saat membaca konten.
+    - **Sisi Kanan (Skala 2/3 — `lg:col-span-8`)**: Diisi langsung dengan teks definisi istilah di bagian atas, kemudian disusul oleh 4 uraian modus (Tahapan Cara Kerja Modus, Titik Masuk Utama / Entry Point, Pertolongan Pertama Jika Terlanjur Terpapar, dan Langkah Pencegahan Utama) yang disajikan sebagai **teks murni (*only text*)** tanpa kotak kontainer pembungkus (*border* dan *background* kartu telah dihilangkan) agar tampilan lebih bersih, leluasa, dan nyaman dibaca.
+
+### Pembersihan Badge Kategori pada Kamus Istilah (Belajar.tsx)
+- **Belajar.tsx**:
+  - Menghapus badge pill kategori (seperti *"Malware Android"*, *"Manipulasi Sosial"*, dll.) pada kartu kamus istilah serta pada bagian tajuk hero halaman detail istilah (`KamusPage`), sehingga judul istilah tampil bersih, besar, dan fokus tanpa elemen dekoratif berlebih.
+
+### Integrasi Foto Asli Listing Produk Smartphone Facebook Marketplace K8 (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx & Asset Simulator**:
+  - Mengekstrak dan mengintegrasikan 6 foto smartphone asli dari arsip `foto hp.zip` ke dalam direktori publik [`apps/web/public/simulator/marketplace/`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/public/simulator/marketplace):
+    - `iphone-15-promax.jpg` (iPhone 15 Pro Max 256GB)
+    - `samsung-s24-ultra.jpg` (Samsung Galaxy S24 Ultra 512GB)
+    - `xiaomi-14-ultra.jpg` (Xiaomi 14 Ultra Leica)
+    - `iphone-14-pro.jpg` (iPhone 14 Pro 128GB)
+    - `google-pixel-8-pro.jpg` (Google Pixel 8 Pro 256GB)
+    - `ipad-air-5.jpg` (iPad Air 5 M1)
+  - Menggantikan kotak mockup CSS gradien lama dengan tag gambar (`<img>`) beresolusi tajam dan rasio persegi (`aspect-square object-cover`) pada grid 3 kolom katalog FB Marketplace.
+  - Menghubungkan foto produk yang dipilih langsung ke kartu cuplikan iklan di bagian atas layar Facebook Messenger.
+  - **Sinkronisasi Foto Unit Obrolan Realistis**: Mengganti brosur promo generik (`k8-flash-sale.svg`) di ruang obrolan Messenger dengan foto unit HP asli yang diklik pengguna (misal: jika pengguna mengklik iPhone 15 Pro Max di katalog, maka penjual mengirimkan foto fisik unit iPhone 15 Pro Max lengkap dengan nama file `Foto_iPhone_15_Pro_Max_Segel.jpg`, teks animasi mengetik dinamis, dan fitur perbesar foto lightbox).
+
+### Simulasi Marketplace Model Facebook & Transisi ke Facebook Messenger Khusus K8 (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Mengimplementasikan pengalaman interaktif **Facebook Marketplace Feed** untuk skenario toko online fiktif (K8):
+    - **Layar Katalog Facebook Marketplace**:
+      - Bilah pencarian khas Facebook Marketplace lengkap dengan ikon toko (*Store*), kolom cari produk, dan tombol kembali ke daftar skenario. Menghapus lencana *"Mode Investigasi Toko Fiktif"* agar tampilan bersih otentik.
+      - Bilah filter kategori cepat (*"Semua Ponsel"*, *"Harga Terendah"*, *"Cuci Gudang"*, *"Garansi Resmi"*) serta indikator lokasi radius 10 km.
+      - Menampilkan grid **3 kolom (3 dan 3 barang)** kartu produk *smartphone/gadget* dengan harga murah fiktif (iPhone 15 Pro Max Rp3.500.000, Samsung Galaxy S24 Ultra Rp4.200.000, Xiaomi 14 Ultra Rp2.900.000, iPhone 14 Pro Rp2.800.000, Google Pixel 8 Pro Rp3.100.000, dan iPad Air 5 Rp3.800.000). Bebas dari produk mobil/otomotif sesuai preferensi pengguna.
+      - Desain visual kartu produk menyerupai listing nyata di Facebook Marketplace dengan mockup smartphone modern, badge promo warna-warni (*"Promo 80%"*, *"Flash Sale"*), ikon bookmark hati, harga coret, serta tombol *"Kirim Pesan"*.
+    - **Transisi Mulus ke Facebook Messenger ("Message FB")**:
+      - Ketika pengguna mengetuk/klik salah satu produk murah, simulator langsung bertransisi ke tampilan percakapan Facebook Messenger bersama seller *Mega Promo Gadget Murah Store*.
+      - Pesan pertanyaan pembuka otomatis dikirimkan oleh pengguna (*"Halo, apakah [nama produk] ini masih ada?"*) dan direspons cepat oleh penjual fiktif yang mendesak transfer langsung ke rekening pribadi.
+    - **Desain Antarmuka Facebook Messenger Otentik**:
+      - Header khas Messenger berwarna putih dengan aksen biru Messenger (`#0084FF`), avatar toko dengan verifikasi toko terpercaya, status *"Aktif sekarang • Di Facebook Marketplace"*, serta tombol *"Pilihan Barang"* untuk kembali menelusuri katalog Marketplace kapan saja.
+      - Cuplikan kartu banner produk Marketplace tersemat di bagian paling atas riwayat obrolan menampilkan thumbnail produk, harga promo, harga coret normal, dan spesifikasi barang.
+      - Balon pesan pengguna di sisi kanan berwarna biru khas Messenger (`bg-[#0084FF] text-white`) lengkap dengan ikon centang terbaca.
+      - Balon pesan penjual di sisi kiri berwarna abu-abu khas Messenger (`bg-[#F0F2F5] text-slate-900`) didampingi mini avatar toko.
+      - Bilah input palsu khas Facebook Messenger di atas dock keputusan dilengkapi tombol jempol biru Messenger (*Thumbs Up* `#0084FF`), ikon kamera, foto, dan mikrofon.
+      - Tombol keputusan di dock bawah menggunakan gaya aksen biru Messenger saat disorot/hover.
+
+### Layar Interaktif "Find a match" Khusus Simulator Dating App K5 (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Menyederhanakan tampilan awal *"Find a match"* pada simulator Dating App (K5):
+    - Mengubah tampilan menjadi **polosan dan bersih**: menghapus foto profil, nama pengirim, lencana bio, dan tag minat sesuai permintaan.
+    - Menampilkan teks minimalis dan tebal **"Find a match"** di tengah layar dengan latar belakang gelap elegan (*deep dark gradient*).
+    - Menempatkan dua tombol aksi utama: Tombol Silang (`X`) yang tidak berfungsi dan Tombol Hati Hijau (`Love`) yang berfungsi untuk langsung membuka ruang obrolan *fake chat*.
+  - Mengimplementasikan alur interaktif awal pra-chat khusus untuk skenario **Aplikasi Dating** (K5 — Siska / Modus Pig Butchering) sesuai referensi antarmuka pengguna:
+    - **Header & Kartu Profil "Find a match"**:
+      - Menampilkan bilah navigasi dengan logo api gradien (*Flame*) bertuliskan *"Find a match"* dan status koneksi online.
+      - Menampilkan kartu profil geser (*swipe card*) Siska (24 tahun, terverifikasi centang biru, jarak 2 km, minat Kripto & Traveling, bio memikat, serta foto profil asli `/simulator/covers/dating-apps.jpg`).
+    - **Mekanisme Interaksi Tombol Silang vs Love**:
+      - **Tombol Silang (X / Pass)**: Didesain **tidak berfungsi untuk melanjutkan**. Saat diklik, tombol dan kartu memicu animasi getar halus (*shake*) dan menampilkan *tooltip* peringatan bahwa pengguna harus menerima kecocokan (*match*) untuk memulai skenario investigasi.
+      - **Tombol Love (Green Heart / Match)**: Didesain meniru persis gambar referensi (tombol lingkaran gradien hijau zamrud berpendar). Saat diklik, sistem memutar audio synthesizer chord kemenangan (*Web Audio API*), menampilkan modal perayaan selebrasi *"IT'S A MATCH! 🎉"*, dan langsung membuka ruang obrolan *fake chat* bersama Siska.
+    - **Adaptasi Tema Obrolan Khas Dating App**:
+      - Bilah header obrolan kini memiliki identitas khas Dating App (cincin avatar gradien rose-amber, status *"Baru saja cocok hari ini"*, dan tombol pintasan *"Kartu Match"*).
+      - Menampilkan kartu ucapan kecocokan di bagian teratas obrolan (*"Kalian Berdua Saling Cocok!"*).
+      - Menambahkan bilah input visual kencan palsu (*"Kirim pesan ke Siska..."* dengan ikon hati dan kirim).
+
+### Kontrol Keputusan Pengguna Tanpa Auto-Restart atau Timer Otomatis pada Simulasi Selesai (PhoneCallSimulator.tsx & FakeChatSimulator.tsx)
+- **PhoneCallSimulator.tsx**:
+  - Menghapus ikon kilau kuning (*Sparkles*) dan teks pendukung *"Pilih jawaban atau tekan Tutup Telepon"* pada bagian judul *Tentukan Respons Bicaramu*.
+  - Menghapus ikon speaker (*Volume2*) dan titik peluru bulat merah muda pada daftar transkripsi suara dialog penelpon sehingga transkripsi teks tampil bersih dan elegan.
+  - Menghapus teks instruksi bawah *"Panggilan selesai. Ketuk tombol di atas untuk melihat evaluasi skenario."* di bawah tombol *"Lanjutkan ke Ringkasan Skenario"*.
+  - Menghapus seluruh ikon kecil visual yang mengganggu pada kotak ringkasan respons di layar panggilan berakhir (`callPhase === "ended"`): menghapus ikon `🗣️` dari *"Respons Kamu:"* dan ikon `📞` dari *"Reaksi Penelpon:"*.
+  - Menghapus ikon gembok kecil (`Lock`) pada lencana *"Kanal Suara Aman (HD)"* di bilah atas antarmuka telepon.
+  - Menghapus seluruh timer otomatis (`setTimeout` 1600ms & 2000ms) yang sebelumnya langsung menutup paksa layar panggilan suara (`onDeclineCall` / `onCompleteCall`) tanpa persetujuan pengguna.
+  - Menghapus teks berdenyut otomatis (*"Menutup tampilan telepon & kembali ke ringkasan obrolan..."*).
+  - Menyediakan tombol aksi interaktif eksplisit: **"Lanjutkan ke Ringkasan Skenario"** di layar panggilan berakhir (`callPhase === "ended"`). Pengguna kini memegang kendali penuh untuk membaca ulasan respons dan reaksi penelpon secara tenang, dan simulasi baru akan melanjutkan ke tahapan berikutnya saat tombol tersebut ditekan.
+- **FakeChatSimulator.tsx**:
+  - Memastikan seluruh skenario simulasi yang telah mencapai hasil evaluasi akhir (*scenario endings*) tetap menetap di layar ringkasan skor dan tidak pernah melakukan pengulangan otomatis (*auto-restart* / *auto-loop*). Pengulangan hanya terjadi secara eksplisit jika pengguna menekan tombol *"Ulangi Kasus"* atau *"Kembali ke Daftar Kasus"*.
+
+### Antarmuka & Tata Letak Dinamis Khas Instagram Direct Message & Konsistensi Font Plus Jakarta Sans (FakeChatSimulator.tsx & PhoneCallSimulator.tsx)
+- **FakeChatSimulator.tsx & PhoneCallSimulator.tsx**:
+  - **Konsistensi Font Plus Jakarta Sans**: Menghapus seluruh kelas `font-mono` yang sebelumnya membuat teks alamat pengirim/handle `@recruitment_workfromhome_id`, jam status bar, dan label kartu tampil dalam font monospace mesin tik. Sekarang seluruh simulator konsisten menggunakan tipografi utama **Plus Jakarta Sans** (`font-sans`).
+  - Mengimplementasikan adaptasi antarmuka dinamis (*multi-platform dynamic chat UI*) yang membedakan skenario Media Sosial (DM Instagram, seperti K3 Lowongan WFH & K7 Giveaway) dari skenario pesan instan standar (WhatsApp, seperti K1 & K2):
+  - **Bilah Header Instagram DM**:
+    - Latar belakang putih bersih (`bg-white`) dengan garis pemisah halus (`border-b border-slate-200/80`).
+    - Avatar profil dengan **Instagram Story Gradient Ring** (`from-[#f09433] via-[#dc2743] to-[#bc1888]`) dan indikator status aktif online hijau.
+    - Lencana nama pengirim dengan centang biru terverifikasi (`CheckCircle2` biru), nama handle `@recruitment_workfromhome_id`, serta tombol aksi khas Instagram DM di kanan (panggilan suara, video call, dan info profil).
+  - **Layar Obrolan & Balon Pesan Otentik Instagram**:
+    - Menghilangkan wallpaper doodle WhatsApp untuk skenario Instagram, menggantinya dengan latar belakang putih bersih (`bg-white`) dan banner kartu ringkasan profil Instagram di bagian teratas obrolan.
+    - Balon chat pengirim (kiri) menggunakan warna abu-abu khas Instagram (`bg-[#EFEFEF] text-[#262626] rounded-[22px] rounded-bl-sm`) didampingi mini avatar bundar di sampingnya.
+    - Balon chat pengguna (kanan) menggunakan gradien warna ungu-magenta khas Instagram Messenger (`bg-gradient-to-r from-[#6366F1] via-[#8B5CF6] to-[#D946EF] rounded-[22px] rounded-br-sm text-white`) disertai status keterangan *"Dilihat"*.
+    - Menambahkan mockup bilah input Instagram di atas titik keputusan (ikon kamera biru, bilah *"Kirim pesan..."*, mic, gambar, dan ikon hati).
+### Penyesuaian Stacking Context Navbar & Penyempurnaan Popup Dialog Peringatan (Layout.tsx & FakeChatSimulator.tsx)
+- **Layout.tsx**:
+  - Memperbarui `z-index` bilah navigasi atas (*sticky dashboard header*) dari `z-30` menjadi `z-40` agar konsisten dengan header publik dan selalu berada di atas seluruh elemen konten halaman saat bergulir (*scrolling*).
+- **FakeChatSimulator.tsx**:
+  - Menambahkan isolasi konteks tumpukan CSS (`isolate z-0`) pada bingkai terluar smartphone simulator sehingga seluruh elemen dan overlay di dalamnya (termasuk modal popup `z-40` dan header obrolan) tersegel rapi di level 0 dan tidak akan pernah tembus atau menutupi kolom pencarian (*search bar*) maupun header website saat digulir.
+  - Menyederhanakan tampilan kartu modal popup peringatan sistem (*Mobile System Alert Dialog*):
+    - Menghapus kotak terpisah *"Tindakan terakhir: ..."* dan teks ganda *"Ketuk di mana saja untuk melanjutkan"* agar dialog peringatan tampil ringkas, bersih, dan fokus seperti peringatan keamanan sistem operasi ponsel asli.
+    - Menghapus badge pill *"Perbesar Layar"* dari kartu pesan sistem dan notifikasi mutasi bank pada feed obrolan untuk mengeliminasi redundansi visual.
+### Pembaruan Widget Indikator Risiko dengan Ikon & Persenan (Cek.tsx)
+- **Cek.tsx**:
+  - Menghapus lingkaran donat *brush stroke* (`strokeWidth="11"` & `tubularHighlight`) yang sebelumnya mengganggu secara visual dengan ujung terpotong (*overlap tip*).
+  - Mengganti tampilan skor lingkaran menjadi widget indikator visual bersih (*clean neumorphic indicator hub*):
+    - Menampilkan **Ikon Indikator Keamanan** yang relevan secara dinamis sesuai kategori risiko (`ShieldAlert` untuk Risiko Sangat Tinggi, `AlertTriangle` untuk Risiko Tinggi, `AlertCircle` untuk Waspada, dan `ShieldCheck` untuk Belum Terlihat Bahaya).
+    - Mengubah format angka skor menjadi **persenan** (`{result.score}%`, misal `90%`) menggantikan teks lama `dari 100`.
+    - Dilengkapi *ambient halo* berpendar lembut serta *bar meter* horizontal ramping modern dengan gradien warna halus (kuning ke orange/merah) yang presisi dari 0% hingga 100%.
+
+### Popup Dialog Peringatan Bersih dengan Efek Blur Layar Chat (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Mengubah tampilan peringatan sistem dari yang sebelumnya layar hitam pekat penuh menjadi **modal dialog popup otomatis yang bersih, simpel, dan elegan** (*Clean Mobile System Alert Popup*):
+    - Latar belakang obrolan (*chat area*, *wallpaper doodle*, dan bilah header) tetap terlihat di belakang dengan efek blur halus mendalam (`backdrop-blur-md bg-black/50`).
+    - Kartu popup mengambang di tengah layar ponsel dengan desain putih bersih (`bg-white rounded-3xl p-6 shadow-2xl`), ikon peringatan simpel (`AlertTriangle` / `AlertOctagon`), judul jelas, isi pesan sistem, serta catatan tindakan sebelumnya.
+    - Pengguna dapat mengetuk/klik di area mana saja (baik pada latar belakang blur maupun kartu popup dan tombol *"Lanjutkan ke Pilihan Keputusan"*) untuk menutup dialog dan melanjutkan ke langkah keputusan berikutnya.
 
 ### Isolasi Tinggi Ponsel Hanya untuk Sesi Telepon & Perbaikan Ruang Kosong Mode Chat (FakeChatSimulator.tsx)
 - **FakeChatSimulator.tsx**:

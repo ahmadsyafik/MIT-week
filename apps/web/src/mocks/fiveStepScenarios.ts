@@ -1984,9 +1984,9 @@ export const FIVE_STEP_SCENARIOS: Record<string, FiveStepScenarioData> = {
         "Stok promo flash sale tinggal 1 unit kak dan banyak yang antre. Kalau mau, langsung transfer sekarang biar langsung kami kirim siang ini!",
       ],
       supportingImage: {
-        src: "/simulator/k8-flash-sale.svg",
-        caption: "Katalog_Flash_Sale_70.jpg",
-        alt: "Katalog Promo Cuci Gudang 70%",
+        src: "/simulator/marketplace/iphone-15-promax.jpg",
+        caption: "Foto_iPhone_15_Pro_Max_Segel.jpg",
+        alt: "Foto Produk iPhone 15 Pro Max",
       },
     },
     evidences: [

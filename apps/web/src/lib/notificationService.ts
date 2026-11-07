@@ -9,44 +9,62 @@ export interface AppNotification {
 }
 
 export const NOTIFICATION_EVENT = "jagaruang_notification_updated";
-const STORAGE_KEY = "jagaruang_notifications";
+const STORAGE_KEY = "jagaruang_notifications_v3";
 
 export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   {
     id: "notif-1",
-    title: "Peringatan Malware APK",
-    message: "Terdeteksi modus baru manipulasi berkedok file APK surat tilang dan resi paket. Jangan buka berkas .apk di luar Play Store!",
-    time: "10 menit lalu",
-    type: "kritis",
+    title: "Your AI Just Got Smarter",
+    message: "Adaptive learning speed increased by 27%. New feature: AI-driven trend forecasting",
+    time: "1h ago",
+    type: "info",
     read: false,
     link: "/cek",
   },
   {
     id: "notif-2",
-    title: "Target Progres: Skenario 1 Selesai",
-    message: "Selamat! Kamu menyelesaikan 'Verifikasi Kontak Resmi'. Rekomendasi: Lanjutkan ke Skenario 2 (Undangan APK) atau coba tantangan Kilat 120 Dtk.",
-    time: "25 menit lalu",
+    title: "Data Analysis Completed",
+    message: "Your AI has processed 10,000+ records and identified key trends.",
+    time: "3h ago",
     type: "sukses",
     read: false,
     link: "/belajar#simulator",
   },
   {
     id: "notif-3",
-    title: "Rekomendasi Belajar: Proteksi SIM Swap",
-    message: "Lindungi SMS OTP perbankanmu dengan mengaktifkan PIN proteksi kartu SIM dan beralih ke aplikasi autentikator.",
-    time: "1 jam lalu",
-    type: "info",
+    title: "System Maintenance",
+    message: "Performance tuning & security updates will be applied at 2:00 AM UTC",
+    time: "5h ago",
+    type: "waspada",
     read: true,
-    link: "/belajar#modul",
+    link: "/sandi",
   },
   {
     id: "notif-4",
-    title: "Inisiasi Sandi Keluarga",
-    message: "Lindungi orang terdekat dari kloning suara AI dengan membuat kata sandi rahasia keluarga sekarang.",
-    time: "2 hari lalu",
+    title: "Threat Pattern Updated",
+    message: "Detection rule Anti-APK Trojan v4.2 active with 99.4% precision.",
+    time: "2d ago",
+    type: "kritis",
+    read: true,
+    link: "/cek",
+  },
+  {
+    id: "notif-5",
+    title: "Family Voice Vault Active",
+    message: "AI clone barrier successfully generated for 3 registered contacts.",
+    time: "4d ago",
     type: "info",
     read: true,
     link: "/sandi",
+  },
+  {
+    id: "notif-6",
+    title: "Weekly Scam Intelligence Report",
+    message: "Processed 64,933 IASC reports on fake marketplace bank transfers.",
+    time: "1w ago",
+    type: "sukses",
+    read: true,
+    link: "/belajar#modul",
   },
 ];
 

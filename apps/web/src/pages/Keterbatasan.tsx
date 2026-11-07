@@ -94,6 +94,7 @@ export default function Keterbatasan() {
       storage.clearAll();
       try {
         localStorage.removeItem("jagaruang_notifications");
+        localStorage.removeItem("jagaruang_notifications_v3");
       } catch {
         // ignore
       }

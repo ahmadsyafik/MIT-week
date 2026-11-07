@@ -191,9 +191,6 @@ export default function Layout() {
               <a href="#modul" className="hover:text-[#27374D] transition-colors">
                 Kasus & Modul
               </a>
-              <a href="#testimoni" className="hover:text-[#27374D] transition-colors">
-                Cerita Rekan
-              </a>
               <a href="#faq" className="hover:text-[#27374D] transition-colors">
                 FAQ
               </a>
@@ -349,7 +346,7 @@ export default function Layout() {
       {/* ===================================================================== */}
       <div className="flex flex-1 flex-col min-w-0 min-h-screen bg-[#DDE6ED]">
         {/* Top Header Bar di atas Dashboard */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#9DB2BF]/40 bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-2xs">
+        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#9DB2BF]/40 bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-2xs">
           {/* Mobile Brand / Logo (Hamburger menu dihilangkan, navigasi mobile menggunakan bottom bar) */}
           <div className="flex items-center gap-2 md:hidden">
             <NavLink to="/" className="flex items-center gap-2 font-bold text-[#27374D] text-base">

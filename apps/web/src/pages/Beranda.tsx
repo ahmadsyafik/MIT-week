@@ -16,7 +16,6 @@ import {
   ShieldCheck,
   HelpCircle,
   ChevronDown,
-  Star,
   Lock,
   ExternalLink,
   Globe,
@@ -34,10 +33,12 @@ const MODULE_SHORTCUTS = [
     title: "Undangan APK Palsu",
     category: "Studi Kasus 1",
     author: "Tim Forensik JR",
+    channel: "WhatsApp",
     steps: 4,
     duration: "3 Mnt",
     progress: 80,
     accent: "from-[#DDE6ED] to-[#9DB2BF]/30",
+    coverImage: "/simulator/covers/undangan-digital.jpg",
     icon: Smartphone,
   },
   {
@@ -46,10 +47,12 @@ const MODULE_SHORTCUTS = [
     title: "Kurir Paket & Foto Resi",
     category: "Studi Kasus 2",
     author: "Satgas Rekayasa Sosial",
+    channel: "WhatsApp",
     steps: 5,
     duration: "4 Mnt",
     progress: 40,
     accent: "from-[#DDE6ED] to-[#526D82]/20",
+    coverImage: "/simulator/covers/paket.jpg",
     icon: Search,
   },
   {
@@ -58,10 +61,12 @@ const MODULE_SHORTCUTS = [
     title: "Loker WFH & Deposit",
     category: "Studi Kasus 3",
     author: "Unit Anti-Phishing",
+    channel: "Media Sosial",
     steps: 4,
     duration: "3 Mnt",
     progress: 0,
     accent: "from-[#DDE6ED] to-[#9DB2BF]/40",
+    coverImage: "/simulator/covers/work-from-home.jpg",
     icon: FileCode,
   },
 ];
@@ -316,7 +321,6 @@ export default function Beranda() {
 
           <div className="grid gap-6 sm:grid-cols-3">
             {MODULE_SHORTCUTS.map((m) => {
-              const Icon = m.icon;
               return (
                 <div
                   key={m.id}
@@ -324,10 +328,19 @@ export default function Beranda() {
                   className="group flex flex-col justify-between rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 hover:border-[#526D82] hover:shadow-lg transition-all cursor-pointer"
                 >
                   <div className="space-y-4">
-                    <div className="flex h-36 w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#DDE6ED] to-[#9DB2BF]/30 relative overflow-hidden group-hover:scale-[1.02] transition-transform">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[#526D82] border border-[#9DB2BF]/50 shadow-sm">
-                        <Icon className="h-7 w-7" />
-                      </div>
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#DDE6ED]/40 flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-300">
+                      <img
+                        src={m.coverImage}
+                        alt={m.title}
+                        className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                      />
+                      {m.channel && (
+                        <div className="absolute top-2.5 left-2.5 z-10">
+                          <span className="rounded-full bg-black/50 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/20 shadow-xs">
+                            {m.channel}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -345,81 +358,6 @@ export default function Beranda() {
                 </div>
               );
             })}
-          </div>
-        </section>
-
-        {/* ================================================================= */}
-        {/* TESTIMONIAL (TRUSTED CUSTOMERS ARE OUR BEST ADS DI VIDEO)        */}
-        {/* ================================================================= */}
-        <section id="testimoni" className="space-y-6 scroll-mt-24">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">Suara Komunitas</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">Dipercaya Rekan Muda Indonesia</h2>
-            <p className="text-sm text-[#526D82]">
-              Pengalaman nyata dari mereka yang berhasil menghindar dari tipuan digital setelah berlatih.
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-3">
-            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-4">
-              <div className="flex items-center gap-1 text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-xs sm:text-sm text-[#27374D] italic leading-relaxed">
-                "Hampir saja saya klik file surat tilang .apk di WhatsApp. Untung ingat simulasi JagaRuang bahwa instansi resmi tidak pernah kirim file instalasi lewat chat!"
-              </p>
-              <div className="pt-2 border-t border-[#9DB2BF]/30 flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#526D82] text-white flex items-center justify-center font-bold text-xs">
-                  NW
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#27374D]">Nabila Wulandari</p>
-                  <p className="text-[10px] text-[#526D82]">Mahasiswi · Bandung</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-4">
-              <div className="flex items-center gap-1 text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-xs sm:text-sm text-[#27374D] italic leading-relaxed">
-                "Fitur Sandi Keluarga sangat berguna! Kami sekeluarga sepakat punya kata rahasia saat ada telepon mencurigakan yang minta transfer uang mengatasnamakan adik."
-              </p>
-              <div className="pt-2 border-t border-[#9DB2BF]/30 flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#526D82] text-white flex items-center justify-center font-bold text-xs">
-                  DP
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#27374D]">Dimas Pratama</p>
-                  <p className="text-[10px] text-[#526D82]">Fresh Graduate · Surabaya</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-4">
-              <div className="flex items-center gap-1 text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-xs sm:text-sm text-[#27374D] italic leading-relaxed">
-                "Yang saya suka, link tidak pernah dibuka dan data kita disamarkan. Transparansi seperti ini yang bikin percaya dan betah belajar bareng."
-              </p>
-              <div className="pt-2 border-t border-[#9DB2BF]/30 flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#526D82] text-white flex items-center justify-center font-bold text-xs">
-                  KA
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#27374D]">Kevin Ananda</p>
-                  <p className="text-[10px] text-[#526D82]">Pegiat Komunitas · Jakarta</p>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 

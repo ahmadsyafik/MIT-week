@@ -49,6 +49,7 @@ import {
 } from "lucide-react";
 import { Card, Button, Disclaimer } from "../components/ui";
 import { FakeChatSimulator } from "../components/simulator/FakeChatSimulator";
+import { ModulRekayasaSosialPage } from "../components/modul/ModulRekayasaSosialPage";
 import {
   addNotification,
   NOTIFICATION_EVENT,
@@ -772,9 +773,9 @@ export const LEARNING_MODULES: LearningModule[] = [
     id: "m1",
     title: "Apa Itu Rekayasa Sosial?",
     category: "Dasar Keamanan",
-    duration: "4 menit baca",
+    duration: "5-6 menit baca",
     icon: HelpCircle,
-    summary: "Kenapa orang bisa percaya pada pesan palsu — konsep dasarnya.",
+    summary: "Memahami bagaimana penipu mengeksploitasi emosi manusia dan cara membangun jeda berpikir kritis sebelum mengambil tindakan.",
     concept: "Rekayasa sosial (social engineering) adalah teknik manipulasi psikologis di mana pelaku tidak meretas sistem komputer atau kode enkripsi rumit, melainkan mengeksploitasi pikiran dan emosi manusia. Penipu memanfaatkan kecenderungan alami manusia: rasa percaya, kepatuhan terhadap figur otoritas, kepanikan, rasa bersalah, atau keinginan mendapatkan keuntungan instan.",
     anatomy: [
       "Pancingan Awal (Approach): Penipu menghubungi korban lewat kanal yang akrab (WhatsApp, SMS, telepon) menggunakan skenario darurat.",
@@ -793,7 +794,7 @@ export const LEARNING_MODULES: LearningModule[] = [
       "Jangan pernah membagikan kode OTP atau PIN kepada siapapun dengan alasan apapun.",
       "Ingatkan keluarga terdekat untuk tidak mudah percaya pada kontak baru yang meminta dana.",
     ],
-    takeaway: "Kunci pertahanan rekayasa sosial bukan teknologi canggih, melainkan jeda berpikir: verifikasi independen sebelum bertindak.",
+    takeaway: "Teknologi membantu, tetapi jeda berpikir dan verifikasi independen adalah pertahanan terkuat.",
   },
   {
     id: "m2",
@@ -2586,6 +2587,17 @@ function ModulPage({
   onToggleRead: () => void;
   onNavigateTab: (tab: TabType) => void;
 }) {
+  if (moduleId === "m1") {
+    return (
+      <ModulRekayasaSosialPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+      />
+    );
+  }
+
   const m = LEARNING_MODULES.find((mod) => mod.id === moduleId) || LEARNING_MODULES[0];
 
   // Checklist interaktif yang tersimpan lokal
@@ -3823,7 +3835,7 @@ function KilatPage({
               <span>Ulasan Detail Refleks Keputusanmu (10 Soal):</span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 items-start">
               {TRIAGE_DRILL_ITEMS.map((item, idx) => {
                 const userChoice = answers[item.id];
                 const isCorrect =
@@ -3834,7 +3846,7 @@ function KilatPage({
                 return (
                   <div
                     key={item.id}
-                    className={`rounded-2xl border-2 transition-all overflow-hidden ${
+                    className={`rounded-2xl border-2 transition-all overflow-hidden h-fit ${
                       isCorrect
                         ? "bg-white border-emerald-500 shadow-2xs hover:shadow-xs"
                         : "bg-white border-rose-500 shadow-2xs hover:shadow-xs"
@@ -4128,11 +4140,6 @@ function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
               className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-3"
             >
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${term.tagColor}`}>
-                    {term.category}
-                  </span>
-                </div>
                 <h3 className="text-base font-bold text-[#27374D] group-hover:text-blue-900 transition-colors">
                   {term.name}
                 </h3>
@@ -4193,10 +4200,11 @@ function KamusPage({
       </div>
 
       {/* Main Container Halaman Khusus Istilah */}
-      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-10">
-        {/* Header Hero Editorial: Kata Besar di Kiri & Penjelasan di Kanan Persis Referensi */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pb-8 border-b border-[#9DB2BF]/30">
-          <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[160px] sm:min-h-[180px]">
+      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-8">
+        {/* Layout 1/3 Kiri (Judul Besar) & 2/3 Kanan (Teks Penjelasan & 4 Kotak Modus) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Kolom Kiri: 1/3 bagian (lg:col-span-4) dengan Font Besar */}
+          <div className="lg:col-span-4 relative flex flex-col justify-start lg:sticky lg:top-24 pt-2">
             {/* Watermark Monogram */}
             <span
               aria-hidden="true"
@@ -4206,9 +4214,6 @@ function KamusPage({
             </span>
 
             <div className="relative z-1 space-y-3">
-              <span className={`inline-block rounded-full px-3.5 py-1 text-xs font-bold border shadow-2xs ${term.tagColor}`}>
-                {term.category}
-              </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#27374D] leading-[1.15] tracking-tight">
                 {renderStyledTermTitle(term)}
                 <span className="text-blue-600 ml-1">.</span>
@@ -4216,69 +4221,62 @@ function KamusPage({
             </div>
           </div>
 
-          <div className="lg:col-span-7 flex flex-col justify-between space-y-5 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-10">
+          {/* Kolom Kanan: 2/3 bagian (lg:col-span-8) Diisi Teks & 4 Kotak Modus */}
+          <div className="lg:col-span-8 flex flex-col space-y-6 pt-2 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-10">
+            {/* Paragraf Definisi (Gambar 2) */}
             <p className="text-base sm:text-lg text-[#526D82] leading-relaxed font-normal">
               {term.meaning}
             </p>
 
-            <div>
-              <a
-                href="#bedah-modus"
-                className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors group/cta"
-              >
-                <ArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-1" />
-                <span>Pelajari Anatomi Modus & Pertolongan Pertama</span>
-              </a>
-            </div>
-          </div>
-        </div>
+            {/* Bagian Uraian Modus (Only Teks Tanpa Kotak Sesuai Permintaan User) */}
+            <div className="space-y-5 pt-1">
+              {/* Section 1: Cara Kerja Modus */}
+              <div className="space-y-1.5">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
+                  Tahapan Cara Kerja Modus:
+                </h2>
+                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
+                  {term.howItWorks}
+                </p>
+              </div>
 
-        <div id="bedah-modus" className="space-y-6 pt-2">
-          {/* Section 1: Cara Kerja Modus */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-              Tahapan Cara Kerja Modus:
-            </h2>
-            <div className="rounded-2xl bg-slate-50 p-4 sm:p-5 border border-slate-200 text-xs sm:text-sm text-[#27374D] leading-relaxed">
-              {term.howItWorks}
-            </div>
-          </div>
+              {/* Section 2: Titik Masuk Utama */}
+              <div className="space-y-1.5">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
+                  Titik Masuk Utama (Entry Point):
+                </h2>
+                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
+                  {term.entryPoint}
+                </p>
+              </div>
 
-          {/* Section 2: Titik Masuk Utama */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-              Titik Masuk Utama (Entry Point):
-            </h2>
-            <div className="rounded-2xl bg-amber-50/70 p-4 sm:p-5 border border-amber-200 text-xs sm:text-sm text-amber-950 leading-relaxed">
-              {term.entryPoint}
-            </div>
-          </div>
+              {/* Section 3: Pertolongan Pertama / Respons Cepat */}
+              <div className="space-y-1.5">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                  <OctagonAlert className="h-4 w-4" />
+                  <span>Pertolongan Pertama Jika Terlanjur Terpapar:</span>
+                </h2>
+                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
+                  {term.firstResponse}
+                </p>
+              </div>
 
-          {/* Section 3: Pertolongan Pertama / Respons Cepat */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
-              <OctagonAlert className="h-4 w-4" />
-              <span>Pertolongan Pertama Jika Terlanjur Terpapar:</span>
-            </h2>
-            <div className="rounded-2xl bg-rose-50/70 p-4 sm:p-5 border border-rose-200 text-xs sm:text-sm text-rose-950 leading-relaxed">
-              {term.firstResponse}
-            </div>
-          </div>
-
-          {/* Section 4: Langkah Pencegahan Mandiri */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D] flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span>Langkah Pencegahan Utama:</span>
-            </h2>
-            <div className="rounded-2xl bg-emerald-50/70 p-4 sm:p-5 border border-emerald-200 text-xs sm:text-sm text-emerald-950 leading-relaxed">
-              {term.prevention}
+              {/* Section 4: Langkah Pencegahan Mandiri */}
+              <div className="space-y-1.5">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D] flex items-center gap-1.5">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                  <span>Langkah Pencegahan Utama:</span>
+                </h2>
+                <p className="text-sm sm:text-base text-[#526D82] leading-relaxed">
+                  {term.prevention}
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Action Footer */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#DDE6ED]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-[#DDE6ED]">
           <Button
             variant="outline"
             size="sm"

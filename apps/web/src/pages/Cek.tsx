@@ -633,13 +633,13 @@ export default function Cek() {
                 Tanda Peringatan Ditemukan
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 items-start">
                 {result.flags.map((flag, idx) => {
                   const isExpanded = !!expandedFlags[idx];
                   return (
                     <div
                       key={flag.ruleId || idx}
-                      className="rounded-2xl border border-amber-200/70 bg-[#FFFDF9] p-4 sm:p-5 space-y-3 shadow-2xs flex flex-col justify-between transition-all"
+                      className="rounded-2xl border border-amber-200/70 bg-[#FFFDF9] p-4 sm:p-5 space-y-3 shadow-2xs transition-all h-fit"
                     >
                       <div className="space-y-2.5">
                         {/* Baris Atas: Label Kategori */}
@@ -658,7 +658,7 @@ export default function Cek() {
                       </div>
 
                       {/* Tombol Tampilkan / Sembunyikan Cara Verifikasi & Konten Collapsible */}
-                      <div className="pt-1 mt-auto">
+                      <div className="pt-1">
                         <button
                           type="button"
                           onClick={() => toggleFlag(idx)}
