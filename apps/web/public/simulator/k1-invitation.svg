@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FCF9F5" />
+      <stop offset="100%" stop-color="#EFE8DE" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#B8860B" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA7A1E" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bgGrad)" rx="16" />
+  <rect x="18" y="18" width="564" height="364" fill="none" stroke="url(#goldGrad)" stroke-width="2" rx="12" opacity="0.7" />
+  <rect x="26" y="26" width="548" height="348" fill="none" stroke="#8B7355" stroke-width="0.8" stroke-dasharray="4,3" rx="8" opacity="0.5" />
+
+  <path d="M 32 50 C 32 32, 50 32, 50 32" stroke="url(#goldGrad)" stroke-width="2" fill="none" />
+  <path d="M 568 50 C 568 32, 550 32, 550 32" stroke="url(#goldGrad)" stroke-width="2" fill="none" />
+  <path d="M 32 350 C 32 368, 50 368, 50 368" stroke="url(#goldGrad)" stroke-width="2" fill="none" />
+  <path d="M 568 350 C 568 368, 550 368, 550 368" stroke="url(#goldGrad)" stroke-width="2" fill="none" />
+
+  <text x="300" y="65" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#AA7A1E" letter-spacing="4">THE WEDDING INVITATION</text>
+  <text x="300" y="88" text-anchor="middle" font-family="serif" font-size="14" font-style="italic" fill="#6B5B45">Walimatul 'Ursy - Save The Date</text>
+
+  <circle cx="300" cy="135" r="28" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" />
+  <text x="300" y="143" text-anchor="middle" font-family="serif" font-size="22" font-weight="bold" fill="#8B6508">D &amp; S</text>
+
+  <text x="300" y="195" text-anchor="middle" font-family="serif" font-size="24" font-weight="bold" fill="#27374D">Dimas Prasetyo, S.Kom</text>
+  <text x="300" y="220" text-anchor="middle" font-family="serif" font-size="18" font-style="italic" fill="#B8860B">&amp;</text>
+  <text x="300" y="248" text-anchor="middle" font-family="serif" font-size="24" font-weight="bold" fill="#27374D">Sarah Maharani, S.Ds</text>
+
+  <line x1="220" y1="268" x2="380" y2="268" stroke="url(#goldGrad)" stroke-width="1" opacity="0.5" />
+  <text x="300" y="290" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#526D82">Minggu, 15 November 2026</text>
+  <text x="300" y="310" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#7A6B58">Grand Ballroom Kartika • Jakarta Selatan</text>
+
+  <rect x="80" y="335" width="440" height="34" rx="8" fill="#27374D" />
+  <text x="300" y="356" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">Konfirmasi Kehadiran &amp; QR Meja: Undangan_Digital.apk</text>
+</svg>

@@ -3,5 +3,481 @@
 Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TASK_GUIDE.md).
 
 ## [Belum dirilis]
+### Layar Peringatan Keamanan Penuh HP & Interaksi Lanjut Keputusan (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Mengimplementasikan tampilan overlay peringatan keamanan sistem selayar penuh HP simulator (*Full-Screen System Security Warning Overlay*) untuk seluruh halaman simulator ketika skenario memicu notifikasi peringatan sistem perangkat (seperti *"Peringatan Sistem Keamanan Perangkat"*, Play Protect, izin kritis SMS/kontak, maupun notifikasi mutasi perbankan).
+  - Tampilan overlay didesain otentik meniru antarmuka peringatan darurat keamanan OS seluler:
+    - Lencana sistem aktif dengan indikator denyut (`PERINGATAN SISTEM KEAMANAN`).
+    - Ikon perisai besar bergelombang getar (*animated caution shield*).
+    - Judul peringatan tebal dan kotak dialog sistem kontras tinggi sesuai tangkapan layar referensi.
+    - Menampilkan ringkasan konsekuensi tindakan berisiko sebelumnya (jika ada) agar pengguna memahami konteks bahaya.
+  - **Interaktivitas Bebas Tap/Klik**:
+    - Seluruh layar overlay dapat diklik di bagian mana saja (`onClick`), didukung tombol aksi bawah *"Lanjutkan ke Pilihan Keputusan"*, untuk menutup overlay secara mulus dan langsung membuka opsi keputusan berikutnya di dock bawah.
+    - Kartu peringatan tetap terekam rapi di riwayat obrolan (chat log) dan dapat diklik kapan saja untuk dibuka kembali selayar penuh.
+
+### Isolasi Tinggi Ponsel Hanya untuk Sesi Telepon & Perbaikan Ruang Kosong Mode Chat (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Menghapus pembatas tinggi paksa (`min-h-[780px] sm:min-h-[850px]`) dari bingkai terluar simulator smartphone di `FakeChatSimulator.tsx`.
+  - Memperbaiki bug tampilan pada mode obrolan (chat) di mana bilah navigasi ponsel sempat mengambang di tengah dan menyisakan ruang kosong biru tua (`bg-[#27374D]`) yang masif di bawah bilah navigasi saat pesan obrolan masih sedikit.
+  - Sekarang mode chat membungkus konten dan dock input percakapan secara natural dan rapat dengan bilah navigasi ponsel menempel pas di bagian bawah bingkai tanpa celah kosong.
+  - Dimensi tinggi yang panjang (`min-h-[720px] sm:min-h-[790px]`) kini **hanya berlaku secara eksklusif untuk sesi panggilan telepon** (`PhoneCallSimulator.tsx`) sehingga tampilan telepon tetap panjang dan proporsional persis smartphone nyata saat panggilan berlangsung.
+
+### Penyederhanaan Visual Minimalis Layar Panggilan Masuk (PhoneCallSimulator.tsx)
+- **PhoneCallSimulator.tsx**:
+  - Menghapus elemen dekoratif yang mengganggu pada tampilan panggilan masuk sesuai permintaan visual pengguna:
+    - Menghapus lencana pill *"Panggilan Masuk..."* di bagian atas.
+    - Menghapus teks nomor dan keterangan tambahan `+62 821-9900-1122 (Panggilan Suara Masuk)` serta `Indonesia • Panggilan Seluler`.
+    - Menghapus avatar lingkaran riak getar di bagian tengah dan teks *"Menunggu Respons Kamu..."*.
+  - Menghasilkan tampilan antarmuka panggilan masuk yang jauh lebih bersih, modern, dan autentik persis referensi video (nama penelepon *Customer Security Bank X* tebal di bagian atas, ruang tengah lapang minimalis, tombol *Ingatkan Saya / Pesan*, serta kapsul interaktif *Ketuk untuk Menjawab* dan tombol *Tolak* di bagian bawah).
+### Penyelarasan Panjang & Proporsi Mockup Layar HP Simulator
+- **FakeChatSimulator.tsx & PhoneCallSimulator.tsx**:
+  - Menyelaraskan tinggi dan proporsi bingkai HP simulator agar layar panggilan telepon memiliki panjang yang presisi sama dengan panjang layar simulator chat (`min-h-[780px] sm:min-h-[850px]`):
+    - Memposisikan bilah status ponsel asli (*Mock Phone Status Bar* dengan waktu 09:41, notch kamera, 5G, dan 88%) permanen di bagian paling atas bingkai ponsel.
+    - Memposisikan bilah navigasi ponsel (*Bilah Navigasi Smartphone* dengan tombol Back, Home, dan Multitasking) permanen di bagian bawah bingkai ponsel.
+    - Mengubah wadah dalam `PhoneCallSimulator` menjadi `min-h-[720px] sm:min-h-[790px] flex-1` serta merelokasi dan memperluas jarak vertikal antar elemen (avatar riak berdenyut, tombol aksi cepat, kapsul geser/ketuk untuk menjawab, dan transkripsi panggilan) sehingga layar telepon tidak lagi tampak gepeng/pendek dan bertransisi mulus tanpa lonjakan tinggi saat berpindah ke obrolan chat.
+### Perbaikan Isolasi Audio Panggilan Telepon (PhoneCallSimulator.tsx)
+- **PhoneCallSimulator.tsx**:
+  - Memperbaiki bug kebocoran nada dering (*ringtone leak*) agar audio telepon **hanya berbunyi secara eksklusif selama sesi panggilan masuk**:
+    - Menambahkan mekanisme *guard flag* (`isRingingActive`) dan pembersihan otomatis `stopRinging()` sebelum interval baru dibuat untuk mencegah *interval timer* terduplikasi atau tertinggal di memori browser.
+    - Menambahkan fungsi pembersihan mendalam `cleanup()` yang menutup dan mendestruksi `AudioContext` serta membersihkan seluruh timer saat komponen *unmount* (ketika panggilan selesai dan kembali ke Fake Chat atau saat pengguna berpindah halaman).
+    - Memastikan dering langsung berhenti seketika (*instant mute*) saat panggilan diangkat (`callPhase === "active"`), panggilan ditolak/diputus (`callPhase === "ended"`), atau saat tab browser diminimalkan/tidak aktif (*visibilitychange listener*).
+### Penyesuaian Lebar Peringatan Selayar HP pada Simulator (FakeChatSimulator.tsx)
+- **FakeChatSimulator.tsx**:
+  - Mengubah seluruh kotak peringatan sistem (`systemCard`), kartu konsekuensi tindakan edukatif (*Konsekuensi Tindakan Berisiko / Konsekuensi Tindakan Aman & Waspada*), peringatan mutasi bank (*Bank Notification*), serta panggilan suara masuk agar tampil penuh selebar layar ponsel simulator (`w-full` dengan padding `p-4 sm:p-5` dan sudut `rounded-2xl`).
+  - Menghapus pembatas lebar sempit (`max-w-lg` 512px) dan pembungkus tengah (`flex justify-center`) yang sebelumnya membuat kartu peringatan tampak melayang sempit di tengah layar ponsel simulator pada layar tablet/desktop, sehingga sekarang kartu peringatan membentang proporsional memenuhi lebar layar HP simulator secara konsisten di seluruh skenario (K1 s.d. K8).
+### Simulasi Panggilan Telepon Interaktif Skenario K4 (Telepon Palsu Petugas Bank)
+- **PhoneCallSimulator.tsx & FakeChatSimulator.tsx**:
+  - Mengimplementasikan pengalaman simulasi panggilan telepon suara (*voice call*) interaktif penuh untuk **Skenario K4 (Telepon Palsu Petugas Bank)** dengan referensi desain ponsel modern (iOS call screen):
+    - **Layar Panggilan Masuk (Incoming Call):**
+      - Tampilan bertema gelap ramping (`#121214` / `#1C1C1E`) dengan ambient glow dan status bar ponsel (09:41, sinyal seluler, 5G, baterai).
+      - Menampilkan identitas penelepon: *Customer Security Bank X* (`+62 821-9900-1122`), status berdenyut *"Panggilan Masuk..."*, serta avatar lingkaran bergelombang getar (*animated ripple waves* & *shake*).
+      - Tombol aksi cepat atas (*Ingatkan Saya* dengan ikon `Clock` dan *Pesan* dengan ikon `MessageSquare`).
+      - Pengguna harus mengangkat panggilan sendiri secara interaktif (menunggu dipencet pengguna sebelum simulasi dimulai) melalui tombol hijau *"Angkat / Jawab"* atau kapsul beranimasi shimmer *"Ketuk untuk Menjawab"*, atau langsung menolak panggilan melalui tombol merah *"Tolak Panggilan"*.
+      - Dilengkapi audio synthesizer Web Audio API mandiri (100% on-device tanpa berkas eksternal) untuk nada dering dan nada putus panggilan, serta tombol sakelar dering senyap/nyala.
+    - **Layar Panggilan Aktif (Active Call):**
+      - Timer durasi panggilan mulai menghitung detik berjalan (`00:01`, `00:02`, dst.) dengan indikator equalizer gelombang audio (*live voice equalizer*).
+      - Menampilkan 6 tombol bundar in-call iOS (Mute/Bisu, Keypad interaktif, Speaker, Tambah Panggilan, FaceTime, dan Kontak).
+      - **Transkripsi Suara Langsung (*Live Speech-to-Text*):** Menampilkan teks dialog yang diucapkan oleh petugas bank gadungan secara bertahap dan jelas, menuntut kode OTP SMS dengan alasan transaksi darurat Rp4.500.000.
+      - **Pilihan Ganda Pop-Out (A, B, C):** Menyediakan 3 opsi respons bicaramu dengan desain kartu *elevated pop-out* (menonjol dan terangkat berbayangan lembut saat kursor menyentuh kartu dengan lencana lingkaran huruf A/B/C putih).
+      - Tombol merah bulat besar di bagian bawah (*End Call*) yang langsung memutus sambungan telepon sebagai respons aman (setara opsi C).
+    - **Panggilan Selesai & Kembali Otomatis ke Fake Chat:**
+      - Saat pengguna memilih respons atau mematikan telepon, layar menampilkan status *"Panggilan Berakhir"*, durasi total, ucapan respons pengguna, dan reaksi penelpon.
+      - Layar panggilan tertutup secara otomatis setelah jeda singkat (~1.8 detik), mengembalikan pengguna ke tampilan chat simulasi (*Fake Chat*) dengan riwayat percakapan, transkripsi telepon, konsekuensi keputusan, serta evaluasi skor pertahanan atau kelanjutan skenario.
+      - Tersedia tombol *"Layar Telepon"* di bilah header jika pengguna ingin membuka kembali antarmuka telepon kapan saja.
+### Pembaruan Gambar Cover Simulator Skenario dari Berkas Zip
+- **Belajar.tsx & public/simulator/covers/**:
+  - Mengintegrasikan seluruh aset gambar cover skenario simulator yang diekstrak dari `foto simulator.zip` serta foto unggahan undangan pernikahan ke dalam direktori publik `public/simulator/covers/`:
+    - **Kasus K1 (Undangan Pernikahan Digital.apk):** Menggunakan `undangan-digital.jpg` (tampilan landing page/website undangan pernikahan elegan *Wedding Venue & Inquiry Assessment*).
+    - **Kasus K2 (Lihat Foto Paket):** Menggunakan `paket.jpg` (foto interaktif seseorang membuka paket kardus).
+    - **Kasus K3 (Loker Admin WFH Palsu):** Menggunakan `work-from-home.jpg` (foto kerja remote di depan laptop meja).
+    - **Kasus K4 (Telepon Palsu Petugas Bank):** Menggunakan `bank.jpg` (antarmuka transfer dana perbankan digital di ponsel).
+    - **Kasus K5 (Kenalan Online -> Investasi Bodong):** Menggunakan `dating-apps.jpg` (tampilan aplikasi kencan daring "Find a Match").
+    - **Kasus K6 (Email Akun Akan Ditangguhkan):** Menggunakan `email.jpg` (tampilan kotak masuk email Google Mail).
+    - **Kasus K7 (Giveaway Palsu):** Menggunakan `giveaway.jpg` (grafis stempel hadiah kotak giveaway).
+    - **Kasus K8 (Toko Online Fiktif):** Menggunakan `toko-online.jpg` (tampilan keranjang belanja checkout belanja daring).
+  - Menyesuaikan penataan posisi objek gambar (`object-cover object-center`) pada wadah kartu rasio 4:3 agar fokus utama setiap skenario terpusat dan tidak terpotong.
+  - Menghapus elemen indikator titik carousel (*dots indicator*) di bagian bawah pratinjau kartu gambar skenario simulator (`Belajar.tsx`) agar tampilan foto cover bersih sepenuhnya tanpa elemen overlay titik putih.
+  - Meratakan warna putih pada aset `giveaway.jpg` dengan menghilangkan garis/letterbox abu-abu di bagian atas dan bawah menjadi putih murni (`#FFFFFF`) rata, serta menyelaraskan latar belakang pembungkus gambar menjadi putih bersih (`bg-white`) agar latar grafis menyatu sempurna dan tidak belang.
+
+### Redesain Tombol Aksi Mulai Simulator Skenario
+- **Belajar.tsx**:
+  - Mengubah desain tombol aksi pada seluruh kartu skenario simulator di halaman Belajar (`SimulatorCover`):
+    - **Model Stroke & Background Outline:** Mengadopsi model stroke kartu profil (latar belakang putih `bg-white`, garis tepi `border border-[#9DB2BF]/60`, bayangan halus `shadow-2xs`, dan transisi hover `hover:border-[#526D82] hover:bg-slate-50 text-[#27374D]`). Mengeliminasi blok warna gelap solid `#27374D` agar tampilan kartu terasa lebih bersih dan lapang.
+    - **Bentuk Square dengan Sudut Radius Sama:** Tetap mempertahankan bentuk rounded rectangle (`rounded-xl`) dengan sudut radius yang sama dengan kartu dan tombol pintasan (bukan bentuk kapsul/pill bulat penuh `rounded-full`).
+    - **Tipografi & Lokasi Selaras Pintasan Simulator:** Menyelaraskan tata letak tombol dengan tombol Pintasan Simulator (`w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm`), memposisikan teks aksi *"Mulai Simulasi"* dan ikon panah `ArrowRight` berdampingan rapi di tengah tanpa kotak terpisah di sisi kanan.
+
+### Diferensiasi Analisis & Pengayaan Fitur Halaman Cek (/cek)
+- **Cek.tsx, analysis.ts, & api.ts**:
+  - **Diferensiasi Output Pemeriksaan:** Memisahkan logika evaluasi dan tampilan hasil analisis secara spesifik untuk masing-masing tab:
+    - **Pesan:** Evaluasi transfer dana, tekanan waktu, tawaran gaji/hadiah berlebihan, tautan pancingan, penyamaran PII otomatis (nomor telepon & rekening), dan permintaan OTP/PIN.
+    - **Tautan (URL):** Deteksi protokol tidak terenkripsi (HTTP), TLD berisiko tinggi (`.xyz`, `.top`, `.site`), pemalsuan merk perbankan/ekspedisi (*typosquatting*), jalur jebakan login/verifikasi akun, pemendek tautan (*URL shorteners*), dan unduhan langsung paket aplikasi mentah (`.apk`).
+    - **Berkas & Izin:** Deteksi ekstensi file aplikasi mentah (`.apk`), manipulasi ekstensi ganda (*double extension* seperti `.pdf.apk`), kata kunci pancingan rekayasa sosial (undangan, tilang, resi), sumber instalasi tidak resmi (*sideloading* via WhatsApp/Telegram), dan izin berbahaya Android.
+  - **Pemilih Izin Interaktif Android:** Menyediakan kartu centang (*checkbox chips*) interaktif di tab Berkas & Izin untuk memilih izin berbahaya seperti `RECEIVE_SMS` (baca OTP), `BIND_ACCESSIBILITY_SERVICE` (aksesibilitas penuh), `READ_CONTACTS`, dan `SYSTEM_ALERT_WINDOW` (screen overlay) dengan label tingkat risiko (*Kritis*, *Tinggi*, *Sedang*).
+  - **Tombol Contoh Tiap Tab:**
+    - Menyesuaikan narasi ringkasan risiko (*summary*) pada hero box kartu hitam agar relevan secara konteks dengan objek yang diperiksa (pesan, URL, atau file).
+    - Menambahkan tombol *"Coba tautan contoh"* dan *"Coba berkas contoh"* dengan data sampel fiktif yang realistis di samping *"Coba contoh fiktif"* untuk pesan.
+  - **Redesain Indikator Donut Meter 3D & Gradien Kuning -> Orange -> Merah:**
+    - Mengganti donat datar oranye dengan desain *3D Neumorphic Donut Gauge* persis referensi visual: lingkaran melengkung tebal dengan saluran track inset, lapisan kilau tubular 3D (*glossy highlight*), serta piringan tengah terangkat (*elevated central hub disc*) berbayangan lembut yang memuat angka skor dan label "DARI 100".
+    - Mengubah skema warna busur lingkaran menjadi gradasi bertahap **Kuning (`#FACC15`) -> Orange (`#F97316`) -> Merah (`#DC2626`)** yang kontras, dinamis, dan intuitif mencerminkan eskalasi risiko.
+    - Menghapus bilah 4-segmen skala horizontal (*Aman, Waspada, Berisiko, Sangat Tinggi*) di bawah hero box agar visual kartu hasil tetap bersih, fokus, dan tidak redundan dengan indikator utama.
+  - **Penyederhanaan UI Kartu Hasil & Tombol Cara Verifikasi Collapsible:**
+    - Menghapus elemen dekoratif yang berlebihan sesuai permintaan (kotak pratinjau target pemeriksaan, lencana objek teks/tautan/berkas di header, lingkaran merah penanda jumlah temuan, tag indikasi modus, dan badge level `L4 · Bahaya` pada kartu red flags).
+    - Pada kartu temuan mencurigakan (*red flags*), secara bawaan hanya mencantumkan kategori dan alasan *"Kenapa mencurigakan"*.
+    - Menambahkan tombol interaktif *"Cara verifikasi"* (dengan ikon `ChevronDown` / `ChevronUp`) pada masing-masing kartu, yang jika diklik akan membuka kotak panduan *"Cara verifikasi"* ke bawah secara responsif dan rapi.
+  - **Status Bersih & Pembersihan Riwayat Saat Pindah Tab:** Menampilkan kartu hijau informatif (*"Tidak Ditemukan Tanda Bahaya Mencurigakan"*) saat tidak ada *red flags* terdeteksi, serta mereset hasil dan error saat berganti tab agar hasil pemeriksaan tidak tercampur.
+  - **Menu Dropdown Profil Interaktif (`UserProfileDropdown.tsx`):**
+    - Mengubah tombol profil pill di pojok kanan atas top bar menjadi tombol interaktif dengan animasi rotasi panah chevron saat terbuka.
+    - Menampilkan panel dropdown melayang (*floating dropdown*) yang memuat informasi akun ringkas, indikator status sesi on-device aktif, tautan cepat ke Keterbatasan & Privasi, serta tombol aksi **Keluar dari Sesi (Logout)**.
+    - Dilengkapi dukungan interaktivitas penuh: menutup otomatis saat klik di luar area (*click-outside listener*) atau saat tombol `Escape` ditekan, serta mengarahkan pengguna kembali ke halaman utama secara mulus saat keluar dari sesi.
+    - Menghapus label catatan *"Privasi Terjaga: 100% data tersimpan di perangkat lokal"* dari dalam menu dropdown profil agar tampilan dropdown lebih ringkas dan fokus pada opsi navigasi & akun.
+
+### Penyesuaian Tata Letak Kamus Istilah Digital: Grid Daftar & Detail Editorial
+- **Belajar.tsx**:
+  - **Pengembalian Daftar Istilah Kamus ke Format Grid (`KamusCover`):** Mengembalikan daftar kartu pada halaman cover kamus ke format grid 2 kolom yang ringkas dan teratur (`grid-cols-1 md:grid-cols-2 gap-5`), memuat badge kategori, judul istilah, ringkasan arti 3 baris, dan pintasan `Buka Detail →` tanpa layout horizontal yang terlalu memanjang.
+  - **Penerapan Gaya Editorial Wolf & Whale pada Halaman Detail (`KamusPage`):** Menerapkan desain tipografi editorial modern persis referensi visual saat kartu istilah diklik untuk melihat detailnya:
+    - **Display Typography (Kiri):** Judul istilah ukuran besar (`text-3xl sm:text-4xl lg:text-5xl font-black`) dengan aksen warna dinamis (`renderStyledTermTitle`), tanda titik aksen, badge kategori pill, serta watermark monogram inisial di latar belakang.
+    - **Penjelasan Editorial & Aksi Tautan (Kanan):** Paragraf penjelasan definisi yang leluasa (`text-base sm:text-lg`) langsung di atas kanvas putih bersih, serta tombol tautan `→ Pelajari Anatomi Modus & Pertolongan Pertama` yang membawa langsung ke bagian tahapan modus, titik masuk jebakan, pertolongan pertama, dan pencegahan.
+
+### Komponen Navigasi Mobile Gelembung Melayang (Curved Bubble Bottom Bar)
+- **MobileCurvedBottomNav.tsx & Layout.tsx**:
+  - Mengimplementasikan desain bilah navigasi bawah ponsel modern (*curved bubble bottom navigation bar*) persis referensi video interaksi:
+    - **Floating Active Bubble:** Gelembung lingkaran aktif bergradasi `#27374D` & `#526D82` dengan efek ring putih, bayangan halus, dan kilau refleksi yang melayang di atas bilah navigasi dan memuat ikon halaman aktif.
+    - **Curved Notch Scoop:** Cekungan lekukan organik (*curved scoop*) yang diukir halus di tepi atas bilah putih, bergerak mulus (*smooth fluid slide*) mengikuti posisi item aktif menggunakan transisi kurva pegas `cubic-bezier(0.34, 1.35, 0.64, 1)`.
+    - **Transisi Ikon & Label:** Ikon halaman tidak aktif terpasang rapi di bilah navigasi; saat suatu modul aktif, ikonnya bertransformasi naik ke dalam gelembung dengan animasi pop-in (`zoom-in-75`), sementara label modul tetap terbaca tebal di bagian bawah dok.
+    - Responsif di seluruh lebar layar ponsel (distribusi seimbang $20\%$ per modul) dengan area sentuh nyaman (*touch target* $> 44\text{px}$).
+
+### Pembersihan & Penyederhanaan Tampilan (UI Cleanup)
+- **Layout.tsx**:
+  - **Pemberhentian Hamburger Menu Mobile & Penyeragaman Navigasi Bawah:** Menghapus tombol hamburger menu (`Menu` icon) dan drawer sidebar geser pada tampilan layar ponsel (`md:hidden`). Navigasi pada perangkat mobile kini difokuskan sepenuhnya melalui bilah navigasi bawah (*bottom navigation bar*) yang sudah memuat 5 halaman utama secara mudah dijangkau satu tangan (*thumb-friendly*), sementara sidebar tetap aktif khusus pada tampilan layar tablet dan desktop (`md:flex`).
+- **Lindungi.tsx**:
+  - Menghapus badge pill `*Cek ulang keaslian alamat di situs resmi` pada header Kanal Lapor Resmi.
+  - Menghapus ikon `Share2` pada label judul "Kartu Peringatan untuk Orang Sekitar".
+  - Menghapus teks bawaan `*Teks aman dibagikan karena tidak memuat data pribadi.` agar area umpan balik status salin/bagi lebih bersih dan minimalis.
+  - Memperbarui isi draf teks pesan pada Kartu Peringatan Keluarga (*warning card*) dengan salinan pesan edukatif terbaru (*"JagaRuang: Yuk, Jaga Keluarga dari Penipuan Digital!"*).
+  - Merapikan struktur paragraf dan jarak baris (*line-height* `leading-normal`) pada pesan peringatan: menyatukan butir daftar (*bullet points* & penomoran langkah) tanpa jeda baris kosong ganda yang terlalu renggang, sehingga pesan tersaji padat, rapi, dan mengalir seperti siaran chat pesan singkat yang natural.
+  - Menghapus teks deskripsi header *"Teks ringkas siap salin tanpa memuat data pribadi untuk memperingatkan orang tua dan grup pertemanan."* pada Kartu Peringatan.
+- **Beranda.tsx**:
+  - Menghapus teks label *"Diperbarui Mingguan"* di samping judul Kamus & Modus Populer.
+- **Sandi.tsx**:
+  - Menghapus tombol toggle segmented pill *"2 Kata"* vs *"3 Kata (Disarankan)"* pada header pembuatan sandi. Generator kata sandi kini secara default langsung menghasilkan kombinasi 3 kata bahasa Indonesia acak yang kuat dan mudah dihafal secara lisan.
+  - Menghapus teks `(*AI Voice Cloning*)` pada deskripsi subtitle header Sandi Verifikasi Keluarga.
+- **FakeChatSimulator.tsx & Belajar.tsx**:
+  - **Efek Hover Pilihan Ganda Menonjol (Pop-out Selection):** Mengubah desain tombol opsi pilihan ganda keputusan (A, B, C) pada simulator sesuai referensi visual:
+    - Saat disentuh kursor (hover), opsi langsung **menonjol** secara nyata: membesar (`scale-[1.03]`), terangkat ke atas (`-translate-y-1.5`), memiliki bayangan pekat yang dalam (`shadow-xl shadow-[#27374D]/30`), dan latar belakang berubah menjadi warna primer solid (`bg-[#27374D]`).
+    - Lencana huruf opsi bertransformasi menjadi lingkaran putih bersih (`bg-white text-[#27374D] font-black shadow-md`) dengan teks opsi putih tebal dan panah chevron kanan yang meluncur mulus.
+- **FakeChatSimulator.tsx**:
+  - Menghapus tombol atas *"Ulangi Kasus"* (`RotateCcw`) pada bilah navigasi atas di atas simulator smartphone agar bilah navigasi tampil ringkas hanya dengan tombol kembali ke daftar skenario.
+  - **Pembersihan Elemen Akhir Skenario & Label Tape:**
+    - Menghapus tampilan `Kode Bukti: TRUST{...} Salin` pada kartu evaluasi akhir skenario (Foto 1).
+    - Menghapus lencana pita kuning *"GILIRANMU MENENTUKAN TINDAKAN"* di atas bilah keputusan, serta menyembunyikan bilah bawah redundan (*Kasus selesai... Selesai / Coba Alur Lain*) saat skenario berakhir sehingga kartu evaluasi akhir menjadi satu-satunya fokus ringkasan penyelesaian (Foto 2).
+  - Menyatukan *Bottom Interactive Choices Dock* (tombol pilihan A, B, C dan status percakapan) ke dalam kontainer gulir utama obrolan (*scroll container*), sehingga scrollbar vertikal memanjang hingga ke bagian paling bawah pilihan dan pilihan dapat digulir langsung secara mulus dari dalam area chat.
+  - Menambahkan bilah navigasi dekoratif di bagian bawah bingkai smartphone yang memuat tombol Home HP (bersama tombol Back dan Recents) bersifat visual murni (`pointer-events-none`) agar area bawah ponsel proporsional, autentik, dan tidak kosong.
+  - Menghapus badge label *"Nomor Asing"* di samping nama kontak dan badge info skenario *"KX · 5 Titik Keputusan"* di header simulator chat agar tampilan bilah atas obrolan tampak bersih, realistis, dan seperti aplikasi pesan asli.
+- **Belajar.tsx**:
+  - **Penyederhanaan Animasi Hover Kartu Skenario Simulator:** Menghapus efek animasi hover internal (`group-hover:scale-105`, `group-hover:scale-110`, perubahan warna font teks judul, dan translasi panah tombol `Mulai →`) pada elemen dalam kartu. Animasi hover kini terisolasi murni pada kontainer kartu (*card lift & shadow* `hover:-translate-y-1 hover:shadow-xl`), menjaga gambar pratinjau dan tipografi di dalam kartu tetap stabil dan tidak bergerak saat dihover.
+  - Menghapus ikon `Sliders` pada judul "Pilih Tingkat Kesulitan:" di kartu tantangan Kilat 2 Menit dan membersihkan import yang tidak terpakai.
+  - Menghapus teks petunjuk *"Klik opsi untuk mengatur durasi tantangan"* di samping judul Pilih Tingkat Kesulitan.
+  - Memperbesar dan meratakan ukuran tombol aksi kapsul "Mulai →" pada kartu Skenario Simulator (`w-full`, padding `py-2.5`, teks `text-sm font-bold`, dan badge panah `h-7 w-7`) agar proporsional, seragam, dan selaras di seluruh kartu skenario.
+  - Memperbesar kotak pratinjau showcase visual *"QUIZ KILAT"* pada kartu Tantangan Kilat (tinggi `min-h-[280px]`, padding `py-9 px-6`, kartu soal melayang lebih besar `w-56`, tipografi `text-6xl`, dan pembagian grid seimbang `lg:col-span-6`) persis sesuai referensi tangkapan layar.
+  - Menghapus badge/kotak pembungkus (*square pill*) pada label mode tantangan (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`) dan mempertahankan tipografi serta diferensiasi warna teks murni: hijau (`text-emerald-400`) untuk Santai, polos (`text-white`) untuk Standar, dan merah (`text-rose-400`) untuk Ekstrem.
+  - Menghapus titik indikator warna pada kartu opsi pilihan tingkat kesulitan di sebelah kanan agar tampilan kartu opsi tetap polos dan bersih.
+  - Memastikan seluruh tipografi aplikasi seragam menggunakan font **Plus Jakarta Sans** (menginstal paket mandiri `@fontsource-variable/plus-jakarta-sans`, memperbarui konfigurasi `@theme` dan `html`/`body` di `index.css`), serta menghapus `font-mono` pada badge timer *"Sisa Waktu:"* di sesi Kilat 2 Menit agar selaras dan konsisten.
+  - Menghapus label petunjuk *"Pilih Yes / No"* pada header kartu pertanyaan kuis kilat agar kartu soal lebih rapi dan terfokus.
+  - Mengganti kotak medali pada kartu hasil evaluasi tantangan kilat dengan indikator lingkaran progres/donat persentase akurasi dinamis (misal `30%` saat benar 3 soal, berkode warna hijau/kuning/merah adaptif), serta menghapus badge pill *"Akurasi 30%"* di samping judul agar visual ringkas dan fokus.
+  - Mengubah daftar ulasan 10 soal hasil tantangan kilat menjadi kartu akordion ringkas yang menampilkan *"Soal X. [Isi Soal]"* dengan penanda garis tepi/stroke tegas (hijau `border-emerald-500` jika tepat dan merah `border-rose-500` jika salah), yang dapat diklik untuk membuka penjelasan detail & tanda kejanggalan (*red flags*) sehingga halaman tidak terlalu panjang.
+  - Menghapus teks petunjuk di samping header ulasan 10 soal (*"Pelajari tanda kejanggalan (red flags) dari tiap pesan"*) agar tampilan header lebih bersih dan minimalis.
+  - Menghapus dua kotak statistik rincian angka (*"Tepat X dari 10 Soal"* dan *"Kurang Tepat X dari 10 Soal"*) pada kartu hasil evaluasi kuis kilat, menyelaraskan tampilan kartu evaluasi menjadi satu layout terpadu yang bersih dan lega.
+  - Menyesuaikan kelengkungan border radius tombol *"Mulai →"* pada kartu Skenario Simulator dari sebelumnya `rounded-full` (kapsul lonjong) menjadi `rounded-xl` (dengan badge panah `rounded-lg`) agar sudutnya lebih tegas, modern, dan tidak terlalu bulat.
+
 ### Ditambahkan
-- Kerangka `apps/web`: Vite + React + TypeScript + Tailwind, router, Layout, halaman Cek (irisan vertikal dengan mock), `coreClient.ts`.
+- **FE-1.1**: Navigasi responsif (ramah mobile mulai 360 px dengan menu toggle), keyboard navigation & skip-link aksesibilitas, footer permanen dengan tautan Keterbatasan dan Privasi.
+- **FE-1.2**: Komponen dasar desain sistem (`Button`, `Card`, `LevelBadge`, `RiskMeter`, `Disclaimer`, `FlagList`) dengan aturan token warna `DESIGN_SYSTEM.md` (level terendah biru-abu, ikon info, tanpa klaim hijau/persentase penipuan).
+- **FE-1.3**: Halaman Keterbatasan dan Privasi (`/keterbatasan`) memuat penjelasan on-device, batas analisis aturan, transparansi uji analyzer, serta tombol interaktif "Hapus semua data lokal" (`storage.clearAll`).
+- Setup lingkungan lokal: `apps/web/.env.local` (`VITE_USE_MOCK=true`) dan penambahan paket ikon `lucide-react` mandiri (bebas CDN).
+- Pembaruan halaman `Beranda` dan peningkatan tampilan tab serta input `Cek` (Pesan, Link, Berkas & Izin).
+- **Pemisahan Alur Landing Page & Pengguna Login**:
+  - `AuthContext`: Manajemen status sesi lokal (on-device, tanpa server) dengan dukungan penyimpanan aman `localStorage`.
+  - Tata Letak Sidebar & Navigasi Bersyarat (`Layout.tsx`):
+    - **Mode Pengunjung (Belum Login):** Tampilan Landing Page bersih tanpa sidebar/navbar menu; hanya logo JR dan tombol **Masuk**.
+    - **Mode Pengguna (Sudah Login):** Navigasi vertikal berbasis **Sidebar** di sisi kiri untuk desktop (w-64 fixed) dengan ikon intuitif, profil pengguna, dan link cepat; serta drawer samping geser responsif (off-canvas) untuk perangkat seluler dengan tombol hamburger, backdrop blur, dan target sentuh >= 44 px.
+    - Tetap mempertahankan link permanen Keterbatasan & Privasi serta tombol **Keluar dari Sesi**.
+  - `LoginModal`: Modal login cepat dengan nama samaran/tamu ramah privasi (100% on-device). Pembersihan kotak informasi privasi bawah sesuai permintaan perampingan modal.
+  - `ProtectedRoute`: Proteksi rute internal aplikasi dengan gerbang ramah jika belum login.
+  - **Redesain Dashboard Pengguna Sesuai Referensi & Pembaruan Palet Warna**:
+    - Penyesuaian palet warna: `#DDE6ED` (background utama aplikasi), `#27374D` (font/tipografi utama berkontras tinggi), `#526D82` (background sidebar navigasi), dan `#9DB2BF` (warna kontras tambahan, border, aksen halus).
+    - Top bar pencarian modul/istilah terintegrasi, notifikasi, dan status profil pengguna.
+    - **1. Banner Welcome Back**: Sambutan personal, indikator progres pembelajaran, dan ilustrasi isometrik edukasi.
+    - **2. Kalender & Pintasan Simulator**: Widget kalender interaktif bulanan dengan penanda skenario waspada/selesai serta tombol pintasan ke simulasi aktif.
+    - **3. Kamus & Modus Populer**: Daftar ringkasan istilah/modus siber (Upcoming Task style) terhubung ke `/kamus`.
+    - **4. Grafik Pembelajaran Mingguan**: Kurva gelombang halus (Activities SVG wave chart) dengan titik sorotan hari aktif dan metrik capaian.
+    - **5. Sidebar**: Navigasi vertikal persis referensi dengan kartu info "Tantangan Kilat 120 Detik" di bagian bawah.
+    - **6. Pintasan Menuju Modul**: 3 kartu kursus/studi kasus (Undangan APK, Kurir Paket, Loker WFH) lengkap dengan level, estimasi durasi, dan progres.
+  - **Redesain Landing Page Berbasis Video Referensi & Integrasi Three.js**:
+    - Komponen 3D Canvas interaktif (`ThreeHeroCanvas.tsx`): Model smartphone 3D interaktif Three.js dengan pencahayaan dinamis, partikel/cincin pelindung melayang, efek *mouse parallax tilt*, dan simulasi layar aplikasi JagaRuang.
+    - Struktur Landing Page lengkap persis alur video: Top Navbar (Home, Tiga Pilar, Modul, Cerita Rekan, FAQ, Login & Register), Hero Section 2 kolom, Metrics Counter Bar (10K+ Skenario, 8K+ Pengguna, 4.9 Rating, 100% On-Device), Kartu Rekomendasi Modul, Testimoni Komunitas, Accordion FAQ, dan Banner Aksi Bawah.
+  - **Restrukturisasi Hub Belajar (/belajar) & Halaman Pembelajaran Khusus (Cover + Page Khusus)**:
+    - **Header & 4 Tab Navigasi Horizontal**: Simulator, Modul, Kilat 2 Menit, dan Kamus dengan alur mandiri (tidak digabung dalam satu alur scroll panjang).
+    - **Bagian 1 (Simulator)**: Cover 3 kartu skenario kasus latih; klik kartu membuka halaman simulasi khusus (Briefing -> Investigasi Bukti -> Debrief & Hasil Evaluasi).
+    - **Bagian 2 (Modul Pembelajaran)**: Tampilan Cover persis referensi visual Figma dengan tombol cepat "Kilat 2 Menit", filter 6 kategori ("Semua", "Dasar Keamanan", "Per Kanal", "Checklist Praktis", "Pola Kejadian Nyata", "Setelah Kejadian"), dan grid 12 kartu modul lengkap dengan badge status "Belum dibaca" / "Sudah dibaca". Klik kartu modul membuka halaman pembelajaran khusus (Konsep Utama, Tahapan Anatomi, Tanda Kejanggalan, Checklist Praktis Interaktif, dan Intisari Perlindungan).
+    - **Bagian 3 (Kilat 2 Menit)**: Cover standby hero 120 detik; klik "Mulai Sekarang" membuka halaman simulasi drill khusus (timer countdown 120s, kartu pesan, tombol "Pesan Biasa" vs "Curiga", dan evaluasi skor refleks).
+    - **Bagian 4 (Kamus Jebakan)**: Cover pencarian istilah dan filter kategori; klik istilah membuka halaman khusus kupas tuntas modus, cara kerja, titik masuk, dan pertolongan pertama.
+    - **Notifikasi & On-Device Storage**: Terintegrasi dengan sistem notifikasi progres target dan persistensi status modul lokal di `localStorage`.
+    - Dashboard pengguna login tetap terjaga 100% utuh tanpa perubahan.
+  - **Penyelarasan Desain & Kesejajaran Grid Dashboard (Beranda.tsx)**:
+    - Menyelaraskan kartu bagian **Modul Pembelajaran** di Dashboard pengguna (`Beranda.tsx`) dengan desain kartu modul pembelajaran dari Hub Belajar:
+      - Mengganti kartu lama dengan modul pembelajaran riil: *Apa Itu Rekayasa Sosial?*, *Anatomi Sebuah Penipuan*, dan *Keamanan di WhatsApp*.
+      - Komposisi kartu identik referensi: wadah ikon di kiri atas, status pill "Belum dibaca" / "Sudah dibaca" tersinkronisasi dengan `localStorage` (`jagaruang_read_modules`), label kategori huruf kapital, judul tebal, ringkasan 2 baris, durasi membaca, dan aksi `Baca Modul →`.
+      - Tautan header disesuaikan menjadi `Lihat Semua Modul →` yang mengarah ke `/belajar?tab=modul`.
+      - Navigasi kartu langsung membuka materi modul yang dipilih (`/belajar?tab=modul&module={id}`) dengan dukungan tombol kembali yang mulus.
+    - **Penyelarasan Panjang & Garis Bawah Kartu Dashboard**:
+      - Membagi layout dashboard pengguna menjadi 2 baris grid terkoordinasi (`items-stretch`):
+        - **Baris 1**: Kolom kiri (*Welcome Back* + *Modul Pembelajaran*) dan kolom kanan (*Pintasan Simulator*). Wadah *Welcome Back* diperbesar secara vertikal dengan padding proporsional (`p-7 sm:p-8 lg:p-9`) dan ilustrasi terpusat, mengeliminasi sela kosong di atas *Modul Pembelajaran*. Wadah *Pintasan Simulator* meregang penuh (`h-full justify-between`) dengan preview chat responsif (`min-h-[160px] max-h-[220px]`), sehingga ujung garis bawahnya sejajar presisi dengan ujung bawah kartu *Modul Pembelajaran*.
+        - **Baris 2**: Kolom kiri (*Activities* – Grafik Pembelajaran Mingguan) dan kolom kanan (*Kamus & Modus Populer*). Wadah *Kamus & Modus Populer* menyajikan 4 istilah populer (*Sniffing APK*, *Social Engineering*, *SIM Swap Fraud*, dan *Phishing Website*) dengan jarak antar item rapat dan proporsional (`space-y-2.5`, padding `p-2.5 sm:p-3`), menghapus peregangan berlebih akibat `justify-between`, serta tombol tautan footer tetap sejajar rapi di bagian bawah.
+    - **Penyelarasan Kotak Putih Header Halaman (Cek.tsx & Belajar.tsx)**:
+      - Membungkus header judul, deskripsi, dan tab navigasi pada halaman **Cek Indikasi Tipuan Digital** (`Cek.tsx`) ke dalam kotak kartu putih berbingkai lembut (`rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs`) agar kontras, solid, dan tidak tenggelam di latar belakang `#DDE6ED`.
+      - Membungkus header judul, deskripsi, dan 4 tab navigasi utama pada halaman **Belajar** (`Belajar.tsx`) ke dalam kotak kartu putih serupa yang selaras dengan gaya kartu `Lindungi.tsx` dan `Beranda.tsx`.
+      - Menghilangkan badge pill tingkat risiko (*Level Waspada*, *Risiko Tinggi*, *Risiko Sangat Tinggi*) di pojok kanan atas kartu modul beranda (`MODULE_SHORTCUTS`) untuk tampilan kartu yang lebih bersih dan minimalis.
+      - Menghilangkan badge pill kategori (*Malware Android*, *Manipulasi Sosial*, dll.) pada kartu kamus dan halaman detail istilah (`Belajar.tsx`).
+      - Menghapus tautan redundan *"Pelajari Modus >"* di baris atas kartu kamus istilah (`Belajar.tsx`) agar tata letak kartu menjadi ringkas dan terfokus pada nama istilah, penjelasan, serta tombol aksi *"Buka Detail →"* di bagian bawah.
+      - Menghapus tautan menu *"Keterbatasan"* pada baris navigasi atas Landing Page publik (`Layout.tsx`) sesuai instruksi pengguna, menjaga tautan navbar terfokus pada konten utama (*Home*, *Tiga Pilar*, *Kasus & Modul*, *Cerita Rekan*, dan *FAQ*).
+      - Menghapus label *kicker* redundan `"DAFTAR PERIKSA BERURUTAN"` di atas judul panduan tindakan darurat pada halaman **Panduan Lindungi** (`Lindungi.tsx`), dan menambahkan teks deskripsi pendukung ringkas langsung di bawah judul kondisi (`activeGuide.title`), seperti *"Pesan / Tautan Mencurigakan Baru Diterima (Belum Diklik)"*, agar hierarki tipografi lebih bersih, seimbang, dan informatif.
+      - **Penyederhanaan Kotak Peringatan Darurat (`Lindungi.tsx`)**: Mengintegrasikan teks pesan penting pembekuan rekening (*"Catatan Penting: Pelaporan resmi bertujuan untuk memutus akses pelaku dan membekukan rekening penampung..."*) langsung berdampingan dengan ikon segitiga darurat (`AlertTriangle`), mengeliminasi pengantar judul yang berulang agar pesan mitigasi kritis langsung tersampaikan secara ringkas dan tegas.
+      - Menyelaraskan tipografi header **Pintasan Simulator** di Dashboard Beranda (`Beranda.tsx`): menghapus ikon smartphone dalam kotak dan format huruf besar tracking lebar, menggantinya dengan gaya font judul clean (`text-base font-bold text-[#27374D] Pintasan Simulator`) yang serasi dengan kartu *Kamus & Modus Populer* dan *Activities*.
+      - **Penyelarasan Indikator Status Baca Kartu Modul (`Beranda.tsx` & `Belajar.tsx`)**:
+        - Memindahkan indikator status baca (*Belum dibaca* / *Sudah dibaca*) dari kotak pill terpisah di atas kartu ke baris bawah footer kartu, persis di pojok kiri berhadapan dengan tombol *"Baca Modul →"*.
+        - Menghilangkan badge kotak/square berlatar belakang, menampilkannya sebagai teks bersih (*text only*) yang ringkas dan rapi (`font-medium text-[#526D82]` untuk belum dibaca, `text-emerald-600` untuk sudah dibaca).
+    - **Penerapan Logo Resmi JagaRuang (Dual Mode: Biru untuk Cerah, Putih untuk Gelap)**:
+      - Menghapus logo emas versi lama sesuai arahan pengguna.
+      - Memproses dan menetapkan 2 varian logo perisai geometris resmi dengan pemotongan presisi (*cropped*) tanpa sisa padding kosong:
+        - **Logo Biru (`/logo-blue.png`)**: Digunakan untuk permukaan posisi cerah/terang (Navbar Landing Page `bg-white`, Topbar Mobile `bg-white`, Modal Login `bg-white`, dan Favicon peramban `index.html`).
+        - **Logo Putih (`/logo-white.png`)**: Digunakan untuk permukaan posisi gelap (Header Sidebar Dashboard `bg-[#526D82]`).
+    - **Pembaruan Sandi Rahasia Keluarga & Rekomendasi 2x2 Sandi Campuran (Sandi.tsx)**:
+      - Menghapus pill teks pengingat di dalam kotak tampilan sandi besar sesuai instruksi pengguna, menjaga tampilan visual sandi utama bersih dan fokus.
+      - Menghapus tombol toggle visibilitas sandi (*Rahasiakan Sandi* / *Rahasiakan*) dari kotak sandi utama maupun header rekomendasi sesuai permintaan pengguna, sehingga teks sandi selalu terlihat jelas dan langsung dapat disalin atau ditetapkan.
+      - Menghapus lencana pill berlebih (*[OPSI X]* dan *[Kapital + Angka di Tengah]*) pada item rekomendasi untuk tampilan minimalis.
+      - Menata 4 rekomendasi sandi campuran ke dalam **tata letak grid 2x2 (2 atas, 2 bawah) dengan border radius tipis (`rounded-xl` / `rounded-lg`)**:
+        - Memadukan huruf kapital, huruf kecil, dan angka (misalnya `Lentera79Samudra`, `kopi88Garuda`, `Elang2026Rembulan`, dan `99KasturiLembah`).
+        - Dilengkapi tombol interaktif **Tetapkan Sandi** (berubah menjadi `[✓ Ditetapkan]` saat aktif) untuk menetapkan pilihan ke kotak utama dengan satu klik.
+        - Tombol **Acak Opsi Baru** (`RefreshCw`) untuk menghasilkan 4 kombinasi campuran baru secara instan kapan saja.
+      - **Accordion Kolapsibel SOP Tindakan Telepon Darurat**:
+        - Mengubah 3 kartu statis panjang menjadi daftar accordion interaktif yang ringkas (`SOP_STEPS`), menghemat ruang vertikal halaman secara signifikan.
+        - Menghilangkan badge kotak nomor hitam (`[ 01 ]`), menggantinya dengan penomoran teks sejajar langsung dengan judul (*"1. Jangan Langsung Panik"*, *"2. Tanyakan Sandi Rahasia"*, *"3. Tolak & Verifikasi Mandiri"*).
+        - Menambahkan ikon panah kanan `>` (`ChevronRight`) di ujung kanan header yang berotasi 90° ke bawah saat baris diklik untuk membuka penjelasan langkah mitigasi.
+    - **Pembaruan Layout 2-Kolom & Pengaturan Tingkat Kesulitan Tantangan Kilat (Belajar.tsx)**:
+      - **Tata Letak 2 Kolom Seimbang**: Mengubah tata letak cover Tantangan Kilat dari tumpukan satu kolom menjadi grid 2 kolom (`grid-cols-1 lg:grid-cols-12 gap-6 items-stretch`).
+      - **Kolom Kiri (Kartu Hero Gelap - `lg:col-span-5`)**:
+        - Kartu biru dongker (`#27374D`) dengan header dinamis `TANTANGAN KILAT`, badge mode (`Mode Santai` / `Mode Standar` / `Mode Ekstrem`), judul waktu dinamis (`180 Detik`, `120 Detik`, `60 Detik`), tombol *"Mulai Sekarang"*, dan estimasi kecepatan menjawab. Menghapus 3 badge pill indikator (*Timer*, *10 Soal Uji Visual*, *Pilihan Yes / No*) agar tata letak kartu hero lebih rapi dan tingginya sejajar presisi dengan kartu di sebelah kanan.
+        - **Pratinjau Visual Soal & Tipografi Header Viral "QUIZ KILAT"**:
+          - Mengisi area tengah kartu hero yang sebelumnya kosong dengan wadah visual interaktif berlatar belakang pencahayaan ambient radial glow (sky, amber, indigo).
+          - Menyajikan kartu tangkapan layar simulasi nyata dari soal kuis (SMS Phishing perbankan dengan tautan palsu dan WhatsApp kurir pengirim malware `.apk`) yang dimiringkan bersilangan (`-rotate-6` dan `rotate-6`) dengan respons hover dinamis.
+          - Menempatkan tipografi display viral di tengah: judul besar bertingkat **QUIZ KILAT** dengan model font display viral modern (kombinasi icy gradient chrome `QUIZ` dan electric amber neon `KILAT` ber-drop shadow 3D) serta subtitle kapsul `10 Soal Cepat · Yes / No · Uji Refleksmu` tanpa lencana atas yang berlebih.
+      - **Kolom Kanan (Kartu Terstruktur - `lg:col-span-7`)**:
+        - **Aturan Main Tantangan**: Kartu putih terstruktur dengan grid 2x2 yang rapi dan teratur (1. 10 Pesan Berurutan, 2. Refleks Putusan Cepat, 3. Waktu Berjalan Mundur, 4. Evaluasi & Bedah Kasus).
+        - **Pengaturan Tingkat Kesulitan Interaktif**: Wadah kartu putih pemilih durasi tantangan dengan 3 kartu opsi interaktif:
+          - **Santai**: 180 Detik (~18 dtk/soal) untuk pemula yang ingin membaca detail pesan tanpa terburu-buru.
+          - **Standar**: 120 Detik (~12 dtk/soal) sebagai mode rekomendasi default untuk menguji refleks insting alami.
+          - **Ekstrem**: 60 Detik (~6 dtk/soal) tantangan kecepatan tinggi untuk keputusan instan tanpa ragu.
+        - Memilih opsi kesulitan secara real-time memperbarui tampilan kartu hero di sebelah kiri dan meneruskan durasi waktu (`initialTime`) ke halaman tantangan (`KilatPage`), termasuk saat tombol ulangi tantangan ditekan.
+    - **Pembaruan Tampilan Tantangan Kilat Berbasis Gambar & Pilihan Yes / No (Belajar.tsx)**:
+      - **Tata Letak 2 Kolom Berdampingan Sesuai Sketsa**: Membagi layar soal drill menjadi 2 kolom seimbang (`grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch`):
+        - **Kolom Kiri (`lg:col-span-7`)**: Kotak tangkapan layar simulasi realistis (`DrillVisualMockup` untuk SMS, WhatsApp, Email, Panggilan, dan Notifikasi) lengkap dengan tombol perbesar modal.
+        - **Kolom Kanan (`lg:col-span-5`)**: Tersusun vertikal teratur terdiri dari 3 kartu: **1. Soal** (pertanyaan singkat berbobot), **2. Tombol Yes** (terindikasi manipulasi/penipuan), dan **3. Tombol No** (pesan resmi/aman/wajar) dengan indikator radio circle besar dan deskripsi konteks.
+      - **Penegasan Top Bar Header (Timer & Nomor Soal)**:
+        - Kotak kartu putih mandiri dengan tombol berbingkai *"Keluar dari Tantangan"*.
+        - Lencana jumlah soal beraksen kontras: `Soal X / 10` lengkap dengan ikon `ListChecks`.
+        - Tombol/badge timer hitungan mundur yang tegas dan tebal dengan font monospace, ikon jam amber, dan mode pulsa merah menyala otomatis saat waktu tersisa <= 20 detik.
+      - **Tombol Zoom & Pratinjau Modal**: Tombol `Maximize2` di sudut kanan atas kartu visual untuk memperbesar pratinjau tangkapan layar dalam modal perbesaran responsif.
+      - **Format Soal Singkat Bernomor**: Menampilkan pertanyaan singkat dan terarah per soal (contoh: *1. Apakah pesan SMS perbankan di atas terindikasi penipuan?*) dengan label teks bersih *"PERTANYAAN #X"* tanpa bingkai kotak/pill background.
+      - **Tombol Navigasi Soal Sebelumnya & Setelahnya**:
+        - Tombol berbingkai *"Soal Sebelumnya"* dengan ikon panah kiri `ChevronLeft` (nonaktif saat di soal 1).
+        - Tombol kontras *"Soal Setelahnya"* dengan ikon panah kanan `ChevronRight`, serta tombol *"Selesai & Evaluasi"* saat berada di soal ke-10.
+        - Tombol mini panah kiri/kanan di dalam lencana `Soal X / 10` pada top bar untuk penjelajahan cepat antar soal.
+      - **Penjabaran Penuh Layar Hasil Evaluasi Tantangan Kilat**:
+        - Mengubah wadah evaluasi dari kotak sempit di tengah (`mx-auto max-w-2xl`) menjadi bentang penuh (`w-full`) selaras dengan kartu header dan halaman utama.
+        - Menghapus pembatas scroll sempit (`max-h-80 overflow-y-auto`) dan menjabarkan seluruh 10 kartu ulasan soal secara terbuka dalam grid responsif 2 kolom (`grid-cols-1 lg:grid-cols-2`).
+        - Menambahkan hero card skor evaluasi 12-kolom dengan piala capaian, narasi hasil refleks, serta kartu ringkasan jumlah tepat vs kurang tepat.
+        - Menyembunyikan bilah navigasi drill atas (*Top Bar Header Drill*: Keluar dari Tantangan, counter soal, dan timer) saat berada di layar hasil evaluasi agar hanya tampil pada saat sesi soal aktif berlangsung, menghindari kotak bar kosong di atas layar evaluasi.
+        - Memperbarui bilah aksi atas dan bawah dengan tombol ulangi tantangan, buka kamus istilah, dan kembali ke beranda belajar.
+    - **Pembaruan Desain & Tata Letak Halaman Cek Indikasi Tipuan Digital (Cek.tsx)**:
+      - **Header & Tab Navigasi Minimalis**: Penambahan badge merek Siaga, tipografi judul yang tebal dan tegas, serta tab navigasi garis bawah (*Pesan*, *Tautan*, *Berkas & Izin*) dengan indikator aktif solid.
+      - **Banner Peringatan Privasi Elegan**: Kotak pendar emas/amber lembut (`#FFFBF0`, border `#FDE68A`) dengan ikon perisai dan penegasan anonimitas data.
+      - **Wadah Formulir & Tombol Aksi Kontras**: Kartu putih bersih dengan label uppercase terstruktur, penghitung karakter monospace, tombol primer hitam solid (`bg-black`), dan tombol sekunder outline bersih.
+      - **Kartu Hasil Analisis Hero Donut Gauge**:
+        - Kotak gelap arang (*charcoal* `#1E1E1E`) berbayang halus yang memuat pengukur donat SVG melingkar dengan angka skor presisi (`92 dari 100`) dan animasi rotasi halus.
+        - Lencana tingkat risiko dinamis bersinar (*glow pill*) serta narasi ringkasan indikasi rekayasa sosial yang berbobot.
+      - **Skala 4-Segmen Horizontal**: 4 bar status (*Aman*, *Waspada*, *Berisiko*, *Sangat Tinggi*) dengan pewarnaan aktif oranye/merah menyala dan label teks yang tegas.
+      - **Pratinjau Teks & Kartu Tanda Peringatan Berjenjang**:
+        - Kotak pratinjau teks font monospace dengan penyamaran data otomatis.
+        - Daftar kartu peringatan bertingkat (`TINGKAT L4`, `TINGKAT L2`, dll.) dengan alasan kejanggalan (`Kenapa mencurigakan:`) dan kotak putih inset rekomendasi aksi (`Cara verifikasi:`).
+        - Catatan penafian (*disclaimer*) transparan di bagian bawah.
+    - **Pembersihan Total Emoticon & Emoji Slop (Anti-Slop Cleanliness)**:
+      - Menghapus 100% karakter emoji, emotikon, dan simbol unicode slop di seluruh antarmuka web, komponen simulator, panduan tindakan, serta data skenario (total 38 kemunculan dieliminasi hingga tersisa 0).
+      - Menghilangkan badge emoji pada halaman Keterbatasan (`⚡`, `🛡️`, `🔍`, `🧪`) dan menggantinya dengan teks clean berbobot profesional.
+      - Menghilangkan emoji pada judul notifikasi dan prompt simulator di `FakeChatSimulator.tsx` (`🔒`, `⚠️`, `🛡️`, `📌`, `💬`).
+      - Menghilangkan emoji pada broadcast warning template di `actionGuides.ts` (`🚨`).
+      - Mengganti simbol teks mentah seperti unicode star `★` dan checkmark `✓`/`✕` di `Belajar.tsx` dan `Lindungi.tsx` dengan komponen ikon vektor SVG berstandar desain sistem (`<Star />`, `<Check />`, `<X />`).
+      - Membersihkan sapaan dan balasan chat skenario di `fiveStepScenarios.ts` dari emoji berlebihan (`🙏`, `💐`, `📦`, `😅`, `💕`, `🥺`, `😢`, `🥹`, dll.) untuk menghasilkan gaya komunikasi yang serius, realistis, dan berkelas.
+    - **Penyempurnaan & Kompaksi Baris Bawah Kartu Skenario Simulator (Belajar.tsx)**:
+      - Menghapus label tumpuk uppercase `Estimasi` dan menyelaraskan baris durasi kartu skenario simulator agar identik dengan kartu modul: satu baris horizontal bersih (`<Clock /> ~{sc.duration}`) dengan warna slate (`text-[#526D82]`), tipografi font-medium, dan ukuran `text-[11px]` sejajar dengan tombol aksi kapsul `Mulai`.
+      - Menambahkan `whitespace-nowrap` dan `leading-none` pada durasi `~2 Mnt` serta menyelaraskan warna ikon jam mikro menjadi abu-abu netral (`text-[#526D82]`) menggantikan warna oranye/amber agar serasi dengan palet desain sistem.
+      - Menyesuaikan teks tombol kapsul aksi menjadi `Mulai` dengan ikon panah di lingkaran putih (persis referensi Nike), mencegah teks tombol terputus menjadi dua baris dan menjaga perbandingan ruang tetap proporsional pada grid 4 kolom.
+    - **Penyederhanaan Lencana Media Kartu Skenario Simulator (Belajar.tsx)**:
+      - Menghapus lencana rating `4.9` di pojok kanan atas kartu yang tidak relevan dengan skenario keamanan.
+      - Memindahkan lencana nama kanal komunikasi (misal: `WhatsApp`) langsung ke pojok kiri atas sebagai satu-satunya lencana utama yang bersih dan berkelas (*clean frosted glass*).
+    - **Pembaruan Cuplikan Obrolan Skenario & Bukti Gambar Pendukung Penipu (Belajar.tsx & FakeChatSimulator.tsx)**:
+      - **Cover Kartu Simulator (`Belajar.tsx`)**:
+        - Mengganti ilustrasi anime/komik lama dengan cuplikan obrolan percakapan realistis (`k1-chat-snippet.png`, `k2-chat-snippet.svg`, dst.) yang diambil langsung dari konteks cerita skenario.
+        - Memperbarui gaya rendering cover media menjadi `object-cover object-top` tanpa bingkai latar belakang tebal agar menyerupai layar ponsel asli.
+      - **Unggahan Gambar Pendukung Penipu (`FakeChatSimulator.tsx` & `fiveStepScenarios.ts`)**:
+        - Memperluas skema data skenario (`briefing.supportingImage`) dan alur percakapan simulator sehingga pelaku penipuan tidak hanya mengirim teks polos ("chat tok"), melainkan juga mengunggah berkas foto bukti pendukung yang realistis:
+          - Skenario K1: Foto Kartu Undangan Pernikahan Mewah (`k1-invitation.svg`) sebelum berkas `.apk`.
+          - Skenario K2: Foto Resi Pengiriman Ekspedisi Gagal Kirim dengan Barcode (`k2-resi-kurir.svg`).
+          - Skenario K3: ID Card Resmi Recruiter Global Media & Surat Tugas Freelance (`k3-loker-id.svg`).
+          - Skenario K4: Dokumen Peringatan Anomali Transaksi Bank & Fraud Alert (`k4-bank-notice.svg`).
+          - Skenario K5: Tangkapan Layar Portofolio Trading Kripto Profit Harian (`k5-trading-profit.svg`).
+          - Skenario K6: Surat Notifikasi Darurat Penangguhan Akun Cloud Auth (`k6-voucher-hadiah.svg`).
+          - Skenario K7: Surat Resmi Sertifikat Pemenang Gebyar Undian (`k7-security-warning.svg`).
+          - Skenario K8: Katalog Flash Sale Gadget Cuci Gudang 70% Non-Rekber (`k8-flash-sale.svg`).
+        - Menambahkan wadah visual foto lampiran dalam balon chat dengan efek hover zoom, lencana forensik, dan teks keterangan.
+        - Menyediakan fitur interaktif **Modal Lightbox Forensik** sehingga pengguna dapat mengklik foto untuk memperbesar dan menganalisis tanda kejanggalan dokumen secara mendalam.
+        - Menghilangkan simbol emoji fast-forward `⏩` yang tersisa pada tombol lewati percakapan.
+    - **Penerapan Wallpaper Doodle Realistis pada Semua Fake Chat**:
+      - Membuat pola doodle vektor seamless (`chat-doodle-pattern.svg`) dengan ikon-ikon khas percakapan pesan instan (gelembung chat, cangkir kopi, kaca pembesar, pesawat kertas, headphone, jam, gembok, surat, hati, perisai, kamera, nada musik, smartphone, bintang, awan, bohlam lampu, dan aksen garis halus) dengan opasitas rendah (10%) pada latar belakang hangat `#EFEAE2`.
+      - Menerapkan wallpaper doodle pada area percakapan interaktif [`FakeChatSimulator.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/components/simulator/FakeChatSimulator.tsx) dengan pengulangan mulus (`backgroundRepeat: repeat`, `backgroundSize: 240px 240px`).
+      - Menyematkan elemen pola doodle (`<pattern id="chatDoodle">`) langsung ke dalam seluruh cover cuplikan obrolan SVG skenario (`k1-chat-snippet.svg` hingga `k8-chat-snippet.svg`) di [`Belajar.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/pages/Belajar.tsx) dan [`Beranda.tsx`](file:///c:/Users/ASUS/Documents/code/JagaRuang/apps/web/src/pages/Beranda.tsx).
+  - **Redesain Total Komposisi Visual 3D Hero (React Three Fiber & Drei)**:
+    - Konsep tunggal terpadu: **"iPhone sebagai hero, orbit sebagai aksesori halus"**.
+    - **Model Prosedural iPhone Midnight Space Black (`IPhone.tsx` & `hero3d.config.ts`)**: Bodi ponsel disesuaikan menjadi nuansa Midnight Space Black (`#0E1726`) elegan sesuai desain mockup, bezel tipis presisi, slit earpiece di bezel atas, dan tombol samping beraksen navy gelap (`#223763`).
+    - **Tekstur Layar Dashboard Baru Ultra-HD (`dashboard-screen.png`)**: Menampilkan antarmuka mobile dashboard JagaRuang terbaru sesuai mockup (Notch lengkung atas, status bar 09:41, kartu Selamat Datang Kembali! dengan progres belajar 82%, modul horizontal Level Waspada & Level Aman, tip keamanan harian OTP, dan 5 tab navigasi bawah aktif).
+    - **Perbaikan Sudut Layar 3D & Z-Layering Bezel (`IPhone.tsx`)**: Mengganti `planeGeometry` siku-siku dengan geometri ber-sudut melengkung `ShapeGeometry` (`shape.absarc`) presisi yang dipetakan UV `[0, 1]`. Memperbaiki Z-layering bezel dan layar (`screen` di `z = +0.006` berada tepat di depan permukaan bezel `z = +0.004`), menghilangkan glitch kotak hitam di tengah layar yang sebelumnya tertembus oleh permukaan depan bezel box.
+    - **Penyesuaian Dimensi Kartu Welcome Back Dashboard (`Beranda.tsx`)**: Mengatur kartu banner Welcome Back dengan `flex-1 flex flex-col justify-center` serta padding lebih lega (`p-7 sm:p-8 lg:p-9`) dan ilustrasi lebih proporsional (`h-36 w-36 sm:h-40 sm:w-40`). Kotak banner kini memanjang turun mengisi ruang vertikal secara natural sehingga meniadakan sela kosong canggung di atas Modul Pembelajaran.
+    - **Layar HTML Ultra-Tajam (`<Html transform>`)**: Tampilan antarmuka tajam dengan kontras tinggi (setara 11-12px final) menampilkan 3 elemen fokus: Header JagaRuang Mobile dengan status bar, Kartu Peringatan Kritis merah (`Undangan_Pernikahan.apk`), dan Kartu Status Hijau terverifikasi (`Tautan Aman`).
+    - **Satu Cincin Orbit Halus (`Orbit.tsx`)**: Satu cincin torus tipis berbagi titik pusat sama `[0, 0, 0]` dengan HP, memotong depan dan belakang dengan *depth buffer* akurat (`depthWrite={false}` dan `renderOrder={1}` untuk mengatasi clipping menembus phone body), serta partikel bercahaya emerald yang mengitari cincin.
+    - **Kartu Notifikasi Melayang Berkedalaman (`FloatingCards.tsx`)**: 3 kartu notifikasi melayang dengan parallax multi-layer (`occlude={false}` mencegah geometry occlusion) dengan posisi terkoreksi (card1 `[-1.95, 1.45, 0.7]`, card2 `[1.90, -1.35, 0.85]`, card3 `[1.85, 1.65, -0.45]`) agar tetap dalam frustum kamera.
+    - **Optimasi Tekstur Layar & Proporsi Bezel (`IPhone.tsx` & `hero3d.config.ts`)**: Konfigurasi `wrapS`/`wrapT` ke `ClampToEdgeWrapping`, `repeat` dan `offset` tekstur layar dashboard, fallback plane `#DDE6ED` jika tekstur belum tersedia, serta proporsi bezel presisi (`screenWidth: 2.04`, `screenHeight: 4.44` menghasilkan bezel 0.07 per sisi).
+    - **Container Bebas Clipping DOM (`Hero3DCanvas.tsx`)**: Menggunakan `overflow: visible` dan `isolation: isolate` langsung pada container utama tanpa `overflow-hidden` di chain parent.
+    - **Pencahayaan Studio & Efek Refleksi (`HeroScene.tsx`)**: Menggunakan `<Lightformer>` prosedural (100% on-device tanpa unduhan eksternal), directional light dengan bayangan halus, serta `<ContactShadows>` di bawah HP.
+    - **Interaktivitas & Aksesibilitas**: Animasi `Float` halus, tilt kursor responsif (maks ~15 derajat) dengan lerp damping, kepatuhan `prefers-reduced-motion` untuk pose statis, dan `IntersectionObserver` / visibility listener untuk auto-pause saat di luar layar.
+    - **Konfigurasi Terpusat (`hero3d.config.ts`)**: Seluruh parameter visual, kecepatan, dan skala dikumpulkan di satu file konfigurasi.
+    - **Code Splitting & Lazy Loading**: Chunk R3F dimuat secara asinkron dengan skeleton fallback (`Hero3DFallback.tsx`).
+    - **FE-Simulator-Pacing**: Alur Percakapan Alami (*Realistic Fake Chat Pacing*) & Respon Interaktif:
+      - **Pembukaan Bertahap Alami**: Chat tidak lagi langsung memunculkan seluruh pesan dan tombol sekaligus. Ditambahkan urutan pembuka bertahap (sapaan awal, tanda pengetikan aktif dengan teks dinamis `${senderName} sedang mengetik...`, lampiran berkas, dan pesan urgensi) dengan jeda waktu realistis layaknya aplikasi percakapan sesungguhnya.
+      - **Respon Balasan Lawan Bicara Pasca-Pilihan**: Setelah pengguna memilih opsi tindakan (Opsi A, B, atau C), simulasi tidak langsung melempar kartu akhir secara terburu-buru. Lawan bicara (pelaku/bank/sistem) merespon secara aktif sesuai konteks jawaban pengguna (`attackerReply`) disertai indikator mengetik dan jeda membaca yang nyaman, sehingga alur cerita dapat dinikmati babak demi babak.
+      - **Koreksi Balasan Lawan Bicara (`attackerReply`)**: Memastikan `replyMsg` selalu memakai sender `role` (pelaku/lawan bicara) sehingga balasan percakapan (seperti *"Sip mantap kak! Nanti kalau ada peringatan di layar HP..."*) selalu muncul sebagai balon chat WhatsApp asli di sisi kiri lengkap dengan avatar, bukan tertukar menjadi pesan sistem/gembok. Sementara itu, peringatan keamanan dari sistem operasi (OS) dirender terpisah sebagai kartu notifikasi sistem perangkat.
+      - **Evaluasi Edukatif Mengalir di Aliran Chat**: Kartu konsekuensi dan evaluasi tindakan muncul alami di dalam alur riwayat pesan sebelum titik keputusan berikutnya atau layar penyelesaian dibuka.
+      - **Penyederhanaan Layar Ending Simulator (Anti-Terbelit-belit & Bebas Desakan Redo)**: Menghapus 5 seksi debrief yang berlebihan (tabel kalkulasi komponen poin, daftar berulang tanda bahaya red flag, dan kutipan mentor bertumpuk). Menggantinya dengan 1 kartu hasil akhir yang ringkas & padat: Badge peringkat, skor akhir (/100), dan intisari evaluasi keputusan pengguna. Menghilangkan tombol oranye mencolok "Ulangi dari Awal" di bilah bawah; aksi default kini disesuaikan menjadi "Selesai & Kembali ke Daftar Kasus", tanpa ada timer countdown, auto-refresh, atau desakan mengulang terburu-buru. Pengguna bebas meninjau seluruh riwayat chat obrolan dengan santai.
+      - **Kontrol Percepat Fleksibel (*Fast-Forward*)**: Menyediakan tombol "Lewati Mengetik ⏩" / "Tampilkan Langsung" agar pengguna atau penguji dapat melewati jeda waktu kapan saja tanpa hambatan.
+      - **Stabilisasi Scroll Alami (*Scroll Containment & No-Bounce*)**: Menghapus penggunaan `scrollIntoView()` yang sebelumnya menyeret seluruh jendela/viewport halaman ke bawah, menonaktifkan CSS `scroll-smooth` pada kontainer chat yang memicu bug lompat ke atas (*reset to top glitch*) di peramban Chromium/Edge saat pengguna menggulir secara manual, mengintegrasikan `isNearBottomRef` agar posisi baca pengguna dihormati (tidak dipaksa melompat ke bawah saat pengguna sedang membaca pesan di atas), serta menambahkan `overscroll-contain` untuk isolasi gulir yang kokoh.
+      - **Pembersihan Timer Aman (Memory-Safe)**: Mengintegrasikan `timeoutIdsRef` dan `clearAllTimeouts` untuk mencegah *race condition* atau kebocoran memori saat simulasi diulang atau berpindah skenario.
+    - **Redesain Kartu Skenario Simulator Cover Sesuai Referensi Visual ([`Belajar.tsx`](../../apps/web/src/pages/Belajar.tsx))**:
+      - Mengubah tampilan kartu skenario (K1 s.d K8) dari desain gelap kaku sebelumnya menjadi kartu modern estetik bersuasana hangat (*warm off-white* `#FAF8F5` dengan sudut lengkung halus `rounded-[28px]` dan *border* `#E7DFD5`).
+      - Bagian atas kartu memuat kotak gambar `aspect-[4/3]` berbingkai melengkung `rounded-[20px]`, dilengkapi *floating badges* bergaya *frosted glass* di sudut kiri atas (ID Kasus `K1` dan kanal komunikasi) serta sudut kanan atas (rating `★ 4.9`).
+      - Menyematkan indikator titik (*dot carousel indicator*) di dasar gambar persis referensi visual.
+      - Bagian tengah memuat judul skenario yang tegas berkontras tinggi (`#27374D`) dan deskripsi singkat 2 baris (`#526D82`).
+      - Baris bawah menampilkan estimasi durasi latih di sisi kiri dan tombol kapsul aksi *"Mulai Simulasi"* di sisi kanan lengkap dengan aksen lingkaran putih berisi ikon panah (`ArrowRight`).
+    - **Pembaruan Desain & Mekanisme Simulator (Netralitas Tombol, 3 Pilihan, & Layout Organik)**:
+      - **3 Pilihan Tindakan di Titik Keputusan Awal**: Mengembangkan titik keputusan awal pada seluruh skenario (K1 s.d K8) dari sebelumnya 2 pilihan menjadi **3 pilihan tindakan realistis** (Opsi A, Opsi B, dan Opsi C) mencakup reaksi impulsif, verifikasi identitas, dan tindakan pencegahan/pelaporan langsung.
+      - **Tombol Keputusan 100% Netral (Bebas Spoiler Warna)**: Menghapus seluruh aksen warna hijau (`emerald`) dan merah (`rose`), badge petunjuk "Berisiko" vs "Aman & Verifikasi", serta teks indikator dalam label. Seluruh opsi kini disajikan dengan gaya visual netral seragam (`bg-white`, border abu-kebiruan `#9DB2BF`, dan badge netral `#DDE6ED` / `#27374D`) agar menguji insting objektif pengguna tanpa bias warna.
+      - **Layout Organik & Lebih Hidup (Jangan Terlalu Rapi)**:
+        - Mockup Layar Smartphone Nyata: Membungkai antarmuka chat dengan bezel smartphone modern, mock status bar (sinyal 5G, jam 09:41, indikator baterai), notch kamera, dan ekor balon percakapan alami.
+        - Sentuhan Papan Kasus Detektif: Menyematkan badge berkas beraksen tape miring (`rotate-[-1deg]`), label washi-tape pada bilah keputusan ("Giliranmu Menentukan Tindakan"), serta mengubah drawer bukti investigasi menjadi memo tempel (*sticky note* kuning lembut bergaya catatan lapangan).
+    - **Pembersihan Elemen UI & Penyelarasan Pintasan Simulator**:
+      - Menghapus badge "Pilar Mitigasi & Tindakan JagaRuang" pada header halaman Panduan Lindungi ([`Lindungi.tsx`](../../apps/web/src/pages/Lindungi.tsx)).
+      - Menghapus baris teks keunggulan ringkas ("100% On-Device di Browser" dan "Tautan Tidak Pernah Dibuka") pada Hero Section Beranda ([`Beranda.tsx`](../../apps/web/src/pages/Beranda.tsx)).
+      - Menghapus teks petunjuk "*Model 3D interaktif Three.js — Gerakkan kursor atau sentuh untuk memutar" di bawah kanvas 3D smartphone Beranda ([`Beranda.tsx`](../../apps/web/src/pages/Beranda.tsx)).
+      - Menghapus breadcrumb kecil "Belajar", badge skenario "8 Skenario (K1 - K8)" di cover Belajar, teks "· MIT-Week 2026" di footer, badge "Fitur Perlindungan Kloning Suara AI" di Sandi Keluarga, dan badge "Kasus K1 · Wajib" di Beranda sesuai instruksi pengguna.
+      - Menyelaraskan kartu Pintasan Simulator di Beranda agar tingginya presisi sejajar dengan kartu Modul Pembelajaran, serta menyisipkan grafis pratinjau potongan chat WhatsApp K1 (`k1-chat-snippet.png`).
+    - **Fitur Rekomendasi Pintar di Search Bar Top Header (`Layout.tsx`)**:
+      - Ketika kotak pencarian diklik/difokuskan, dropdown interaktif muncul menampilkan rekomendasi eksplorasi terbatas maksimal 5 item.
+      - Rekomendasi otomatis diacak kembali (*refresh*) setiap kali pengguna mengklik ulang (unclick & click) search bar, lengkap dengan tombol "Acak Lagi".
+      - Menyajikan perpaduan 8 skenario Simulator (K1-K8), 12 Modul Pembelajaran, dan 10 Istilah Kamus dengan ikon dan badge warna yang jelas.
+      - Mengetik teks pada kotak pencarian langsung menyaring hasil secara real-time dan mengarahkan langsung ke halaman target saat item dipilih.
+      - Mengintegrasikan seluruh 8 kasus dari dokumen `Rangkaian_Simulator_Latih_JagaRuang.docx`:
+        - K1: Undangan Pernikahan Digital.apk (WhatsApp · Wajib)
+        - K2: Lihat Foto Paket (WhatsApp · Wajib)
+        - K3: Loker Admin WFH Palsu (Media Sosial / DM · Wajib)
+        - K4: Telepon Palsu Petugas Bank (Panggilan Suara / Vishing)
+        - K5: Kenalan Online → Investasi Bodong (Dating App / Pig Butchering)
+        - K6: Email Akun Akan Ditangguhkan (Email · Phishing)
+        - K7: Giveaway Palsu (Media Sosial · Iming-iming Hadiah)
+        - K8: Toko Online Fiktif (Marketplace / Belanja Palsu)
+      - **Desain Kartu Showcase Minimalis (Cover)**: Grid 8 kartu (4 kolom desktop) dengan layout gambar:
+        - Layer background: disiapkan untuk file `bg.png`/`bg.jpg` dengan efek sedikit blur (`blur-[2px]`) dan penurunan kecerahan (`brightness-75`).
+        - Bagian tengah: slot gambar tengah (`k1.png` - `k8.png`) dengan placeholder ikon dan judul skenario sementara menunggu unggahan aset.
+        - Setiap kartu tetap interaktif dan langsung membuka halaman simulasi khusus (`SimulatorPage`) dengan briefing, investigasi bukti, keputusan, debrief, dan kode penyelesaian `TRUST{...}`.
+  - **Simulator Cerita Interaktif Meja Kerja (Visual Novel K1)**:
+    - **Aset & Background Meja Kerja Cozy**: Menggunakan template latar meja kerja (`desk-template.jpg`) dengan cangkir kopi, laptop, tanaman sukulen, dan alat tulis sesuai referensi visual.
+    - **Alur Rute 41 Kartu K1 (`DeskStorybookSimulator`)**: Memuat dan merender secara sekuensial 41 kartu cerita naratif (`1.jpg` hingga `40.jpg`, termasuk `22.2.jpg`) di atas buku catatan panggung tengah meja dengan rasio presisi (`aspect-[1696/2528]`, `h-[91%]`).
+    - **Interaktivitas & Animasi Menarik**:
+      - Transisi halaman buku halus dengan bayangan realistis (`shadow-[0_25px_50px_rgba(0,0,0,0.65)]`).
+      - Hotspot interaktif tombol keemasan di atas teks "Lanjut →" dengan cincin pendar animasi pulsasi dan kilau bintang.
+      - Zona klik sisi kiri/kanan kartu untuk navigasi cepat sebelumnya/selanjutnya.
+      - Dukungan navigasi keyboard: panah kanan/spasi/enter (lanjut), panah kiri (kembali), 'f' (layar penuh), Esc (keluar).
+      - Bilah kontrol atas mengambang: tombol kembali, info skenario, counter kartu, toggle putar otomatis (slideshow), reset, dan fullscreen.
+      - Bilah kontrol bawah mengambang: tombol navigasi dan slider scrubber untuk melompat langsung ke kartu mana saja (1 - 41).
+      - Preloading gambar pintar di latar belakang untuk pengalaman perpindahan halaman instan tanpa jeda.
+    - **Perayaan Misi Selesai**: Modal popup piala kemenangan saat kartu ke-41 tercapai, tombol salin kode `TRUST{APK-UNDANGAN}`, dan pemicu notifikasi target capaian otomatis.
+    - **Pratinjau Cover K1**: Kartu cover K1 menampilkan miniatur kartu buku catatan asli di atas meja kerja yang diburamkan halus.
+  - **Penyelarasan Kartu Pintasan Simulator & Cuplikan Chat K1 ([`Beranda.tsx`](../../apps/web/src/pages/Beranda.tsx))**:
+    - Menambahkan gambar cuplikan chat WhatsApp skenario K1 (`/simulator/k1-chat-snippet.png`) di antara header *"Pintasan Simulator"* dan teks judul *"Undangan Pernikahan APK"*.
+    - Menyesuaikan tinggi/panjang kartu Pintasan Simulator ke bawah sehingga sejajar secara vertikal dengan baris Modul Pembelajaran di sisi kiri.
+  - **Penyempurnaan Layar 3D iPhone & Integrasi Screenshot Beranda HD**:
+    - **Penghapusan Badge**: Menghapus pill badge `✨ Sesi Aktif Digital Guardian` pada banner Welcome Back di `Beranda.tsx` sesuai permintaan antarmuka yang lebih bersih.
+    - **Integrasi Screenshot Beranda HD (1170x2532)**: Layar 3D iPhone kini menampilkan tangkapan layar tampilan mobile Beranda JagaRuang secara proporsional presisi (rasio 1:2.165, pas dengan dimensi layar iPhone 2.06 x 4.46 tanpa distorsi/stretching).
+    - **Ketajaman & Rendering Bebas Layar Hitam**: Menggunakan `useTexture` dengan 16x *Anisotropic Filtering*, *Linear Mipmapping*, serta material *emissive map* pendaran OLED terang sehingga layar tidak pernah hitam, tidak blur, dan tetap terbaca jernih di semua sudut rotasi Three.js.
+    - **Penempatan Dynamic Island Presisi**: Kapsul Dynamic Island ditempatkan presisi di status bar atas (di antara jam 09:41 dan ikon baterai/wifi) sehingga tidak menutupi logo atau teks header aplikasi.
+  - **Simulator Interaktif Fake Chat (Undangan Pernikahan Digital.apk - K1)**:
+    - **Komponen Interaktif Baru (`FakeChatSimulator.tsx`)**: Mengubah skenario Undangan Pernikahan Digital APK menjadi simulasi percakapan chat interaktif sekuensial (gaya WhatsApp / visual novel messenger) lengkap dengan avatar lawan bicara, avatar pengguna, gelembung obrolan, kartu lampiran berkas APK asli, dan indikator mengetik.
+    - **Alur Percabangan Ketat (Strict Branching Logic A, B, C)**:
+      - **Pilihan A (Gegabah/Langsung Buka)**: Pengguna memasang berkas APK -> Pelaku mengarahkan untuk memberikan izin berbahaya -> Muncul kartu peringatan sistem Android (READ_SMS) -> Aplikasi mengalami force close -> Notifikasi SMS perbankan disadap dan saldo tersedot -> Debrief & Solusi Darurat A (Mode pesawat, blokir rekening bank, cabut SIM, factory reset).
+      - **Pilihan B (Ragu/Minta Format Biasa)**: Pengguna menanyakan ekstensi .apk dan meminta foto/web -> Pelaku melancarkan manipulasi emosional (guilt-tripping) -> Sub-pilihan B1 (tetap menolak tegas -> pelaku memblokir) atau B2 (goyah -> infeksi) -> Debrief & Solusi B (Nol toleransi APK pernikahan, abaikan rasa sungkan, laporkan nomor).
+      - **Pilihan C (Waspada Penuh/Verifikasi Mandiri)**: Pengguna menolak membuka berkas dan memverifikasi langsung -> Pelaku panik dan pesan centang satu -> Panggilan verifikasi mandiri (out-of-band) mengonfirmasi pencatutan nama -> Pengguna memblokir nomor -> Debrief & Solusi Sempurna C (Zero-Trust, verifikasi out-of-band, lapor ke aduannomor.id).
+    - **Pengalaman Obrolan Utuh (Single Scrollable Chat)**:
+      - Seluruh jalannya simulasi berada dalam 1 thread chat yang mengalir ke bawah seperti percakapan nyata.
+      - Pengguna dapat melakukan scroll ke atas kapan saja untuk memeriksa pesan sebelumnya maupun pilihan yang telah diambil.
+      - Tombol melayang cerdas "Pesan Terbaru" muncul otomatis saat pengguna menggulir ke atas untuk memudahkan kembali ke pesan paling akhir.
+      - Tombol "Coba Pilihan Lain" memungkinkan pengguna mengulang dan bereksplorasi dengan alur pilihan lainnya tanpa harus keluar dari halaman.
+    - **Responsif & Aksesibel di Mobile & Desktop**: Tata letak beradaptasi sempurna di layar ponsel (target sentuh >= 48px, padding fleksibel, tanpa overflow) maupun layar desktop (kontainer terpusat elegan dengan elevated shadow dan micro-interaction halus).
+  - **Optimasi Performa 3D Scene (INP Reduksi dari 336 ms)**:
+    - Menghilangkan kalkulasi berat *Environment Lightformer FBO* pada scene 3D yang sebelumnya membebani CPU main-thread, digantikan dengan pencahayaan direksional efisien.
+    - Menambah ketebalan z-axis pada bodi smartphone agar tampil solid dan berisi (`phoneDepth: 0.30`).
+    - Merotasi Dynamic Island ke posisi horizontal `[0, 0, Math.PI / 2]` di status bar atas.
+  - **Penyederhanaan Dashboard & Redesain Kartu Pintasan Simulator (`Beranda.tsx`)**:
+    - **Penghapusan Widget Kalender**: Menghapus kalender bulanan statis berserta kode/state penanganannya (`selectedCalendarTab`, `selectedDayInfo`) untuk merampingkan antarmuka dan mengurangi kepadatan visual.
+    - **Penyelarasan Kartu Pintasan Simulator Aktif ke Baris Atas**: Menarik kotak pintasan simulator ke bagian atas kolom kanan dan mengubahnya menjadi *static card* mandiri yang selaras dengan banner "Welcome Back !" di sebelahnya (`rounded-3xl`, `border border-[#9DB2BF]/50`, `bg-white`, `p-6 sm:p-7`, `shadow-xs`).
+    - **Detail Kartu Pintasan**: Menampilkan ikon smartphone, label badge "Kasus K1 · Wajib", judul "Undangan Pernikahan APK", deskripsi skenario, indikator durasi & tingkat dasar, serta tombol CTA "Lanjutkan Simulasi" yang terhubung langsung ke skenario interaktif (`/belajar?tab=simulator&scenario=k1`).
+  - **Pembaruan Alur Simulasi K1–K8 (Fake Chat Bercabang 5 Titik Keputusan & 5 Ending)**:
+    - **Dataset Komprehensif Skenario (`fiveStepScenarios.ts`)**: Menerapkan struktur state machine 5 titik keputusan berurutan (Keputusan 1 s.d 5) untuk seluruh skenario K1 hingga K8 (K1: Undangan APK, K2: Foto Paket, K3: Loker WFH, K4: Telepon Bank, K5: Kenalan Investasi, K6: Email Phishing, K7: Giveaway Palsu, K8: Toko Fiktif).
+    - **Logika Alur 5 Keputusan**:
+      - Keputusan 1: Aman -> lanjut ke Keputusan 2; Berisiko -> melompat ke Keputusan 3.
+      - Keputusan 2: Aman -> **Ending A** (Jalur Aman Penuh, Skor 100 Guardian); Berisiko -> lanjut ke Keputusan 3.
+      - Keputusan 3: Aman -> **Ending B** (Batal Instalasi / Berhenti Sebelum Berlanjut, Skor 85 Guardian); Berisiko -> lanjut ke Keputusan 4.
+      - Keputusan 4: Aman -> **Ending C** (Tolak Izin SMS / Berhenti Sebelum Dampak Utama, Skor 60 Penjaga); Berisiko -> lanjut ke Keputusan 5.
+      - Keputusan 5: Aman -> **Ending D** (Lapor Bank Cepat / Terlambat Sadar Tetap Bertindak, Skor 35 Pemula); Berisiko -> **Ending E** (Kerugian Penuh, Skor 10 Pemula).
+    - **Investigasi 4 Bukti Red Flags**: Tombol inspeksi 4 tanda bahaya di top bar chat yang memberikan pemahaman awal (+40 poin).
+    - **Debrief Lengkap & Nasihat Mentor Jaga**: Setiap ending memuat tabel rincian skor, narasi keputusan pemain, evaluasi red flags yang dipelajari, quote nasihat ideal dari mentor Jaga, dan tombol salin kode flag penyelesaian (`TRUST{...}`).
+  - **Penyederhanaan Tampilan Modal Login (`LoginModal.tsx`)**:
+    - Menghapus kotak info privasi on-device di bagian bawah modal login sesuai permintaan perampingan tampilan.
+  - **Pembersihan & Perampingan Hasil Analisis Indikasi (`Cek.tsx`)**:
+    - **Penghapusan Box Teks**: Menghapus kotak pratinjau *"TEKS YANG DIANALISIS"* pada kartu hasil analisis untuk mengeliminasi redundansi visual teks yang telah dimasukkan pengguna.
+    - **Pembersihan Ikon Tanda Tanya**: Menghapus ikon lingkaran tanda tanya (`HelpCircle`) di samping label *"Kenapa mencurigakan:"* pada setiap kartu tanda peringatan bahaya, sehingga tampilan penjelasan menjadi lebih bersih dan fokus pada teks edukasi.
+    - **Penghapusan Badge Tingkat L (Foto 1)**: Menghapus badge pill `TINGKAT L{level}` dari setiap kartu tanda peringatan bahaya.
+    - **Tata Letak 2 Kolom Grid Kartu Peringatan (Foto 2)**: Mengubah kontainer daftar tanda bahaya dari deret vertikal panjang 1-kolom menjadi grid 2-kolom (`grid-cols-1 md:grid-cols-2`), sehingga kartu tampil sebagai kotak proporsional yang rapi dan terstruktur seimbang.
+    - **Penghapusan Teks Mock Data (Foto 3)**: Menghilangkan teks pemberitahuan *"Mode data tiruan (mock) aktif — aman digunakan selama modul logika inti Backend sedang disiapkan."*.
+    - **Penghapusan Footer Disclaimer (Foto 4)**: Menghilangkan kotak teks catatan kaki *"Hasil ini hanya indikator berbasis aturan dan bias kalimat..."*.
+    - **Penegasan Tipografi INDIKASI RISIKO (Foto 5)**: Mempertebal tipografi header *"INDIKASI RISIKO"* menjadi `font-black text-slate-900` dengan kontras tinggi yang tegas dan tajam.
+    - **Pembersihan Waktu Analisis (Foto 1 - `Cek.tsx`)**: Menghilangkan teks status *"Dianalisis baru saja"* pada header hasil analisis.
+    - **Pembersihan Durasi & Penataan Tombol Mulai (Foto 2 & 3 - `Belajar.tsx`)**: Menghilangkan label estimasi waktu durasi (`~2 Mnt`) pada cover kartu skenario simulator serta memperpanjang dan memusatkan tombol aksi kapsul *"Mulai →"* (`w-full sm:w-[85%]`, `justify-center`) agar seimbang dan proporsional.
+    - **Pembersihan Badge Kondisi Darurat (Foto 4 - `Lindungi.tsx`)**: Menghapus badge pill tingkat status (*Darurat*, *Waspada*, *Kritis*, *Pemulihan*, *Edukasi*) pada tombol opsi kondisi skenario darurat untuk tampilan minimalis dan seragam.
+    - **Pembersihan Badge Urgensi Langkah (Foto 5 - `Lindungi.tsx`)**: Menghapus badge urgensi (*Wajib Segera*, *Hari Ini*, *Minggu Ini*) pada daftar langkah panduan mitigasi agar fokus langsung pada urutan tindakan.
+    - **Pembersihan Status Terverifikasi (Foto 1 - `Lindungi.tsx`)**: Menghilangkan baris status *"Terverifikasi: {tanggal}"* beserta indikator bulatan hijau pada kartu portal kanal lapor resmi.
+    - **Pembersihan Ikon Mikrofon Merah (Foto 2 - `Sandi.tsx`)**: Menghapus ikon `Mic` merah pada header sesi penjelasan AI Voice Cloning.
+    - **Pembersihan Estimasi Waktu Baca (Foto 3 - `Belajar.tsx` & `Beranda.tsx`)**: Menghilangkan label durasi waktu baca (*"4 menit baca"*, dll.) pada kartu modul pembelajaran di Hub Belajar dan Beranda.
+    - **Pembersihan Kategori & Tanggal Istilah (Foto 4 - `Beranda.tsx`)**: Menghilangkan baris meta *"Penipuan Web · 16 Nov 2026"* pada daftar Kamus & Modus Populer di Beranda.
+    - **Pembersihan Footer Popover Notifikasi (Foto 5 - `NotificationDropdown.tsx`)**: Menghapus banner footer *"Notifikasi privasi disimpan 100% lokal di perangkatmu"* dari popover notifikasi.
+    - **Pembersihan Footer Modal Lightbox (Foto 1 - `FakeChatSimulator.tsx`)**: Menghilangkan footer modal inspeksi bukti (*"Inspeksi Forensik Kasus"* dan nama berkas) agar tampilan gambar bersih.
+    - **Pembersihan Badge Opsi Pilihan (Foto 2 - `FakeChatSimulator.tsx`)**: Menghapus badge pill *"Opsi A / B / C"* pada setiap kartu pilihan keputusan.
+    - **Pembersihan Teks Pertimbangan (Foto 3 - `FakeChatSimulator.tsx`)**: Menghilangkan teks pertimbangan (*"Pertimbangan: '...' "*) di bawah label opsi keputusan.
+    - **Pembersihan Petunjuk Langkah (Foto 4 - `FakeChatSimulator.tsx`)**: Menghilangkan teks bantuan *"Pilih langkah yang menurutmu paling tepat (tanpa petunjuk warna)"* di header pilihan keputusan.
+    - **Pembersihan Sub-Banner Riwayat & Modus (Foto 5 - `FakeChatSimulator.tsx`)**: Menghilangkan bilah sub-banner atas (*ikon kompas + judul modus + "Scroll ke atas untuk memeriksa riwayat"*) sehingga jendela simulator langsung mengalir ke area percakapan chat.
+    - **Pembersihan Header Berkas & Mode (Foto 1 - `FakeChatSimulator.tsx`)**: Menghapus pita label *"BERKAS #{id}"* dan badge *"Mode Simulasi Kasus Nyata"* di atas bilah navigasi simulator.
+    - **Pembersihan Tombol & Drawer Bukti Investigasi (Foto 2 & 3 - `FakeChatSimulator.tsx`)**: Menghapus tombol *"4 Tanda Kejanggalan (+40 Poin)"* beserta drawer catatan investigasi 4 bukti red flags untuk menjaga antarmuka simulasi tetap imersif dan tidak membocorkan petunjuk kasus.
+    - **Penyederhanaan Separator Tanggal Chat (Foto 4 - `FakeChatSimulator.tsx`)**: Menghilangkan teks imbuhan *"· Simulasi Kasus Nyata"* pada gelembung pemisah tanggal di thread percakapan chat, menyisakan label natural *"Hari ini"*.
+    - **Pembersihan Badge Rank Hasil Ending (Foto 5 - `FakeChatSimulator.tsx`)**: Menghilangkan badge pill rank (*PEMULA*, *PENJAGA*, *GUARDIAN*) di atas judul evaluasi ending kasus.
+    - **Pembersihan Ikon & Elemen Keterbatasan serta Sidebar (Foto 1 s.d 5 - `Keterbatasan.tsx` & `Layout.tsx`)**:
+      - **Pembersihan Ikon Bagian Transparansi (Foto 1 - `Keterbatasan.tsx`)**: Menghapus ikon perisai hijau (`ShieldCheck`) pada judul Bagian 3 Transparansi Uji Analyzer agar tipografi judul rapi dan seragam.
+      - **Pembersihan Sumber Dokumen (Foto 2 - `Keterbatasan.tsx`)**: Menghilangkan badge pill sumber *"Sumber: docs/backend/CHANGELOG.md"* di samping judul Transparansi Uji Analyzer.
+      - **Pembersihan Ikon Penyimpanan Lokal (Foto 3 - `Keterbatasan.tsx`)**: Menghapus ikon hard drive (`HardDrive`) pada judul Bagian 4 Pengelolaan Penyimpanan Lokal (serta ikon `EyeOff` dan `AlertTriangle` pada Bagian 1 & 2 untuk konsistensi tipografi).
+      - **Pembersihan Menu Keterbatasan di Sidebar (Foto 4 - `Layout.tsx`)**: Menghapus tautan menu *"Keterbatasan & Privasi"* pada bagian bawah sidebar navigasi desktop & mobile (tautan permanen tetap terjaga di footer aplikasi).
+      - **Pembersihan Badge Kebijakan Header (Foto 5 - `Keterbatasan.tsx`)**: Menghilangkan badge pill *"Transparansi & Kebijakan Sistem"* dengan ikon gembok pada header banner halaman Keterbatasan & Kebijakan Privasi.
+    - **Pembersihan Elemen Sandi & Keterbatasan (Batch Lanjutan)**:
+      - **Pembersihan Teks Penyimpanan Sandi (Foto 1 - `Sandi.tsx`)**: Menghapus kalimat penjelasan *"Bila opsi ini diaktifkan, sandi akan disimpan di memori lokal (localStorage) browser ini."* pada opsi penyimpanan sandi rahasia keluarga.
+      - **Penyelarasan Ikon Heading Privasi (Foto 2 & 4 - `Keterbatasan.tsx` & `Sandi.tsx`)**: Memastikan ikon heading `EyeOff` (Bagian 1) dan `AlertTriangle` (Bagian 2 pada `Keterbatasan.tsx` serta banner aturan emas pada `Sandi.tsx`) dihilangkan untuk tipografi judul yang bersih.
+      - **Pembersihan Badge Highlight Pilar Privasi (Foto 3 - `Keterbatasan.tsx`)**: Menghilangkan badge pill highlight (*"Zero-Server Transmission"*, *"Inspeksi Pola String Aman"*, *"Inspeksi Ekstensi Saja"*, *"Masking Otomatis"*) pada 4 kartu pilar privasi di Hub Keterbatasan.
+      - **Pembersihan Bulatan Titik Indikator (Foto 5 - `Keterbatasan.tsx`)**: Menghapus bulatan indikator warna (*amber, slate, rose, emerald*) di sebelah judul kartu heuristik Bagian 2 Keterbatasan Teknis.
+    - **Pembersihan Elemen Header Keterbatasan & Kartu Modul Belajar (Batch Lanjutan 2)**:
+      - **Pembersihan 4 Kapsul Prinsip Header (Foto 1 - `Keterbatasan.tsx`)**: Menghapus 4 badge pill (*"Tanpa Server Aplikasi"*, *"Zero Cookies & Analytics"*, *"22 Aturan Heuristik L1–L5"*, *"Contoh & Skenario Fiktif"*) dari banner header Keterbatasan & Kebijakan Privasi.
+      - **Pembersihan Durasi Baca Modul (Foto 2 - `Belajar.tsx`)**: Menghilangkan indikator waktu durasi (*"{m.duration}"* dengan ikon jam `Clock`) di top bar halaman detail modul pembelajaran.
+      - **Pembersihan Ikon Segitiga Peringatan Red Flags (Foto 3 - `Belajar.tsx`)**: Menghapus deretan ikon `AlertTriangle` amber pada daftar poin tanda kejanggalan (*Red Flags*) di halaman detail modul.
+      - **Pembersihan Wadah Ikon Modul (Foto 4 - `Belajar.tsx` & `Beranda.tsx`)**: Menghilangkan wadah ikon pada setiap kartu modul pembelajaran di Hub Belajar dan Beranda (serta header halaman detail modul).
+      - **Pembersihan Label Kategori Huruf Kapital (Foto 5 - `Belajar.tsx` & `Beranda.tsx`)**: Menghapus label kategori (*"DASAR KEAMANAN"*, *"CHECKLIST PRAKTIS"*, dll.) dari kartu modul pembelajaran di Hub Belajar dan Beranda.

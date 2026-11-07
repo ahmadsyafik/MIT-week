@@ -1,14 +1,122 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  /* Warna level (lihat docs/frontend/DESIGN_SYSTEM.md). TIDAK ADA hijau untuk level terendah. */
-  --color-lvl-info: #5b7083;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  /* Palet warna brand: DDE6ED background, 27374D font/teks, 526D82 sidebar, 9DB2BF kontras tambahan */
+  --color-brand-bg: #dde6ed;
+  --color-brand-font: #27374d;
+  --color-brand-sidebar: #526d82;
+  --color-brand-contrast: #9db2bf;
+
+  /* Token warna level risiko sesuai docs/frontend/DESIGN_SYSTEM.md */
+  --color-lvl-info: #526d82;
   --color-lvl-waspada: #b7791f;
   --color-lvl-tinggi: #c05621;
   --color-lvl-kritis: #c53030;
 }
 
+:root {
+  --color-brand-bg: #dde6ed;
+  --color-brand-font: #27374d;
+  --color-brand-sidebar: #526d82;
+  --color-brand-contrast: #9db2bf;
+
+  --color-lvl-info: #526d82;
+  --color-lvl-waspada: #b7791f;
+  --color-lvl-tinggi: #c05621;
+  --color-lvl-kritis: #c53030;
+}
+
+html {
+  font-family: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  scroll-behavior: smooth;
+}
+
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  font-family: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  background-color: #dde6ed;
+  color: #27374d;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Red flag text marker */
+mark.flag-mark {
+  background-color: #fef08a;
+  color: #854d0e;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+/* Animations for Phone Call Simulator */
+@keyframes phone-ring-shake {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  10%, 30%, 50%, 70%, 90% { transform: rotate(-6deg) scale(1.04); }
+  20%, 40%, 60%, 80% { transform: rotate(6deg) scale(1.04); }
+}
+
+@keyframes call-ripple-pulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes live-equalizer-1 {
+  0%, 100% { height: 6px; }
+  50% { height: 26px; }
+}
+
+@keyframes live-equalizer-2 {
+  0%, 100% { height: 20px; }
+  50% { height: 8px; }
+}
+
+@keyframes live-equalizer-3 {
+  0%, 100% { height: 12px; }
+  50% { height: 28px; }
+}
+
+@keyframes live-equalizer-4 {
+  0%, 100% { height: 24px; }
+  50% { height: 10px; }
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+.animate-phone-shake {
+  animation: phone-ring-shake 1.6s infinite ease-in-out;
+}
+
+.animate-ripple-1 {
+  animation: call-ripple-pulse 2.2s infinite cubic-bezier(0, 0.2, 0.8, 1);
+}
+
+.animate-ripple-2 {
+  animation: call-ripple-pulse 2.2s infinite cubic-bezier(0, 0.2, 0.8, 1) 0.7s;
+}
+
+.animate-ripple-3 {
+  animation: call-ripple-pulse 2.2s infinite cubic-bezier(0, 0.2, 0.8, 1) 1.4s;
+}
+
+.animate-eq-1 {
+  animation: live-equalizer-1 0.8s infinite ease-in-out;
+}
+
+.animate-eq-2 {
+  animation: live-equalizer-2 0.7s infinite ease-in-out;
+}
+
+.animate-eq-3 {
+  animation: live-equalizer-3 0.9s infinite ease-in-out;
+}
+
+.animate-eq-4 {
+  animation: live-equalizer-4 0.65s infinite ease-in-out;
+}
+
+.animate-shimmer-sweep {
+  animation: shimmer-sweep 2.4s infinite linear;
 }

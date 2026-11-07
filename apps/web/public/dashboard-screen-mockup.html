@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1, viewport-fit=cover">
+<title>JagaRuang Screen</title>
+<style>
+  :root{
+    --navy:#162544; --navy2:#223763; --blue:#3B6CF6; --blue-soft:#EAF0FF;
+    --amber:#F5A623; --amber-soft:#FFF4E0; --bg:#F3F5F8; --card:#FFFFFF;
+    --line:#E7EAF0; --text-dim:#6B7280;
+    --radius:20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  *{box-sizing:border-box; -webkit-font-smoothing: antialiased;}
+  body{
+    margin:0; padding:0; background:var(--bg); width:390px; height:844px; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .screen{
+    background:var(--bg); width:100%; height:100%; position:relative;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .statusbar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 24px 4px; font-size:14px; font-weight:600; color:var(--navy);
+  }
+  .topnav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 20px 14px;
+  }
+  .brand{display:flex; align-items:center; gap:8px;}
+  .brand-mark{
+    width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg,var(--navy2),var(--navy));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .brand-mark svg{width:16px;height:16px;}
+  .brand-name{font-weight:700; font-size:16px; color:var(--navy); letter-spacing:-.2px;}
+  .icon-group{display:flex; align-items:center; gap:12px;}
+  .bell{
+    position:relative; width:34px; height:34px; border-radius:50%; background:var(--card);
+    display:flex; align-items:center; justify-content:center; border:1px solid var(--line);
+  }
+  .bell .dot{
+    position:absolute; top:6px; right:7px; width:7px; height:7px; border-radius:50%;
+    background:#E8503A; border:1.5px solid var(--card);
+  }
+  .avatar{
+    width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--navy2));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700;
+  }
+
+  .content{ padding: 0 18px 12px; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+
+  .hero{
+    background:linear-gradient(160deg,var(--navy) 0%, var(--navy2) 100%);
+    border-radius: var(--radius);
+    padding:18px 20px 18px;
+    position:relative; overflow:hidden;
+    color:#fff;
+    box-shadow:0 12px 28px -10px rgba(22,37,68,.3);
+  }
+  .hero::after{
+    content:""; position:absolute; right:-30px; top:-30px; width:140px; height:140px;
+    background:radial-gradient(circle, rgba(59,108,246,.35), transparent 70%);
+  }
+  .hero-top{display:flex; justify-content:space-between; align-items:flex-start; position:relative;}
+  .hero h1{
+    font-size:19px; margin:0 0 6px; font-weight:700; letter-spacing:-.3px;
+  }
+  .hero p{
+    margin:0; font-size:12px; line-height:1.45; color:rgba(255,255,255,.75); max-width:215px;
+  }
+  .cap-badge{
+    width:42px; height:42px; border-radius:13px;
+    background:rgba(255,255,255,.12); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    border:1px solid rgba(255,255,255,.2);
+  }
+  .cap-badge svg{width:22px;height:22px;}
+
+  .progress-row{
+    margin-top:16px; position:relative;
+  }
+  .progress-label{
+    display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px;
+  }
+  .progress-label span:first-child{font-size:12px; color:rgba(255,255,255,.7); font-weight:500;}
+  .progress-label span:last-child{font-size:16px; font-weight:700;}
+  .bar-track{
+    height:7px; border-radius:99px; background:rgba(255,255,255,.16); overflow:hidden;
+  }
+  .bar-fill{
+    height:100%; width:82%; border-radius:99px;
+    background:linear-gradient(90deg,#5B8CFF,#9BB8FF);
+  }
+
+  .section-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin:14px 0 10px;
+  }
+  .section-head h2{ font-size:15px; margin:0; color:var(--navy); font-weight:700; letter-spacing:-.2px;}
+  .see-all{
+    display:flex; align-items:center; gap:4px; font-size:12.5px; color:var(--blue); font-weight:600;
+    text-decoration:none;
+  }
+  .see-all svg{width:12px;height:12px;}
+
+  .modules{
+    display:flex; gap:10px; overflow-x:hidden;
+  }
+  .module-card{
+    flex:1; background:var(--card); border-radius:16px; border:1px solid var(--line);
+    padding:12px 10px; box-shadow:0 6px 18px -10px rgba(22,37,68,.10);
+  }
+  .module-icon{
+    width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    margin-bottom:10px;
+  }
+  .module-icon.blue{ background:var(--blue-soft); }
+  .module-icon.amber{ background:var(--amber-soft); }
+  .module-icon svg{width:18px;height:18px;}
+  .module-card h3{
+    font-size:12px; margin:0 0 4px; color:var(--navy); font-weight:700; line-height:1.25;
+    height:30px; overflow:hidden;
+  }
+  .module-card .meta{font-size:10px; color:var(--text-dim); margin-bottom:8px;}
+  .badge{
+    display:inline-block; font-size:9.5px; font-weight:700; padding:3px 7px; border-radius:99px;
+  }
+  .badge.waspada{ background:var(--amber-soft); color:#B6690A; }
+  .badge.aman{ background:#E6F6EC; color:#1C8A4C; }
+
+  .tipbar{
+    margin-top:12px; display:flex; gap:10px; align-items:flex-start;
+    background:var(--blue-soft); border-radius:14px; padding:11px 13px;
+  }
+  .tipbar svg{width:16px;height:16px; flex-shrink:0; margin-top:2px;}
+  .tipbar p{margin:0; font-size:11px; line-height:1.45; color:var(--navy2);}
+  .tipbar b{color:var(--navy);}
+
+  .bottomnav{
+    display:flex; justify-content:space-between; padding:10px 16px 22px;
+    background:var(--card); border-top:1px solid var(--line);
+  }
+  .navitem{
+    display:flex; flex-direction:column; align-items:center; gap:3px; width:52px;
+  }
+  .navitem svg{width:18px; height:18px;}
+  .navitem span{font-size:9.5px; font-weight:600; color:var(--text-dim);}
+  .navitem.active .icon-wrap{
+    background:var(--navy); border-radius:10px; width:36px; height:28px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .navitem.active .icon-wrap svg{stroke:#fff;}
+  .navitem.active span{color:var(--navy); font-weight:700;}
+  .navitem:not(.active) .icon-wrap{
+    width:36px; height:28px; display:flex; align-items:center; justify-content:center;
+  }
+</style>
+</head>
+<body>
+  <div class="screen">
+    <div>
+      <div class="statusbar">
+        <span>09:41</span>
+        <span>●●● 100%</span>
+      </div>
+
+      <div class="topnav">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="brand-name">JagaRuang</span>
+        </div>
+        <div class="icon-group">
+          <div class="bell">
+            <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 3a5 5 0 00-5 5v3.5L5.5 14h13L17 11.5V8a5 5 0 00-5-5z" stroke="#223763" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 17a2 2 0 004 0" stroke="#223763" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <div class="dot"></div>
+          </div>
+          <div class="avatar">T</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="hero">
+        <div class="hero-top">
+          <div>
+            <h1>Selamat Datang Kembali!</h1>
+            <p>Lanjutkan latihan pertahanan digitalmu melalui skenario interaktif dan analisis indikasi rekayasa sosial.</p>
+          </div>
+          <div class="cap-badge">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M2 8l10-5 10 5-10 5-10-5z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 10.5V15c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label">
+            <span>Progres Belajar</span>
+            <span>82%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-head">
+          <h2>Modul Pembelajaran</h2>
+          <a class="see-all" href="#">Lihat Semua<svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#3B6CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+
+        <div class="modules">
+          <div class="module-card">
+            <div class="module-icon amber">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="6" y="2" width="12" height="20" rx="3" stroke="#B6690A" stroke-width="1.6"/><path d="M10 18h4" stroke="#B6690A" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Kenali Rekayasa Sosial Telepon</h3>
+            <div class="meta">6 materi · 12 mnt</div>
+            <span class="badge waspada">Level Waspada</span>
+          </div>
+          <div class="module-card">
+            <div class="module-icon blue">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#3B6CF6" stroke-width="1.6"/><path d="M3 7l9 6 9-6" stroke="#3B6CF6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Deteksi Email Phishing</h3>
+            <div class="meta">4 materi · 9 mnt</div>
+            <span class="badge aman">Level Aman</span>
+          </div>
+          <div class="module-card">
+            <div class="module-icon amber">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3z" stroke="#B6690A" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Amankan Sandi Akun</h3>
+            <div class="meta">5 materi · 11 mnt</div>
+            <span class="badge waspada">Level Waspada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tipbar">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#3B6CF6" stroke-width="1.6"/><path d="M12 8v5M12 16h.01" stroke="#3B6CF6" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <p><b>Tips Hari Ini:</b> Jangan bagikan kode OTP ke siapa pun, termasuk pihak yang mengaku bank resmi.</p>
+      </div>
+    </div>
+
+    <div class="bottomnav">
+      <div class="navitem active">
+        <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.6"/></svg></div>
+        <span>Dashboard</span>
+      </div>
+      <div class="navitem">
+        <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V8l8-5 8 5v11" stroke="#6B7280" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke="#6B7280" stroke-width="1.6"/></svg></div>
+        <span>Belajar</span>
+      </div>
+      <div class="navitem">
+        <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#6B7280" stroke-width="1.6"/><path d="M21 21l-4.3-4.3" stroke="#6B7280" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <span>Cek</span>
+      </div>
+      <div class="navitem">
+        <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8 3.5v5c0 5.5-3.4 9.7-8 11-4.6-1.3-8-5.5-8-11v-5L12 2z" stroke="#6B7280" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+        <span>Lindungi</span>
+      </div>
+      <div class="navitem">
+        <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#6B7280" stroke-width="1.6"/><path d="M8 10V7a4 4 0 018 0v3" stroke="#6B7280" stroke-width="1.6"/></svg></div>
+        <span>Sandi</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
