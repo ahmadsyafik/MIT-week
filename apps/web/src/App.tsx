@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Beranda from "./pages/Beranda";
+import Dashboard from "./pages/Dashboard";
 import Belajar from "./pages/Belajar";
 import Cek from "./pages/Cek";
 import Lindungi from "./pages/Lindungi";
@@ -28,9 +29,19 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route element={<Layout />}>
-          {/* Halaman Publik (Dapat Diakses Tanpa Login) */}
+          {/* Halaman Publik (Landing Page sebagai direktori awal ketika masuk) */}
           <Route index element={<Beranda />} />
           <Route path="keterbatasan" element={<Keterbatasan />} />
+
+          {/* Halaman Dashboard Utama (Terproteksi) */}
+          <Route
+            path="dashboard"
+            element={
+              <ProtectedRoute featureName="Dashboard Utama">
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Halaman Aplikasi yang Terproteksi (Hanya Ditampilkan untuk User yang Sudah Login) */}
           <Route

@@ -3,6 +3,17 @@
 Format: `[versi] tanggal` + perubahan, merujuk ID tugas di [`TASK_GUIDE.md`](TASK_GUIDE.md).
 
 ## [Belum dirilis]
+### Penetapan Landing Page Sebagai Direktori Awal Aplikasi dan Pemisahan Rute Dashboard (App.tsx & Layout.tsx)
+- **apps/web/src/App.tsx, pages/Beranda.tsx, pages/Dashboard.tsx, components/Layout.tsx**:
+  - Mengubah rute awal direktori `/` (root) agar **selalu menyajikan Landing Page** publik (Three.js 3D smartphone canvas, capaian metrik, tiga pilar utama, pilihan studi kasus populer, FAQ accordion, dan banner CTA), bukan langsung membuka dashboard utama saat diakses.
+  - Memisahkan halaman Dashboard Utama ke rute terproteksi mandiri di `/dashboard` (`pages/Dashboard.tsx`):
+    - Pengguna yang masuk ke direktori awal `/` akan selalu melihat Landing Page.
+    - Jika pengguna sudah login, bilah atas Landing Page dan tombol hero secara dinamis menampilkan tombol *"Buka Dashboard"* (`/dashboard`) dan ucapan selamat datang.
+    - Jika pengguna belum login, tombol *"Login"*, *"Register"*, dan *"Mulai Sekarang"* memunculkan modal autentikasi lokal.
+  - Memperbarui navigasi menu sidebar dan bilah bawah mobile (`NAV_ITEMS`) di `Layout.tsx` agar menu *"Dashboard"* mengarah tepat ke `/dashboard`.
+  - Menambahkan tautan *"Halaman Depan (Landing)"* pada footer sidebar dan dropdown profil pengguna (`UserProfileDropdown.tsx`) agar pengguna dapat kembali ke halaman depan publik kapan pun dengan mudah.
+  - Menyesuaikan alur `LoginModal.tsx` agar mengarahkan pengguna secara mulus ke `/dashboard` begitu proses login berhasil saat berada di Landing Page.
+
 ### Penyatuan Halaman Detail Kamus Menjadi 1 Section Utuh Tanpa Pembagian Kotak Terpisah (Belajar.tsx)
 - **apps/web/src/pages/Belajar.tsx**:
   - Menggabungkan seluruh konten halaman detail istilah kamus penipuan (`KamusPage`) ke dalam **1 wadah section tunggal** (`<article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-8 sm:space-y-10">`) dan menghapus pembagian kotak-kotak kartu terpisah yang sebelumnya terpecah menjadi 5 elemen mengambang:

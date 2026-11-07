@@ -12,6 +12,8 @@ import {
   RefreshCw,
   Smartphone,
   HelpCircle,
+  Globe,
+  ArrowRight,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import LoginModal from "./LoginModal";
@@ -20,7 +22,7 @@ import UserProfileDropdown from "./UserProfileDropdown";
 import MobileCurvedBottomNav from "./MobileCurvedBottomNav";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Dashboard", shortLabel: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/dashboard", label: "Dashboard", shortLabel: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/belajar", label: "Belajar", shortLabel: "Belajar", icon: BookOpen },
   { to: "/cek", label: "Cek Pesan & File", shortLabel: "Cek", icon: Search },
   { to: "/lindungi", label: "Panduan Lindungi", shortLabel: "Lindungi", icon: ShieldAlert },
@@ -145,10 +147,12 @@ export default function Layout() {
   };
 
   // =========================================================================
-  // KONDISI 1: PENGUNJUNG BELUM LOGIN (LANDING PAGE MODE PERSIS SEPERTI VIDEO)
+  // KONDISI 1: HALAMAN LANDING PAGE & PUBLIK (RUTE / DAN /KETERBATASAN)
   // Background: DDE6ED, Font: 27374D, Aksen Kontras: 526D82 & 9DB2BF
   // =========================================================================
-  if (!isAuthenticated) {
+  const isLandingRoute = location.pathname === "/" || location.pathname === "/keterbatasan";
+
+  if (isLandingRoute) {
     return (
       <div className="flex min-h-screen flex-col bg-[#DDE6ED] text-[#27374D] font-sans antialiased selection:bg-[#526D82] selection:text-white">
         {/* Skip to Content */}
@@ -189,29 +193,46 @@ export default function Layout() {
                 Tiga Pilar
               </a>
               <a href="#modul" className="hover:text-[#27374D] transition-colors">
-                Kasus & Modul
+                Kasus &amp; Modul
               </a>
               <a href="#faq" className="hover:text-[#27374D] transition-colors">
                 FAQ
               </a>
             </nav>
 
-            {/* Tombol Kanan (Login & Register / Mulai Sekarang seperti di video) */}
+            {/* Tombol Kanan (Login & Register jika belum login, atau Buka Dashboard jika sudah login) */}
             <div className="flex items-center gap-2.5 sm:gap-3">
-              <button
-                type="button"
-                onClick={openLoginModal}
-                className="inline-flex min-h-[40px] items-center justify-center px-4 py-2 text-xs font-bold text-[#27374D] hover:text-[#526D82] transition-colors cursor-pointer"
-              >
-                <span>Login</span>
-              </button>
-              <button
-                type="button"
-                onClick={openLoginModal}
-                className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm cursor-pointer"
-              >
-                <span>Register</span>
-              </button>
+              {isAuthenticated ? (
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <span className="hidden sm:inline text-xs font-semibold text-[#526D82]">
+                    Halo, <strong className="text-[#27374D]">{user?.name || "Kawan"}</strong>
+                  </span>
+                  <NavLink
+                    to="/dashboard"
+                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm"
+                  >
+                    <span>Buka Dashboard</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </NavLink>
+                </div>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={openLoginModal}
+                    className="inline-flex min-h-[40px] items-center justify-center px-4 py-2 text-xs font-bold text-[#27374D] hover:text-[#526D82] transition-colors cursor-pointer"
+                  >
+                    <span>Login</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={openLoginModal}
+                    className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm cursor-pointer"
+                  >
+                    <span>Register</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </header>
@@ -327,12 +348,19 @@ export default function Layout() {
           {/* Spacer */}
           <div className="flex-1 min-h-4" />
 
-          {/* Bagian Footer Sidebar: Logout */}
-          <div className="p-3 border-t border-[#9DB2BF]/30 shrink-0">
+          {/* Bagian Footer Sidebar: Halaman Depan & Logout */}
+          <div className="p-3 border-t border-[#9DB2BF]/30 shrink-0 space-y-1">
+            <NavLink
+              to="/"
+              className="flex min-h-[38px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-[#27374D]/40 hover:text-white transition-colors"
+            >
+              <Globe className="h-4 w-4 text-[#DDE6ED]/70 shrink-0" />
+              <span>Halaman Depan (Landing)</span>
+            </NavLink>
             <button
               type="button"
               onClick={handleLogout}
-              className="flex min-h-[42px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-red-950/40 hover:text-red-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 cursor-pointer"
+              className="flex min-h-[38px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-red-950/40 hover:text-red-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 cursor-pointer"
             >
               <LogOut className="h-4 w-4 text-[#DDE6ED]/70 group-hover:text-red-300 shrink-0" />
               <span>Keluar dari Sesi</span>

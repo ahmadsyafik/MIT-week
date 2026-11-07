@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { X, UserCheck, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
@@ -6,6 +7,8 @@ export default function LoginModal() {
   const { isLoginModalOpen, closeLoginModal, login } = useAuth();
   const [name, setName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (isLoginModalOpen) {
@@ -27,13 +30,21 @@ export default function LoginModal() {
 
   if (!isLoginModalOpen) return null;
 
+  const handleSuccessfulAuth = () => {
+    if (location.pathname === "/" || location.pathname === "/keterbatasan") {
+      navigate("/dashboard");
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     login(name.trim() || "Kawan JagaRuang");
+    handleSuccessfulAuth();
   };
 
   const handleGuestLogin = () => {
     login("Tamu");
+    handleSuccessfulAuth();
   };
 
   return (
