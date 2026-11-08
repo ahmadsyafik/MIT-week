@@ -1,47 +1,70 @@
-# Dokumentasi JagaRuang (MIT-Week 2026)
+# Dokumentasi Teknis JagaRuang (MIT-Week 2026)
 
-Indeks dokumentasi dan matriks wewenang tim. Baca bagian 2 dan 3 **sebelum menulis kode pertama**.
+Indeks dokumentasi resmi, arsitektur sistem, spesifikasi antarmuka, dan matriks wewenang pengembangan proyek **JagaRuang** (Platform Edukasi & Mitigasi Anti-Penipuan Digital).
 
-## 1. Peta dokumentasi
+---
+
+## 1. Peta Indeks Dokumentasi
 
 ```
 docs/
-├── README.md                          <- dokumen ini
-├── universal/                         <- KONTRAK GLOBAL (pemilik: branch development)
-│   ├── BOUNDARIES_AND_CONTRACTS.md    <- aturan batas folder & protokol RFC
-│   ├── INTERFACES.md                  <- bentuk data & API @jagaruang/core
-│   ├── GIT_WORKFLOW.md                <- branch, commit, PR, konflik
-│   ├── INTEGRATION_RUNBOOK.md         <- urutan merge ke development & rilis ke main
-│   ├── DECISIONS.md                   <- catatan keputusan arsitektur (ADR)
-│   ├── ROADMAP.md                     <- rencana 10 hari per peran
-│   └── PRD_JagaRuang.pdf              <- PRD (salin manual, lihat GITHUB_SETUP.md)
-├── backend/                           <- DOMAIN BACKEND (logika & data)
-│   ├── README.md · TASK_GUIDE.md · SETUP.md · DATA_MODEL.md · CHANGELOG.md
-├── frontend/                          <- DOMAIN FRONTEND (tampilan)
-│   ├── README.md · TASK_GUIDE.md · SETUP.md · PAGES_AND_FLOWS.md
-│   └── DESIGN_SYSTEM.md · MOCK_DATA.md · CHANGELOG.md
-└── development/                       <- DEPLOY & INTEGRASI
-    ├── README.md · DEPLOY.md · GITHUB_SETUP.md
+├── README.md                          <- Dokumen indeks utama ini
+├── universal/                         <- Kontrak Global & Arsitektur Lintas Peran
+│   ├── BOUNDARIES_AND_CONTRACTS.md    <- Aturan batas folder & protokol RFC perubahan tipe
+│   ├── INTERFACES.md                  <- Spesifikasi bentuk data & API @jagaruang/core
+│   ├── GIT_WORKFLOW.md                <- Alur branch, konvensi commit, & resolusi konflik
+│   ├── INTEGRATION_RUNBOOK.md         <- Prosedur integrasi ke development & rilis ke main
+│   ├── DECISIONS.md                   <- Catatan Keputusan Arsitektur (ADR-001 s.d. ADR-007)
+│   ├── ROADMAP.md                     <- Rencana kerja & milestone pencapaian tim
+│   └── PRD_JagaRuang.pdf              <- Product Requirements Document resmi
+├── backend/                           <- Domain Logika & Inferensi (@jagaruang/core)
+│   ├── README.md                      <- Mandat & pengenalan modul core
+│   ├── TASK_GUIDE.md                  <- Daftar tugas backend (BE-1.x s.d. BE-5.x)
+│   ├── SETUP.md                       <- Panduan pengujian & eksekusi vitest di lokal
+│   ├── DATA_MODEL.md                  <- Struktur aturan heuristik 22 rules & taksonomi modus
+│   └── CHANGELOG.md                   <- Catatan rilis & evaluasi akurasi analyzer
+├── frontend/                          <- Domain Antarmuka Pengguna (@jagaruang/web)
+│   ├── README.md                      <- Arsitektur frontend React 18, Vite, & modular learning
+│   ├── TASK_GUIDE.md                  <- Panduan tugas frontend (FE-1.x s.d. FE-6.x)
+│   ├── SETUP.md                       <- Panduan menjalankan server frontend di lokal
+│   ├── PAGES_AND_FLOWS.md             <- Spesifikasi lengkap rute halaman, modul, & state alur
+│   ├── DESIGN_SYSTEM.md               <- Token warna, tipografi Plus Jakarta Sans, & WCAG AA
+│   ├── MOCK_DATA.md                   <- Panduan konsumsi mock data
+│   └── CHANGELOG.md                   <- Riwayat perubahan UI, komponen modular, & refactoring
+└── development/                       <- Integrasi, Pengujian, & Deployment
+    ├── README.md                      <- Pengenalan peran integrasi
+    ├── DEPLOY.md                      <- Prosedur deploy ke Vercel & verifikasi CSP
+    └── GITHUB_SETUP.md                <- Konfigurasi proteksi branch & CI workflows
 ```
 
-## 2. Matriks wewenang (siapa boleh menulis di mana)
+---
 
-| Branch | Penanggung jawab | Boleh ditulis (R/W) | Dilarang keras |
+## 2. Matriks Wewenang & Batas Cakupan Pengembangan
+
+Untuk menjaga kebersihan arsitektur monorepo, setiap branch memiliki batas cakupan modifikasi yang ditegakkan secara otomatis melalui hook lokal (`scripts/scope-check.sh`) dan GitHub Actions:
+
+| Branch | Penanggung Jawab | Direktori Wewenang (R/W) | Larangan Modifikasi Langsung |
 |---|---|---|---|
-| `backend` | Raffi (`@azzakyDp`) | `packages/core/`, `docs/backend/` | `apps/web/`, `docs/frontend/`, `packages/contracts/`, `docs/universal/`, file root, `.github/`, `scripts/`, `vercel.json` |
-| `frontend` | Syifa dan Mutiara (`@syifamojocanggih-hash` `@mutiaradewanda`) | `apps/web/`, `docs/frontend/` | `packages/core/`, `docs/backend/`, `packages/contracts/`, `docs/universal/`, file root, `.github/`, `scripts/`, `vercel.json` |
-| `development` | Raffi (`@azzakyDp`); testing oleh Syafi (`@ahmadsyafik`) | file root, `.github/`, `scripts/`, `vercel.json`, `packages/contracts/`, `docs/universal/`, `docs/development/` | Menulis kode fitur milik `packages/core/` atau `apps/web/` secara langsung (selain konflik merge) |
-| `main` | Integrator | Tidak ada commit langsung. Hanya menerima merge dari `development` | Semua commit langsung |
+| `backend` | Raffi (`@azzakyDp`) | `packages/core/`, `docs/backend/` | `apps/web/`, `docs/frontend/`, `packages/contracts/`, `docs/universal/`, file root |
+| `frontend` | Syifa & Mutiara (`@syifamojocanggih-hash`, `@mutiaradewanda`) | `apps/web/`, `docs/frontend/` | `packages/core/`, `docs/backend/`, `packages/contracts/`, `docs/universal/`, file root |
+| `development` | Raffi (`@azzakyDp`); Pengujian oleh Syafi (`@ahmadsyafik`) | File root, `.github/`, `scripts/`, `vercel.json`, `packages/contracts/`, `docs/universal/`, `docs/development/` | Menulis kode fitur milik `packages/core/` atau `apps/web/` secara langsung |
+| `main` | Integrator | Menerima penggabungan (*merge*) tervalidasi dari `development` atau `frontend` | Tidak diperkenankan commit langsung tanpa verifikasi check |
 
-`package-lock.json` boleh ikut berubah di `backend` dan `frontend` (otomatis saat `npm install <paket>`).
-Konflik lockfile diselesaikan sesuai [GIT_WORKFLOW.md](universal/GIT_WORKFLOW.md) bagian 6.
+---
 
-Aturan ini **ditegakkan otomatis** oleh `scripts/scope-check.sh` (hook `pre-push` di lokal dan workflow `scope-guard` di GitHub).
+## 3. Lima Prinsip Utama Arsitektur
 
-## 3. Lima aturan emas
+1. **Kontrak Data Bersama (Contract-First)**: Semua bentuk data yang melintasi batas domain frontend dan backend didefinisikan secara deklaratif di `packages/contracts` dan [INTERFACES.md](universal/INTERFACES.md).
+2. **Pintu Gerbang Tunggal (Single Entry Point)**: Aplikasi frontend mengonsumsi fungsi logika `@jagaruang/core` secara eksklusif melalui `apps/web/src/lib/coreClient.ts`. Tidak diperbolehkan mengimpor file internal `packages/core/src/...` secara bebas.
+3. **Privasi Penuh 100% Client-Side**: Aplikasi tidak memiliki server backend runtime, database, cookies pelacak, maupun skrip analitik pihak ketiga. Seluruh evaluasi inferensi heuristik berjalan lokal di browser pengguna (lihat [ADR-001](universal/DECISIONS.md)).
+4. **Penyajian Informasi Objektif (No False Certainty)**: Menghindari klaim kepastian mutlak seperti "100% aman" atau "pasti penipuan". Seluruh hasil disajikan dalam bentuk tingkat kewaspadaan berbasis indikator kejanggalan disertai disclaimer permanen.
+5. **Aksesibilitas & Inklusivitas**: Antarmuka mematuhi standar kontras warna WCAG AA, navigasi ramah keyboard, pengumuman pembaca layar (*screen reader* ARIA), serta dukungan responsif dari layar terkecil (360 px).
 
-1. **Kontrak dulu.** Bentuk data yang melintasi batas domain hanya didefinisikan di `packages/contracts` dan [INTERFACES.md](universal/INTERFACES.md). Mengubahnya wajib lewat RFC.
-2. **Satu pintu.** Frontend hanya memakai `@jagaruang/core` lewat `apps/web/src/lib/coreClient.ts`. Tidak ada impor ke `packages/core/src/...`.
-3. **Mock dulu.** Frontend bekerja dengan `apps/web/src/mocks` (`VITE_USE_MOCK=true`) sampai Backend selesai. Backend menguji logikanya dengan Vitest tanpa menunggu UI.
-4. **Tanpa server, tanpa data pribadi.** Semua berjalan di browser (lihat ADR-001). Tidak ada jaringan saat runtime, tidak ada analytics, tidak ada cookie.
-5. **Jujur soal batas.** Tidak ada kata "aman"/"pasti", tidak ada persentase penipuan, disclaimer tampil di setiap hasil.
+---
+
+## 4. Panduan Navigasi Cepat Dokumen
+
+- Ingin menjalankan aplikasi di lokal? Baca [SETUP Frontend](frontend/SETUP.md) atau [README Root](../README.md#5-cara-menjalankan-di-komputer-lokal).
+- Ingin memahami alur navigasi dan seluruh 12 modul edukasi? Baca [PAGES_AND_FLOWS.md](frontend/PAGES_AND_FLOWS.md).
+- Ingin mempelajari sistem warna, komponen kartu, dan tipografi? Baca [DESIGN_SYSTEM.md](frontend/DESIGN_SYSTEM.md).
+- Ingin mengetahui alasan arsitektur di balik keputusan teknis? Baca [DECISIONS.md](universal/DECISIONS.md).

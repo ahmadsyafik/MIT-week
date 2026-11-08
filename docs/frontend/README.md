@@ -1,42 +1,110 @@
 # DOMAIN FRONTEND (Tampilan): README
 
-> **PENANGGUNG JAWAB:** Ahmad Syifa'ul Falakhul Khayyi dan Mutiara Dewanda Prisvilla (@syifamojocanggih-hash @mutiaradewanda)
-> **BRANCH:** `frontend`
-> **BOLEH DITULIS (R/W):** `apps/web/`, `docs/frontend/`
+> **Penanggung Jawab:** Ahmad Syifa'ul Falakhul Khayyi (`@syifamojocanggih-hash`) dan Mutiara Dewanda Prisvilla (`@mutiaradewanda`)  
+> **Ruang Lingkup:** `apps/web/`, `docs/frontend/`  
+> **Teknologi:** React 18 · TypeScript 5 · Vite 6 · Tailwind CSS v4 · Lucide React · Three.js (`@react-three/fiber`)
 
-## 1. Mandat
+---
 
-Frontend memegang semua yang dilihat dan disentuh pengguna: halaman, komponen, gaya, interaksi, copywriting UI, responsivitas (mulai 360 px), dan aksesibilitas. Data dan logika diambil dari `@jagaruang/core` **hanya lewat** `apps/web/src/lib/coreClient.ts`. Selama Backend belum selesai, Frontend memakai mock di `apps/web/src/mocks/`.
+## 1. Mandat & Ruang Lingkup
 
-## 2. Zona terlarang
+Domain Frontend bertanggung jawab penuh atas seluruh antarmuka yang dilihat, diinteraksikan, dan dialami oleh pengguna, meliputi:
+- **Desain & Tipografi**: Menggunakan palet biru gelap profesional (`#27374D`, `#526D82`, `#9DB2BF`, `#DDE6ED`), kartu putih rounded dengan shadow halus, dan tipografi modern self-hosted *Plus Jakarta Sans*.
+- **Pemisahan Rute Publik & Terproteksi**: Rute `/` menyajikan Landing Page publik dengan kanvas 3D Three.js, sedangkan rute `/dashboard` menyajikan Dashboard Utama dengan sistem autentikasi lokal terproteksi (`AuthContext.tsx`).
+- **Pemeriksa Heuristik Interaktif (`/cek`)**: Mengonsumsi hasil analisis dari `@jagaruang/core` melalui `apps/web/src/lib/coreClient.ts`.
+- **Hub Pembelajaran Interaktif (`/belajar`)**: Menyediakan 4 pilar edukasi terpadu (Skenario Simulator, 12 Modul Pembelajaran Interaktif, Kuis Kilat 2 Menit, dan Kamus Jebakan).
+- **Pusat Darurat & Mitigasi (`/lindungi` & Modul m11)**: Panduan tanggap darurat, direktori kanal lapor resmi terverifikasi, generator kartu peringatan, serta wizard darurat dan generator draf kronologi lokal.
+- **Sandi Verifikasi Keluarga (`/sandi`)**: Antarmuka pembuatan dan pengelolaan kata sandi verbal untuk menangkal penipuan AI Voice Cloning.
+- **Transparansi Sistem (`/keterbatasan`)**: Halaman kebijakan privasi, keterbatasan deteksi heuristik, dan tombol kontrol penghapusan data lokal.
 
-1. ❌ **Dilarang menulis logika deteksi/skor/aturan.** Jangan menghitung skor atau menentukan label sendiri. Tampilkan `AnalysisResult` apa adanya.
-2. ❌ **Dilarang menyentuh `packages/core/`** dan `docs/backend/`.
-3. ❌ **Dilarang mengimpor `packages/core/src/...` langsung.** Pakai paket `@jagaruang/core` lewat `coreClient.ts`.
-4. ❌ **Dilarang mengubah `packages/contracts/` atau `docs/universal/` sepihak.** Pakai RFC.
-5. ❌ **Dilarang menambah jaringan saat runtime:** fetch/XHR, analytics, cookie, font/CDN/skrip eksternal.
-6. ❌ **Dilarang `dangerouslySetInnerHTML`, `eval`.** Highlight red flag dibuat lewat elemen React (`<mark>`).
-7. ❌ **Dilarang memakai kata "aman", "pasti", "100%", persentase penipuan** di teks UI. Dilarang hijau/centang/ikon perisai untuk level terendah.
-8. ❌ Mengubah `vercel.json`/CI. Minta Integrator lewat issue.
+---
 
-## 3. Struktur folder milik Frontend
+## 2. Struktur Direktori Frontend (`apps/web/`)
 
 ```
 apps/web/
-├── index.html · vite.config.ts · tsconfig.json · .env.example
-└── src/
-    ├── main.tsx · App.tsx · index.css
-    ├── pages/        <- Beranda, Cek, Latih, Lindungi, Kamus, Kilat, Sandi, Keterbatasan
-    ├── components/   <- Layout, RiskMeter, FlagList, Disclaimer, EvidenceCard, ...
-    ├── lib/          <- coreClient.ts (pintu tunggal ke core)
-    └── mocks/        <- data tiruan sesuai kontrak
+├── public/                          # Aset statis favicon dan gambar
+├── src/
+│   ├── components/                  # Komponen antarmuka modular
+│   │   ├── landing/                 # Hero3DCanvas Three.js & komponen Landing Page
+│   │   ├── modul/                   # Halaman modular untuk 12 modul edukasi:
+│   │   │   ├── ModulRekayasaSosialPage.tsx   # m1: Rekayasa Sosial
+│   │   │   ├── ModulAnatomiPenipuanPage.tsx  # m2: Anatomi Penipuan
+│   │   │   ├── ModulPerKanalPage.tsx         # m3: Keamanan WhatsApp
+│   │   │   ├── ModulEmailPhishingPage.tsx    # m4: Email & Phishing
+│   │   │   ├── ModulTeleponBankPage.tsx      # m5: Telepon Mengaku Bank
+│   │   │   ├── ModulSepuluhCiriPage.tsx      # m6: 10 Ciri Phishing (Capstone)
+│   │   │   ├── ModulSebelumTransferPage.tsx  # m7: Checklist Sebelum Transfer
+│   │   │   ├── ModulPolaModusNasionalPage.tsx # m8: Modus Terbanyak Nasional IASC
+│   │   │   ├── ModulQrisEwalletPage.tsx      # m9: QRIS & E-Wallet
+│   │   │   ├── ModulPinjolIlegalPage.tsx     # m10: Pinjaman Online Ilegal
+│   │   │   ├── ModulPusatDaruratPage.tsx     # m11: Pusat Darurat (Emergency Wizard)
+│   │   │   └── ModulDampingiKeluargaPage.tsx # m12: Pendampingan Keluarga
+│   │   ├── simulator/               # FakeChatSimulator & Lightbox Forensik Kasus
+│   │   ├── ui/                      # Atom UI dasar (Button, Card, Modal, RiskMeter, dsb.)
+│   │   ├── Layout.tsx               # Layout navigasi sidebar desktop & bilah bawah mobile
+│   │   ├── LoginModal.tsx           # Modal autentikasi lokal
+│   │   ├── ProtectedRoute.tsx       # Pengawal rute terproteksi dashboard
+│   │   └── UserProfileDropdown.tsx  # Menu profil pengguna & switch landing
+│   ├── context/
+│   │   └── AuthContext.tsx          # Konteks otentikasi sesi lokal
+│   ├── data/                        # File data mandiri per modul dengan validasi build:
+│   │   ├── modulRekayasaSosial.ts
+│   │   ├── modulAnatomiPenipuan.ts
+│   │   ├── modulPerKanal.ts
+│   │   ├── modulEmailPhishing.ts
+│   │   ├── modulTeleponBank.ts
+│   │   ├── modulSepuluhCiri.ts
+│   │   ├── modulSebelumTransfer.ts
+│   │   ├── modulPolaModusNasional.ts
+│   │   ├── modulQrisEwallet.ts
+│   │   ├── modulPinjolIlegal.ts
+│   │   ├── modulPusatDarurat.ts
+│   │   └── modulDampingiKeluarga.ts
+│   ├── lib/
+│   │   ├── coreClient.ts            # Pintu gerbang konsumsi fungsi inferensi @jagaruang/core
+│   │   └── notificationService.ts   # Notifikasi peristiwa lokal
+│   ├── mocks/                       # Data tiruan skenario chat dan audio vishing
+│   ├── pages/                       # Halaman tampilan utama
+│   │   ├── Beranda.tsx              # Landing Page interaktif
+│   │   ├── Dashboard.tsx            # Dashboard utama terproteksi
+│   │   ├── Cek.tsx                  # Halaman Cek Pesan, Link, File & Izin
+│   │   ├── Belajar.tsx              # Hub Belajar (Simulator, Modul, Kilat, Kamus)
+│   │   ├── Lindungi.tsx             # Panduan mitigasi, kanal resmi, & kartu peringatan
+│   │   ├── Sandi.tsx                # Halaman panduan & pembuat Sandi Keluarga
+│   │   ├── Keterbatasan.tsx         # Keterbatasan analisis & manajemen storage
+│   │   └── NotFound.tsx             # Halaman 404
+│   ├── App.tsx                      # Router konfigurasi React Router v6
+│   ├── index.css                    # Definisi Tailwind CSS v4 & custom design tokens
+│   └── main.tsx                     # Entry point React
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
-## 4. Indeks dokumen
+---
 
-1. [`TASK_GUIDE.md`](TASK_GUIDE.md): tugas FE-1.x s.d FE-6.x
-2. [`SETUP.md`](SETUP.md): menjalankan di lokal
-3. [`PAGES_AND_FLOWS.md`](PAGES_AND_FLOWS.md): spesifikasi halaman & alur
-4. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md): warna level, tipografi, aturan UI
-5. [`MOCK_DATA.md`](MOCK_DATA.md): cara memakai/menulis mock
-6. [`CHANGELOG.md`](CHANGELOG.md)
+## 3. Aturan & Batasan Pengembangan Frontend
+
+1. **Konsumsi Single-Entry Core**: Frontend hanya memanggil fungsi logika analisis `@jagaruang/core` melalui `apps/web/src/lib/coreClient.ts`. Tidak boleh mengimpor langsung dari `packages/core/src/...`.
+2. **Tanpa Jaringan Saat Runtime (Zero Runtime Fetch)**: Dilarang menambahkan panggilan `fetch`, `axios`, atau koneksi API eksternal saat aplikasi berjalan di peramban. Seluruh logika inferensi dan generator draf berjalan 100% lokal di memori klien.
+3. **Keamanan Eksekusi Konten**: Dilarang menggunakan `dangerouslySetInnerHTML` atau `eval`. Penandaan teks red flag dibuat aman menggunakan elemen React standar (`<mark>`).
+4. **Bahasa & Nada Komunikasi**:
+   - Gunakan Bahasa Indonesia yang ramah, santai namun formal (*"kamu"*), kalimat pendek dan to the point.
+   - Hindari klaim mutlak atau kepastian palsu ("pasti aman", "100%", "pembekuan permanen", "1-2 jam golden period"). Gunakan formulasi objektif seperti *"Belum terlihat tanda bahaya"*, *"Waspada"*, atau *"Tingkat Risiko Tinggi"*.
+5. **Aksesibilitas (WCAG AA)**:
+   - Target sentuh tombol minimal 44 × 44 px.
+   - Kontras warna teks sekunder minimal 4.5:1 terhadap latar belakang kartu.
+   - Semua elemen interaktif (tombol salin, kuis, tab, simulator) memiliki label `aria-label`, fokus keyboard yang jelas, dan pengumuman pembaca layar melalui `aria-live`.
+
+---
+
+## 4. Indeks Dokumen Terkait
+
+- 🎨 [**DESIGN_SYSTEM.md**](DESIGN_SYSTEM.md): Spesifikasi warna, token CSS, dan pedoman komponen visual.
+- 🗺️ [**PAGES_AND_FLOWS.md**](PAGES_AND_FLOWS.md): Spesifikasi lengkap rute halaman, modul, dan alur interaksi.
+- 🛠️ [**SETUP.md**](SETUP.md): Panduan menjalankan server frontend di lingkungan lokal.
+- 📋 [**TASK_GUIDE.md**](TASK_GUIDE.md): Pelacakan tugas implementasi frontend FE-1.x hingga FE-6.x.
+- 📦 [**MOCK_DATA.md**](MOCK_DATA.md): Panduan konsumsi mock data untuk pengujian lokal.
+- 📝 [**CHANGELOG.md**](CHANGELOG.md): Riwayat lengkap perubahan dan penyempurnaan UI.
