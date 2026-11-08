@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Beranda from "./pages/Beranda";
 import Belajar from "./pages/Belajar";
 import Cek from "./pages/Cek";
@@ -27,66 +28,68 @@ function RedirectToBelajar({ defaultTab }: { defaultTab: string }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route element={<Layout />}>
-          {/* Halaman Publik (Dapat Diakses Tanpa Login) */}
-          <Route index element={<Beranda />} />
-          <Route path="keterbatasan" element={<Keterbatasan />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
+    <ErrorBoundary>
+      <AuthProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            {/* Halaman Publik (Dapat Diakses Tanpa Login) */}
+            <Route index element={<Beranda />} />
+            <Route path="keterbatasan" element={<Keterbatasan />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
 
-          {/* Halaman Aplikasi yang Terproteksi (Hanya Ditampilkan untuk User yang Sudah Login) */}
-          <Route
-            path="cek"
-            element={
-              <ProtectedRoute featureName="Cek Pesan & Berkas">
-                <Cek />
-              </ProtectedRoute>
-            }
-          />
+            {/* Halaman Aplikasi yang Terproteksi (Hanya Ditampilkan untuk User yang Sudah Login) */}
+            <Route
+              path="cek"
+              element={
+                <ProtectedRoute featureName="Cek Pesan & Berkas">
+                  <Cek />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Rute Baru Belajar Interaktif (Menggabungkan Simulator Kasus, Modul, Kilat 2 Menit, Kamus) */}
-          <Route
-            path="belajar"
-            element={
-              <ProtectedRoute featureName="Belajar Interaktif">
-                <Belajar />
-              </ProtectedRoute>
-            }
-          />
+            {/* Rute Baru Belajar Interaktif (Menggabungkan Simulator Kasus, Modul, Kilat 2 Menit, Kamus) */}
+            <Route
+              path="belajar"
+              element={
+                <ProtectedRoute featureName="Belajar Interaktif">
+                  <Belajar />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="lindungi"
-            element={
-              <ProtectedRoute featureName="Panduan Lindungi Diri & Sekitar">
-                <Lindungi />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="lindungi"
+              element={
+                <ProtectedRoute featureName="Panduan Lindungi Diri & Sekitar">
+                  <Lindungi />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="sandi"
-            element={
-              <ProtectedRoute featureName="Sandi Verifikasi Keluarga">
-                <Sandi />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="sandi"
+              element={
+                <ProtectedRoute featureName="Sandi Verifikasi Keluarga">
+                  <Sandi />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Redirect Otomatis Rute Lama ke /belajar dengan Query Param Tab yang Sesuai */}
-          <Route path="modul-kasus" element={<RedirectToBelajar defaultTab="simulator" />} />
-          <Route path="latih" element={<RedirectToBelajar defaultTab="simulator" />} />
-          <Route path="modul" element={<RedirectToBelajar defaultTab="modul" />} />
-          <Route path="kilat-2-menit" element={<RedirectToBelajar defaultTab="kilat" />} />
-          <Route path="kilat" element={<RedirectToBelajar defaultTab="kilat" />} />
-          <Route path="kamus-jebakan" element={<RedirectToBelajar defaultTab="kamus" />} />
-          <Route path="kamus" element={<RedirectToBelajar defaultTab="kamus" />} />
+            {/* Redirect Otomatis Rute Lama ke /belajar dengan Query Param Tab yang Sesuai */}
+            <Route path="modul-kasus" element={<RedirectToBelajar defaultTab="simulator" />} />
+            <Route path="latih" element={<RedirectToBelajar defaultTab="simulator" />} />
+            <Route path="modul" element={<RedirectToBelajar defaultTab="modul" />} />
+            <Route path="kilat-2-menit" element={<RedirectToBelajar defaultTab="kilat" />} />
+            <Route path="kilat" element={<RedirectToBelajar defaultTab="kilat" />} />
+            <Route path="kamus-jebakan" element={<RedirectToBelajar defaultTab="kamus" />} />
+            <Route path="kamus" element={<RedirectToBelajar defaultTab="kamus" />} />
 
-          {/* Rute 404 */}
-          <Route path="*" element={<Placeholder title="Halaman Tidak Ditemukan" task="404" />} />
-        </Route>
-      </Routes>
-    </AuthProvider>
+            {/* Rute 404 */}
+            <Route path="*" element={<Placeholder title="Halaman Tidak Ditemukan" task="404" />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
