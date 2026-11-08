@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   Phone,
   PhoneOff,
@@ -16,8 +16,6 @@ import {
   ShieldAlert,
   AlertTriangle,
   ChevronRight,
-  Sparkles,
-  Lock,
   Volume1,
   X,
 } from "lucide-react";
@@ -246,6 +244,7 @@ export function PhoneCallSimulator({
     return rawLabel
       .replace(/^Pilihan\s+[A-Z]\s*\((?:Berisiko|Aman)\)\s*[—–-]\s*/i, "")
       .replace(/\s*\((?:Berisiko|Aman)\)/gi, "")
+      .replace(/^[A-C]\.\s*[-–—]?\s*/i, "")
       .trim();
   };
 
@@ -278,16 +277,7 @@ export function PhoneCallSimulator({
     setSelectedChoice("C");
     setUserVoiceText("Panggilan ditolak seketika oleh pengguna.");
     setAttackerVoiceReply("[Panggilan Ditolak] Nomor asing yang meminta OTP langsung dihentikan sebelum tersambung.");
-
-    if (onDeclineCall) {
-      setTimeout(() => {
-        onDeclineCall();
-      }, 1600);
-    } else {
-      setTimeout(() => {
-        onCompleteCall("C", 0);
-      }, 1600);
-    }
+    // Tidak otomatis menutup atau mengulang, menunggu pengguna menekan tombol selesai
   };
 
   // 3. Aksi Memilih Opsi A, B, atau C saat panggilan aktif
@@ -306,11 +296,7 @@ export function PhoneCallSimulator({
     setUserVoiceText(opt.userReply);
     setAttackerVoiceReply(opt.attackerReply || opt.consequence);
     setCallPhase("ended");
-
-    // Tutup otomatis setelah menampilkan respon dan kembali ke Fake Chat
-    setTimeout(() => {
-      onCompleteCall(choice, durationSeconds);
-    }, 2000);
+    // Tidak otomatis menutup atau mengulang, menunggu pengguna menekan tombol selesai
   };
 
   // Format durasi MM:SS
@@ -323,9 +309,17 @@ export function PhoneCallSimulator({
   };
 
   const decision1 = scenario.decisions[1];
-  const availableChoices = decision1
-    ? ((["A", "B", "C"] as const).filter((k) => decision1.options[k] !== undefined))
-    : [];
+  const availableChoices = useMemo(() => {
+    if (!decision1) return [];
+    const keys = (["A", "B", "C"] as const).filter((k) => decision1.options[k] !== undefined);
+    // Fisher-Yates shuffle acak bebas pola
+    const shuffled = [...keys];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, [scenario.id]);
 
   return (
     <div className="relative w-full min-h-[720px] sm:min-h-[790px] flex-1 bg-[#121214] text-white flex flex-col justify-between overflow-hidden font-sans select-none animate-fadeIn">
@@ -338,8 +332,7 @@ export function PhoneCallSimulator({
       {/* Top Bar Informasi Mockup & Toggle Suara */}
       <div className="relative z-10 px-6 py-2.5 flex items-center justify-between text-xs text-white/70 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-[10px] bg-white/10 px-2.5 py-0.5 rounded-full text-white/75 font-semibold">
-            <Lock className="w-2.5 h-2.5 text-amber-400" />
+          <span className="inline-flex items-center text-[10px] bg-white/10 px-2.5 py-0.5 rounded-full text-white/75 font-semibold font-sans">
             <span>Kanal Suara Aman (HD)</span>
           </span>
         </div>
@@ -468,7 +461,7 @@ export function PhoneCallSimulator({
 
             {/* Timer Durasi & Status Berbicara */}
             <div className="flex items-center justify-center gap-2">
-              <span className="font-mono text-xs sm:text-sm text-emerald-400 font-bold tracking-widest bg-emerald-950/60 px-3 py-0.5 rounded-full border border-emerald-500/30">
+              <span className="font-sans font-bold tabular-nums text-xs sm:text-sm text-emerald-400 tracking-wider bg-emerald-950/60 px-3 py-0.5 rounded-full border border-emerald-500/30">
                 {formatTimer(durationSeconds)}
               </span>
 
@@ -478,19 +471,18 @@ export function PhoneCallSimulator({
                 <span className="w-1 bg-emerald-400 rounded-full animate-eq-2" />
                 <span className="w-1 bg-emerald-400 rounded-full animate-eq-3" />
                 <span className="w-1 bg-emerald-400 rounded-full animate-eq-4" />
-                <span className="text-[10px] text-white/70 ml-1 font-medium">Bicara</span>
+                <span className="text-[10px] text-white/70 ml-1 font-medium font-sans">Bicara</span>
               </div>
             </div>
           </div>
 
           {/* Kotak Transkripsi Suara Langsung (Real-time Speech-to-Text Transkripsi) */}
-          <div className="my-3 sm:my-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-4 sm:p-5 shadow-xl space-y-3">
+          <div className="my-3 sm:my-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-4 sm:p-5 shadow-xl space-y-3 font-sans">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-sky-300 uppercase tracking-wider">
-                <Volume2 className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
-                <span>Transkripsi Suara Panggilan</span>
+              <span className="text-[11px] font-bold text-sky-300 uppercase tracking-wider font-sans">
+                Transkripsi Suara Panggilan
               </span>
-              <span className="text-[10px] text-white/50 font-mono">
+              <span className="text-[10px] text-white/60 font-sans font-medium">
                 Kanal Telepon Langsung
               </span>
             </div>
@@ -502,15 +494,12 @@ export function PhoneCallSimulator({
                 .map((line) => (
                   <div
                     key={line.step}
-                    className="flex items-start gap-2 text-xs sm:text-[13px] leading-relaxed animate-fadeIn"
+                    className="text-xs sm:text-[13px] leading-relaxed animate-fadeIn"
                   >
-                    <span className="h-2 w-2 rounded-full bg-rose-400 shrink-0 mt-2" />
-                    <div>
-                      <span className="font-bold text-rose-300 text-[11px] sm:text-xs mr-1.5">
-                        [Petugas Bank]:
-                      </span>
-                      <span className="text-white/90 font-medium">{line.text}</span>
-                    </div>
+                    <span className="font-bold text-rose-300 text-[11px] sm:text-xs mr-1.5">
+                      [Petugas Bank]:
+                    </span>
+                    <span className="text-white/90 font-medium">{line.text}</span>
                   </div>
                 ))}
             </div>
@@ -614,9 +603,9 @@ export function PhoneCallSimulator({
 
           {/* Modal Mini Keypad jika tombol keypad ditekan */}
           {showKeypad && (
-            <div className="my-2 p-3 bg-black/70 rounded-2xl border border-white/20 max-w-xs mx-auto w-full animate-fadeIn">
+            <div className="my-2 p-3 bg-black/70 rounded-2xl border border-white/20 max-w-xs mx-auto w-full animate-fadeIn font-sans">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] text-white/70 font-mono">
+                <span className="text-[11px] text-white/70 font-sans font-medium">
                   Input: {keypadInput || "(kosong)"}
                 </span>
                 <button
@@ -627,7 +616,7 @@ export function PhoneCallSimulator({
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <div className="grid grid-cols-3 gap-1.5 text-center font-mono">
+              <div className="grid grid-cols-3 gap-1.5 text-center font-sans tabular-nums">
                 {["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"].map((d) => (
                   <button
                     key={d}
@@ -649,33 +638,30 @@ export function PhoneCallSimulator({
           {/* PILIHAN GANDA SIMULATOR A, B, C (POP-OUT ELEVATED SEPERTI GAMBAR 1) */}
           {/* ================================================================= */}
           <div className="mt-3 pt-4 border-t border-white/15 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Tentukan Respons Bicaramu:</span>
-              </span>
-              <span className="text-[10px] text-white/60">
-                Pilih jawaban atau tekan Tutup Telepon
+            <div>
+              <span className="text-xs font-black text-white uppercase tracking-wider">
+                Tentukan Respons Bicaramu:
               </span>
             </div>
 
-            {/* Grid 3 Opsi Jawaban Pop-Out Menonjol saat disentuh kursor */}
+            {/* Grid 3 Opsi Jawaban Pop-Out Menonjol saat disentuh kursor (Diacak Bebas Pola) */}
             <div className="space-y-2.5">
-              {availableChoices.map((choice) => {
-                const opt = decision1?.options[choice];
+              {availableChoices.map((originalChoice, index) => {
+                const displayLetter = (["A", "B", "C"] as const)[index] || originalChoice;
+                const opt = decision1?.options[originalChoice];
                 if (!opt) return null;
                 const cleanText = cleanOptionLabel(opt.label);
 
                 return (
                   <button
-                    key={choice}
+                    key={`${originalChoice}-${index}`}
                     type="button"
-                    onClick={() => handleSelectDecision(choice)}
+                    onClick={() => handleSelectDecision(originalChoice)}
                     className="group w-full text-left p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white text-[#27374D] border-2 border-white/60 hover:bg-[#27374D] hover:text-white hover:border-sky-400 transition-all duration-200 ease-out cursor-pointer flex items-center gap-3.5 shadow-md hover:shadow-2xl hover:shadow-sky-500/30 hover:scale-[1.02] hover:-translate-y-1 active:scale-[0.99] z-0 hover:z-10"
                   >
-                    {/* Badge Huruf A, B, C (Lingkaran Putih Menonjol saat Hover) */}
+                    {/* Badge Huruf A, B, C (Tampilan berurutan rapi untuk pengguna) */}
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#27374D] text-white group-hover:bg-white group-hover:text-[#27374D] text-xs font-black transition-all duration-200 shrink-0 shadow-sm group-hover:shadow-md">
-                      {choice}
+                      {displayLetter}
                     </span>
 
                     {/* Teks Pilihan Jawaban */}
@@ -695,7 +681,11 @@ export function PhoneCallSimulator({
           <div className="flex items-center justify-center pt-4 pb-2">
             <button
               type="button"
-              onClick={() => handleSelectDecision("C")}
+              onClick={() => {
+                const safeKey =
+                  (["A", "B", "C"] as const).find((k) => decision1?.options[k]?.type === "safe") || "C";
+                handleSelectDecision(safeKey);
+              }}
               title="Tutup Panggilan Langsung (Refleks Aman)"
               className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-[0_0_25px_rgba(225,29,72,0.6)] hover:shadow-[0_0_35px_rgba(225,29,72,0.9)] transition-all cursor-pointer hover:scale-110 active:scale-95"
             >
@@ -706,30 +696,30 @@ export function PhoneCallSimulator({
       )}
 
       {/* ===================================================================== */}
-      {/* 3. LAYAR PANGGILAN SELESAI / DITUTUP (CALL ENDED - AUTO CLOSING)        */}
+      {/* 3. LAYAR PANGGILAN SELESAI / DITUTUP (CALL ENDED - MENUNGGU PERINTAH)  */}
       {/* ===================================================================== */}
       {callPhase === "ended" && (
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 sm:py-20 text-center space-y-5 animate-fadeIn">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-10 sm:py-16 text-center space-y-5 animate-fadeIn">
           {/* Ikon Merah Panggilan Berakhir */}
           <div className="w-20 h-20 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-rose-400 shadow-xl animate-bounce-short">
             <PhoneOff className="w-9 h-9" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-xl sm:text-2xl font-black text-white">
+            <h3 className="text-xl sm:text-2xl font-black text-white font-sans">
               Panggilan Berakhir
             </h3>
-            <p className="font-mono text-xs text-white/60">
+            <p className="text-xs text-white/70 font-sans font-medium">
               Durasi: {formatTimer(durationSeconds)} • Sambungan Terputus
             </p>
           </div>
 
           {/* Teks Ucapan Pengguna & Respons Penipu */}
-          <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/15 text-left text-xs space-y-2.5">
+          <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/15 text-left text-xs space-y-2.5 font-sans">
             {userVoiceText && (
               <div>
                 <span className="font-bold text-sky-300 block mb-0.5">
-                  🗣️ Respons Kamu:
+                  Respons Kamu:
                 </span>
                 <p className="text-white/90 italic leading-relaxed">
                   "{userVoiceText}"
@@ -740,7 +730,7 @@ export function PhoneCallSimulator({
             {attackerVoiceReply && (
               <div className="pt-2 border-t border-white/10">
                 <span className="font-bold text-rose-300 block mb-0.5">
-                  📞 Reaksi Penelpon:
+                  Reaksi Penelpon:
                 </span>
                 <p className="text-white/80 text-[11px] leading-relaxed">
                   {attackerVoiceReply}
@@ -749,9 +739,22 @@ export function PhoneCallSimulator({
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-white/60 animate-pulse pt-4">
-            <div className="w-2 h-2 rounded-full bg-emerald-400" />
-            <span>Menutup tampilan telepon & kembali ke ringkasan obrolan...</span>
+          {/* Tombol Interaktif Pengguna untuk Melanjutkan (Menunggu Perintah Selanjutnya) */}
+          <div className="pt-3 flex flex-col items-center gap-2.5 w-full max-w-md">
+            <button
+              type="button"
+              onClick={() => {
+                if (selectedChoice === "C" && onDeclineCall) {
+                  onDeclineCall();
+                } else {
+                  onCompleteCall(selectedChoice || "C", durationSeconds);
+                }
+              }}
+              className="w-full sm:w-auto px-7 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] font-sans"
+            >
+              <span>Lanjutkan ke Ringkasan Skenario</span>
+              <ChevronRight className="w-4 h-4 text-slate-950" />
+            </button>
           </div>
         </div>
       )}

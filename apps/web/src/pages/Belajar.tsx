@@ -49,6 +49,19 @@ import {
 } from "lucide-react";
 import { Card, Button, Disclaimer } from "../components/ui";
 import { FakeChatSimulator } from "../components/simulator/FakeChatSimulator";
+import { ModulRekayasaSosialPage } from "../components/modul/ModulRekayasaSosialPage";
+import { ModulAnatomiPenipuanPage } from "../components/modul/ModulAnatomiPenipuanPage";
+import { ModulPerKanalPage } from "../components/modul/ModulPerKanalPage";
+import { MODUL_WHATSAPP } from "../data/modulPerKanal";
+import { ModulEmailPhishingPage } from "../components/modul/ModulEmailPhishingPage";
+import { ModulTeleponBankPage } from "../components/modul/ModulTeleponBankPage";
+import { ModulSepuluhCiriPage } from "../components/modul/ModulSepuluhCiriPage";
+import { ModulSebelumTransferPage } from "../components/modul/ModulSebelumTransferPage";
+import { ModulPolaModusNasionalPage } from "../components/modul/ModulPolaModusNasionalPage";
+import { ModulQrisEwalletPage } from "../components/modul/ModulQrisEwalletPage";
+import { ModulPinjolIlegalPage } from "../components/modul/ModulPinjolIlegalPage";
+import { ModulPusatDaruratPage } from "../components/modul/ModulPusatDaruratPage";
+import { ModulDampingiKeluargaPage } from "../components/modul/ModulDampingiKeluargaPage";
 import {
   addNotification,
   NOTIFICATION_EVENT,
@@ -772,9 +785,9 @@ export const LEARNING_MODULES: LearningModule[] = [
     id: "m1",
     title: "Apa Itu Rekayasa Sosial?",
     category: "Dasar Keamanan",
-    duration: "4 menit baca",
+    duration: "5-6 menit baca",
     icon: HelpCircle,
-    summary: "Kenapa orang bisa percaya pada pesan palsu — konsep dasarnya.",
+    summary: "Memahami bagaimana penipu mengeksploitasi emosi manusia dan cara membangun jeda berpikir kritis sebelum mengambil tindakan.",
     concept: "Rekayasa sosial (social engineering) adalah teknik manipulasi psikologis di mana pelaku tidak meretas sistem komputer atau kode enkripsi rumit, melainkan mengeksploitasi pikiran dan emosi manusia. Penipu memanfaatkan kecenderungan alami manusia: rasa percaya, kepatuhan terhadap figur otoritas, kepanikan, rasa bersalah, atau keinginan mendapatkan keuntungan instan.",
     anatomy: [
       "Pancingan Awal (Approach): Penipu menghubungi korban lewat kanal yang akrab (WhatsApp, SMS, telepon) menggunakan skenario darurat.",
@@ -793,7 +806,7 @@ export const LEARNING_MODULES: LearningModule[] = [
       "Jangan pernah membagikan kode OTP atau PIN kepada siapapun dengan alasan apapun.",
       "Ingatkan keluarga terdekat untuk tidak mudah percaya pada kontak baru yang meminta dana.",
     ],
-    takeaway: "Kunci pertahanan rekayasa sosial bukan teknologi canggih, melainkan jeda berpikir: verifikasi independen sebelum bertindak.",
+    takeaway: "Teknologi membantu, tetapi jeda berpikir dan verifikasi independen adalah pertahanan terkuat.",
   },
   {
     id: "m2",
@@ -959,80 +972,81 @@ export const LEARNING_MODULES: LearningModule[] = [
     id: "m8",
     title: "Pola Modus Penipuan Terbanyak di Indonesia",
     category: "Pola Kejadian Nyata",
-    duration: "3 menit baca",
+    duration: "5-6 menit baca",
     icon: BarChart3,
-    summary: "Ringkasan data IASC/OJK — tanpa menyebut identitas korban.",
-    concept: "Berdasarkan rangkuman data Indonesia Anti-Scam Centre (IASC) dan Satgas OJK, mayoritas kerugian digital berasal dari 3 kategori utama: manipulasi rekayasa sosial, loker fiktif berbayar, dan malware pencuri OTP.",
+    summary: "Dasbor edukasi data laporan IASC / Satgas PASTI.",
+    concept: "Berdasarkan rangkuman data resmi Indonesia Anti-Scam Centre (IASC) dan Satgas PASTI, data ini mencerminkan laporan yang masuk, bukan seluruh kasus di lapangan, dan bukan nilai total kerugian.",
     anatomy: [
-      "Peringkat 1: Modus Penipuan Belanja & Undian Palsu (38% kasus laporan).",
-      "Peringkat 2: Modus Loker Kerja Lepas / Review Video Berbayar Deposit (27% kasus).",
-      "Peringkat 3: Modus Malware Berkas APK (Kurir Paket, Undangan, Surat Tilang) (21% kasus).",
-      "Peringkat 4: Modus Investasi Bodong & Pinjaman Ilegal (14% kasus).",
+      "Peringkat 1: Penipuan Transaksi Belanja Online (77.740 laporan per 31 Mei 2026).",
+      "Peringkat 2: Impersonation / Panggilan Telepon Palsu (47.269 laporan).",
+      "Peringkat 3: Penipuan Investasi Bodong (26.649 laporan).",
+      "Peringkat 4: Penipuan Lowongan Kerja / Komisi Tugas (23.910 laporan).",
     ],
     redFlags: [
-      "Skema komisi bertingkat yang mengharuskan deposit modal sebelum reward dapat ditarik.",
-      "Pengiriman berkas aplikasi Android di luar toko resmi Google Play Store.",
-      "Akun media sosial jualan yang menonaktifkan kolom komentar publik.",
+      "Permintaan transfer langsung ke rekening pribadi di luar sistem marketplace.",
+      "Penelepon mengaku petugas bank meminta kode OTP, PIN, atau data sensitif.",
+      "Tawaran investasi keuntungan pasti atau kerja komisi yang menuntut deposit modal.",
     ],
     checklistItems: [
-      "Pahami 3 pola teratas sehingga kamu langsung waspada saat pola serupa muncul.",
-      "Edukasi orang tua dan kerabat yang belum paham bahaya pemasangan berkas APK.",
-      "Simpan nomor kontak kanal lapor resmi IASC OJK di ponselmu.",
+      "Sebelum transfer, cek kembali nama penjual dan rekening tujuan di CekRekening.id.",
+      "Bila ada telepon mengaku petugas, tutup panggilan lalu hubungi kanal resmi mandiri.",
+      "Jangan pasang file APK dari luar toko resmi, dan ingatkan orang tua serta kerabat.",
+      "Simpan kontak kanal lapor resmi OJK/IASC di ponselmu untuk kondisi darurat.",
       "Bagikan Kartu Peringatan JagaRuang ke grup obrolan keluarga.",
     ],
-    takeaway: "Pola penipuan selalu berulang; mengenali statistik modusnya membuatmu selangkah lebih maju dari pelaku.",
+    takeaway: "Penipu terus berganti cerita, tetapi pola intinya sama: mendesakmu bertindak cepat. Berhenti sejenak dan verifikasi lewat jalur yang kamu pilih sendiri.",
   },
   {
     id: "m9",
     title: "Pola Penipuan QRIS & E-Wallet",
     category: "Pola Kejadian Nyata",
-    duration: "3 menit baca",
+    duration: "4 menit baca",
     icon: QrCode,
-    summary: "Bagaimana kode QR dan link pembayaran disalahgunakan.",
-    concept: "Kode QR memudahkan transaksi instan, namun kemudahan ini dimanfaatkan penipu dengan menempelkan kode QR palsu atau mengirimkan tautan transfer berkedok link penerimaan saldo (disbursement).",
+    summary: "Pola penipuan kode QR, manipulasi transfer e-wallet, dan keamanan transaksi penjual & pembeli.",
+    concept: "Sistem QRIS aman dan terstandarisasi, namun celah fisik stiker dan kebiasaan terburu-buru sering dimanfaatkan penipu untuk menukar QRIS merchant atau mengirim struk transfer editan.",
     anatomy: [
-      "Penempelan Fisik QRIS Palsu: Menimpa QRIS pedagang resmi dengan stiker QRIS penipu di kasir atau kotak amal.",
-      "Tautan Permintaan Transfer Berkedok Penerimaan: Pelaku mengirimkan link transfer dengan nominal saldo, meminta korban mengetik PIN agar 'saldo masuk'.",
-      "Manipulasi Bukti Transfer QRIS: Menggunakan tangkapan layar editan atau struk palsu untuk mengklaim barang sudah dibayar.",
+      "Manipulasi Fisik QRIS: Menempelkan stiker QRIS palsu di atas QRIS kasir toko atau kotak amal rumah ibadah.",
+      "Tautan Pengalihan Saldo: Mengirimkan tautan permintaan transfer berkedok link penerimaan uang atau klaim hadiah.",
+      "Struk Transfer Palsu: Memanipulasi tangkapan layar transaksi berhasil untuk mengelabui pedagang/penjual.",
     ],
     redFlags: [
-      "Nama merchant yang muncul di aplikasi tidak sama dengan nama toko tempat kamu berbelanja.",
-      "Pihak lain meminta kamu mengetikkan PIN e-wallet untuk menerima kiriman uang (menerima uang TIDAK butuh PIN).",
-      "Stiker QRIS tampak bertumpuk atau ada bekas stiker tempelan baru di atas kode lama.",
+      "Nama merchant di layar aplikasi berbeda dari nama toko atau pengelola tempat ibadah yang sah.",
+      "Pihak lain meminta kamu mengetikkan PIN atau memberikan kode OTP untuk menerima uang (menerima uang tidak butuh PIN/OTP).",
+      "Stiker QRIS tampak bertumpuk, bergelembung, atau memiliki bekas tempelan baru.",
     ],
     checklistItems: [
-      "Selalu cocokkan nama merchant di layar ponsel dengan nama merchant fisik sebelum memasukkan PIN.",
-      "Ingat aturan baku: memasukkan PIN di dompet digital artinya MENGELUARKAN dana, bukan menerima dana.",
-      "Tolak kiriman link tautan QRIS dari orang tidak dikenal yang menjanjikan pengembalian dana (refund).",
-      "Periksa mutasi saldo di aplikasi merchant secara real-time sebelum menyerahkan barang dagangan.",
+      "Luangkan 5 detik mencocokkan nama merchant dan nominal di layar ponsel sebelum menekan bayar.",
+      "Ingat prinsip aman: untuk menerima dana, kamu tidak pernah perlu memasukkan PIN atau menyerahkan OTP.",
+      "Bagi pedagang: selalu periksa mutasi saldo di aplikasi merchant sendiri, bukan hanya melihat HP pembeli.",
+      "Segera lapor ke penyedia pembayaran dan portal IASC jika menemukan kode QR yang disalahgunakan.",
     ],
-    takeaway: "Menerima dana tidak pernah membutuhkan PIN; periksa nama merchant sebelum memindai QRIS.",
+    takeaway: "Periksa nama merchant sebelum membayar; untuk menerima uang, kamu tidak perlu PIN atau OTP.",
   },
   {
     id: "m10",
     title: "Pola Pinjaman Online Ilegal",
     category: "Pola Kejadian Nyata",
-    duration: "3 menit baca",
+    duration: "5 menit baca",
     icon: CreditCard,
-    summary: "Ciri pinjol ilegal dan kenapa data pribadi jadi sasaran.",
-    concept: "Pinjaman online (pinjol) ilegal beroperasi tanpa izin OJK dan menggunakan metode penagihan teror dengan menyedot seluruh kontak buku telepon di ponsel korban.",
+    summary: "Mengenali batasan izin aplikasi, jebakan teror kontak, dan perlindungan diri dari pinjol ilegal.",
+    concept: "Pinjol ilegal beroperasi tanpa izin OJK dan menjadikan daftar kontak ponsel serta galeri foto sebagai senjata pemerasan dan intimidasi sosial.",
     anatomy: [
-      "Permintaan Akses Kontak & Galeri: Aplikasi meminta izin READ_CONTACTS dan READ_EXTERNAL_STORAGE yang tidak diizinkan untuk pinjol resmi.",
-      "Pencairan Dana Tanpa Persetujuan: Mentransfer dana kecil secara sepihak ke rekening korban dan menuntut bunga mencekik dalam 7 hari.",
-      "Penyebaran Data & Teror Kontak: Mengirimkan pesan penagihan intimidasi ke seluruh nomor telepon yang ada di kontak ponsel korban.",
+      "Permintaan Izin Agresif: Meminta izin akses Kontak Telepon, Galeri Foto, dan SMS yang dilarang keras bagi fintech berizin resmi.",
+      "Jebakan Biaya & Tenor Ekstrem: Memotong dana pencairan di muka secara drastis dengan bunga melonjak dan tenor sangat singkat.",
+      "Teror & Doxing Kontak: Menagih dengan menyebarkan pesan fitnah dan intimidasi ke keluarga serta rekan kerja korban.",
     ],
     redFlags: [
-      "Penawaran pinjaman cepat tanpa syarat melalui pesan blast WhatsApp atau SMS.",
-      "Aplikasi tidak terdaftar di direktori resmi Otoritas Jasa Keuangan (OJK).",
-      "Aplikasi meminta izin akses ke kontak, galeri foto, riwayat panggilan, dan lokasi GPS.",
+      "Aplikasi meminta akses ke Buku Kontak ponsel, Galeri Foto, atau SMS (Fintech berizin hanya boleh CAMILAN: Camera, Microphone, Location).",
+      "Penawaran pinjaman instan tanpa syarat melalui SMS blast atau pesan WhatsApp dari nomor asing.",
+      "Nama aplikasi tidak terdaftar di direktori resmi Otoritas Jasa Keuangan (OJK).",
     ],
     checklistItems: [
-      "Cek legalitas pinjol di portal OJK (ojk.go.id) atau WhatsApp resmi OJK 081-157-157-157.",
-      "Jangan berikan izin akses Kontak atau Galeri pada aplikasi keuangan apapun di ponselmu.",
-      "Jika terlanjur ditransfer dana sepihak oleh pinjol ilegal, jangan gunakan uangnya dan laporkan ke Satgas OJK.",
-      "Gunakan fitur blokir panggilan dari nomor tak dikenal jika menerima teror penagihan ilegal.",
+      "Cek legalitas nama aplikasi lewat WhatsApp resmi OJK 081-157-157-157 sebelum mengunduh.",
+      "Tolak dan uninstall aplikasi yang meminta izin membaca seluruh kontak atau folder galeri.",
+      "Jika ditransfer sepihak, jangan gunakan uangnya, simpan mutasi, dan segera lapor ke bank serta Satgas PASTI.",
+      "Siapkan templat klarifikasi ke kontak terdekat jika nomor dan namamu disalahgunakan penagih liar.",
     ],
-    takeaway: "Pinjol resmi OJK hanya boleh meminta akses kamera, mikrofon, dan lokasi (CAMILAN); tolak akses kontak dan galeri.",
+    takeaway: "Pinjol resmi tidak memerlukan kontak dan galerimu. Cek legalitas ke OJK sebelum mengunduh aplikasi.",
   },
   {
     id: "m11",
@@ -1040,50 +1054,49 @@ export const LEARNING_MODULES: LearningModule[] = [
     category: "Setelah Kejadian",
     duration: "5 menit baca",
     icon: AlertTriangle,
-    summary: "Langkah ke bank, IASC OJK, dan mengamankan akun.",
-    concept: "Jika kamu atau orang terdekat baru saja menjadi korban penipuan digital, waktu 1 - 2 jam pertama (golden period) sangat menentukan keberhasilan pemblokiran rekening pelaku.",
+    summary: "Pusat darurat panduan pelaporan cepat ke bank, portal resmi IASC OJK, dan kepolisian.",
+    concept: "OJK menyebut idealnya korban melapor dalam 10 menit atau kurang sebelum sindikat memindahkan dana. Hubungi bank pengirim terlebih dahulu, lalu buat laporan di portal resmi iasc.ojk.go.id.",
     anatomy: [
-      "Menit 0 - 30: Pelaku sedang mencoba memindahkan dana hasil kejahatan ke rekening nominee lain atau mencairkannya ke dompet kripto.",
-      "Menit 30 - 60: Peluang pemblokiran saldo oleh bank pengirim dan bank penerima masih terbuka lebar.",
-      "Jam 1 - 24: Proses dokumentasi berkas laporan polisi dan pengajuan pembekuan permanen rekening pelaku.",
+      "Langkah 1: Hubungi segera call center resmi bank pengirim dari nomor di belakang kartu fisik untuk penahanan transaksi.",
+      "Langkah 2: Laporkan ke portal resmi iasc.ojk.go.id untuk memicu koordinasi pemblokiran lintas perbankan.",
+      "Langkah 3: Amankan perangkat, buat STPL di kepolisian (SPKT), dan pantau nomor tiket aduan resmi.",
     ],
     redFlags: [
-      "Menunda pelaporan karena merasa malu atau mengira dana sudah pasti hilang tanpa harapan.",
-      "Mempercayai oknum di media sosial yang menawarkan jasa 'recovery dana penipuan' (penipuan lapis kedua).",
-      "Menghapus bukti obrolan atau nomor kontak pelaku.",
+      "Menunda lapor karena malu atau menganggap uang pasti hilang (semakin cepat melapor, peluang semakin terbuka).",
+      "Mempercayai oknum jasa 'recovery dana' di medsos yang meminta bayaran atau transfer di muka.",
+      "Mengeklik tautan situs pengaduan tiruan yang beralamat selain di portal resmi iasc.ojk.go.id.",
     ],
     checklistItems: [
-      "Hubungi call center bank pengirim seketika untuk meminta penahanan transaksi dan blokir rekening tujuan.",
-      "Simpan semua tangkapan layar bukti transfer, riwayat chat, nomor HP, dan nomor rekening pelaku.",
-      "Buat laporan pengaduan resmi di portal IASC OJK (iasc.ojk.go.id) dan CekRekening.id.",
-      "Datang ke kantor kepolisian terdekat (SPKT) untuk membuat Surat Tanda Penerimaan Laporan (STPL).",
-      "Ubah kata sandi m-Banking, email utama, dan aktifkan kembali keamanan dua langkah.",
+      "Telepon call center resmi bank pengirim melalui nomor di balik kartu ATM untuk meminta penahanan transaksi.",
+      "Buat laporan resmi di portal IASC hanya melalui alamat resmi iasc.ojk.go.id.",
+      "Simpan tangkapan layar bukti transfer, mutasi rekening, dan nomor rekening/kontak pelaku.",
+      "Datang ke kantor kepolisian (SPKT) untuk membuat Surat Tanda Penerimaan Laporan (STPL) resmi.",
     ],
-    takeaway: "Jangan ragu bertindak di menit-menit awal: segera hubungi bank untuk membekukan rekening penampung sebelum dana dilarikan.",
+    takeaway: "Makin cepat kamu melapor, makin besar peluangnya. Hubungi bank dulu, lapor ke iasc.ojk.go.id, simpan bukti.",
   },
   {
     id: "m12",
     title: "Cara Mendampingi Keluarga yang Kena Tipu",
     category: "Setelah Kejadian",
-    duration: "4 menit baca",
+    duration: "5 menit baca",
     icon: Heart,
-    summary: "Ngomong ke keluarga yang kena tipu tanpa menyalahkan.",
-    concept: "Korban penipuan digital mengalami trauma psikologis yang berat, rasa bersalah, dan malu. Pendampingan tanpa menyalahkan adalah kunci agar korban mau terbuka dan dapat menyelamatkan aset yang tersisa.",
+    summary: "Panduan empati, pemulihan psikologis, dan urutan tindakan teknis mendampingi keluarga korban.",
+    concept: "Korban penipuan mengalami guncangan psikologis berat. Menghardik tidak akan mengembalikan dana, justru menutup komunikasi saat mereka paling membutuhkan perlindungan.",
     anatomy: [
-      "Fase Syok: Korban merasa bingung, tidak percaya bahwa orang yang mereka ajak bicara selama ini adalah penipu.",
-      "Fase Menyalahkan Diri: Korban merasa bersalah, takut dimarahi keluarga, dan cenderung menyembunyikan besarnya kerugian.",
-      "Fase Kerentanan Lanjutan: Penipu sering menghubungi korban kembali berpura-pura menjadi polisi atau pengacara untuk menipu lagi.",
+      "Fase 1 (Syok & Penyangkalan): Korban bingung dan linglung; butuh kehadiran fisik yang tenang tanpa perdebatan logika.",
+      "Fase 2 (Menyalahkan Diri & Malu): Korban merasa bodoh; tegaskan bahwa pelaku adalah sindikat kriminal profesional.",
+      "Fase 3 (Kerentanan Lanjutan): Korban panik mencari cara cepat; jaga dari jebakan jasa recovery dana palsu.",
     ],
     redFlags: [
-      "Menghardik atau berkata 'Kan sudah kubilang jangan percaya!' yang membuat korban menutup diri.",
-      "Membiarkan korban sendirian memegang ponsel tanpa mengamankan akses akun perbankan.",
-      "Tidak memeriksa apakah ada malware yang masih aktif berjalan di ponsel korban.",
+      "Menghardik atau melontarkan kalimat 'Kan sudah dibilang jangan percaya!' yang memicu depresi korban.",
+      "Menyuruh korban mengikhlaskan di menit-menit awal sehingga menghentikan langkah mitigasi darurat ke bank.",
+      "Tidak segera mengamankan perangkat (mode pesawat untuk hentikan malware, cabut SIM card jika rawan OTP).",
     ],
     checklistItems: [
-      "Tunjukkan empati terlebih dahulu: 'Penipuan ini memang sangat canggih dan banyak korban lainnya, yang penting kita amankan sisanya sekarang.'",
-      "Ambil alih pengamanan perangkat: aktifkan mode pesawat, cabut SIM card jika ada malware, dan ganti kredensial penting.",
-      "Temani korban ke kantor bank dan kantor polisi untuk proses pelaporan agar korban merasa didukung.",
-      "Sepakati Sandi Keluarga untuk mencegah modus penipuan kloning suara atau telepon darurat berikutnya.",
+      "Tahan emosi dan berikan dukungan emosional: 'Yang terpenting kamu selamat, ayo kita selesaikan ini bareng-bareng'.",
+      "Prioritas teknis: aktifkan mode pesawat untuk putus malware, cabut SIM card untuk cegah pembajakan SMS lanjutan.",
+      "Bantu menyusun draf kronologi kejadian dan temani melapor ke customer service bank serta iasc.ojk.go.id.",
+      "Ajak keluarga membuat Sandi Keluarga (/sandi) untuk memverifikasi panggilan darurat atau kloning suara AI.",
     ],
     takeaway: "Dukungan emosional yang suportif membuat korban mau bertindak cepat menyelamatkan akun sebelum kerugian meluas.",
   },
@@ -1456,8 +1469,36 @@ export default function Belajar() {
     });
   };
 
+  // Jika sedang membaca modul detail, tampilkan ModulPage secara langsung edge-to-edge
+  // agar sticky reading progress bar menyatu mulus di bawah top navbar tanpa jeda atau kotak terisolasi
+  if (activeTab === "modul" && activeModuleId) {
+    return (
+      <ModulPage
+        moduleId={activeModuleId}
+        isRead={readModules.includes(activeModuleId)}
+        onBack={() => {
+          setActiveModuleId(null);
+          if (searchParams.has("module")) {
+            const next = new URLSearchParams(searchParams);
+            next.delete("module");
+            setSearchParams(next);
+          }
+        }}
+        onToggleRead={() => handleMarkModuleRead(activeModuleId)}
+        onNavigateTab={handleTabChange}
+        onSelectModule={(id) => {
+          setActiveModuleId(id);
+          const next = new URLSearchParams(searchParams);
+          next.set("module", id);
+          setSearchParams(next);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="space-y-6 w-full">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 space-y-6 w-full">
       {/* ===================================================================== */}
       {/* HEADER UTAMA HALAMAN BELAJAR (KOTAK PUTIH PERSIS REFERENSI)           */}
       {/* ===================================================================== */}
@@ -1562,28 +1603,11 @@ export default function Belajar() {
         {/* PILAR 2: MODUL PEMBELAJARAN (PERSIS SEPERTI GAMBAR USER) */}
         {activeTab === "modul" && (
           <div>
-            {!activeModuleId ? (
-              <ModulCover
-                readModules={readModules}
-                onSelectModule={(id) => setActiveModuleId(id)}
-                onGoToKilat={() => handleTabChange("kilat")}
-              />
-            ) : (
-              <ModulPage
-                moduleId={activeModuleId}
-                isRead={readModules.includes(activeModuleId)}
-                onBack={() => {
-                  setActiveModuleId(null);
-                  if (searchParams.has("module")) {
-                    const next = new URLSearchParams(searchParams);
-                    next.delete("module");
-                    setSearchParams(next);
-                  }
-                }}
-                onToggleRead={() => handleMarkModuleRead(activeModuleId)}
-                onNavigateTab={handleTabChange}
-              />
-            )}
+            <ModulCover
+              readModules={readModules}
+              onSelectModule={(id) => setActiveModuleId(id)}
+              onGoToKilat={() => handleTabChange("kilat")}
+            />
           </div>
         )}
 
@@ -2579,13 +2603,149 @@ function ModulPage({
   onBack,
   onToggleRead,
   onNavigateTab,
+  onSelectModule,
 }: {
   moduleId: string;
   isRead: boolean;
   onBack: () => void;
   onToggleRead: () => void;
   onNavigateTab: (tab: TabType) => void;
+  onSelectModule?: (moduleId: string) => void;
 }) {
+  if (moduleId === "m1") {
+    return (
+      <ModulRekayasaSosialPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m2") {
+    return (
+      <ModulAnatomiPenipuanPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m3") {
+    return (
+      <ModulPerKanalPage
+        data={MODUL_WHATSAPP}
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m4") {
+    return (
+      <ModulEmailPhishingPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m5") {
+    return (
+      <ModulTeleponBankPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m6") {
+    return (
+      <ModulSepuluhCiriPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m7") {
+    return (
+      <ModulSebelumTransferPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m8") {
+    return (
+      <ModulPolaModusNasionalPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m9") {
+    return (
+      <ModulQrisEwalletPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m10") {
+    return (
+      <ModulPinjolIlegalPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m11") {
+    return (
+      <ModulPusatDaruratPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m12") {
+    return (
+      <ModulDampingiKeluargaPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+
   const m = LEARNING_MODULES.find((mod) => mod.id === moduleId) || LEARNING_MODULES[0];
 
   // Checklist interaktif yang tersimpan lokal
@@ -3491,42 +3651,13 @@ function KilatPage({
           </button>
 
           <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Indikator Jumlah Soal & Navigasi Cepat */}
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-[#9DB2BF]/60 text-xs font-bold text-[#27374D] shadow-2xs">
-              <ListChecks className="h-4 w-4 text-[#526D82]" />
-              <span>
-                Soal{" "}
-                <span className="text-sky-700 font-black text-sm">
-                  {currentIndex + 1}
-                </span>{" "}
-                <span className="text-[#9DB2BF]">/</span> {TRIAGE_DRILL_ITEMS.length}
-              </span>
-
-              {/* Tombol Mini Navigasi Soal Sebelumnya & Setelahnya */}
-              <div className="flex items-center gap-0.5 pl-1.5 border-l border-slate-200 ml-1">
-                <button
-                  type="button"
-                  onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-                  disabled={currentIndex === 0}
-                  className="p-1 rounded-lg text-slate-500 hover:text-[#27374D] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all"
-                  title="Soal Sebelumnya"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCurrentIndex((prev) =>
-                      Math.min(TRIAGE_DRILL_ITEMS.length - 1, prev + 1)
-                    )
-                  }
-                  disabled={currentIndex === TRIAGE_DRILL_ITEMS.length - 1}
-                  className="p-1 rounded-lg text-slate-500 hover:text-[#27374D] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all"
-                  title="Soal Setelahnya"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
+            {/* Indikator Jumlah Soal */}
+            <div className="text-xs sm:text-sm font-bold text-[#27374D]">
+              Soal{" "}
+              <span className="text-sky-700 font-black text-sm">
+                {currentIndex + 1}
+              </span>{" "}
+              <span className="text-[#9DB2BF]">/</span> {TRIAGE_DRILL_ITEMS.length}
             </div>
 
             {/* Tombol & Indikator Timer yang Jelas dan Kontras */}
@@ -3823,7 +3954,7 @@ function KilatPage({
               <span>Ulasan Detail Refleks Keputusanmu (10 Soal):</span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 items-start">
               {TRIAGE_DRILL_ITEMS.map((item, idx) => {
                 const userChoice = answers[item.id];
                 const isCorrect =
@@ -3834,7 +3965,7 @@ function KilatPage({
                 return (
                   <div
                     key={item.id}
-                    className={`rounded-2xl border-2 transition-all overflow-hidden ${
+                    className={`rounded-2xl border-2 transition-all overflow-hidden h-fit ${
                       isCorrect
                         ? "bg-white border-emerald-500 shadow-2xs hover:shadow-xs"
                         : "bg-white border-rose-500 shadow-2xs hover:shadow-xs"
@@ -4128,11 +4259,6 @@ function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
               className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-3"
             >
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${term.tagColor}`}>
-                    {term.category}
-                  </span>
-                </div>
                 <h3 className="text-base font-bold text-[#27374D] group-hover:text-blue-900 transition-colors">
                   {term.name}
                 </h3>
@@ -4192,12 +4318,13 @@ function KamusPage({
         </button>
       </div>
 
-      {/* Main Container Halaman Khusus Istilah */}
-      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-10">
-        {/* Header Hero Editorial: Kata Besar di Kiri & Penjelasan di Kanan Persis Referensi */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pb-8 border-b border-[#9DB2BF]/30">
-          <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[160px] sm:min-h-[180px]">
-            {/* Watermark Monogram */}
+      {/* Main Container Halaman Khusus Istilah: 1 Section Terpadu Tanpa Pembagian Kotak Terpisah */}
+      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-8 sm:space-y-10">
+        {/* Baris Atas: Judul Font Besar (Kiri) & Cara Kerja serta Titik Masuk (Kanan) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Sisi Atas Kiri: Judul Font Besar, Watermark, & Definisi Inti */}
+          <div className="relative flex flex-col justify-between space-y-5">
+            {/* Watermark Monogram Besar di Pojok Kiri Atas */}
             <span
               aria-hidden="true"
               className="absolute -top-10 -left-4 text-9xl sm:text-[140px] font-black text-[#526D82]/10 select-none pointer-events-none"
@@ -4205,80 +4332,91 @@ function KamusPage({
               {term.name.charAt(0).toUpperCase()}
             </span>
 
-            <div className="relative z-1 space-y-3">
-              <span className={`inline-block rounded-full px-3.5 py-1 text-xs font-bold border shadow-2xs ${term.tagColor}`}>
-                {term.category}
-              </span>
+            <div className="relative z-1 space-y-3.5">
+              {/* Judul Font Besar */}
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#27374D] leading-[1.15] tracking-tight">
                 {renderStyledTermTitle(term)}
                 <span className="text-blue-600 ml-1">.</span>
               </h1>
             </div>
+
+            {/* Paragraf Definisi Inti */}
+            <div className="relative z-1 pt-2">
+              <p className="text-sm sm:text-base text-[#526D82] leading-relaxed font-normal">
+                {term.meaning}
+              </p>
+            </div>
           </div>
 
-          <div className="lg:col-span-7 flex flex-col justify-between space-y-5 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-10">
-            <p className="text-base sm:text-lg text-[#526D82] leading-relaxed font-normal">
-              {term.meaning}
+          {/* Sisi Atas Kanan: Cara Kerja Modus & Titik Masuk Utama */}
+          <div className="space-y-4 lg:border-l lg:border-slate-100 lg:pl-10">
+            <div className="pb-2.5 border-b border-slate-100">
+              <h2 className="text-sm sm:text-base font-bold text-[#27374D]">
+                Cara Kerja &amp; Titik Masuk
+              </h2>
+            </div>
+
+            {/* Cara Kerja */}
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82]">
+                Tahapan Cara Kerja:
+              </span>
+              <p className="text-xs sm:text-sm text-[#27374D] leading-relaxed">
+                {term.howItWorks}
+              </p>
+            </div>
+
+            {/* Titik Masuk Utama */}
+            <div className="space-y-1 pt-2 border-t border-slate-100">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                <span>Titik Masuk Utama (Entry Point):</span>
+              </span>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                {term.entryPoint}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Garis Pembatas Halus Horizontal Antara Bagian Atas dan Bawah */}
+        <div className="border-t border-slate-100" />
+
+        {/* Baris Bawah: Pertolongan Pertama (Kiri) & Langkah Pencegahan (Kanan) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Sisi Bawah Kiri: Pertolongan Pertama Terpapar */}
+          <div className="space-y-3">
+            <div className="pb-2.5 border-b border-rose-100">
+              <h2 className="text-sm sm:text-base font-bold text-rose-950">
+                Pertolongan Pertama Terpapar
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              {term.firstResponse}
             </p>
 
-            <div>
-              <a
-                href="#bedah-modus"
-                className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors group/cta"
-              >
-                <ArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-1" />
-                <span>Pelajari Anatomi Modus & Pertolongan Pertama</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div id="bedah-modus" className="space-y-6 pt-2">
-          {/* Section 1: Cara Kerja Modus */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-              Tahapan Cara Kerja Modus:
-            </h2>
-            <div className="rounded-2xl bg-slate-50 p-4 sm:p-5 border border-slate-200 text-xs sm:text-sm text-[#27374D] leading-relaxed">
-              {term.howItWorks}
+            <div className="text-xs font-semibold text-rose-700 pt-1">
+              <span>Lakukan tindakan mitigasi segera dalam 15 menit pertama.</span>
             </div>
           </div>
 
-          {/* Section 2: Titik Masuk Utama */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D]">
-              Titik Masuk Utama (Entry Point):
-            </h2>
-            <div className="rounded-2xl bg-amber-50/70 p-4 sm:p-5 border border-amber-200 text-xs sm:text-sm text-amber-950 leading-relaxed">
-              {term.entryPoint}
+          {/* Sisi Bawah Kanan: Langkah Pencegahan Utama */}
+          <div className="space-y-3 lg:border-l lg:border-slate-100 lg:pl-10">
+            <div className="pb-2.5 border-b border-emerald-100">
+              <h2 className="text-sm sm:text-base font-bold text-emerald-950">
+                Langkah Pencegahan Utama
+              </h2>
             </div>
-          </div>
 
-          {/* Section 3: Pertolongan Pertama / Respons Cepat */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
-              <OctagonAlert className="h-4 w-4" />
-              <span>Pertolongan Pertama Jika Terlanjur Terpapar:</span>
-            </h2>
-            <div className="rounded-2xl bg-rose-50/70 p-4 sm:p-5 border border-rose-200 text-xs sm:text-sm text-rose-950 leading-relaxed">
-              {term.firstResponse}
-            </div>
-          </div>
-
-          {/* Section 4: Langkah Pencegahan Mandiri */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#27374D] flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span>Langkah Pencegahan Utama:</span>
-            </h2>
-            <div className="rounded-2xl bg-emerald-50/70 p-4 sm:p-5 border border-emerald-200 text-xs sm:text-sm text-emerald-950 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
               {term.prevention}
-            </div>
+            </p>
           </div>
         </div>
 
-        {/* Action Footer */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#DDE6ED]">
+        {/* Action Footer di Dalam Satu Container Section yang Sama */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-[#DDE6ED]">
           <Button
             variant="outline"
             size="sm"
@@ -4296,7 +4434,7 @@ function KamusPage({
               onClick={() => navigate("/cek")}
               className="flex-1 sm:flex-none text-xs"
             >
-              Uji Cek Pesan & Berkas
+              Uji Cek Pesan &amp; Berkas
             </Button>
             <Button
               variant="primary"

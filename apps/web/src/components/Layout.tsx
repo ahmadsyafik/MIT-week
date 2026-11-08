@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate, Link } from "react-router-dom";
 import {
   LogOut,
   LayoutDashboard,
@@ -12,15 +12,15 @@ import {
   RefreshCw,
   Smartphone,
   HelpCircle,
+  ArrowRight,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import LoginModal from "./LoginModal";
 import NotificationDropdown from "./NotificationDropdown";
 import UserProfileDropdown from "./UserProfileDropdown";
 import MobileCurvedBottomNav from "./MobileCurvedBottomNav";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Dashboard", shortLabel: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/dashboard", label: "Dashboard", shortLabel: "Dashboard", icon: LayoutDashboard },
   { to: "/belajar", label: "Belajar", shortLabel: "Belajar", icon: BookOpen },
   { to: "/cek", label: "Cek Pesan & File", shortLabel: "Cek", icon: Search },
   { to: "/lindungi", label: "Panduan Lindungi", shortLabel: "Lindungi", icon: ShieldAlert },
@@ -80,7 +80,7 @@ function getRandomRecommendations(pool: SearchItem[], count = 5): SearchItem[] {
 }
 
 export default function Layout() {
-  const { user, isAuthenticated, logout, openLoginModal } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [recommendations, setRecommendations] = useState<SearchItem[]>([]);
@@ -108,7 +108,6 @@ export default function Layout() {
     logout();
   };
 
-  // Saat input search diklik/fokus: buka dropdown dan refresh 5 rekomendasi acak baru
   const handleSearchFocus = () => {
     setIsSearchOpen(true);
     setRecommendations(getRandomRecommendations(SEARCH_POOL, 5));
@@ -120,7 +119,6 @@ export default function Layout() {
     navigate(item.url);
   };
 
-  // Filter hasil saat mengetik, atau tampilkan 5 rekomendasi acak saat kosong
   const displayedItems = useMemo(() => {
     if (!searchQuery.trim()) {
       return recommendations.slice(0, 5);
@@ -141,88 +139,69 @@ export default function Layout() {
     } else if (searchQuery.trim()) {
       setIsSearchOpen(false);
       navigate(`/belajar?tab=kamus&q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
     }
   };
 
-  // =========================================================================
-  // KONDISI 1: PENGUNJUNG BELUM LOGIN (LANDING PAGE MODE PERSIS SEPERTI VIDEO)
-  // Background: DDE6ED, Font: 27374D, Aksen Kontras: 526D82 & 9DB2BF
-  // =========================================================================
-  if (!isAuthenticated) {
+  // KONDISI 1: LANDING PAGE PUBLIK (Rute /)
+  const isLandingPage = location.pathname === "/" || location.pathname === "/login" || location.pathname === "/register";
+
+  if (isLandingPage) {
     return (
-      <div className="flex min-h-screen flex-col bg-[#DDE6ED] text-[#27374D] font-sans antialiased selection:bg-[#526D82] selection:text-white">
-        {/* Skip to Content */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-[#27374D] focus:px-4 focus:py-2 focus:text-white focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#526D82]"
-        >
-          Lewati ke konten utama
-        </a>
+      <div className="flex min-h-screen flex-col bg-[#DDE6ED] text-[#27374D] font-sans antialiased">
+        <header className="sticky top-0 z-30 border-b border-[#9DB2BF]/40 bg-white/90 backdrop-blur-md">
+          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <Link to="/" className="flex items-center gap-2.5 font-bold text-[#27374D]">
+              <img src="/logo-blue.png" alt="Logo JagaRuang" className="h-9 w-9 object-contain" />
+              <span className="text-lg font-black tracking-tight">JagaRuang.</span>
+            </Link>
 
-        {/* Top Header Navbar untuk Landing Page (Persis seperti di video referensi) */}
-        <header className="sticky top-0 z-40 border-b border-[#9DB2BF]/40 bg-white/95 backdrop-blur-md shadow-xs">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
-            {/* Logo Brand JagaRuang (Posisi Cerah: Logo Biru) */}
-            <NavLink
-              to="/"
-              className="flex items-center gap-2.5 font-bold text-[#27374D] text-lg hover:text-[#526D82] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] rounded-md transition-colors"
-            >
-              <img
-                src="/logo-blue.png"
-                alt="Logo JagaRuang"
-                className="h-9 w-9 object-contain shrink-0"
-              />
-              <div className="flex items-baseline gap-0.5">
-                <span className="leading-tight font-black text-xl tracking-tight text-[#27374D]">
-                  JagaRuang
-                </span>
-                <span className="font-extrabold text-[#526D82] text-xl">.</span>
-              </div>
-            </NavLink>
-
-            {/* Nav Links Tengah (seperti Home, About, Pricing, Contact, Blog di video) */}
-            <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-semibold text-[#526D82]">
-              <a href="#beranda" className="hover:text-[#27374D] transition-colors">
-                Home
-              </a>
-              <a href="#tiga-pilar" className="hover:text-[#27374D] transition-colors">
-                Tiga Pilar
-              </a>
-              <a href="#modul" className="hover:text-[#27374D] transition-colors">
-                Kasus & Modul
-              </a>
-              <a href="#testimoni" className="hover:text-[#27374D] transition-colors">
-                Cerita Rekan
-              </a>
-              <a href="#faq" className="hover:text-[#27374D] transition-colors">
-                FAQ
-              </a>
+            <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-[#526D82]">
+              <a href="#beranda" className="hover:text-[#27374D] transition-colors">Home</a>
+              <a href="#tiga-pilar" className="hover:text-[#27374D] transition-colors">Tiga Pilar</a>
+              <a href="#modul" className="hover:text-[#27374D] transition-colors">Kasus & Modul</a>
+              <a href="#testimoni" className="hover:text-[#27374D] transition-colors">Cerita Rekan</a>
+              <a href="#faq" className="hover:text-[#27374D] transition-colors">FAQ</a>
             </nav>
 
-            {/* Tombol Kanan (Login & Register / Mulai Sekarang) */}
             <div className="flex items-center gap-2.5 sm:gap-3">
-              <NavLink
-                to="/login"
-                className="inline-flex min-h-[40px] items-center justify-center px-4 py-2 text-xs font-bold text-[#27374D] hover:text-[#526D82] transition-colors cursor-pointer"
-              >
-                <span>Login</span>
-              </NavLink>
-              <NavLink
-                to="/register"
-                className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm cursor-pointer"
-              >
-                <span>Register</span>
-              </NavLink>
+              {isAuthenticated ? (
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <span className="hidden sm:inline text-xs font-semibold text-[#526D82]">
+                    Halo, <strong className="text-[#27374D]">{user?.name || "Kawan"}</strong>
+                  </span>
+                  <NavLink
+                    to="/dashboard"
+                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm"
+                  >
+                    <span>Buka Dashboard</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </NavLink>
+                </div>
+              ) : (
+                <>
+                  <NavLink
+                    to="/login"
+                    className="inline-flex min-h-[40px] items-center justify-center px-4 py-2 text-xs font-bold text-[#27374D] hover:text-[#526D82] transition-colors cursor-pointer"
+                  >
+                    <span>Login</span>
+                  </NavLink>
+                  <NavLink
+                    to="/register"
+                    className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm cursor-pointer"
+                  >
+                    <span>Register</span>
+                  </NavLink>
+                </>
+              )}
             </div>
           </div>
         </header>
 
-        {/* Konten Landing Page dengan Animasi Transisi Halus */}
         <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 page-transition-enter" key={location.pathname}>
           <Outlet />
         </main>
 
-        {/* Footer Permanen */}
         <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 sm:px-6 sm:flex-row sm:items-center sm:justify-between text-xs text-[#526D82]">
             <p className="max-w-xl leading-relaxed">
@@ -230,10 +209,7 @@ export default function Layout() {
               perangkatmu (on-device) tanpa server atau pelacak data.
             </p>
             <div className="flex items-center gap-4 shrink-0">
-              <NavLink
-                to="/keterbatasan"
-                className="font-semibold text-[#27374D] underline underline-offset-4 hover:text-[#526D82]"
-              >
+              <NavLink to="/keterbatasan" className="font-semibold text-[#27374D] underline underline-offset-4 hover:text-[#526D82]">
                 Keterbatasan dan Privasi
               </NavLink>
             </div>
@@ -243,40 +219,18 @@ export default function Layout() {
     );
   }
 
-  // =========================================================================
-  // KONDISI 2: PENGGUNA SUDAH LOGIN (DASHBOARD DENGAN PALET WARNA SESUAI INSTRUKSI)
-  // Background: DDE6ED, Font: 27374D, Side bar: 526D82, Kontras: 9DB2BF
-  // =========================================================================
+  // KONDISI 2: DASHBOARD PENGGUNA TERPROTEKSI
   return (
     <div className="flex min-h-screen bg-[#DDE6ED] text-[#27374D] font-sans antialiased selection:bg-[#526D82] selection:text-white">
-      {/* Skip to Content */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-[#27374D] focus:px-4 focus:py-2 focus:text-white focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#526D82]"
-      >
-        Lewati ke konten utama
-      </a>
-
-      {/* ===================================================================== */}
-      {/* SIDEBAR: DESKTOP ONLY (PADA MOBILE SUDAH DIGANTIKAN BOTTOM NAVIGATION) */}
-      {/* ===================================================================== */}
       <aside
         id="app-sidebar"
         aria-label="Navigasi sidebar utama"
         className="hidden md:flex md:w-64 md:flex-col justify-between bg-[#526D82] text-white md:sticky md:top-0 md:h-screen border-r border-[#9DB2BF]/30 shrink-0"
       >
         <div className="flex flex-col h-full overflow-y-auto">
-          {/* Header Sidebar Brand: Logo & Title (Posisi Gelap: Logo Putih) */}
           <div className="flex h-16 items-center justify-between border-b border-[#9DB2BF]/30 px-5 shrink-0 bg-[#526D82]">
-            <NavLink
-              to="/"
-              className="flex items-center gap-3 font-bold text-white hover:text-[#DDE6ED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-lg transition-colors"
-            >
-              <img
-                src="/logo-white.png"
-                alt="Logo JagaRuang"
-                className="h-9 w-9 object-contain shrink-0 drop-shadow-sm"
-              />
+            <NavLink to="/" className="flex items-center gap-3 font-bold text-white hover:text-[#DDE6ED] rounded-lg transition-colors">
+              <img src="/logo-white.png" alt="Logo JagaRuang" className="h-9 w-9 object-contain drop-shadow-sm" />
               <div className="flex flex-col">
                 <span className="leading-tight font-extrabold text-base tracking-tight text-white">JagaRuang</span>
                 <span className="text-[10px] font-medium text-[#DDE6ED]/80">Guardians of Digital</span>
@@ -284,7 +238,6 @@ export default function Layout() {
             </NavLink>
           </div>
 
-          {/* Menu Navigasi Utama di Sidebar */}
           <nav className="space-y-1 p-3.5" aria-label="Menu navigasi sidebar">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
@@ -292,9 +245,8 @@ export default function Layout() {
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  end={item.end}
                   className={({ isActive }) =>
-                    `group flex min-h-[44px] items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                    `group flex min-h-[44px] items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
                       isActive
                         ? "bg-[#27374D] text-white shadow-sm font-semibold border border-[#9DB2BF]/40"
                         : "text-[#DDE6ED] hover:bg-[#27374D]/30 hover:text-white"
@@ -304,18 +256,10 @@ export default function Layout() {
                   {({ isActive }) => (
                     <>
                       <div className="flex items-center gap-3">
-                        <Icon
-                          className={`h-4 w-4 shrink-0 transition-colors ${
-                            isActive ? "text-[#DDE6ED]" : "text-[#DDE6ED]/80 group-hover:text-white"
-                          }`}
-                        />
+                        <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#DDE6ED]" : "text-[#DDE6ED]/80 group-hover:text-white"}`} />
                         <span>{item.label}</span>
                       </div>
-                      <ChevronRight
-                        className={`h-3.5 w-3.5 shrink-0 transition-opacity ${
-                          isActive ? "opacity-100 text-[#DDE6ED]" : "opacity-0 group-hover:opacity-60"
-                        }`}
-                      />
+                      <ChevronRight className={`h-3.5 w-3.5 shrink-0 ${isActive ? "opacity-100 text-[#DDE6ED]" : "opacity-0 group-hover:opacity-60"}`} />
                     </>
                   )}
                 </NavLink>
@@ -323,128 +267,70 @@ export default function Layout() {
             })}
           </nav>
 
-          {/* Spacer */}
           <div className="flex-1 min-h-4" />
 
-          {/* Bagian Footer Sidebar: Logout */}
           <div className="p-3 border-t border-[#9DB2BF]/30 shrink-0">
             <button
               type="button"
               onClick={handleLogout}
-              className="flex min-h-[42px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-red-950/40 hover:text-red-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 cursor-pointer"
+              className="flex min-h-[42px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-red-950/40 hover:text-red-200 transition-colors cursor-pointer"
             >
-              <LogOut className="h-4 w-4 text-[#DDE6ED]/70 group-hover:text-red-300 shrink-0" />
+              <LogOut className="h-4 w-4 text-[#DDE6ED]/70 shrink-0" />
               <span>Keluar dari Sesi</span>
             </button>
           </div>
         </div>
       </aside>
 
-      {/* ===================================================================== */}
-      {/* AREA KANAN: TOP BAR + DASHBOARD CONTENT (BACKGROUND: DDE6ED, FONT: 27374D) */}
-      {/* ===================================================================== */}
-      <div className="flex flex-1 flex-col min-w-0 min-h-screen bg-[#DDE6ED]">
-        {/* Top Header Bar di atas Dashboard */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#9DB2BF]/40 bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-2xs">
-          {/* Mobile Brand / Logo (Hamburger menu dihilangkan, navigasi mobile menggunakan bottom bar) */}
-          <div className="flex items-center gap-2 md:hidden">
-            <NavLink to="/" className="flex items-center gap-2 font-bold text-[#27374D] text-base">
-              <img
-                src="/logo-blue.png"
-                alt="Logo JagaRuang"
-                className="h-7 w-7 object-contain shrink-0"
-              />
-              <span className="tracking-tight">JagaRuang</span>
+      <div className="flex flex-1 flex-col min-w-0">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#9DB2BF]/40 bg-white/95 px-4 sm:px-6 lg:px-7 backdrop-blur-md">
+          <div className="flex items-center gap-3 md:hidden">
+            <NavLink to="/" className="flex items-center gap-2 font-bold text-[#27374D]">
+              <img src="/logo-blue.png" alt="Logo JagaRuang" className="h-8 w-8 object-contain" />
+              <span className="text-base font-black tracking-tight">JagaRuang</span>
             </NavLink>
           </div>
 
-          {/* Search Input Bar & Dropdown Rekomendasi (di Desktop dan Tablet) */}
-          <div ref={searchContainerRef} className="relative hidden md:flex flex-1 max-w-md items-center">
-            <form onSubmit={handleSearchSubmit} className="w-full">
-              <div className="relative w-full">
+          <div ref={searchContainerRef} className="relative hidden sm:block w-72 md:w-80 lg:w-96">
+            <form onSubmit={handleSearchSubmit}>
+              <div className="relative flex items-center">
+                <Search className="absolute left-3.5 h-4 w-4 text-[#526D82] pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={handleSearchFocus}
-                  placeholder="Cari modul, istilah, atau modus penipuan..."
-                  className="w-full rounded-full border border-[#9DB2BF]/70 bg-[#DDE6ED]/50 px-4 py-2 pl-10 pr-4 text-xs sm:text-sm text-[#27374D] placeholder:text-[#526D82]/70 focus:border-[#526D82] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#526D82]/20 transition-all shadow-inner"
+                  placeholder="Cari simulator, modul, istilah..."
+                  className="h-10 w-full rounded-full border border-[#9DB2BF]/50 bg-[#DDE6ED]/40 pl-10 pr-4 text-xs font-medium text-[#27374D] placeholder:text-[#526D82]/70 focus:border-[#526D82] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#526D82]/20 transition-all"
                 />
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#526D82]" />
               </div>
             </form>
 
-            {/* Dropdown Rekomendasi (Maks. 5 item, selalu refresh/acak saat dibuka kembali) */}
             {isSearchOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-2xl border border-[#9DB2BF]/60 bg-white p-2.5 shadow-2xl space-y-2 animate-in fade-in zoom-in-95 duration-150">
-                {/* Header Dropdown */}
-                <div className="flex items-center justify-between px-2 pt-1 pb-1 border-b border-[#9DB2BF]/30">
-                  <span className="text-[11px] font-bold text-[#526D82] uppercase tracking-wider flex items-center gap-1.5">
-                    <Search className="h-3.5 w-3.5 text-[#526D82]" />
-                    {searchQuery.trim() ? "Hasil Pencarian Cepat" : "Rekomendasi Eksplorasi (Maks. 5)"}
+              <div className="absolute top-12 left-0 right-0 z-50 rounded-2xl border border-[#9DB2BF]/60 bg-white shadow-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
+                <div className="p-2 border-b border-[#9DB2BF]/20 bg-[#DDE6ED]/20 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-[#526D82] uppercase tracking-wider">
+                    {searchQuery.trim() ? "Hasil Pencarian Cepat" : "Rekomendasi Coba Fitur"}
                   </span>
-                  {!searchQuery.trim() && (
-                    <button
-                      type="button"
-                      onClick={() => setRecommendations(getRandomRecommendations(SEARCH_POOL, 5))}
-                      className="inline-flex items-center gap-1 text-[10px] font-bold text-[#526D82] hover:text-[#27374D] bg-[#DDE6ED]/60 hover:bg-[#DDE6ED] px-2 py-0.5 rounded-md transition-colors cursor-pointer"
-                    >
-                      <RefreshCw className="h-3 w-3" />
-                      <span>Acak Lagi</span>
-                    </button>
-                  )}
                 </div>
-
-                {/* Daftar Maksimal 5 Rekomendasi */}
-                <div className="space-y-1">
+                <div className="max-h-72 overflow-y-auto divide-y divide-[#9DB2BF]/15">
                   {displayedItems.length > 0 ? (
-                    displayedItems.map((item) => {
-                      const Icon =
-                        item.type === "simulator"
-                          ? Smartphone
-                          : item.type === "modul"
-                          ? BookOpen
-                          : HelpCircle;
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => handleSelectRecommendation(item)}
-                          className="w-full text-left p-2.5 rounded-xl hover:bg-[#DDE6ED]/50 transition-all flex items-center justify-between group cursor-pointer"
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div
-                              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-xs ${
-                                item.type === "simulator"
-                                  ? "bg-amber-50 text-amber-700 border-amber-200"
-                                  : item.type === "modul"
-                                  ? "bg-slate-100 text-[#27374D] border-[#9DB2BF]/50"
-                                  : "bg-emerald-50 text-emerald-800 border-emerald-200"
-                              }`}
-                            >
-                              <Icon className="h-4 w-4" />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="text-xs font-bold text-[#27374D] group-hover:text-[#526D82] transition-colors truncate">
-                                {item.title}
-                              </div>
-                              <div className="text-[10px] text-[#526D82] truncate">{item.subtitle}</div>
-                            </div>
-                          </div>
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-[9px] font-extrabold border shrink-0 ${
-                              item.type === "simulator"
-                                ? "bg-amber-50 text-amber-800 border-amber-300"
-                                : item.type === "modul"
-                                ? "bg-slate-100 text-[#27374D] border-[#9DB2BF]/60"
-                                : "bg-emerald-50 text-emerald-800 border-emerald-300"
-                            }`}
-                          >
-                            {item.badge}
-                          </span>
-                        </button>
-                      );
-                    })
+                    displayedItems.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleSelectRecommendation(item)}
+                        className="w-full text-left p-3 hover:bg-[#DDE6ED]/40 transition-colors flex items-center justify-between gap-3 cursor-pointer"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-[#27374D] truncate">{item.title}</p>
+                          <p className="text-[10px] text-[#526D82] truncate">{item.subtitle}</p>
+                        </div>
+                        <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/40">
+                          {item.badge}
+                        </span>
+                      </button>
+                    ))
                   ) : (
                     <div className="p-3 text-center text-xs text-[#526D82]">
                       Tidak ada hasil yang cocok. Tekan Enter untuk cari di Kamus.
@@ -455,46 +341,31 @@ export default function Layout() {
             )}
           </div>
 
-          {/* Right Header Controls (Notifikasi, Pesan, User Profile) */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Notification Interactive Dropdown */}
             <NotificationDropdown />
-
-            {/* User Profile Pill Dropdown */}
             <UserProfileDropdown />
           </div>
         </header>
 
-        {/* Konten Dashboard Utama (Background: DDE6ED, Font: 27374D) */}
-        {/* pb-24 di mobile agar konten tidak tertutup bottom bar navigasi */}
         <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 pb-24 md:pb-7 page-transition-enter" key={location.pathname}>
           <Outlet />
         </main>
 
-        {/* Footer Permanen (diberi margin bawah di mobile agar tidak terpotong bottom nav) */}
         <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto mb-20 md:mb-0">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 sm:px-6 sm:flex-row sm:items-center sm:justify-between text-xs text-[#526D82]">
             <p className="max-w-xl leading-relaxed">
-              Hasil hanyalah indikasi berbasis aturan dan bisa keliru. Seluruh analisis berjalan langsung di
-              perangkatmu (on-device) tanpa server atau pelacak data.
+              JagaRuang · Platform perlindungan dan edukasi siber masyarakat Indonesia.
             </p>
             <div className="flex items-center gap-4 shrink-0">
-              <NavLink
-                to="/keterbatasan"
-                className="font-semibold text-[#27374D] underline underline-offset-4 hover:text-[#526D82]"
-              >
+              <NavLink to="/keterbatasan" className="font-semibold text-[#27374D] underline underline-offset-4 hover:text-[#526D82]">
                 Keterbatasan dan Privasi
               </NavLink>
             </div>
           </div>
         </footer>
-
-        {/* =================================================================== */}
-        {/* BOTTOM NAVIGATION BAR MOBILE DENGAN FLOATING BUBBLE & CURVED NOTCH  */}
-        {/* 5 ITEM: DASHBOARD, BELAJAR, CEK, LINDUNGI, SANDI                    */}
-        {/* =================================================================== */}
-        <MobileCurvedBottomNav items={NAV_ITEMS} />
       </div>
+
+      <MobileCurvedBottomNav items={NAV_ITEMS} />
     </div>
   );
 }

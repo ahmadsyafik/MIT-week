@@ -5,13 +5,13 @@
 2. Tidak ada push langsung ke `development` untuk fitur. Semua lewat PR.
 3. Setelah merge, tiap pihak tetap bekerja di branch peran masing-masing.
 
-## 2. Urutan
+## 2. Urutan Integrasi
 
 ```
-[1] backend  ──PR──> development   (logika + konten + tes)
-[2] frontend ──PR──> development   (UI, dengan VITE_USE_MOCK=true dulu)
+[1] backend  ───PR───► development   (logika + konten + tes)
+[2] frontend ───PR───► development   (UI, dengan VITE_USE_MOCK=true dulu)
 [3] development: ganti ke core asli (VITE_USE_MOCK=false) -> uji alur penuh
-[4] development ──PR──> main       (setelah checklist rilis lulus)
+[4] development ───PR───► main       (setelah checklist rilis lulus)
 ```
 
 Backend lebih dulu karena Frontend perlu mengganti mock ke core asli. Bila Frontend selesai lebih dulu, tidak masalah: mock membuatnya tetap jalan.
@@ -33,7 +33,7 @@ Backend lebih dulu karena Frontend perlu mengganti mock ke core asli. Bila Front
 - [ ] Tidak ada impor langsung ke `packages/core/src`
 - [ ] Disclaimer tampil di setiap hasil; tidak ada hijau/centang/perisai untuk level terendah
 - [ ] Tidak ada kata terlarang di teks UI (jalankan skrip pemindai, FE-6.3)
-- [ ] `npm run scope` hijau
+- [ ] `npm run check` hijau
 
 ## 4. Langkah Integrator di `development`
 

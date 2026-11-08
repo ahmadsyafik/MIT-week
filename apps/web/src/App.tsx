@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Beranda from "./pages/Beranda";
+import Dashboard from "./pages/Dashboard";
 import Belajar from "./pages/Belajar";
 import Cek from "./pages/Cek";
 import Lindungi from "./pages/Lindungi";
@@ -37,6 +38,16 @@ export default function App() {
             <Route path="keterbatasan" element={<Keterbatasan />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
+
+            {/* Halaman Dashboard Utama (Terproteksi) */}
+            <Route
+              path="dashboard"
+              element={
+                <ProtectedRoute featureName="Dashboard Utama">
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Halaman Aplikasi yang Terproteksi (Hanya Ditampilkan untuk User yang Sudah Login) */}
             <Route

@@ -109,7 +109,7 @@ export default function UserProfileDropdown() {
               onClick={() => setIsOpen(false)}
               className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-[#27374D] hover:bg-slate-50 transition-colors"
             >
-              <span>Keterbatasan & Privasi</span>
+              <span>Keterbatasan &amp; Privasi</span>
               <ExternalLink className="h-3 w-3 text-[#526D82]" />
             </NavLink>
           </div>

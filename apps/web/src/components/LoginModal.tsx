@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { X, UserCheck, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
@@ -6,6 +7,8 @@ export default function LoginModal() {
   const { isLoginModalOpen, closeLoginModal, login } = useAuth();
   const [name, setName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (isLoginModalOpen) {
@@ -27,13 +30,21 @@ export default function LoginModal() {
 
   if (!isLoginModalOpen) return null;
 
+  const handleSuccessfulAuth = () => {
+    if (location.pathname === "/" || location.pathname === "/keterbatasan") {
+      navigate("/dashboard");
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     login(name.trim() || "Kawan JagaRuang");
+    handleSuccessfulAuth();
   };
 
   const handleGuestLogin = () => {
     login("Tamu");
+    handleSuccessfulAuth();
   };
 
   return (
@@ -63,7 +74,7 @@ export default function LoginModal() {
           <img
             src="/logo-blue.png"
             alt="Logo JagaRuang"
-            className="h-11 w-11 object-contain shrink-0"
+            className="h-8 w-8 object-contain shrink-0"
           />
           <div>
             <h2 id="login-modal-title" className="text-xl font-bold text-[#27374D]">

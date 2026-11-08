@@ -222,7 +222,7 @@ export default function Sandi() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 space-y-6">
       {/* ===================================================================== */}
       {/* HEADER HALAMAN SANDI KELUARGA                                         */}
       {/* ===================================================================== */}

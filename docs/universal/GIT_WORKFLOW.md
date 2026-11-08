@@ -13,7 +13,7 @@ backend         frontend
 
 | Branch | Isi | Siapa yang push |
 |---|---|---|
-| `main` | Rilis stabil | Tidak ada push langsung. Hanya merge PR dari `development` |
+| `main` | Rilis stabil | Tidak ada push langsung. Hanya merge PR dari `development` atau `frontend` |
 | `development` | Gabungan `backend` + `frontend` + infrastruktur | Integrator (untuk file infrastruktur) dan merge PR |
 | `backend` | Pekerjaan Backend | Backend |
 | `frontend` | Pekerjaan Frontend | Frontend |
@@ -22,7 +22,7 @@ Sub-branch pendek boleh dipakai bila perlu: `backend/analyzer-rules`, `frontend/
 
 Integrator mengubah file infrastruktur (root, `.github/`, `scripts/`, `vercel.json`, `packages/contracts/`, `docs/universal/`) lewat branch pendek `infra/<topik>` -> PR ke `development` (tidak dibatasi scope-guard).
 
-## 2. Rutinitas harian
+## 2. Rutinitas Harian
 
 ```bash
 # Backend (contoh). Frontend sama, ganti nama branch.
@@ -37,9 +37,9 @@ git commit -m "feat(core): tambah aturan negasi OTP"
 git push origin backend              # hook pre-push menjalankan scope-guard
 ```
 
-> Pakai `git merge`, bukan `rebase`, supaya riwayat aman dan tidak butuh `--force`.
+> Gunakan `git merge`, bukan `rebase`, supaya riwayat aman dan tidak butuh `--force`.
 
-## 3. Format commit (Conventional Commits)
+## 3. Format Commit (Conventional Commits)
 
 ```
 <tipe>(<lingkup>): <deskripsi imperatif singkat>
@@ -63,15 +63,15 @@ Urutan merge ke `development` ada di [INTEGRATION_RUNBOOK.md](INTEGRATION_RUNBOO
 
 Hanya Integrator: PR `development` -> `main` setelah skenario uji juri lulus. Beri tag `v1.0.0`.
 
-## 6. Konflik
+## 6. Resolusi Konflik
 
-| File | Cara |
+| File | Cara Penyelesaian |
 |---|---|
 | `package-lock.json` | Jangan digabung manual. Ambil versi `origin/development`, lalu `npm install` ulang: `git checkout origin/development -- package-lock.json && npm install && git add package-lock.json` |
 | `packages/contracts/*`, `docs/universal/*` | Seharusnya tidak berubah di role branch. Jika konflik, ambil versi `development`: `git checkout origin/development -- <file>` |
 | File milik sendiri | Selesaikan manual seperti biasa |
 
-## 7. Jika terlanjur mengubah file di luar wewenang
+## 7. Jika Terlanjur Mengubah File di Luar Wewenang
 
 ```bash
 git checkout origin/development -- <path/file/itu>

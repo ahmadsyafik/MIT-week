@@ -94,6 +94,7 @@ export default function Keterbatasan() {
       storage.clearAll();
       try {
         localStorage.removeItem("jagaruang_notifications");
+        localStorage.removeItem("jagaruang_notifications_v3");
       } catch {
         // ignore
       }
@@ -104,7 +105,7 @@ export default function Keterbatasan() {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-10">
+    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-7 space-y-8 pb-10">
       {/* Header Banner Halaman */}
       <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col gap-3">

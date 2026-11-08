@@ -7,7 +7,7 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "dev": "npm run dev -w @jagaruang/web",
-    "build": "npm run build -w @jagaruang/web",
+    "build": "npm run build -w @jagaruang/web && node -e \"const fs=require('fs'); fs.cpSync('apps/web/dist', 'dist', {recursive:true});\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "check": "npm run typecheck && npm run test && npm run build",
