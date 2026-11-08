@@ -4,7 +4,7 @@
 
 Studi kasus **The Trust Trap: Navigating Digital Deception** · **MIT-Week 2026** · Tema: *Guardians of the Digital Space*.
 
-- 🔗 **Live:** _(isi tautan Vercel)_
+- 🔗 **Live:** _(https://jagaruang.vercel.app)_
 - 🎬 **Video demo:** _(isi tautan)_
 - 📄 **PRD:** [`docs/universal/PRD_JagaRuang.pdf`](docs/universal/PRD_JagaRuang.pdf)
 
@@ -71,9 +71,9 @@ Prasyarat: Node.js 20+.
 ## 7. Tim & branch
 | Peran | Nama | Branch |
 |---|---|---|
-| Backend (logika & data) | Ahmad Syifa'ul Falakhul Khayyi | `backend` |
-| Frontend (tampilan) | _(isi)_ | `frontend` |
-| Integrasi & deploy | _(isi)_ | `development` -> `main` |
+| Backend (logika & data) | Raffi Azzaky Ramadhani | `backend` |
+| Frontend (tampilan) | Ahmad Syifaul Falakhul Khayyi dan Mutiara Dewanda Prisvilla | `frontend` |
+| Integrasi & deploy | Ahmad Syafi'al Anam | `development` -> `main` |
 
 ## 8. Dokumentasi
 [Indeks](docs/README.md) · [Git workflow](docs/universal/GIT_WORKFLOW.md) · [Kontrak](docs/universal/INTERFACES.md) · [Backend](docs/backend/README.md) · [Frontend](docs/frontend/README.md) · [Deploy](docs/development/DEPLOY.md)
