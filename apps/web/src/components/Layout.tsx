@@ -222,8 +222,6 @@ export default function Layout() {
           <Outlet />
         </main>
 
-        <LoginModal />
-
         {/* Footer Permanen */}
         <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 sm:px-6 sm:flex-row sm:items-center sm:justify-between text-xs text-[#526D82]">
@@ -472,8 +470,6 @@ export default function Layout() {
         <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 pb-24 md:pb-7 page-transition-enter" key={location.pathname}>
           <Outlet />
         </main>
-
-        <LoginModal />
 
         {/* Footer Permanen (diberi margin bawah di mobile agar tidak terpotong bottom nav) */}
         <footer className="border-t border-[#9DB2BF]/40 bg-white mt-auto mb-20 md:mb-0">

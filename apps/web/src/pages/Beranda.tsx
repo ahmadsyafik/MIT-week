@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Search,
   Compass,
@@ -127,7 +127,12 @@ const FAQ_ITEMS = [
 ];
 
 export default function Beranda() {
-  const { user, isAuthenticated, openLoginModal } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleGoToLogin = () => {
+    navigate("/login");
+  };
 
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
@@ -167,7 +172,7 @@ export default function Beranda() {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <button
                 type="button"
-                onClick={openLoginModal}
+                onClick={handleGoToLogin}
                 className="inline-flex min-h-[48px] items-center justify-center gap-3 rounded-full bg-[#526D82] px-8 py-3 text-sm font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-md cursor-pointer"
               >
                 <span>Mulai Sekarang</span>
@@ -243,7 +248,7 @@ export default function Beranda() {
               <div className="pt-6">
                 <button
                   type="button"
-                  onClick={openLoginModal}
+                  onClick={handleGoToLogin}
                   className="w-full rounded-full bg-[#526D82] py-2.5 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
                 >
                   Periksa Sekarang
@@ -264,7 +269,7 @@ export default function Beranda() {
               <div className="pt-6">
                 <button
                   type="button"
-                  onClick={openLoginModal}
+                  onClick={handleGoToLogin}
                   className="w-full rounded-full bg-[#526D82] py-2.5 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
                 >
                   Mulai Latihan
@@ -285,7 +290,7 @@ export default function Beranda() {
               <div className="pt-6">
                 <button
                   type="button"
-                  onClick={openLoginModal}
+                  onClick={handleGoToLogin}
                   className="w-full rounded-full bg-[#526D82] py-2.5 text-xs font-bold text-white hover:bg-[#27374D] transition-colors"
                 >
                   Buka Panduan
@@ -306,7 +311,7 @@ export default function Beranda() {
             </div>
             <button
               type="button"
-              onClick={openLoginModal}
+              onClick={handleGoToLogin}
               className="text-xs font-bold text-[#526D82] hover:text-[#27374D] flex items-center gap-1"
             >
               <span>Jelajahi Semua Modul</span>
@@ -320,7 +325,7 @@ export default function Beranda() {
               return (
                 <div
                   key={m.id}
-                  onClick={openLoginModal}
+                  onClick={handleGoToLogin}
                   className="group flex flex-col justify-between rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 hover:border-[#526D82] hover:shadow-lg transition-all cursor-pointer"
                 >
                   <div className="space-y-4">
@@ -480,7 +485,7 @@ export default function Beranda() {
           <div className="pt-2">
             <button
               type="button"
-              onClick={openLoginModal}
+              onClick={handleGoToLogin}
               className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-white px-8 py-3 text-sm font-bold text-[#27374D] hover:bg-[#DDE6ED] active:scale-98 transition-all shadow-md cursor-pointer"
             >
               <span>Masuk & Mulai Simulasi</span>
