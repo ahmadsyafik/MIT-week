@@ -1,0 +1,4452 @@
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import {
+  Compass,
+  BookOpen,
+  Clock,
+  Search,
+  CheckCircle2,
+  AlertTriangle,
+  OctagonAlert,
+  ShieldCheck,
+  ShieldAlert,
+  ArrowRight,
+  ArrowLeft,
+  ExternalLink,
+  ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  RefreshCw,
+  RotateCcw,
+  Award,
+  X,
+  FileCode,
+  Users,
+  Smartphone,
+  Globe,
+  QrCode,
+  Lock,
+  Layers,
+  HelpCircle,
+  Bell,
+  Mail,
+  PhoneCall,
+  ListChecks,
+  CheckSquare,
+  BarChart3,
+  CreditCard,
+  Heart,
+  Share2,
+  Check,
+  Star,
+  Copy,
+  Play,
+  Pause,
+  Maximize2,
+  Minimize2,
+  Zap,
+  Sparkles,
+} from "lucide-react";
+import { Card, Button, Disclaimer } from "../components/ui";
+import { FakeChatSimulator } from "../components/simulator/FakeChatSimulator";
+import { ModulRekayasaSosialPage } from "../components/modul/ModulRekayasaSosialPage";
+import { ModulAnatomiPenipuanPage } from "../components/modul/ModulAnatomiPenipuanPage";
+import { ModulPerKanalPage } from "../components/modul/ModulPerKanalPage";
+import { MODUL_WHATSAPP } from "../data/modulPerKanal";
+import { ModulEmailPhishingPage } from "../components/modul/ModulEmailPhishingPage";
+import { ModulTeleponBankPage } from "../components/modul/ModulTeleponBankPage";
+import { ModulSepuluhCiriPage } from "../components/modul/ModulSepuluhCiriPage";
+import { ModulSebelumTransferPage } from "../components/modul/ModulSebelumTransferPage";
+import { ModulPolaModusNasionalPage } from "../components/modul/ModulPolaModusNasionalPage";
+import { ModulQrisEwalletPage } from "../components/modul/ModulQrisEwalletPage";
+import { ModulPinjolIlegalPage } from "../components/modul/ModulPinjolIlegalPage";
+import { ModulPusatDaruratPage } from "../components/modul/ModulPusatDaruratPage";
+import { ModulDampingiKeluargaPage } from "../components/modul/ModulDampingiKeluargaPage";
+import {
+  addNotification,
+  NOTIFICATION_EVENT,
+  type AppNotification,
+} from "../lib/notificationService";
+
+// =============================================================================
+// TIPE & DATA STATIC UNTUK 4 PILAR BELAJAR
+// =============================================================================
+
+type TabType = "simulator" | "modul" | "kilat" | "kamus";
+
+// -----------------------------------------------------------------------------
+// 1. DATA SKENARIO SIMULATOR
+// -----------------------------------------------------------------------------
+interface ScenarioEvidence {
+  id: string;
+  label: string;
+  isRedFlag: boolean;
+  explanation: string;
+}
+
+interface ScenarioChoice {
+  id: string;
+  label: string;
+  score: number;
+  feedback: string;
+  isCorrect: boolean;
+}
+
+interface ScenarioCase {
+  id: string;
+  title: string;
+  category: string;
+  channel: string;
+  levelLabel: string;
+  levelBadge: string;
+  dotColor: string;
+  duration: string;
+  stepsCount: number;
+  description: string;
+  icon: typeof FileCode;
+  bgImage?: string;
+  centerImage?: string;
+  storyCards?: string[];
+  senderName: string;
+  senderAddress: string;
+  messageText: string;
+  attachmentName?: string;
+  attachmentSize?: string;
+  briefing: string[];
+  evidences: ScenarioEvidence[];
+  choices: ScenarioChoice[];
+  flagCode: string;
+  learningPoint: string;
+}
+
+const K1_STORY_CARDS: string[] = [
+  "/simulator/k1/1.jpg",
+  "/simulator/k1/2.jpg",
+  "/simulator/k1/3.jpg",
+  "/simulator/k1/4.jpg",
+  "/simulator/k1/5.jpg",
+  "/simulator/k1/6.jpg",
+  "/simulator/k1/7.jpg",
+  "/simulator/k1/8.jpg",
+  "/simulator/k1/9.jpg",
+  "/simulator/k1/10.jpg",
+  "/simulator/k1/11.jpg",
+  "/simulator/k1/12.jpg",
+  "/simulator/k1/13.jpg",
+  "/simulator/k1/14.jpg",
+  "/simulator/k1/15.jpg",
+  "/simulator/k1/16.jpg",
+  "/simulator/k1/17.jpg",
+  "/simulator/k1/18.jpg",
+  "/simulator/k1/19.jpg",
+  "/simulator/k1/20.jpg",
+  "/simulator/k1/21.jpg",
+  "/simulator/k1/22.jpg",
+  "/simulator/k1/22.2.jpg",
+  "/simulator/k1/23.jpg",
+  "/simulator/k1/24.jpg",
+  "/simulator/k1/25.jpg",
+  "/simulator/k1/26.jpg",
+  "/simulator/k1/27.jpg",
+  "/simulator/k1/28.jpg",
+  "/simulator/k1/29.jpg",
+  "/simulator/k1/30.jpg",
+  "/simulator/k1/31.jpg",
+  "/simulator/k1/32.jpg",
+  "/simulator/k1/33.jpg",
+  "/simulator/k1/34.jpg",
+  "/simulator/k1/35.jpg",
+  "/simulator/k1/36.jpg",
+  "/simulator/k1/37.jpg",
+  "/simulator/k1/38.jpg",
+  "/simulator/k1/39.jpg",
+  "/simulator/k1/40.jpg",
+];
+
+const SCENARIOS: ScenarioCase[] = [
+  {
+    id: "k1",
+    title: "Undangan Pernikahan Digital.apk",
+    category: "Skenario 1 · Wajib",
+    channel: "WhatsApp",
+    levelLabel: "Tingkat Dasar",
+    levelBadge: "bg-emerald-50 text-emerald-800 border-emerald-300",
+    dotColor: "bg-emerald-500",
+    duration: "2 Mnt",
+    stepsCount: 3,
+    icon: Mail,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/undangan-digital.jpg",
+    storyCards: K1_STORY_CARDS,
+    description: "File .apk menyamar sebagai undangan pernikahan digital yang dikirimkan melalui ruang obrolan WhatsApp.",
+    senderName: "Admin Undangan Palsu",
+    senderAddress: "+62 812-7788-9901",
+    messageText: "Kak, kami mengundang ke pernikahan kami, buka undangan digital di aplikasi ini ya. Mohon hadir dan doanya.",
+    attachmentName: "Undangan_Pernikahan_Digital.apk",
+    attachmentSize: "7.8 MB",
+    briefing: [
+      "Pemain menerima chat dari nomor tak dikenal yang mengirimkan undangan pernikahan.",
+      "Pesan disertai lampiran berkas bernama 'Undangan_Pernikahan_Digital.apk'.",
+      "Misi: Temukan tanda kejanggalan pada file dan pengirim, lalu ambil keputusan yang tepat.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Ekstensi file .apk dikirim langsung lewat chat (bukan dari toko aplikasi resmi Play Store)",
+        isRedFlag: true,
+        explanation: "Berkas .apk adalah installer aplikasi mentah Android yang sangat berbahaya jika dipasang di luar Google Play Store.",
+      },
+      {
+        id: "e2",
+        label: "Nama file memakai kata umpan 'Undangan' untuk memancing rasa penasaran dan sungkan",
+        isRedFlag: true,
+        explanation: "Pelaku memanfaatkan rasa sungkan sosial agar korban segera mengklik tanpa sempat memeriksa ekstensi berkas.",
+      },
+      {
+        id: "e3",
+        label: "Pengirim adalah nomor baru yang tidak tersimpan di daftar kontak",
+        isRedFlag: true,
+        explanation: "Undangan pernikahan dari orang dekat semestinya berasal dari kontak yang sudah kamu kenal sebelumnya.",
+      },
+      {
+        id: "e4",
+        label: "Setelah dibuka, aplikasi meminta izin Baca/Terima SMS (READ_SMS)",
+        isRedFlag: true,
+        explanation: "Aplikasi undangan tidak membutuhkan akses SMS; izin ini disalahgunakan untuk menyadap kode OTP perbankan.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Langsung pasang aplikasi undangan tersebut karena penasaran siapa yang menikah",
+        score: 0,
+        feedback: "Berisiko tinggi! Aplikasi terpasang dan meminta izin Baca SMS — ini jalan masuk pencurian kode OTP perbankan.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tolak pasang aplikasi, verifikasi ke kontak yang bersangkutan atau hubungi via telepon",
+        score: 50,
+        feedback: "Keputusan tepat! File .apk dari chat tidak boleh dipasang. Undangan digital asli berupa web, bukan aplikasi instalasi.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Abaikan file dan langsung laporkan nomor asing sebagai kontak mencurigakan",
+        score: 50,
+        feedback: "Tindakan preventif terbaik! Memblokir nomor asing memutus upaya rekayasa sosial sebelum terjadi eksploitasi.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{APK-UNDANGAN}",
+    learningPoint: "File .apk dikirim langsung lewat chat adalah jalur paling umum penyebaran malware pencuri OTP di Indonesia. Undangan digital asli biasanya berupa halaman web, bukan aplikasi.",
+  },
+  {
+    id: "k2",
+    title: "Lihat Foto Paket",
+    category: "Skenario 2 · Wajib",
+    channel: "WhatsApp",
+    levelLabel: "Level Waspada",
+    levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: FileCode,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/paket.jpg",
+    description: "File berkedok foto bukti paket dari kurir ekspedisi dengan ekstensi ganda berbahaya.",
+    senderName: "Kurir Ekspedisi Paket",
+    senderAddress: "+62 877-4409-1234",
+    messageText: "Paket Anda tertahan di gudang sortir karena alamat kurang jelas. Mohon cek foto buktinya di sini ya kak: Foto_Resi_Paket.jpg.apk",
+    attachmentName: "Foto_Resi_Paket.jpg.apk",
+    attachmentSize: "6.4 MB",
+    briefing: [
+      "Chat masuk dari pengirim yang mengaku kurir ekspedisi pengiriman paket.",
+      "Mengabarkan paket tertahan dan meminta melihat foto resi terlampir.",
+      "Misi: Kenali trik ekstensi ganda (.jpg.apk) dan ambil tindakan pengamanan mandiri.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Ekstensi file ganda (.jpg.apk) — menyamarkan file installer aplikasi sebagai foto biasa",
+        isRedFlag: true,
+        explanation: "Sistem Android membaca ekstensi paling belakang (.apk), sehingga file ini adalah aplikasi, bukan foto dokumen.",
+      },
+      {
+        id: "e2",
+        label: "Tautan atau file dikirim dari nomor seluler pribadi, bukan akun resmi ekspedisi centang hijau",
+        isRedFlag: true,
+        explanation: "Ekspedisi resmi menghubungi pelanggan menggunakan akun bisnis terverifikasi centang hijau.",
+      },
+      {
+        id: "e3",
+        label: "Pemain tidak sedang menunggu kiriman paket dari kurir tersebut",
+        isRedFlag: true,
+        explanation: "Penipu menyebar pesan acak memanfaatkan tingginya frekuensi belanja online masyarakat.",
+      },
+      {
+        id: "e4",
+        label: "Ukuran file 6.4 MB terlalu besar untuk sekadar foto resi pengiriman",
+        isRedFlag: true,
+        explanation: "Foto resi biasanya berukuran di bawah 1 MB; ukuran di atas 5 MB mengindikasikan paket aplikasi malware lengkap.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Buka dan unduh file Foto_Resi_Paket.jpg.apk untuk memastikan isi paket",
+        score: 0,
+        feedback: "Pilihan berisiko! Ekstensi sebenarnya adalah .apk yang menyusupkan spyware sniffer SMS perbankan.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Abaikan dan cek nomor resi secara mandiri langsung di aplikasi resmi ekspedisi",
+        score: 50,
+        feedback: "Langkah tepat! Jangan pernah membuka file kiriman kurir; selalu lacak nomor resi di aplikasi resmi ekspedisi.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Abaikan file chat dan laporkan nomor pengirim yang mengatasnamakan kurir",
+        score: 50,
+        feedback: "Langkah protektif tepat! Nomor asing tanpa verifikasi centang hijau yang mengirim file patut langsung dilaporkan.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{FOTO-PAKET}",
+    learningPoint: "Ekstensi file ganda (.jpg.apk) adalah trik menyamarkan file aplikasi sebagai foto biasa. Selalu cek status pengiriman langsung lewat aplikasi resmi ekspedisi menggunakan nomor resi sendiri.",
+  },
+  {
+    id: "k3",
+    title: "Loker Admin WFH Palsu",
+    category: "Skenario 3 · Wajib",
+    channel: "Media Sosial",
+    levelLabel: "Risiko Kritis",
+    levelBadge: "bg-rose-50 text-rose-800 border-rose-300",
+    dotColor: "bg-rose-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: Users,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/work-from-home.jpg",
+    description: "Tawaran kerja admin work-from-home yang meminta transfer deposit/biaya di muka.",
+    senderName: "HR Global Media Partner",
+    senderAddress: "DM Instagram / Telegram: @hr_recruitment_id",
+    messageText: "Selamat, Anda lolos seleksi sebagai Admin WFH paruh waktu, gaji Rp 5.000.000/bulan, langsung kerja besok. Mohon transfer Rp 150.000 dulu untuk biaya administrasi ID card dan pelatihan.",
+    briefing: [
+      "Pemain mendapat DM tawaran kerja freelance dengan iming-iming gaji fantastis.",
+      "Dinyatakan langsung diterima tanpa wawancara, namun diminta transfer biaya administrasi di muka.",
+      "Misi: Identifikasi skema rekrutmen palsu berbayar sebelum mentransfer uang.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Diterima kerja langsung tanpa ada proses wawancara atau uji kompetensi sebelumnya",
+        isRedFlag: true,
+        explanation: "Perekrutan kerja yang sah selalu melalui tahapan verifikasi identitas, wawancara, atau tes keterampilan.",
+      },
+      {
+        id: "e2",
+        label: "Gaji yang ditawarkan (Rp 5 juta) tidak realistis untuk pekerjaan lepas pemula tanpa syarat",
+        isRedFlag: true,
+        explanation: "Gaji tinggi tanpa syarat kualifikasi adalah umpan psikologis agar korban terburu-buru mengambil keputusan.",
+      },
+      {
+        id: "e3",
+        label: "Permintaan transfer uang di muka untuk 'biaya administrasi dan pelatihan'",
+        isRedFlag: true,
+        explanation: "Pemberi kerja yang sah tidak pernah membebankan biaya administrasi atau meminta uang dari pelamar.",
+      },
+      {
+        id: "e4",
+        label: "Akun perekrut baru dibuat dan tidak memiliki informasi perusahaan resmi yang kredibel",
+        isRedFlag: true,
+        explanation: "Akun anonim di media sosial tanpa alamat kantor fisik jelas menandakan operasi rekrutmen bodong.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Transfer biaya administrasi Rp 150.000 karena takut kehilangan kesempatan kerja bagus",
+        score: 0,
+        feedback: "Terjebak penipuan! Begitu uang ditransfer, pelaku akan meminta biaya tambahan lain dan akhirnya memblokir kontak.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tolak tawaran, jangan transfer uang sepeser pun, lalu laporkan akun tersebut",
+        score: 50,
+        feedback: "Keputusan tepat! Pemberi kerja sah tidak pernah memungut biaya apapun dari calon karyawannya.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Minta surat perjanjian kerja tertulis dan verifikasi legalitas perusahaan ke situs Kemenaker",
+        score: 50,
+        feedback: "Verifikasi yang kritis! Memeriksa legalitas badan usaha melindungi diri dari jerat penipuan loker fiktif.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{LOKER-WFH}",
+    learningPoint: "Pekerjaan sah tidak pernah meminta bayaran di muka dalam bentuk apa pun. Curigai proses rekrutmen yang terlalu instan dengan janji gaji tinggi tanpa seleksi.",
+  },
+  {
+    id: "k4",
+    title: "Telepon Palsu Petugas Bank",
+    category: "Skenario 4 · Usulan",
+    channel: "Panggilan Telepon",
+    levelLabel: "Risiko Kritis",
+    levelBadge: "bg-rose-50 text-rose-800 border-rose-300",
+    dotColor: "bg-rose-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: PhoneCall,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/bank.jpg",
+    description: "Panggilan telepon mengaku staf keamanan bank meminta kode OTP dengan dalih pembatalan transaksi.",
+    senderName: "Fraud Unit Bank (Palsu)",
+    senderAddress: "Panggilan Suara: +62 21-1500888 (Spoofing)",
+    messageText: "[Panggilan Telepon] Selamat siang, saya dari Divisi Keamanan Bank Anda. Terdeteksi transaksi mencurigakan Rp 12.500.000 di luar negeri. Untuk membatalkannya sekarang, mohon sebutkan 6 digit kode OTP yang baru kami kirimkan ke SMS Anda.",
+    briefing: [
+      "HP pemain berdering mendesak dari orang yang mengaku staf keamanan bank resmi.",
+      "Penipu menakut-nakuti adanya transaksi luar negeri dan meminta kode OTP untuk membatalkan.",
+      "Misi: Hadapi manipulasi tekanan suara (vishing) dan pertahankan kerahasiaan OTP.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Penelepon meminta 6 digit kode OTP yang masuk via SMS",
+        isRedFlag: true,
+        explanation: "Kode OTP adalah kunci otorisasi transaksi. Bank resmi tidak pernah meminta kode OTP nasabah.",
+      },
+      {
+        id: "e2",
+        label: "Penelepon memakai nada mendesak dan menekan agar pemain panik dan tidak sempat berpikir logis",
+        isRedFlag: true,
+        explanation: "Tekanan psikologis sengaja diciptakan agar korban bertindak impulsif sebelum sadar sedang ditipu.",
+      },
+      {
+        id: "e3",
+        label: "Nomor panggilan bukan nomor resmi yang tertera di kartu ATM (memakai VoIP caller ID spoofing)",
+        isRedFlag: true,
+        explanation: "Teknologi telepon internet memungkinkan pelaku menampilkan nomor seolah-olah berasal dari kantor bank.",
+      },
+      {
+        id: "e4",
+        label: "Pesan SMS OTP dengan jelas menyatakan: 'JANGAN BERIKAN KODE INI KEPADA SIAPAPUN TERMASUK PIHAK BANK'",
+        isRedFlag: true,
+        explanation: "Setiap SMS resmi bank selalu mencantumkan peringatan tegas tentang kerahasiaan kode verifikasi.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Sebutkan kode OTP ke penelepon agar transaksi Rp 12.500.000 segera dibatalkan",
+        score: 0,
+        feedback: "Bahaya kritis! Menyebutkan kode OTP membuat penipu langsung berhasil membobol akun m-Banking Anda.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tutup panggilan segera, jangan beri OTP, dan hubungi nomor resmi bank dari balik kartu fisik",
+        score: 50,
+        feedback: "Langkah penyelamat! Bank resmi tidak pernah meminta kode OTP lewat telepon dengan alasan apapun.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Tanyakan ID pegawai dan nomor tiket pengaduan resmi sebelum mengambil tindakan apapun",
+        score: 50,
+        feedback: "Sikap skeptis tepat! Meminta verifikasi tiket resmi menggagalkan kepanikan palsu yang dirancang penipu.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{TELEPON-BANK}",
+    learningPoint: "Jangan pernah memberikan kode OTP kepada siapa pun lewat telepon, apa pun alasannya — termasuk yang mengaku pihak bank. Kalau ragu, tutup telepon dan hubungi balik nomor resmi di kartu fisik.",
+  },
+  {
+    id: "k5",
+    title: "Kenalan Online → Investasi Bodong",
+    category: "Skenario 5 · Usulan",
+    channel: "Dating App / Sosmed",
+    levelLabel: "Level Waspada",
+    levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    duration: "4 Mnt",
+    stepsCount: 4,
+    icon: Heart,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/dating-apps.jpg",
+    description: "Membangun kedekatan emosional bertahap, lalu mengajak investasi bersama di platform trading fiktif.",
+    senderName: "Kenalan Online (Amanda / Kevin)",
+    senderAddress: "Tinder / Bumble / Instagram DM",
+    messageText: "Halo sayang, hari ini aku profit lagi 25% dari trading crypto di platform ini. Kamu mau aku ajarin pelan-pelan? Coba deposit kecil dulu Rp 500 ribu, nanti aku bimbing sampai bisa ditarik hasilnya.",
+    briefing: [
+      "Selama beberapa minggu, kenalan online bersikap sangat ramah, hangat, dan perhatian.",
+      "Setelah rasa percaya terbangun, ia mulai membujuk untuk ikut berinvestasi di platform trading khusus.",
+      "Misi: Kenali pola manipulasi emosional (Pig Butchering) sebelum dana disetorkan ke platform fiktif.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Platform investasi tidak terdaftar dalam daftar izin resmi Otoritas Jasa Keuangan (OJK)",
+        isRedFlag: true,
+        explanation: "Setiap platform keuangan dan investasi yang beroperasi di Indonesia wajib memiliki izin resmi dari OJK/Bappebti.",
+      },
+      {
+        id: "e2",
+        label: "Menjanjikan keuntungan tetap yang tinggi tanpa risiko rugi sama sekali",
+        isRedFlag: true,
+        explanation: "Tidak ada instrumen investasi legal yang menjamin profit pasti tanpa adanya risiko fluktuasi pasar.",
+      },
+      {
+        id: "e3",
+        label: "Kenalan menolak bertemu langsung atau video call dengan alasan selalu berubah-ubah",
+        isRedFlag: true,
+        explanation: "Pelaku menggunakan foto profil curian dan menghindari panggilan video agar identitas aslinya tidak terbongkar.",
+      },
+      {
+        id: "e4",
+        label: "Alamat website platform trading menggunakan domain baru dan tidak jelas legalitas pengembangnya",
+        isRedFlag: true,
+        explanation: "Situs trading palsu dibuat dengan template web instan untuk memanipulasi tampilan angka saldo keuntungan semu.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Transfer modal awal Rp 500.000 ke platform trading yang direkomendasikan kenalan",
+        score: 0,
+        feedback: "Terjebak Pig Butchering! Tampilan keuntungan di layar hanya angka palsu. Begitu modal ditambah, uang tidak akan pernah bisa ditarik.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tolak tawaran investasi, cek legalitas platform di situs resmi OJK, dan batasi komunikasi finansial",
+        score: 50,
+        feedback: "Pilihan bijak! Selalu verifikasi izin penyelenggara investasi ke OJK dan waspadai ajakan finansial dari kenalan daring.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Hentikan komunikasi dan tolak segala bentuk transfer dana ke platform tanpa izin OJK",
+        score: 50,
+        feedback: "Keputusan tepat! Menjaga batas privasi finansial melindungi dari manipulasi psikologis pertemanan fiktif.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{KENALAN-INVESTASI}",
+    learningPoint: "Investasi sah selalu memiliki risiko dan diawasi OJK. Janji profit pasti dari kenalan online yang belum pernah ditemui adalah ciri khas penipuan investasi (Pig Butchering).",
+  },
+  {
+    id: "k6",
+    title: "Email Akun Akan Ditangguhkan",
+    category: "Skenario 6 · Phishing",
+    channel: "Email",
+    levelLabel: "Level Waspada",
+    levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: Mail,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/email.jpg",
+    description: "Email phishing mengaku penyedia layanan resmi, meminta klik tautan verifikasi kata sandi darurat.",
+    senderName: "Pusat Keamanan Akun Google",
+    senderAddress: "security@g00gle-accounts.verify-user.id",
+    messageText: "Pemberitahuan Mendesak: Aktivitas tidak wajar terdeteksi pada akun Anda. Akun akan ditangguhkan permanen dalam 24 jam. Klik tautan berikut untuk memverifikasi kata sandi Anda: http://login-security-service.net/verify",
+    briefing: [
+      "Pemain menerima email berjudul mendesak: 'Akun Anda akan ditangguhkan dalam 24 jam'.",
+      "Pengirim meminta klik tautan verifikasi kata sandi darurat.",
+      "Misi: Telusuri domain pengirim dan tautan tersembunyi sebelum memasukkan kredensial login.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Alamat domain pengirim mirip merek resmi (typosquatting: g00gle-accounts...) bukan domain resmi google.com",
+        isRedFlag: true,
+        explanation: "Pelaku mendaftarkan domain tiruan dengan sedikit salah eja untuk mengelabui pembaca yang terburu-buru.",
+      },
+      {
+        id: "e2",
+        label: "Tautan di dalam email mengarah ke domain pihak ketiga yang tidak berhubungan dengan layanan resmi",
+        isRedFlag: true,
+        explanation: "Tautan asli mengarah ke server peretas untuk mencuri kredensial akun pengguna.",
+      },
+      {
+        id: "e3",
+        label: "Penggunaan nada mendesak dengan tenggat waktu singkat (24 jam) agar korban panik",
+        isRedFlag: true,
+        explanation: "Ancaman pemblokiran akun adalah pemicu emosional agar korban bertindak tanpa berpikir logis.",
+      },
+      {
+        id: "e4",
+        label: "Permintaan memasukkan password melalui link di dalam email",
+        isRedFlag: true,
+        explanation: "Penyedia layanan resmi tidak pernah meminta pembaruan kata sandi secara mendadak lewat tautan email eksternal.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Klik tautan dan segera masukkan password karena takut akun ditangguhkan",
+        score: 0,
+        feedback: "Kredensial dicuri! Halaman tersebut adalah situs tiruan phishing yang langsung merekam kata sandi akun asli Anda.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Jangan klik link, laporkan email sebagai phishing, dan buka situs resmi langsung dari peramban",
+        score: 50,
+        feedback: "Tindakan tepat! Jangan login dari tautan email yang mencurigakan. Selalu ketik sendiri alamat resmi di browser.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Buka tab browser baru dan verifikasi status akun langsung di pusat bantuan resmi",
+        score: 50,
+        feedback: "Langkah cerdas! Menghindari klik tautan dan membuka pusat bantuan resmi memastikan akun tetap aman.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{EMAIL-SUSPEND}",
+    learningPoint: "Jangan pernah klik tautan dari email yang terasa mendesak. Buka situs resmi dengan mengetik alamatnya sendiri di browser, lalu login dari sana untuk memeriksa status akun.",
+  },
+  {
+    id: "k7",
+    title: "Giveaway Palsu",
+    category: "Skenario 7 · Hadiah",
+    channel: "Media Sosial",
+    levelLabel: "Tingkat Dasar",
+    levelBadge: "bg-emerald-50 text-emerald-800 border-emerald-300",
+    dotColor: "bg-emerald-500",
+    duration: "2 Mnt",
+    stepsCount: 3,
+    icon: Award,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/giveaway.jpg",
+    description: "Mengaku brand ternama mengumumkan pemenang giveaway, meminta biaya pajak hadiah di muka.",
+    senderName: "Akun Giveaway Resmi Brand (Palsu)",
+    senderAddress: "Instagram DM: @official_giveaway_brand2026",
+    messageText: "Selamat! Akun Anda terpilih sebagai pemenang ke-1 Giveaway iPhone 15 Pro Max. Untuk klaim pengiriman unit, silakan transfer biaya pajak hadiah sebesar Rp 350.000 ke rekening Bendahara kami.",
+    briefing: [
+      "Pemain menerima DM dari akun yang memakai nama dan logo mirip brand ternama.",
+      "Mengabarkan memenangkan hadiah smartphone, tapi meminta transfer uang pajak hadiah ke rekening pribadi.",
+      "Misi: Verifikasi keabsahan undian dan tolak pungutan liar berkedok hadiah gratis.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Diminta membayar biaya terlebih dulu untuk menerima 'hadiah gratis'",
+        isRedFlag: true,
+        explanation: "Hadiah atau giveaway yang sah tidak pernah memungut biaya transfer dari pemenang.",
+      },
+      {
+        id: "e2",
+        label: "Pemain sama sekali tidak pernah mendaftar atau mengikuti undian dari brand tersebut",
+        isRedFlag: true,
+        explanation: "Undian resmi hanya mengundi pihak yang benar-benar terdaftar sebagai peserta kompetisi.",
+      },
+      {
+        id: "e3",
+        label: "Akun baru dibuat dengan sedikit pengikut dan tidak memiliki lencana centang verifikasi resmi",
+        isRedFlag: true,
+        explanation: "Brand besar selalu menggunakan akun resmi bercentang verifikasi biru dengan riwayat postingan panjang.",
+      },
+      {
+        id: "e4",
+        label: "Rekening tujuan transfer adalah rekening perorangan pribadi, bukan rekening perusahaan berbadan hukum",
+        isRedFlag: true,
+        explanation: "Penyelenggara resmi tidak pernah menampung dana administrasi di rekening bank atas nama individu perorangan.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Langsung transfer biaya pajak hadiah Rp 350.000 agar hadiah smartphone segera dikirim",
+        score: 0,
+        feedback: "Tertipu iming-iming! Hadiah tidak akan pernah dikirim, dan pelaku akan terus meminta biaya tambahan asuransi.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Abaikan pesan, cek akun resmi brand yang terverifikasi, dan laporkan akun palsu tersebut",
+        score: 50,
+        feedback: "Keputusan tepat! Hadiah/giveaway yang sah tidak pernah memungut biaya apapun dari pemenang.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Minta surat tanda pengesahan resmi Kementerian Sosial dan tolak transfer biaya apapun",
+        score: 50,
+        feedback: "Penyelidikan tepat! Menolak pungutan biaya pajak undian mematahkan modus giveaway fiktif seketika.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{GIVEAWAY-PALSU}",
+    learningPoint: "Hadiah asli tidak pernah meminta kamu membayar lebih dulu. Selalu cek pengumuman pemenang di akun resmi brand yang terverifikasi, bukan dari DM pihak yang mengaku-aku.",
+  },
+  {
+    id: "k8",
+    title: "Toko Online Fiktif",
+    category: "Skenario 8 · Belanja",
+    channel: "Marketplace / Iklan",
+    levelLabel: "Level Waspada",
+    levelBadge: "bg-amber-50 text-amber-800 border-amber-300",
+    dotColor: "bg-amber-500",
+    duration: "3 Mnt",
+    stepsCount: 4,
+    icon: CreditCard,
+    bgImage: "/simulator/desk-template.jpg",
+    centerImage: "/simulator/covers/toko-online.jpg",
+    description: "Toko fiktif menjual barang elektronik murah jauh di bawah pasar, menolak rekber dan memaksa transfer langsung.",
+    senderName: "Toko Elektronik Cuci Gudang",
+    senderAddress: "WhatsApp / Chat Marketplace",
+    messageText: "Promo Cuci Gudang! iPhone 15 baru garansi resmi cuma Rp 4.500.000 (harga normal Rp 14 jt). Khusus hari ini karena stok sisa 2 unit. Tidak bisa lewat rekber Shopee/Tokped karena dana tertahan lama, wajib transfer langsung ke rekening toko ya kak.",
+    briefing: [
+      "Pemain melihat iklan promosi ponsel keluaran terbaru dijual dengan harga separuh harga pasar.",
+      "Penjual menolak sistem pembayaran resmi marketplace dan memaksa transfer langsung ke rekening pribadi.",
+      "Misi: Hindari jeratan harga murah fiktif dan pertahankan transaksi di kanal pembayaran resmi.",
+    ],
+    evidences: [
+      {
+        id: "e1",
+        label: "Harga barang jauh di bawah harga pasar wajar untuk barang sejenis (diskon tidak masuk akal)",
+        isRedFlag: true,
+        explanation: "Harga tidak wajar adalah pancingan utama penipu untuk menarik calon korban yang mencari barang murah.",
+      },
+      {
+        id: "e2",
+        label: "Penjual meminta pembayaran transfer langsung dan menghindari sistem rekening bersama (escrow) resmi",
+        isRedFlag: true,
+        explanation: "Transaksi langsung di luar platform marketplace menghilangkan perlindungan jaminan uang kembali bagi pembeli.",
+      },
+      {
+        id: "e3",
+        label: "Toko/akun penjual baru dibuat, tanpa ulasan riwayat transaksi nyata dari pembeli sebelumnya",
+        isRedFlag: true,
+        explanation: "Toko fiktif biasanya berumur singkat karena akun akan segera dibuang begitu berhasil menipu korban.",
+      },
+      {
+        id: "e4",
+        label: "Penjual mendesak transaksi cepat dengan dalih 'stok terbatas sisa 2 unit'",
+        isRedFlag: true,
+        explanation: "Menciptakan kelangkaan semu agar pembeli takut kehabisan dan mentransfer tanpa memverifikasi rekening.",
+      },
+    ],
+    choices: [
+      {
+        id: "c1",
+        label: "Langsung transfer Rp 4.500.000 ke rekening penjual karena takut kehabisan barang murah",
+        score: 0,
+        feedback: "Uang melayang! Begitu dana diterima, penjual langsung memblokir nomor dan barang tidak pernah dikirim.",
+        isCorrect: false,
+      },
+      {
+        id: "c2",
+        label: "Tolak transfer langsung dan hanya mau bertransaksi lewat sistem resmi rekening bersama marketplace",
+        score: 50,
+        feedback: "Langkah cerdas! Sistem pembayaran resmi marketplace menahan dana sampai barang benar-benar diterima pembeli.",
+        isCorrect: true,
+      },
+      {
+        id: "c3",
+        label: "Batalkan pesanan dan laporkan akun toko fiktif ke pusat bantuan marketplace",
+        score: 50,
+        feedback: "Tindakan pencegahan tuntas! Menghindari transfer pribadi memutus rantai penipuan transaksi palsu.",
+        isCorrect: true,
+      },
+    ],
+    flagCode: "TRUST{BELANJA-PALSU}",
+    learningPoint: "Selalu bertransaksi lewat sistem pembayaran resmi marketplace yang menahan dana sampai barang diterima (rekening bersama), bukan transfer langsung ke rekening pribadi.",
+  },
+];
+
+// -----------------------------------------------------------------------------
+// 2. DATA 12 MODUL PEMBELAJARAN (SESUAI GAMBAR DESAIN)
+// -----------------------------------------------------------------------------
+export interface LearningModule {
+  id: string;
+  title: string;
+  category: "Dasar Keamanan" | "Per Kanal" | "Checklist Praktis" | "Pola Kejadian Nyata" | "Setelah Kejadian";
+  duration: string;
+  icon: typeof HelpCircle;
+  summary: string;
+  concept: string;
+  anatomy: string[];
+  redFlags: string[];
+  checklistItems: string[];
+  takeaway: string;
+}
+
+export const LEARNING_MODULES: LearningModule[] = [
+  {
+    id: "m1",
+    title: "Apa Itu Rekayasa Sosial?",
+    category: "Dasar Keamanan",
+    duration: "5-6 menit baca",
+    icon: HelpCircle,
+    summary: "Memahami bagaimana penipu mengeksploitasi emosi manusia dan cara membangun jeda berpikir kritis sebelum mengambil tindakan.",
+    concept: "Rekayasa sosial (social engineering) adalah teknik manipulasi psikologis di mana pelaku tidak meretas sistem komputer atau kode enkripsi rumit, melainkan mengeksploitasi pikiran dan emosi manusia. Penipu memanfaatkan kecenderungan alami manusia: rasa percaya, kepatuhan terhadap figur otoritas, kepanikan, rasa bersalah, atau keinginan mendapatkan keuntungan instan.",
+    anatomy: [
+      "Pancingan Awal (Approach): Penipu menghubungi korban lewat kanal yang akrab (WhatsApp, SMS, telepon) menggunakan skenario darurat.",
+      "Pembangunan Rasa Percaya (Trust Building): Menggunakan kop surat, seragam, atau data pribadi korban yang bocor agar tampak meyakinkan.",
+      "Manipulasi Emosi (Emotional Trigger): Memicu kepanikan mendadak ('rekening akan diblokir') atau iming-iming hadiah besar.",
+      "Eksploitasi Tindakan (Action): Korban diarahkan mengambil tindakan fatal: mengirimkan OTP, mentransfer uang, atau mengklik tautan/file.",
+    ],
+    redFlags: [
+      "Adanya batas waktu sangat sempit yang memicu kepanikan (urgensi palsu).",
+      "Permintaan data rahasia seperti PIN, kata sandi, kode OTP, atau foto KTP.",
+      "Ketidakcocokan antara pengirim yang mengaku institusi resmi dengan nomor seluler pribadi biasa.",
+    ],
+    checklistItems: [
+      "Tarik napas dan jeda minimal 5 menit sebelum membalas pesan yang bernada mendesak.",
+      "Verifikasi kontak pengirim melalui kanal resmi yang dicari secara mandiri.",
+      "Jangan pernah membagikan kode OTP atau PIN kepada siapapun dengan alasan apapun.",
+      "Ingatkan keluarga terdekat untuk tidak mudah percaya pada kontak baru yang meminta dana.",
+    ],
+    takeaway: "Teknologi membantu, tetapi jeda berpikir dan verifikasi independen adalah pertahanan terkuat.",
+  },
+  {
+    id: "m2",
+    title: "Anatomi Sebuah Penipuan",
+    category: "Dasar Keamanan",
+    duration: "5 menit baca",
+    icon: Share2,
+    summary: "Tahapan umum modus: pendekatan, bangun percaya, eksploitasi.",
+    concept: "Setiap tipuan digital mengikuti pola siklus yang konsisten. Memahami fase-fase ini membantu kamu menyadari jebakan sebelum mencapai tahap eksploitasi finansial atau pencurian data pribadi.",
+    anatomy: [
+      "Fase 1 - Pengintaian (Reconnaissance): Mengumpulkan data nomor kontak, nama, dan riwayat belanja dari kebocoran data internet.",
+      "Fase 2 - Umpan Pertama (Baiting): Menyodorkan tawaran menarik atau ancaman yang memicu respons instingtif cepat.",
+      "Fase 3 - Penanaman Sugesti (Pretexting): Membangun cerita palsu yang logis agar korban merasa terikat.",
+      "Fase 4 - Eksekusi (The Hook): Mengarahkan korban ke formulir phishing, file APK sniffer, atau transfer rekening nominee.",
+      "Fase 5 - Pemutusan Jejak (Disappearance): Memblokir kontak korban seketika setelah dana atau akses akun didapatkan.",
+    ],
+    redFlags: [
+      "Permintaan transfer biaya administrasi untuk mencairkan hadiah yang tidak pernah diikuti.",
+      "Instruksi untuk merahasiakan komunikasi dari pihak keluarga atau petugas bank.",
+      "Perubahan nomor rekening tujuan transfer dari rekening berbadan hukum menjadi rekening perorangan.",
+    ],
+    checklistItems: [
+      "Kenali tanda awal pada fase umpan sebelum terbujuk ke fase sugesti penipu.",
+      "Tanyakan bukti legalitas dan konfirmasi ke situs resmi instansi terkait.",
+      "Periksa nama pemilik rekening tujuan di portal CekRekening.id sebelum transaksi.",
+      "Simpan tangkapan layar bukti interaksi sebagai dokumentasi mandiri jika mencurigakan.",
+    ],
+    takeaway: "Semua penipuan memiliki fase yang serupa: putus interaksi di fase umpan sebelum masuk ke fase eksekusi kerugian.",
+  },
+  {
+    id: "m3",
+    title: "Keamanan di WhatsApp",
+    category: "Per Kanal",
+    duration: "3 menit baca",
+    icon: Smartphone,
+    summary: "Cara cek centang hijau, broadcast, dan akun bercentang biru.",
+    concept: "WhatsApp adalah pintu masuk utama penipuan digital di Indonesia. Penipu sering memalsukan profil bisnis, memanfaatkan emotikon centang palsu, atau membajak akun rekan dekat untuk meminta dana darurat.",
+    anatomy: [
+      "Centang Hijau Palsu: Penipu memasang emoji centang hijau di dalam nama tampilan akun personal mereka.",
+      "Pesan Teruskan (Forwarded Many Times): Informasi palsu disebarkan berulang kali untuk membangun ilusi kebenaran.",
+      "Pengambilalihan Akun (Account Hijacking): Mengirim chat berpura-pura kasir minimarket salah kirim voucher dan meminta 6 digit kode SMS registrasi WhatsApp.",
+    ],
+    redFlags: [
+      "Centang hijau berada di dalam teks nama kontak, bukan lencana resmi WhatsApp di header percakapan.",
+      "Permintaan kode 6 digit SMS dengan dalih apapun dari teman atau kontak keluarga.",
+      "Pesan blast dari nomor tak dikenal yang menawarkan promo atau file dokumen.",
+    ],
+    checklistItems: [
+      "Aktifkan Verifikasi Dua Langkah (Two-Step Verification) dengan PIN 6 digit di WhatsApp.",
+      "Jangan pernah membagikan kode SMS 6 digit registrasi WhatsApp kepada siapapun.",
+      "Kunci privasi grup WhatsApp agar hanya kontak tersimpan yang dapat menambahkanmu ke grup.",
+      "Verifikasi suara langsung jika ada rekan di WhatsApp yang tiba-tiba meminjam dana.",
+    ],
+    takeaway: "Centang hijau resmi tidak bisa dipalsukan di header obrolan; jangan pernah serahkan kode 6 digit SMS WhatsApp.",
+  },
+  {
+    id: "m4",
+    title: "Keamanan Email & Phishing",
+    category: "Per Kanal",
+    duration: "4 menit baca",
+    icon: Mail,
+    summary: "Membaca header, domain pengirim, dan lampiran mencurigakan.",
+    concept: "Email phishing dirancang menyerupai email resmi dari Google, bank, atau marketplace. Memeriksa domain asli pengirim dan header email adalah garis pertahanan pertama yang paling efektif.",
+    anatomy: [
+      "Domain Typo (Typosquatting): Pengirim menggunakan alamat seperti 'security@bca-verifikasi.com' bukan domain asli 'bca.co.id'.",
+      "Tautan Palsu (Hyperlink Disguise): Teks tautan tertulis 'www.bank.com' tetapi ketika kursor diarahkan, tautan mengarah ke server peretas.",
+      "Lampiran Berbahaya: File terlampir berupa file .html, .zip, atau .exe yang disamarkan sebagai bukti transfer (invoice).",
+    ],
+    redFlags: [
+      "Domain pengirim menggunakan domain gratisan (@gmail.com) untuk mengabarkan urusan perbankan korporasi.",
+      "Sapaan umum tanpa nama (misal: 'Yth. Pengguna yang Terhormat' bukan nama lengkapmu).",
+      "Tuntutan klik tautan segera untuk menghindari penutupan akun dalam hitungan jam.",
+    ],
+    checklistItems: [
+      "Arahkan kursor di atas tautan sebelum mengklik untuk melihat alamat URL tujuan sebenarnya.",
+      "Bandingkan domain pengirim dengan domain resmi yang tercantum di kartu debit/kreditmu.",
+      "Jangan unduh lampiran berformat .zip, .iso, atau .html dari pengirim yang tidak dikenal.",
+      "Tandai email sebagai 'Laporkan Phishing' di penyedia email untuk memblokir pengirim serupa.",
+    ],
+    takeaway: "Selalu cek domain di balik tanda '@' pengirim dan jangan klik tautan di email yang meminta reset kredensial mendadak.",
+  },
+  {
+    id: "m5",
+    title: "Waspada Telepon Mengaku Bank",
+    category: "Per Kanal",
+    duration: "3 menit baca",
+    icon: PhoneCall,
+    summary: "Ciri vishing dan kenapa caller ID bisa dipalsukan.",
+    concept: "Vishing (Voice Phishing) adalah penipuan via telepon di mana pelaku menggunakan teknik Caller ID Spoofing agar layar ponselmu menampilkan nomor resmi call center bank.",
+    anatomy: [
+      "Spoofing Caller ID: Memanfaatkan gateway VoIP internet untuk memalsukan nomor pemanggil menjadi 1500xxx atau 140xx.",
+      "Skenario Darurat: Memberitahukan adanya transaksi di luar negeri atau kenaikan tarif biaya transaksi bulanan secara sepihak.",
+      "Pengalihan ke Mesin Otomatis Palsu: Korban diminta menekan angka PIN atau menyebutkan kode OTP ke 'mesin perekam sistem'.",
+    ],
+    redFlags: [
+      "Penelepon meminta nomor CVV (3 angka di belakang kartu debit/kredit), PIN, atau kode OTP.",
+      "Penelepon melarang menutup telepon atau berkonsultasi dengan orang lain saat panggilan berlangsung.",
+      "Penelepon bersikeras menghubungkan ke 'pihak kepolisian' dalam satu sambungan panggilan yang sama.",
+    ],
+    checklistItems: [
+      "Tutup panggilan telepon sepihak jika penelepon menyinggung data rahasia perbankan.",
+      "Telepon balik nomor resmi bank dari perangkat terpisah atau nomor yang tertera di kartu fisik.",
+      "Ingat prinsip dasar: Bank resmi TIDAK PERNAH meminta kode OTP atau PIN nasabah.",
+      "Gunakan aplikasi identifikasi nomor untuk memeriksa ulasan komunitas terhadap nomor pemanggil.",
+    ],
+    takeaway: "Nomor di layar telepon bisa dipalsukan; bank resmi tidak pernah meminta CVV, PIN, atau kode OTP lewat telepon.",
+  },
+  {
+    id: "m6",
+    title: "10 Ciri Pesan Phishing yang Wajib Dicek",
+    category: "Checklist Praktis",
+    duration: "3 menit baca",
+    icon: ListChecks,
+    summary: "Checklist interaktif sebelum klik tautan atau buka lampiran.",
+    concept: "Kompilasi 10 indikator universal red flag pada pesan digital untuk membedakan pesan biasa dari manipulasi rekayasa sosial.",
+    anatomy: [
+      "1. Urgensi ancaman waktu sempit yang memaksa keputusan panik.",
+      "2. Iming-iming hadiah undian yang tidak pernah didaftarkan sebelumnya.",
+      "3. Domain web yang mengandung karakter aneh atau ekstensi tak lazim (.xyz, .top, .vip).",
+      "4. Nomor seluler biasa yang mengaku perwakilan lembaga resmi.",
+      "5. Kesalahan ejaan, tata bahasa kaku, atau campuran istilah yang tidak konsisten.",
+    ],
+    redFlags: [
+      "File berekstensi .apk, .exe, .scr, atau .vbs yang dikirimkan via ruang obrolan chat.",
+      "Permintaan untuk merahasiakan pembicaraan dari pihak keluarga atau kolega.",
+      "Tautan pendek (shortener link) yang menyembunyikan domain tujuan sesungguhnya.",
+    ],
+    checklistItems: [
+      "Cek apakah kamu memang sedang menunggu transaksi atau kiriman paket yang dimaksud.",
+      "Periksa domain tautan sebelum diklik (apakah sesuai domain resmi institusi).",
+      "Pastikan tidak ada permintaan kode verifikasi rahasia (OTP) atau PIN.",
+      "Gunakan fitur 'Cek Pesan & File' di JagaRuang untuk memindai indikasi red flag secara on-device.",
+    ],
+    takeaway: "Cukup temukan 1 dari 10 ciri red flag untuk mengambil keputusan berhenti dan memverifikasi mandiri.",
+  },
+  {
+    id: "m7",
+    title: "Checklist Sebelum Transfer",
+    category: "Checklist Praktis",
+    duration: "2 menit baca",
+    icon: CheckSquare,
+    summary: "Langkah verifikasi sebelum kirim uang ke rekening baru.",
+    concept: "Langkah preventif wajib sebelum menekan tombol konfirmasi transfer uang di aplikasi perbankan atau dompet digital untuk nomor tujuan baru.",
+    anatomy: [
+      "Tekanan Emosional: Penjual atau lawan bicara menuntut transfer dalam hitungan menit dengan alasan barang akan dilepas ke pembeli lain.",
+      "Penggunaan Rekening Nominee: Rekening penampung berbeda dari nama toko atau nama entitas yang bertransaksi.",
+      "Permintaan Kode Unik Mencurigakan: Meminta nominal dengan kode unik yang sebenarnya adalah nominal top-up dompet digital pelaku.",
+    ],
+    redFlags: [
+      "Nama pemilik rekening tujuan sama sekali berbeda dari nama pemilik toko online.",
+      "Penjual menolak opsi transaksi lewat rekening bersama (escrow) marketplace resmi.",
+      "Ada riwayat pelaporan nomor rekening di portal CekRekening.id.",
+    ],
+    checklistItems: [
+      "Cari nomor rekening di CekRekening.id dan cek apakah ada laporan penipuan aktif.",
+      "Cek nomor HP penjual di aplikasi identifikasi kontak publik.",
+      "Pastikan transaksi dilakukan di dalam sistem escrow marketplace resmi jika berbelanja daring.",
+      "Konfirmasi dua arah lewat panggilan video singkat jika transfer ditujukan untuk bantuan keluarga.",
+    ],
+    takeaway: "Uang yang sudah ditransfer ke penipu hampir mustahil ditarik kembali; luangkan 2 menit verifikasi sebelum kirim.",
+  },
+  {
+    id: "m8",
+    title: "Pola Modus Penipuan Terbanyak di Indonesia",
+    category: "Pola Kejadian Nyata",
+    duration: "5-6 menit baca",
+    icon: BarChart3,
+    summary: "Dasbor edukasi data laporan IASC / Satgas PASTI.",
+    concept: "Berdasarkan rangkuman data resmi Indonesia Anti-Scam Centre (IASC) dan Satgas PASTI, data ini mencerminkan laporan yang masuk, bukan seluruh kasus di lapangan, dan bukan nilai total kerugian.",
+    anatomy: [
+      "Peringkat 1: Penipuan Transaksi Belanja Online (77.740 laporan per 31 Mei 2026).",
+      "Peringkat 2: Impersonation / Panggilan Telepon Palsu (47.269 laporan).",
+      "Peringkat 3: Penipuan Investasi Bodong (26.649 laporan).",
+      "Peringkat 4: Penipuan Lowongan Kerja / Komisi Tugas (23.910 laporan).",
+    ],
+    redFlags: [
+      "Permintaan transfer langsung ke rekening pribadi di luar sistem marketplace.",
+      "Penelepon mengaku petugas bank meminta kode OTP, PIN, atau data sensitif.",
+      "Tawaran investasi keuntungan pasti atau kerja komisi yang menuntut deposit modal.",
+    ],
+    checklistItems: [
+      "Sebelum transfer, cek kembali nama penjual dan rekening tujuan di CekRekening.id.",
+      "Bila ada telepon mengaku petugas, tutup panggilan lalu hubungi kanal resmi mandiri.",
+      "Jangan pasang file APK dari luar toko resmi, dan ingatkan orang tua serta kerabat.",
+      "Simpan kontak kanal lapor resmi OJK/IASC di ponselmu untuk kondisi darurat.",
+      "Bagikan Kartu Peringatan JagaRuang ke grup obrolan keluarga.",
+    ],
+    takeaway: "Penipu terus berganti cerita, tetapi pola intinya sama: mendesakmu bertindak cepat. Berhenti sejenak dan verifikasi lewat jalur yang kamu pilih sendiri.",
+  },
+  {
+    id: "m9",
+    title: "Pola Penipuan QRIS & E-Wallet",
+    category: "Pola Kejadian Nyata",
+    duration: "4 menit baca",
+    icon: QrCode,
+    summary: "Pola penipuan kode QR, manipulasi transfer e-wallet, dan keamanan transaksi penjual & pembeli.",
+    concept: "Sistem QRIS aman dan terstandarisasi, namun celah fisik stiker dan kebiasaan terburu-buru sering dimanfaatkan penipu untuk menukar QRIS merchant atau mengirim struk transfer editan.",
+    anatomy: [
+      "Manipulasi Fisik QRIS: Menempelkan stiker QRIS palsu di atas QRIS kasir toko atau kotak amal rumah ibadah.",
+      "Tautan Pengalihan Saldo: Mengirimkan tautan permintaan transfer berkedok link penerimaan uang atau klaim hadiah.",
+      "Struk Transfer Palsu: Memanipulasi tangkapan layar transaksi berhasil untuk mengelabui pedagang/penjual.",
+    ],
+    redFlags: [
+      "Nama merchant di layar aplikasi berbeda dari nama toko atau pengelola tempat ibadah yang sah.",
+      "Pihak lain meminta kamu mengetikkan PIN atau memberikan kode OTP untuk menerima uang (menerima uang tidak butuh PIN/OTP).",
+      "Stiker QRIS tampak bertumpuk, bergelembung, atau memiliki bekas tempelan baru.",
+    ],
+    checklistItems: [
+      "Luangkan 5 detik mencocokkan nama merchant dan nominal di layar ponsel sebelum menekan bayar.",
+      "Ingat prinsip aman: untuk menerima dana, kamu tidak pernah perlu memasukkan PIN atau menyerahkan OTP.",
+      "Bagi pedagang: selalu periksa mutasi saldo di aplikasi merchant sendiri, bukan hanya melihat HP pembeli.",
+      "Segera lapor ke penyedia pembayaran dan portal IASC jika menemukan kode QR yang disalahgunakan.",
+    ],
+    takeaway: "Periksa nama merchant sebelum membayar; untuk menerima uang, kamu tidak perlu PIN atau OTP.",
+  },
+  {
+    id: "m10",
+    title: "Pola Pinjaman Online Ilegal",
+    category: "Pola Kejadian Nyata",
+    duration: "5 menit baca",
+    icon: CreditCard,
+    summary: "Mengenali batasan izin aplikasi, jebakan teror kontak, dan perlindungan diri dari pinjol ilegal.",
+    concept: "Pinjol ilegal beroperasi tanpa izin OJK dan menjadikan daftar kontak ponsel serta galeri foto sebagai senjata pemerasan dan intimidasi sosial.",
+    anatomy: [
+      "Permintaan Izin Agresif: Meminta izin akses Kontak Telepon, Galeri Foto, dan SMS yang dilarang keras bagi fintech berizin resmi.",
+      "Jebakan Biaya & Tenor Ekstrem: Memotong dana pencairan di muka secara drastis dengan bunga melonjak dan tenor sangat singkat.",
+      "Teror & Doxing Kontak: Menagih dengan menyebarkan pesan fitnah dan intimidasi ke keluarga serta rekan kerja korban.",
+    ],
+    redFlags: [
+      "Aplikasi meminta akses ke Buku Kontak ponsel, Galeri Foto, atau SMS (Fintech berizin hanya boleh CAMILAN: Camera, Microphone, Location).",
+      "Penawaran pinjaman instan tanpa syarat melalui SMS blast atau pesan WhatsApp dari nomor asing.",
+      "Nama aplikasi tidak terdaftar di direktori resmi Otoritas Jasa Keuangan (OJK).",
+    ],
+    checklistItems: [
+      "Cek legalitas nama aplikasi lewat WhatsApp resmi OJK 081-157-157-157 sebelum mengunduh.",
+      "Tolak dan uninstall aplikasi yang meminta izin membaca seluruh kontak atau folder galeri.",
+      "Jika ditransfer sepihak, jangan gunakan uangnya, simpan mutasi, dan segera lapor ke bank serta Satgas PASTI.",
+      "Siapkan templat klarifikasi ke kontak terdekat jika nomor dan namamu disalahgunakan penagih liar.",
+    ],
+    takeaway: "Pinjol resmi tidak memerlukan kontak dan galerimu. Cek legalitas ke OJK sebelum mengunduh aplikasi.",
+  },
+  {
+    id: "m11",
+    title: "Cara Lapor Jika Sudah Jadi Korban",
+    category: "Setelah Kejadian",
+    duration: "5 menit baca",
+    icon: AlertTriangle,
+    summary: "Pusat darurat panduan pelaporan cepat ke bank, portal resmi IASC OJK, dan kepolisian.",
+    concept: "OJK menyebut idealnya korban melapor dalam 10 menit atau kurang sebelum sindikat memindahkan dana. Hubungi bank pengirim terlebih dahulu, lalu buat laporan di portal resmi iasc.ojk.go.id.",
+    anatomy: [
+      "Langkah 1: Hubungi segera call center resmi bank pengirim dari nomor di belakang kartu fisik untuk penahanan transaksi.",
+      "Langkah 2: Laporkan ke portal resmi iasc.ojk.go.id untuk memicu koordinasi pemblokiran lintas perbankan.",
+      "Langkah 3: Amankan perangkat, buat STPL di kepolisian (SPKT), dan pantau nomor tiket aduan resmi.",
+    ],
+    redFlags: [
+      "Menunda lapor karena malu atau menganggap uang pasti hilang (semakin cepat melapor, peluang semakin terbuka).",
+      "Mempercayai oknum jasa 'recovery dana' di medsos yang meminta bayaran atau transfer di muka.",
+      "Mengeklik tautan situs pengaduan tiruan yang beralamat selain di portal resmi iasc.ojk.go.id.",
+    ],
+    checklistItems: [
+      "Telepon call center resmi bank pengirim melalui nomor di balik kartu ATM untuk meminta penahanan transaksi.",
+      "Buat laporan resmi di portal IASC hanya melalui alamat resmi iasc.ojk.go.id.",
+      "Simpan tangkapan layar bukti transfer, mutasi rekening, dan nomor rekening/kontak pelaku.",
+      "Datang ke kantor kepolisian (SPKT) untuk membuat Surat Tanda Penerimaan Laporan (STPL) resmi.",
+    ],
+    takeaway: "Makin cepat kamu melapor, makin besar peluangnya. Hubungi bank dulu, lapor ke iasc.ojk.go.id, simpan bukti.",
+  },
+  {
+    id: "m12",
+    title: "Cara Mendampingi Keluarga yang Kena Tipu",
+    category: "Setelah Kejadian",
+    duration: "5 menit baca",
+    icon: Heart,
+    summary: "Panduan empati, pemulihan psikologis, dan urutan tindakan teknis mendampingi keluarga korban.",
+    concept: "Korban penipuan mengalami guncangan psikologis berat. Menghardik tidak akan mengembalikan dana, justru menutup komunikasi saat mereka paling membutuhkan perlindungan.",
+    anatomy: [
+      "Fase 1 (Syok & Penyangkalan): Korban bingung dan linglung; butuh kehadiran fisik yang tenang tanpa perdebatan logika.",
+      "Fase 2 (Menyalahkan Diri & Malu): Korban merasa bodoh; tegaskan bahwa pelaku adalah sindikat kriminal profesional.",
+      "Fase 3 (Kerentanan Lanjutan): Korban panik mencari cara cepat; jaga dari jebakan jasa recovery dana palsu.",
+    ],
+    redFlags: [
+      "Menghardik atau melontarkan kalimat 'Kan sudah dibilang jangan percaya!' yang memicu depresi korban.",
+      "Menyuruh korban mengikhlaskan di menit-menit awal sehingga menghentikan langkah mitigasi darurat ke bank.",
+      "Tidak segera mengamankan perangkat (mode pesawat untuk hentikan malware, cabut SIM card jika rawan OTP).",
+    ],
+    checklistItems: [
+      "Tahan emosi dan berikan dukungan emosional: 'Yang terpenting kamu selamat, ayo kita selesaikan ini bareng-bareng'.",
+      "Prioritas teknis: aktifkan mode pesawat untuk putus malware, cabut SIM card untuk cegah pembajakan SMS lanjutan.",
+      "Bantu menyusun draf kronologi kejadian dan temani melapor ke customer service bank serta iasc.ojk.go.id.",
+      "Ajak keluarga membuat Sandi Keluarga (/sandi) untuk memverifikasi panggilan darurat atau kloning suara AI.",
+    ],
+    takeaway: "Dukungan emosional yang suportif membuat korban mau bertindak cepat menyelamatkan akun sebelum kerugian meluas.",
+  },
+];
+
+// -----------------------------------------------------------------------------
+// 3. DATA KILAT 2 MENIT (MICRO-LEARNING REFLEKS DRILL)
+// -----------------------------------------------------------------------------
+interface TriageDrillItem {
+  id: string;
+  channel: "sms" | "whatsapp" | "email" | "call" | "app";
+  source: string;
+  senderName: string;
+  senderAddress: string;
+  timeString: string;
+  text: string;
+  linkText?: string;
+  attachmentName?: string;
+  attachmentSize?: string;
+  question: string;
+  isScam: boolean;
+  explanation: string;
+}
+
+const TRIAGE_DRILL_ITEMS: TriageDrillItem[] = [
+  {
+    id: "t1",
+    channel: "sms",
+    source: "SMS dari +62 821-9988-1234",
+    senderName: "+62 821-9988-1234",
+    senderAddress: "+62 821-9988-1234",
+    timeString: "10:14",
+    text: "Pemberitahuan: Akun Bank Mandiri Anda diblokir sementara. Klik http://mandiri-verifikasi.xyz/unblock untuk verifikasi ulang PIN Anda.",
+    linkText: "http://mandiri-verifikasi.xyz/unblock",
+    question: "Apakah pesan SMS perbankan di atas terindikasi penipuan?",
+    isScam: true,
+    explanation: "Curiga! Domain mandiri-verifikasi.xyz bukan situs resmi Bank Mandiri (bankmandiri.co.id). Bank tidak pernah meminta verifikasi PIN lewat tautan web.",
+  },
+  {
+    id: "t2",
+    channel: "sms",
+    source: "SMS dari 'GOJEK'",
+    senderName: "GOJEK",
+    senderAddress: "Official Sender ID",
+    timeString: "14:22",
+    text: "Kode verifikasi (OTP) login akun Gojek Anda adalah: 8492. JANGAN BERIKAN KODE INI KEPADA SIAPAPUN, termasuk pihak Gojek.",
+    question: "Apakah pesan SMS kode OTP di atas terindikasi penipuan?",
+    isScam: false,
+    explanation: "Bukan penipuan (Resmi). Ini adalah SMS OTP resmi dari Gojek dengan peringatan tegas untuk tidak membagikan kode rahasia kepada siapapun.",
+  },
+  {
+    id: "t3",
+    channel: "whatsapp",
+    source: "WhatsApp dari Kontak Tak Dikenal",
+    senderName: "Admin Hadiah Shopee",
+    senderAddress: "+62 831-4455-8899",
+    timeString: "09:30",
+    text: "Halo kak, kami dari Shopee. Selamat kamu memenangkan giveaway iPhone 15 Pro Max! Mohon transfer biaya asuransi Rp 150.000 ke rek BNI 0829182392 a.n. Slamet.",
+    question: "Apakah pesan chat undian hadiah di atas terindikasi penipuan?",
+    isScam: true,
+    explanation: "Curiga! Shopee tidak pernah memungut biaya asuransi, ongkos kirim, atau pajak undian ke rekening pribadi perorangan.",
+  },
+  {
+    id: "t4",
+    channel: "whatsapp",
+    source: "WhatsApp dari Nomor Kurir",
+    senderName: "Kurir Ekspedisi JNE",
+    senderAddress: "+62 877-1234-5678",
+    timeString: "11:05",
+    text: "Selamat siang kak, ini foto resi paket dokumen yang kami antar. Mohon dibuka untuk cek detail paket:",
+    attachmentName: "Cek_Paket_JNE.apk",
+    attachmentSize: "5.2 MB",
+    question: "Apakah kiriman file paket pada chat di atas terindikasi penipuan / malware?",
+    isScam: true,
+    explanation: "Curiga! Berkas berekstensi .apk yang dikirim via chat adalah malware Sniffer pencuri SMS OTP perbankan.",
+  },
+  {
+    id: "t5",
+    channel: "email",
+    source: "Email dari 'no-reply@accounts.google.com'",
+    senderName: "Google Accounts",
+    senderAddress: "no-reply@accounts.google.com",
+    timeString: "08:15",
+    text: "Peringatan Keamanan: Ada perangkat Windows baru yang login ke Akun Google Anda. Jika ini bukan Anda, tinjau aktivitas perangkat Anda di situs resmi.",
+    linkText: "https://myaccount.google.com",
+    question: "Apakah email peringatan login baru di atas terindikasi penipuan?",
+    isScam: false,
+    explanation: "Bukan penipuan (Resmi). Email dikirim dari alamat resmi Google (@accounts.google.com) dan tautan mengarah langsung ke domain resmi google.com.",
+  },
+  {
+    id: "t6",
+    channel: "call",
+    source: "Panggilan Suara +62 21-1500888",
+    senderName: "Fraud BCA",
+    senderAddress: "+62 21-1500888 (Panggilan Masuk)",
+    timeString: "13:40",
+    text: "Penelepon mengaku staf Fraud BCA: 'Kartu kredit Anda terpakai Rp 12 juta di luar negeri. Mohon sebutkan 3 angka CVV di belakang kartu Anda untuk pembatalan sekarang juga.'",
+    question: "Apakah panggilan telepon perbankan di atas terindikasi penipuan?",
+    isScam: true,
+    explanation: "Curiga! Nomor telepon pemanggil bisa dipalsukan (Caller ID Spoofing). Petugas bank resmi dilarang keras meminta kode CVV atau PIN rahasia nasabah.",
+  },
+  {
+    id: "t7",
+    channel: "sms",
+    source: "SMS dari 'TELKOMSEL'",
+    senderName: "TELKOMSEL",
+    senderAddress: "Official Sender ID",
+    timeString: "16:00",
+    text: "Paket Internet Combo Sakti 25GB Anda akan berakhir besok. Perpanjang melalui *363# atau aplikasi MyTelkomsel sebelum masa aktif habis.",
+    question: "Apakah SMS notifikasi paket kuota di atas terindikasi penipuan?",
+    isScam: false,
+    explanation: "Bukan penipuan (Resmi). Pesan pengingat masa aktif tanpa tautan asing, mengarahkan ke menu USSD resmi *363#.",
+  },
+  {
+    id: "t8",
+    channel: "whatsapp",
+    source: "WhatsApp dari +62 895-3412-9812",
+    senderName: "+62 895-3412-9812",
+    senderAddress: "+62 895-3412-9812",
+    timeString: "19:10",
+    text: "Mamah minta tolong belikan pulsa Rp 100.000 ke nomor ini ya nak, nomor mamah yang lama sedang gangguan dan perlu hubungi teman arisan darurat.",
+    question: "Apakah pesan WhatsApp permintaan pulsa di atas terindikasi penipuan?",
+    isScam: true,
+    explanation: "Curiga! Modus klasik 'Mamah Minta Pulsa' memanfaatkan rasa bakti anak. Selalu hubungi nomor lama langsung atau verifikasi dengan Sandi Keluarga.",
+  },
+  {
+    id: "t9",
+    channel: "whatsapp",
+    source: "WhatsApp Grup Komunitas",
+    senderName: "Grup Info Warga RT",
+    senderAddress: "Diteruskan berkali-kali",
+    timeString: "15:20",
+    text: "Guys, ada promo subsidi pulsa pemerintah Rp 500.000 untuk semua operator! Daftarnya klik di sini ya: https://subsidi-pulsa-kominfo.free-claim.top",
+    linkText: "https://subsidi-pulsa-kominfo.free-claim.top",
+    question: "Apakah pesan tautan subsidi kuota di atas terindikasi penipuan?",
+    isScam: true,
+    explanation: "Curiga! Domain .free-claim.top adalah situs jebakan phishing penjerat data identitas. Informasi resmi pemerintah hanya memakai domain .go.id.",
+  },
+  {
+    id: "t10",
+    channel: "app",
+    source: "Notifikasi Aplikasi Bank Mandiri",
+    senderName: "Livin' by Mandiri",
+    senderAddress: "Notifikasi Mutasi Rekening",
+    timeString: "14:20",
+    text: "Pembayaran QRIS di Kopi Kenangan sebesar Rp 28.000 berhasil pada 04/11/2026 14:20 WIB. Saldo rekening Anda telah disesuaikan.",
+    question: "Apakah notifikasi mutasi transaksi QRIS di atas terindikasi penipuan?",
+    isScam: false,
+    explanation: "Bukan penipuan (Resmi). Notifikasi mutasi resmi in-app dari aplikasi perbankan setelah transaksi pembayaran mandiri.",
+  },
+];
+
+// -----------------------------------------------------------------------------
+// 4. DATA KAMUS JEBAKAN DIGITAL (10 ISTILAH LENGKAP)
+// -----------------------------------------------------------------------------
+interface GlossaryTerm {
+  id: string;
+  name: string;
+  category: "Malware Android" | "Manipulasi Sosial" | "Identitas" | "Penipuan Web";
+  tagColor: string;
+  meaning: string;
+  howItWorks: string;
+  entryPoint: string;
+  firstResponse: string;
+  prevention: string;
+}
+
+const GLOSSARY_TERMS: GlossaryTerm[] = [
+  {
+    id: "sniffing-apk",
+    name: "Sniffing APK",
+    category: "Malware Android",
+    tagColor: "bg-rose-50 text-rose-800 border-rose-300",
+    meaning: "Aplikasi Android berbahaya (.apk) yang dirancang untuk menyadap SMS masuk dan mencuri kode OTP perbankan korban.",
+    howItWorks: "Malware meminta izin READ_SMS dan RECEIVE_SMS saat dipasang. Setelah aktif, setiap SMS perbankan yang masuk diteruskan ke server penipu tanpa disadari korban.",
+    entryPoint: "File WhatsApp berkedok undangan pernikahan (.apk), foto resi paket kurir, surat tilang kepolisian, atau surat pemilu.",
+    firstResponse: "Nyalakan Mode Pesawat (Airplane Mode) segera, copot kartu SIM, hapus aplikasi berbahaya lewat Pengaturan Aplikasi, lalu hubungi bank untuk memblokir akun m-Banking.",
+    prevention: "Kunci opsi 'Install Unknown Apps' di pengaturan ponsel dan tolak semua berkas .apk dari chat.",
+  },
+  {
+    id: "social-engineering",
+    name: "Social Engineering",
+    category: "Manipulasi Sosial",
+    tagColor: "bg-amber-50 text-amber-800 border-amber-300",
+    meaning: "Seni memanipulasi psikologis manusia agar secara sukarela membocorkan informasi rahasia atau mentransfer sejumlah dana.",
+    howItWorks: "Penyerang memanfaatkan kelemahan psikologis mendasar seperti rasa takut (ancaman rekening diblokir), panik, otoritas semu, atau harapan keuntungan instan.",
+    entryPoint: "Panggilan telepon mengaku staf bank, pesan chat darurat teman yang meminjam uang, atau tawaran loker palsu bergaji fantastis.",
+    firstResponse: "Ambil jeda minimal 5 menit sebelum bertindak. Jangan membuat keputusan finansial saat sedang panik atau terburu-buru. Verifikasi lewat kanal resmi independen.",
+    prevention: "Terapkan prinsip 'Zero Trust': verifikasi mandiri setiap permintaan mendadak.",
+  },
+  {
+    id: "sim-swap",
+    name: "SIM Swap Fraud",
+    category: "Identitas",
+    tagColor: "bg-rose-50 text-rose-800 border-rose-300",
+    meaning: "Pengambilalihan nomor telepon seluler korban dengan mengajukan pergantian kartu SIM fisik baru ke gerai operator telekomunikasi.",
+    howItWorks: "Pelaku menggunakan data KTP dan identitas palsu korban untuk mengklaim kartu SIM hilang di gerai seluler. Begitu SIM baru aktif, seluruh SMS OTP dialihkan ke ponsel pelaku.",
+    entryPoint: "Kebocoran data pribadi (data breach) di internet yang memuat nomor NIK, nama ibu kandung, dan nomor ponsel korban.",
+    firstResponse: "Jika sinyal seluler tiba-tiba 'No Service' di lokasi yang biasanya berjangkauan normal, segera hubungi call center operator seluler dan kunci seluruh m-Bankingmu.",
+    prevention: "Beralih dari SMS OTP ke aplikasi autentikator (TOTP) seperti Google Authenticator.",
+  },
+  {
+    id: "phishing",
+    name: "Phishing Website",
+    category: "Penipuan Web",
+    tagColor: "bg-amber-50 text-amber-800 border-amber-300",
+    meaning: "Situs web tiruan yang dibuat sangat mirip dengan portal perbankan, media sosial, atau marketplace asli untuk mencuri data kredensial login.",
+    howItWorks: "Korban diarahkan ke halaman login palsu dengan tampilan identik. Kredensial (email, password, PIN) yang diketikkan korban akan langsung terekam di basis data penipu.",
+    entryPoint: "Tautan pendek (bit.ly, tinyurl) yang disebarkan lewat email tagihan palsu, SMS promo diskon, atau pesan WhatsApp blast.",
+    firstResponse: "Jangan pernah memasukkan kata sandi jika domain web berbeda dari alamat resmi. Segera ganti kata sandi akun utamamu bila terlanjur menginput kredensial.",
+    prevention: "Periksa domain secara teliti di bilah alamat browser sebelum mengetikkan password.",
+  },
+  {
+    id: "quishing",
+    name: "Quishing (QR Phishing)",
+    category: "Penipuan Web",
+    tagColor: "bg-purple-50 text-purple-800 border-purple-300",
+    meaning: "Penipuan menggunakan kode QR manipulatif yang menempel pada stiker QRIS pedagang atau tertera pada surat dokumen palsu.",
+    howItWorks: "Penipu menempelkan stiker kode QR miliknya di atas QRIS resmi merchant di tempat umum, atau mengirimkan gambar QR berkedok konfirmasi pembayaran.",
+    entryPoint: "Stiker QRIS di tempat ibadah, kafe, atau kiriman gambar kode QR lewat pesan instan WhatsApp.",
+    firstResponse: "Periksa nama penerima yang muncul di layar konfirmasi aplikasi pembayaran sebelum memasukkan PIN. Pastikan nama merchant sesuai dengan nama toko fisik.",
+    prevention: "Selalu konfirmasi nama toko ke kasir sebelum menekan tombol bayar.",
+  },
+  {
+    id: "smishing",
+    name: "Smishing (SMS Phishing)",
+    category: "Penipuan Web",
+    tagColor: "bg-blue-50 text-blue-800 border-blue-300",
+    meaning: "Serangan phishing yang diluncurkan menggunakan pesan singkat SMS dengan memalsukan ID pengirim (Sender ID spoofing).",
+    howItWorks: "Pesan SMS mengabarkan promo poin hangus, tagihan kartu kredit darurat, atau tautan penarikan dana tunai yang mengarahkan korban ke web jebakan.",
+    entryPoint: "SMS broadcast dengan nama pengirim yang dimanipulasi menyerupai nama instansi pemerintah atau perbankan.",
+    firstResponse: "Abaikan tautan yang ada di SMS. Buka aplikasi resmi atau ketik manual alamat web resmi lembaga yang bersangkutan di perambanmu.",
+    prevention: "Jangan pernah mengklik link di dalam SMS; buka aplikasi resmi secara mandiri.",
+  },
+  {
+    id: "typosquatting",
+    name: "Typosquatting",
+    category: "Penipuan Web",
+    tagColor: "bg-indigo-50 text-indigo-800 border-indigo-300",
+    meaning: "Pendaftaran nama domain web yang sangat mirip atau merupakan kesalahan ketik umum dari nama domain situs populer.",
+    howItWorks: "Penipu mendaftarkan nama seperti 'g00gle.com' atau 'bca-klik.com' dan mengisinya dengan formulir login pencuri kredensial nasabah.",
+    entryPoint: "Pencarian di mesin pencari atau link tautan yang dikirimkan melalui forum obrolan.",
+    firstResponse: "Simpan alamat situs perbankan resmi di menu bookmark browser favoritmu untuk menghindari salah ketik alamat web.",
+    prevention: "Gunakan bookmark browser untuk situs sensitif seperti internet banking.",
+  },
+  {
+    id: "account-takeover",
+    name: "Account Takeover (ATO)",
+    category: "Identitas",
+    tagColor: "bg-rose-50 text-rose-800 border-rose-300",
+    meaning: "Kondisi ketika penyerang berhasil menguasai penuh akun digital korban dan mengubah kata sandi, email pemulihan, serta nomor verifikasi.",
+    howItWorks: "Setelah mendapatkan kredensial dan kode OTP korban, pelaku masuk ke menu pengaturan akun dan mengganti nomor telepon serta email agar korban tidak bisa masuk kembali.",
+    entryPoint: "Kombinasi kebocoran password (credential stuffing), phishing, atau penyadapan malware di ponsel.",
+    firstResponse: "Gunakan fitur 'Keluarkan dari Semua Perangkat' (Logout all sessions), hubungi pusat bantuan aplikasi untuk verifikasi identitas fisik, dan bekukan akun perbankan tertaut.",
+    prevention: "Gunakan pengelola kata sandi (password manager) dan kata sandi unik untuk tiap akun.",
+  },
+  {
+    id: "ransomware",
+    name: "Ransomware",
+    category: "Malware Android",
+    tagColor: "bg-rose-50 text-rose-800 border-rose-300",
+    meaning: "Perangkat lunak berbahaya yang mengenkripsi berkas dokumen penting korban sehingga tidak dapat dibuka, lalu menuntut tebusan uang.",
+    howItWorks: "Program jahat mengunci file foto, video, dan dokumen menggunakan algoritma kriptografi kuat dan menampilkan layar tebusan pemerasan.",
+    entryPoint: "Unduhan aplikasi modifikasi (mod apk) dari situs tidak resmi atau lampiran email dari pengirim tak dikenal.",
+    firstResponse: "Putuskan koneksi internet seketika. Jangan membayar tebusan karena tidak ada jaminan berkas akan dipulihkan. Pulihkan data dari cadangan offline yang aman.",
+    prevention: "Rutin mencadangkan data penting ke media penyimpanan eksternal offline.",
+  },
+  {
+    id: "loker-deposit",
+    name: "Deposit Loker Palsu (Pig Butchering)",
+    category: "Manipulasi Sosial",
+    tagColor: "bg-amber-50 text-amber-800 border-amber-300",
+    meaning: "Skema penipuan lowongan kerja online dengan imbalan komisi instan yang mensyaratkan transfer deposit uang bertahap.",
+    howItWorks: "Korban diberikan tugas sederhana (like produk, follow akun) dan dibayar uang receh. Kemudian korban dibujuk memasukkan modal besar untuk 'misi VIP' yang akhirnya dibawa kabur pelaku.",
+    entryPoint: "Pesan WhatsApp atau Telegram tawaran kerja lepas paruh waktu fleksibel dari rumah.",
+    firstResponse: "Hentikan transaksi dan komunikasi seketika. Laporkan nomor rekening pelaku ke CekRekening.id dan simpan tangkapan layar bukti percakapan untuk laporan kepolisian.",
+    prevention: "Ingat rumus mutlak: pekerjaan legal tidak pernah meminta deposit uang.",
+  },
+];
+
+// =============================================================================
+// KOMPONEN UTAMA: HALAMAN BELAJAR
+// =============================================================================
+export default function Belajar() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // Tab yang aktif
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    const p = searchParams.get("tab");
+    return p && ["simulator", "modul", "kilat", "kamus"].includes(p) ? (p as TabType) : "simulator";
+  });
+
+  // State tampilan subhalaman khusus (null = cover)
+  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(() => searchParams.get("scenario") || null);
+  const [activeModuleId, setActiveModuleId] = useState<string | null>(() => searchParams.get("module") || null);
+  const [kilatMode, setKilatMode] = useState<"cover" | "drill">("cover");
+  const [kilatDuration, setKilatDuration] = useState<number>(120);
+  const [activeGlossaryId, setActiveGlossaryId] = useState<string | null>(null);
+
+  // Status modul yang sudah dibaca (disimpan di localStorage, default m3 dan m6 sesuai referensi)
+  const [readModules, setReadModules] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("jagaruang_read_modules");
+      return saved ? JSON.parse(saved) : ["m3", "m6"];
+    } catch {
+      return ["m3", "m6"];
+    }
+  });
+
+  // Toast Notifikasi Mengambang Real-time
+  const [toastNotif, setToastNotif] = useState<AppNotification | null>(null);
+
+  useEffect(() => {
+    const handleNotifUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<AppNotification>;
+      if (customEvent.detail) {
+        setToastNotif(customEvent.detail);
+        const timer = setTimeout(() => {
+          setToastNotif((current) => (current?.id === customEvent.detail.id ? null : current));
+        }, 5000);
+        return () => clearTimeout(timer);
+      }
+    };
+
+    window.addEventListener(NOTIFICATION_EVENT, handleNotifUpdate as EventListener);
+    return () => {
+      window.removeEventListener(NOTIFICATION_EVENT, handleNotifUpdate as EventListener);
+    };
+  }, []);
+
+  // Sinkronisasi bila query param URL berubah
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam && ["simulator", "modul", "kilat", "kamus"].includes(tabParam)) {
+      if (tabParam !== activeTab) {
+        setActiveTab(tabParam as TabType);
+        // Buka subhalaman jika ada parameter khusus di URL
+        setActiveScenarioId(searchParams.get("scenario") || null);
+        setActiveModuleId(searchParams.get("module") || null);
+        setKilatMode("cover");
+        setActiveGlossaryId(null);
+      }
+    }
+    const moduleParam = searchParams.get("module");
+    if (moduleParam && moduleParam !== activeModuleId) {
+      setActiveModuleId(moduleParam);
+    }
+  }, [searchParams, activeTab, activeModuleId]);
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    setActiveScenarioId(null);
+    setActiveModuleId(null);
+    setKilatMode("cover");
+    setActiveGlossaryId(null);
+    setSearchParams({ tab });
+  };
+
+  const handleMarkModuleRead = (modulId: string) => {
+    setReadModules((prev) => {
+      const isAlreadyRead = prev.includes(modulId);
+      const next = isAlreadyRead ? prev.filter((id) => id !== modulId) : [...prev, modulId];
+      try {
+        localStorage.setItem("jagaruang_read_modules", JSON.stringify(next));
+      } catch {
+        // no-op
+      }
+      return next;
+    });
+  };
+
+  // Jika sedang membaca modul detail, tampilkan ModulPage secara langsung edge-to-edge
+  // agar sticky reading progress bar menyatu mulus di bawah top navbar tanpa jeda atau kotak terisolasi
+  if (activeTab === "modul" && activeModuleId) {
+    return (
+      <ModulPage
+        moduleId={activeModuleId}
+        isRead={readModules.includes(activeModuleId)}
+        onBack={() => {
+          setActiveModuleId(null);
+          if (searchParams.has("module")) {
+            const next = new URLSearchParams(searchParams);
+            next.delete("module");
+            setSearchParams(next);
+          }
+        }}
+        onToggleRead={() => handleMarkModuleRead(activeModuleId)}
+        onNavigateTab={handleTabChange}
+        onSelectModule={(id) => {
+          setActiveModuleId(id);
+          const next = new URLSearchParams(searchParams);
+          next.set("module", id);
+          setSearchParams(next);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 space-y-6 w-full">
+      {/* ===================================================================== */}
+      {/* HEADER UTAMA HALAMAN BELAJAR (KOTAK PUTIH PERSIS REFERENSI)           */}
+      {/* ===================================================================== */}
+      <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-5">
+        <div className="space-y-1.5">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] tracking-tight">Belajar</h1>
+          <p className="text-xs sm:text-sm text-[#526D82] max-w-3xl leading-relaxed">
+            Gabungan Modul, Kilat 2 Menit, dan Kamus dalam satu tempat — supaya navigasinya ringkas di layar kecil.
+          </p>
+        </div>
+
+        {/* ===================================================================== */}
+        {/* HORIZONTAL TAB BAR (4 TAB UTAMA)                                      */}
+        {/* ===================================================================== */}
+        <div className="border-b border-[#9DB2BF]/30 pt-1">
+          <nav
+            aria-label="Pilihan Tab Belajar"
+            className="flex items-center gap-6 overflow-x-auto no-scrollbar py-0.5"
+          >
+            {/* Tab 1: Simulator */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("simulator")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "simulator"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+                }`}
+            >
+              <span>Simulator</span>
+              {activeTab === "simulator" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
+
+            {/* Tab 2: Modul */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("modul")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "modul"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+                }`}
+            >
+              <span>Modul</span>
+              {activeTab === "modul" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
+
+            {/* Tab 3: Kilat 2 Menit */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("kilat")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "kilat"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+                }`}
+            >
+              <span>Kilat 2 Menit</span>
+              {activeTab === "kilat" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
+
+            {/* Tab 4: Kamus */}
+            <button
+              type="button"
+              onClick={() => handleTabChange("kamus")}
+              className={`pb-2.5 text-xs font-bold transition-all relative shrink-0 cursor-pointer ${activeTab === "kamus"
+                  ? "text-[#27374D] font-black"
+                  : "text-[#526D82] hover:text-[#27374D]"
+                }`}
+            >
+              <span>Kamus</span>
+              {activeTab === "kamus" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#27374D] rounded-full" />
+              )}
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* KONTEN AKTIF BERDASARKAN TAB YANG DIPILIH                             */}
+      {/* ===================================================================== */}
+      <div>
+        {/* PILAR 1: SIMULATOR */}
+        {activeTab === "simulator" && (
+          <div>
+            {!activeScenarioId ? (
+              <SimulatorCover onSelectScenario={(id) => setActiveScenarioId(id)} />
+            ) : (
+              <SimulatorPage
+                scenarioId={activeScenarioId}
+                onBack={() => setActiveScenarioId(null)}
+                onNavigateTab={handleTabChange}
+              />
+            )}
+          </div>
+        )}
+
+        {/* PILAR 2: MODUL PEMBELAJARAN (PERSIS SEPERTI GAMBAR USER) */}
+        {activeTab === "modul" && (
+          <div>
+            <ModulCover
+              readModules={readModules}
+              onSelectModule={(id) => setActiveModuleId(id)}
+              onGoToKilat={() => handleTabChange("kilat")}
+            />
+          </div>
+        )}
+
+        {/* PILAR 3: KILAT 2 MENIT */}
+        {activeTab === "kilat" && (
+          <div>
+            {kilatMode === "cover" ? (
+              <KilatCover
+                duration={kilatDuration}
+                onSelectDuration={setKilatDuration}
+                onStart={() => setKilatMode("drill")}
+              />
+            ) : (
+              <KilatPage
+                initialTime={kilatDuration}
+                onExit={() => setKilatMode("cover")}
+                onNavigateTab={handleTabChange}
+              />
+            )}
+          </div>
+        )}
+
+        {/* PILAR 4: KAMUS JEBAKAN */}
+        {activeTab === "kamus" && (
+          <div>
+            {!activeGlossaryId ? (
+              <KamusCover onSelectTerm={(id) => setActiveGlossaryId(id)} />
+            ) : (
+              <KamusPage
+                termId={activeGlossaryId}
+                onBack={() => setActiveGlossaryId(null)}
+                onNavigateTab={handleTabChange}
+              />
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ===================================================================== */}
+      {/* FLOATING TOAST NOTIFIKASI OTOMATIS                                    */}
+      {/* ===================================================================== */}
+      {toastNotif && (
+        <aside
+          aria-live="polite"
+          className="fixed bottom-6 right-6 z-50 max-w-sm w-full p-4 rounded-2xl bg-[#27374D] text-white shadow-2xl border border-[#9DB2BF]/40 transition-all animate-in fade-in slide-in-from-bottom-4 duration-300"
+        >
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-xl bg-white/10 text-amber-300 shrink-0">
+              <Bell className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="text-xs font-bold text-white truncate">{toastNotif.title}</h4>
+                <button
+                  type="button"
+                  onClick={() => setToastNotif(null)}
+                  className="text-[#9DB2BF] hover:text-white transition-colors cursor-pointer"
+                  title="Tutup Notifikasi"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <p className="text-[11px] text-[#DDE6ED] mt-1 leading-relaxed">
+                {toastNotif.message}
+              </p>
+              {toastNotif.link && (
+                <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between">
+                  <a
+                    href={toastNotif.link}
+                    onClick={() => setToastNotif(null)}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-300 hover:text-amber-200 hover:underline"
+                  >
+                    <span>Buka Rekomendasi</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                  <span className="text-[10px] text-[#9DB2BF]">Baru saja</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
+      )}
+
+      {/* Footer Catatan Kepatuhan Desain */}
+      <Disclaimer />
+    </div>
+  );
+}
+
+// =============================================================================
+// SUB-KOMPONEN 1: COVER & PAGE SIMULATOR (BAGIAN 1)
+// =============================================================================
+
+function SimulatorCover({ onSelectScenario }: { onSelectScenario: (id: string) => void }) {
+  return (
+    <div className="space-y-6">
+      {/* Header Cover Simulator */}
+      <div className="bg-white p-5 rounded-2xl border border-[#9DB2BF]/40 space-y-1">
+        <h2 className="text-base sm:text-lg font-bold text-[#27374D]">
+          Simulator Skenario Kasus Interaktif
+        </h2>
+        <p className="text-xs text-[#526D82]">
+          Latih insting dan refleks keputusanmu dalam 8 skenario rekayasa sosial nyata dari data IASC & OJK secara aman tanpa risiko.
+        </p>
+      </div>
+
+      {/* Grid 8 Kartu Skenario (K1 - K8) - Desain Kartu Modern Sesuai Referensi Visual */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {SCENARIOS.map((sc) => {
+          const Icon = sc.icon;
+          return (
+            <div
+              key={sc.id}
+              onClick={() => onSelectScenario(sc.id)}
+              className="group relative flex flex-col justify-between rounded-[28px] border border-[#E7DFD5] bg-[#FAF8F5] p-3.5 sm:p-4 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden h-full"
+            >
+              {/* Bagian Atas: Gambar / Media Preview Card */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px] bg-white flex items-center justify-center">
+                {sc.centerImage ? (
+                  <div className="w-full h-full relative overflow-hidden bg-white">
+                    <img
+                      src={sc.centerImage}
+                      alt={sc.title}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                ) : (
+                  <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden p-4">
+                    {/* Background template halus dengan blur lembut */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center filter blur-[1.5px] brightness-90"
+                      style={{
+                        backgroundImage: `url('/simulator/desk-template.jpg'), linear-gradient(135deg, #27374D 0%, #526D82 100%)`,
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-[#27374D]/25" />
+
+                    {/* Floating Center Icon Pill */}
+                    <div className="relative z-1 flex flex-col items-center justify-center space-y-1.5">
+                      <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 text-white shadow-md">
+                        <Icon className="h-6 w-6 text-white drop-shadow-md" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Floating Badge: Pojok Kiri (Kanal: WhatsApp, dll.) */}
+                <div className="absolute top-2.5 left-2.5 z-10">
+                  <span className="rounded-full bg-black/45 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/20 shadow-xs">
+                    {sc.channel}
+                  </span>
+                </div>
+
+
+              </div>
+
+              {/* Bagian Tengah: Judul & Deskripsi Skenario */}
+              <div className="pt-3 pb-0.5 px-0.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-[#27374D] line-clamp-1 tracking-tight leading-snug">
+                    {sc.title}
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-[#526D82] line-clamp-2 leading-relaxed min-h-[36px] mt-1 font-normal">
+                    {sc.description}
+                  </p>
+                </div>
+
+                {/* Bagian Bawah: Tombol Aksi "Mulai Simulasi →" (Model Stroke seperti Profil, Radius Square rounded-xl, Tata Letak seperti Pintasan) */}
+                <div className="pt-3 border-t border-slate-200/70 mt-3 w-full">
+                  <div className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#9DB2BF]/60 bg-white text-[#27374D] shadow-2xs group-hover:border-[#526D82] group-hover:bg-slate-50 transition-all font-bold text-xs sm:text-sm">
+                    <span>Mulai Simulasi</span>
+                    <ArrowRight className="h-4 w-4 text-[#526D82] group-hover:text-[#27374D] shrink-0" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// SUB-KOMPONEN SIMULATOR VISUAL NOVEL / BUKU CERITA MEJA KERJA INTERAKTIF (K1)
+// =============================================================================
+
+function DeskStorybookSimulator({
+  scenario,
+  onBack,
+  onNavigateTab,
+}: {
+  scenario: ScenarioCase;
+  onBack: () => void;
+  onNavigateTab: (tab: TabType) => void;
+}) {
+  const cards = scenario.storyCards || [];
+  const totalCards = cards.length;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlay, setIsAutoPlay] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [copiedFlag, setCopiedFlag] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const currentCardUrl = cards[currentIndex] || scenario.centerImage || "/simulator/k1-chat-snippet.svg";
+
+  // Preload gambar berikutnya agar perpindahan kartu instan tanpa kedip putih
+  useEffect(() => {
+    if (!cards.length) return;
+    const toPreload = [
+      cards[currentIndex + 1],
+      cards[currentIndex + 2],
+      cards[currentIndex - 1],
+    ].filter(Boolean);
+    toPreload.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [currentIndex, cards]);
+
+  // Catat target progress & kirim notifikasi saat kartu terakhir tercapai
+  useEffect(() => {
+    if (totalCards > 0 && currentIndex === totalCards - 1 && !isCompleted) {
+      setIsCompleted(true);
+      addNotification({
+        title: `Misi Selesai: ${scenario.title}`,
+        message: `Hebat! Kamu telah menuntaskan seluruh ${totalCards} kartu rute investigasi ${scenario.category} dan membongkar modus berkas ${scenario.attachmentName || "malware"}.`,
+        type: "sukses",
+        link: "/belajar?tab=simulator",
+      });
+    }
+  }, [currentIndex, totalCards, isCompleted, scenario]);
+
+  // Slideshow otomatis
+  useEffect(() => {
+    if (!isAutoPlay || isCompleted) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => {
+        if (prev < totalCards - 1) {
+          return prev + 1;
+        }
+        setIsAutoPlay(false);
+        return prev;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isAutoPlay, totalCards, isCompleted]);
+
+  const handleNext = () => {
+    if (currentIndex < totalCards - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      setIsCompleted(true);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleJump = (index: number) => {
+    setCurrentIndex(Math.max(0, Math.min(totalCards - 1, index)));
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen((prev) => !prev);
+  };
+
+  const handleCopyFlag = () => {
+    if (scenario.flagCode) {
+      navigator.clipboard?.writeText(scenario.flagCode);
+      setCopiedFlag(true);
+      setTimeout(() => setCopiedFlag(false), 2000);
+    }
+  };
+
+  // Navigasi keyboard (Panah Kanan/Kiri, Spasi, Enter, F, Esc)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrev();
+      } else if (e.key === "Escape") {
+        if (isFullscreen) setIsFullscreen(false);
+      } else if (e.key === "f" || e.key === "F") {
+        toggleFullscreen();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex, totalCards, isFullscreen]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative overflow-hidden select-none transition-all duration-300 ${isFullscreen
+          ? "fixed inset-0 z-50 bg-[#1e1514] flex flex-col justify-between"
+          : "w-full rounded-3xl border border-[#9DB2BF]/50 bg-[#1e1514] shadow-2xl aspect-[16/9] min-h-[520px] sm:min-h-[620px] flex flex-col justify-between"
+        }`}
+    >
+      {/* Layer 1: Background Meja Kerja Cozy (desk-template.jpg) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <img
+          src={scenario.bgImage || "/simulator/desk-template.jpg"}
+          alt="Desk Background"
+          className="w-full h-full object-cover"
+        />
+        {/* Vignette bayangan hangat */}
+        <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+      </div>
+
+      {/* Layer 2: Floating Top Bar Controls */}
+      <div className="relative z-20 p-3 sm:p-4 flex items-center justify-between gap-2 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+        {/* Sisi Kiri: Tombol Kembali & Info Skenario */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white/90 text-xs font-bold border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Kembali</span>
+          </button>
+
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white shadow-lg">
+            <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+            <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
+              {scenario.id.toUpperCase()}
+            </span>
+            <span className="hidden md:inline text-xs font-medium text-white/90 truncate max-w-[200px]">
+              · {scenario.title}
+            </span>
+          </div>
+        </div>
+
+        {/* Tengah: Badge Counter Kartu */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-lg">
+          <span className="text-xs font-extrabold tracking-wide">
+            Kartu {currentIndex + 1}{" "}
+            <span className="text-white/60 font-medium">/ {totalCards}</span>
+          </span>
+        </div>
+
+        {/* Sisi Kanan: Putar Otomatis, Layar Penuh, Ulangi */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <button
+            type="button"
+            onClick={() => setIsAutoPlay((prev) => !prev)}
+            title={isAutoPlay ? "Jeda tayangan otomatis" : "Mulai tayangan otomatis"}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border backdrop-blur-md transition-all cursor-pointer shadow-lg ${isAutoPlay
+                ? "bg-amber-500 text-white border-amber-300 animate-pulse"
+                : "bg-black/60 hover:bg-black/80 text-white/90 border-white/20"
+              }`}
+          >
+            {isAutoPlay ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+            <span className="hidden lg:inline">{isAutoPlay ? "Otomatis" : "Putar"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleJump(0)}
+            title="Ulangi dari kartu pertama"
+            className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white/90 hover:text-white border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Keluar layar penuh" : "Layar penuh (F)"}
+            className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white/90 hover:text-white border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Layer 3: Panggung Tengah - Kartu Buku Catatan di Atas Meja */}
+      <div className="relative z-10 flex-1 flex items-center justify-center p-2 overflow-hidden">
+        <div
+          className="relative h-[91%] max-h-[92%] aspect-[1696/2528] rounded-[6px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.65)] border border-[#8a5d3b]/50 group transition-all duration-300"
+          style={{
+            boxShadow: "0 20px 45px -10px rgba(0,0,0,0.8), 0 0 20px rgba(217, 119, 6, 0.2)",
+          }}
+        >
+          {/* Gambar Kartu Aktif */}
+          <img
+            key={currentCardUrl}
+            src={currentCardUrl}
+            alt={`Kartu ${currentIndex + 1}`}
+            className="w-full h-full object-cover transition-all duration-300"
+          />
+
+          {/* Zona Klik Sisi Kiri (Kembali ke Kartu Sebelumnya) */}
+          <div
+            onClick={handlePrev}
+            title="Klik sisi kiri untuk ke kartu sebelumnya (←)"
+            className="absolute inset-y-0 left-0 w-1/4 cursor-w-resize z-20 group/left hover:bg-black/5 transition-colors flex items-center justify-start pl-2"
+          >
+            <div className="opacity-0 group-hover/left:opacity-75 transition-opacity rounded-full bg-black/40 backdrop-blur-sm p-1.5 text-white">
+              <ChevronLeft className="h-5 w-5" />
+            </div>
+          </div>
+
+          {/* Zona Klik Sisi Kanan (Lanjut ke Kartu Berikutnya) */}
+          <div
+            onClick={handleNext}
+            title="Klik sisi kanan untuk lanjut (→)"
+            className="absolute inset-y-0 right-0 w-1/4 cursor-e-resize z-20 group/right hover:bg-black/5 transition-colors flex items-center justify-end pr-2"
+          >
+            <div className="opacity-0 group-hover/right:opacity-75 transition-opacity rounded-full bg-black/40 backdrop-blur-sm p-1.5 text-white">
+              <ChevronRight className="h-5 w-5" />
+            </div>
+          </div>
+
+          {/* Hotspot Tombol Emas Interaktif di Atas "Lanjut →" */}
+          <div
+            onClick={handleNext}
+            className="absolute bottom-[4.2%] left-1/2 -translate-x-1/2 w-[48%] h-[8%] rounded-full cursor-pointer z-30 group/btn transition-transform active:scale-95"
+            title="Klik Lanjut untuk melanjutkan simulasi"
+          >
+            {/* Efek cincin pendar keemasan */}
+            <div className="absolute inset-0 rounded-full border-2 border-amber-400/50 group-hover/btn:border-amber-300 group-hover/btn:bg-amber-400/15 animate-pulse transition-all" />
+          </div>
+        </div>
+      </div>
+
+      {/* Layer 4: Bilah Kontrol & Scrubber Bawah */}
+      <div className="relative z-20 p-3 sm:p-4 bg-gradient-to-t from-black/85 via-black/50 to-transparent flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-3">
+          {/* Tombol Sebelumnya */}
+          <button
+            type="button"
+            disabled={currentIndex === 0}
+            onClick={handlePrev}
+            className="flex items-center gap-1 px-3 sm:px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur-md text-white text-xs font-bold border border-white/20 transition-all hover:scale-105 cursor-pointer shadow-lg"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Sebelumnya</span>
+          </button>
+
+          {/* Slider Scrubber Interaktif */}
+          <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/15 shadow-lg">
+            <span className="text-[10px] text-white/70 font-mono">1</span>
+            <input
+              type="range"
+              min={0}
+              max={totalCards - 1}
+              value={currentIndex}
+              onChange={(e) => handleJump(Number(e.target.value))}
+              className="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-amber-400"
+            />
+            <span className="text-[10px] text-white/70 font-mono">{totalCards}</span>
+          </div>
+
+          {/* Tombol Lanjut */}
+          <button
+            type="button"
+            onClick={handleNext}
+            className="flex items-center gap-1.5 px-4 sm:px-6 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-xs font-black border border-amber-300/40 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-lg shadow-amber-500/30"
+          >
+            <span>{currentIndex === totalCards - 1 ? "Selesai" : "Lanjut"}</span>
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Layer 5: Modal Perayaan Misi Selesai */}
+      {isCompleted && (
+        <div className="absolute inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md rounded-3xl bg-[#27374D] border-2 border-amber-400/50 p-6 text-white text-center shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-400/20 text-amber-300 border border-amber-400/40 shadow-lg mx-auto">
+              <Award className="h-9 w-9 drop-shadow" />
+            </div>
+
+            <div className="space-y-1">
+              <span className="rounded-full bg-amber-400/20 px-3 py-0.5 text-[10px] font-black text-amber-300 border border-amber-400/30 uppercase tracking-widest">
+                MISI SELESAI
+              </span>
+              <h3 className="text-lg font-black text-white">{scenario.title}</h3>
+              <p className="text-xs text-[#DDE6ED] leading-relaxed">
+                Selamat! Kamu telah menyelesaikan seluruh 41 kartu rute pembelajaran dan berhasil mengungkap seluruh anatomi rekayasa sosial APK palsu.
+              </p>
+            </div>
+
+            {/* Kartu Trust Flag */}
+            <div className="rounded-2xl bg-black/40 border border-amber-400/30 p-3.5 space-y-2 text-left">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Kode Pelindung (Trust Flag)
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyFlag}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 hover:text-amber-200 bg-amber-400/10 hover:bg-amber-400/20 px-2 py-0.5 rounded-md border border-amber-400/30 transition-all cursor-pointer"
+                >
+                  {copiedFlag ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                  <span>{copiedFlag ? "Tersalin!" : "Salin Flag"}</span>
+                </button>
+              </div>
+              <div className="font-mono text-xs font-black text-white bg-black/50 p-2 rounded-lg border border-white/10 tracking-widest text-center">
+                {scenario.flagCode}
+              </div>
+            </div>
+
+            {/* Tombol Aksi */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleJump(0);
+                  setIsCompleted(false);
+                }}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Ulangi Kasus</span>
+              </button>
+              <button
+                type="button"
+                onClick={onBack}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-xs font-black border border-amber-300/40 transition-all cursor-pointer shadow-lg shadow-orange-500/30"
+              >
+                <span>Daftar Skenario</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SimulatorPage({
+  scenarioId,
+  onBack,
+  onNavigateTab,
+}: {
+  scenarioId: string;
+  onBack: () => void;
+  onNavigateTab: (tab: TabType) => void;
+}) {
+  const sc = SCENARIOS.find((s) => s.id === scenarioId) || SCENARIOS[0];
+
+  // Skenario K1 (Undangan Pernikahan Digital APK) menggunakan Fake Chat Simulator Interaktif
+  if (["k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8"].includes(sc.id.toLowerCase())) {
+    return (
+      <FakeChatSimulator
+        scenario={sc}
+        onBack={onBack}
+        onNavigateTab={onNavigateTab}
+      />
+    );
+  }
+
+  // Jika skenario memiliki deretan kartu visual novel (seperti K1), render DeskStorybookSimulator
+  if (sc.storyCards && sc.storyCards.length > 0) {
+    return (
+      <DeskStorybookSimulator
+        scenario={sc}
+        onBack={onBack}
+        onNavigateTab={onNavigateTab}
+      />
+    );
+  }
+
+  const [step, setStep] = useState<"briefing" | "investigasi" | "debrief">("briefing");
+  const [selectedEvidences, setSelectedEvidences] = useState<string[]>([]);
+  const [chosenOption, setChosenOption] = useState<ScenarioChoice | null>(null);
+  const navigate = useNavigate();
+
+  const toggleEvidence = (evId: string) => {
+    setSelectedEvidences((prev) =>
+      prev.includes(evId) ? prev.filter((id) => id !== evId) : [...prev, evId]
+    );
+  };
+
+  const handleSelectChoice = (choice: ScenarioChoice) => {
+    setChosenOption(choice);
+    setStep("debrief");
+    addNotification({
+      title: `Target Skenario: ${sc.title}`,
+      message: choice.isCorrect
+        ? `Luar biasa! Kamu berhasil menghindari jebakan ${sc.category} dan mengambil keputusan tepat. Rekomendasi: Pelajari langkah mitigasinya di Panduan Lindungi atau lanjutkan ke Skenario berikutnya.`
+        : `Skenario selesai! Refleks keputusanmu masih berisiko terjebak. Rekomendasi: Buka artikel pembedahan anatomi malware pada bagian Modul Belajar.`,
+      type: choice.isCorrect ? "sukses" : "waspada",
+      link: choice.isCorrect ? "/belajar?tab=simulator" : "/belajar?tab=modul",
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Top Bar Kembali */}
+      <div className="flex items-center justify-between border-b border-[#9DB2BF]/40 pb-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526D82] hover:text-[#27374D] cursor-pointer"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Kembali ke Daftar Skenario</span>
+        </button>
+
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${sc.levelBadge}`}
+        >
+          <span className={`h-1.5 w-1.5 rounded-full ${sc.dotColor}`} />
+          {sc.levelLabel}
+        </span>
+      </div>
+
+      {/* Main Box Halaman Khusus Skenario */}
+      <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        {/* Step Indicator */}
+        <div className="flex items-center justify-between border-b border-[#DDE6ED] pb-4">
+          <div className="flex items-center gap-3">
+            <span
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === "briefing" ? "bg-[#27374D] text-white" : "bg-emerald-100 text-emerald-800"
+                }`}
+            >
+              1
+            </span>
+            <span className="text-xs font-bold text-[#27374D]">Briefing Kasus</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-[#9DB2BF]" />
+          <div className="flex items-center gap-3">
+            <span
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === "investigasi"
+                  ? "bg-[#27374D] text-white"
+                  : step === "debrief"
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-slate-100 text-[#526D82]"
+                }`}
+            >
+              2
+            </span>
+            <span className="text-xs font-bold text-[#27374D]">Investigasi & Keputusan</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-[#9DB2BF]" />
+          <div className="flex items-center gap-3">
+            <span
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === "debrief" ? "bg-[#27374D] text-white" : "bg-slate-100 text-[#526D82]"
+                }`}
+            >
+              3
+            </span>
+            <span className="text-xs font-bold text-[#27374D]">Debrief & Evaluasi</span>
+          </div>
+        </div>
+
+        {/* STEP 1: BRIEFING */}
+        {step === "briefing" && (
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">
+                {sc.category}
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">{sc.title}</h2>
+              <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">{sc.description}</p>
+            </div>
+
+            <div className="rounded-2xl bg-[#DDE6ED]/40 p-4 sm:p-5 border border-[#9DB2BF]/40 space-y-3">
+              <span className="text-xs font-bold text-[#27374D] uppercase tracking-wider block">
+                Petunjuk Misi Simulasi:
+              </span>
+              <ul className="space-y-2 text-xs text-[#27374D]">
+                {sc.briefing.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-bold text-[#27374D] border border-[#9DB2BF]/50">
+                      {idx + 1}
+                    </span>
+                    <span className="leading-relaxed mt-0.5">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <Button
+                variant="primary"
+                size="md"
+                className="gap-2 text-xs font-bold"
+                onClick={() => setStep("investigasi")}
+              >
+                <span>Mulai Investigasi Pesan</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 2: INVESTIGASI */}
+        {step === "investigasi" && (
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-[#9DB2BF]/50 bg-slate-50/70 p-4 sm:p-5 space-y-3">
+              <div className="flex items-center justify-between border-b border-[#9DB2BF]/30 pb-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#27374D] text-white text-xs font-bold">
+                    {sc.senderName.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#27374D]">{sc.senderName}</div>
+                    <div className="text-[10px] text-[#526D82]">{sc.senderAddress}</div>
+                  </div>
+                </div>
+                <span className="text-[10px] font-semibold text-[#526D82] bg-white px-2 py-0.5 rounded-full border border-[#9DB2BF]/40">
+                  Pesan Masuk
+                </span>
+              </div>
+
+              <div className="rounded-xl bg-white p-3.5 text-xs text-[#27374D] border border-[#9DB2BF]/40 space-y-2.5 shadow-xs">
+                <p className="leading-relaxed">{sc.messageText}</p>
+                {sc.attachmentName && (
+                  <div className="flex items-center gap-2.5 rounded-lg border border-rose-200 bg-rose-50/60 p-2.5 text-rose-900">
+                    <FileCode className="h-5 w-5 text-rose-600 shrink-0" />
+                    <div className="flex-1 min-w-0 text-left">
+                      <div className="text-[11px] font-bold truncate">{sc.attachmentName}</div>
+                      <div className="text-[9px] text-rose-700">{sc.attachmentSize} · Berkas Installer APK</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Langkah 1: Ketuk Tanda Kejanggalan */}
+            <div className="space-y-2.5">
+              <div className="text-xs font-bold text-[#27374D]">
+                Langkah 1: Ketuk tanda kejanggalan yang kamu temukan:
+              </div>
+              <div className="space-y-2">
+                {sc.evidences.map((ev) => {
+                  const isSelected = selectedEvidences.includes(ev.id);
+                  return (
+                    <button
+                      key={ev.id}
+                      type="button"
+                      onClick={() => toggleEvidence(ev.id)}
+                      className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-2.5 ${isSelected
+                          ? "border-[#526D82] bg-[#DDE6ED]/60 text-[#27374D] font-medium"
+                          : "border-[#9DB2BF]/50 bg-white text-[#526D82] hover:border-[#526D82]"
+                        }`}
+                    >
+                      <div
+                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${isSelected
+                            ? "border-[#526D82] bg-[#526D82] text-white"
+                            : "border-[#9DB2BF]"
+                          }`}
+                      >
+                        {isSelected && <Check className="h-2.5 w-2.5 stroke-[3]" />}
+                      </div>
+                      <span className="leading-relaxed">{ev.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Langkah 2: Pilihan Keputusan */}
+            <div className="space-y-2.5 pt-3 border-t border-[#9DB2BF]/30">
+              <div className="text-xs font-bold text-[#27374D]">
+                Langkah 2: Tentukan keputusan tindakanmu:
+              </div>
+              <div className="space-y-2">
+                {sc.choices.map((choice, cIdx) => {
+                  const letter = String.fromCharCode(65 + cIdx);
+                  return (
+                    <button
+                      key={choice.id}
+                      type="button"
+                      onClick={() => handleSelectChoice(choice)}
+                      className="group relative w-full text-left rounded-2xl border-2 border-[#9DB2BF]/50 bg-white hover:bg-[#27374D] hover:border-[#27374D] text-[#27374D] hover:text-white p-3.5 sm:p-4 text-xs font-bold transition-all duration-250 ease-out cursor-pointer flex items-center gap-3.5 shadow-xs hover:shadow-xl hover:shadow-[#27374D]/30 hover:scale-[1.02] hover:-translate-y-1 active:scale-[0.98] z-0 hover:z-10"
+                    >
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#DDE6ED] text-[#27374D] border border-[#9DB2BF]/40 group-hover:bg-white group-hover:text-[#27374D] group-hover:border-white text-xs font-black transition-all duration-200 shadow-2xs group-hover:shadow-md shrink-0">
+                        {letter}
+                      </span>
+                      <span className="flex-1 leading-snug">{choice.label}</span>
+                      <ChevronRight className="h-4 w-4 text-white opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shrink-0" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: DEBRIEF */}
+        {step === "debrief" && chosenOption && (
+          <div className="space-y-6">
+            <div
+              className={`rounded-2xl p-4 sm:p-5 border ${chosenOption.isCorrect
+                  ? "bg-emerald-50 border-emerald-300 text-emerald-900"
+                  : "bg-rose-50 border-rose-300 text-rose-900"
+                }`}
+            >
+              <div className="flex items-center gap-2 font-bold text-sm">
+                {chosenOption.isCorrect ? (
+                  <>
+                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                    <span>Refleks Tepat! Kamu Berhasil Menghindari Tipuan</span>
+                  </>
+                ) : (
+                  <>
+                    <OctagonAlert className="h-5 w-5 text-rose-600" />
+                    <span>Pilihan Berisiko! Tipuan Berhasil Menjebakmu</span>
+                  </>
+                )}
+              </div>
+              <p className="mt-2 text-xs leading-relaxed">{chosenOption.feedback}</p>
+            </div>
+
+            {/* Intisari Pembelajaran */}
+            <div className="rounded-2xl bg-[#DDE6ED]/50 p-4 sm:p-5 border border-[#9DB2BF]/50 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#9DB2BF]/30 pb-3">
+                <span className="text-xs font-bold text-[#27374D]">
+                  Kode Pelindung (Trust Flag):
+                </span>
+                <span className="font-mono text-xs font-extrabold text-[#27374D] bg-white px-2.5 py-1 rounded-lg border border-[#9DB2BF]/60">
+                  {sc.flagCode}
+                </span>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[11px] font-bold text-[#526D82] uppercase tracking-wider">
+                  Intisari Keamanan Utama:
+                </span>
+                <p className="text-xs text-[#27374D] leading-relaxed">{sc.learningPoint}</p>
+              </div>
+            </div>
+
+            {/* Tombol Aksi Akhir */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStep("investigasi");
+                  setChosenOption(null);
+                }}
+                className="w-full sm:w-auto text-xs"
+              >
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                Ulangi Kasus Ini
+              </Button>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/lindungi")}
+                  className="flex-1 sm:flex-none text-xs"
+                >
+                  Buka Panduan Lindungi
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={onBack}
+                  className="flex-1 sm:flex-none text-xs font-bold"
+                >
+                  Selesai & Kembali ke Skenario
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// SUB-KOMPONEN 2: COVER & PAGE MODUL PEMBELAJARAN (BAGIAN 2)
+// =============================================================================
+
+function ModulCover({
+  readModules,
+  onSelectModule,
+  onGoToKilat,
+}: {
+  readModules: string[];
+  onSelectModule: (id: string) => void;
+  onGoToKilat: () => void;
+}) {
+  const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
+
+  const categories = [
+    "Semua",
+    "Dasar Keamanan",
+    "Per Kanal",
+    "Checklist Praktis",
+    "Pola Kejadian Nyata",
+    "Setelah Kejadian",
+  ];
+
+  const filteredModules = useMemo(() => {
+    if (selectedCategory === "Semua") return LEARNING_MODULES;
+    return LEARNING_MODULES.filter((m) => m.category === selectedCategory);
+  }, [selectedCategory]);
+
+  return (
+    <div className="space-y-6">
+      {/* Header Modul Pembelajaran dengan tombol Kilat 2 Menit di kanan (persis gambar) */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">Modul Pembelajaran</h2>
+          <p className="text-xs sm:text-sm text-[#526D82]">
+            Materi dasar yang bisa dibaca kapan saja, dikelompokkan per bab — bukan skenario simulasi.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onGoToKilat}
+          className="inline-flex items-center gap-2 rounded-xl bg-[#27374D] px-4 py-2.5 text-xs font-bold text-white hover:bg-[#1f2d3f] transition-all shadow-xs shrink-0 cursor-pointer self-start sm:self-auto"
+        >
+          <Clock className="h-3.5 w-3.5" />
+          <span>Kilat 2 Menit</span>
+        </button>
+      </div>
+
+      {/* Category Filter Pills (persis gambar: Semua, Dasar Keamanan, Per Kanal, ...) */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => setSelectedCategory(cat)}
+            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${selectedCategory === cat
+                ? "bg-[#27374D] text-white shadow-xs"
+                : "bg-white border border-[#9DB2BF]/50 text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
+              }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Grid 12 Kartu Modul Pembelajaran (3 Kolom persis gambar) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+        {filteredModules.map((m) => {
+          const isRead = readModules.includes(m.id);
+          return (
+            <div
+              key={m.id}
+              onClick={() => onSelectModule(m.id)}
+              className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-4"
+            >
+              {/* Judul & Deskripsi */}
+              <div className="space-y-1.5">
+                <h3 className="text-sm sm:text-base font-bold text-[#27374D] leading-snug group-hover:text-blue-900 transition-colors">
+                  {m.title}
+                </h3>
+                <p className="text-xs text-[#526D82] leading-relaxed line-clamp-2">
+                  {m.summary}
+                </p>
+              </div>
+
+              {/* Footer: Status di kiri pojok & Aksi Baca Modul di kanan */}
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                {isRead ? (
+                  <span className="font-medium text-emerald-600">
+                    Sudah dibaca
+                  </span>
+                ) : (
+                  <span className="font-medium text-[#526D82]">
+                    Belum dibaca
+                  </span>
+                )}
+                <span className="font-bold text-[#27374D] group-hover:underline flex items-center gap-0.5">
+                  Baca Modul <ChevronRight className="h-3 w-3" />
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ModulPage({
+  moduleId,
+  isRead,
+  onBack,
+  onToggleRead,
+  onNavigateTab,
+  onSelectModule,
+}: {
+  moduleId: string;
+  isRead: boolean;
+  onBack: () => void;
+  onToggleRead: () => void;
+  onNavigateTab: (tab: TabType) => void;
+  onSelectModule?: (moduleId: string) => void;
+}) {
+  if (moduleId === "m1") {
+    return (
+      <ModulRekayasaSosialPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m2") {
+    return (
+      <ModulAnatomiPenipuanPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m3") {
+    return (
+      <ModulPerKanalPage
+        data={MODUL_WHATSAPP}
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m4") {
+    return (
+      <ModulEmailPhishingPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m5") {
+    return (
+      <ModulTeleponBankPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m6") {
+    return (
+      <ModulSepuluhCiriPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m7") {
+    return (
+      <ModulSebelumTransferPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m8") {
+    return (
+      <ModulPolaModusNasionalPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m9") {
+    return (
+      <ModulQrisEwalletPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m10") {
+    return (
+      <ModulPinjolIlegalPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m11") {
+    return (
+      <ModulPusatDaruratPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+  if (moduleId === "m12") {
+    return (
+      <ModulDampingiKeluargaPage
+        isRead={isRead}
+        onBack={onBack}
+        onToggleRead={onToggleRead}
+        onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
+      />
+    );
+  }
+
+  const m = LEARNING_MODULES.find((mod) => mod.id === moduleId) || LEARNING_MODULES[0];
+
+  // Checklist interaktif yang tersimpan lokal
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem("jagaruang_modul_checks");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const toggleCheck = (itemIdx: number) => {
+    const checkKey = `${m.id}_chk_${itemIdx}`;
+    setCheckedItems((prev) => {
+      const willBeChecked = !prev[checkKey];
+      const next = { ...prev, [checkKey]: willBeChecked };
+      try {
+        localStorage.setItem("jagaruang_modul_checks", JSON.stringify(next));
+      } catch {
+        // no-op
+      }
+
+      // Jika seluruh checklist selesai, tandai modul sudah dibaca & buat notifikasi
+      if (willBeChecked) {
+        let allCompleted = true;
+        for (let i = 0; i < m.checklistItems.length; i++) {
+          if (!next[`${m.id}_chk_${i}`]) {
+            allCompleted = false;
+            break;
+          }
+        }
+        if (allCompleted) {
+          if (!isRead) onToggleRead();
+          addNotification({
+            title: `Modul Selesai: ${m.title}`,
+            message: `Luar biasa! Kamu telah menuntaskan seluruh checklist pencegahan untuk '${m.title}'. Rekomendasi: Uji refleksmu di Tantangan Kilat 120 Detik atau buat Sandi Keluarga.`,
+            type: "sukses",
+            link: "/sandi",
+          });
+        }
+      }
+
+      return next;
+    });
+  };
+
+  const handleFinishAndNotify = () => {
+    if (!isRead) onToggleRead();
+    addNotification({
+      title: `Modul Selesai Dibaca: ${m.title}`,
+      message: `Pemahaman materi '${m.title}' telah dicatat. Rekomendasi: Lanjutkan ke modul berikutnya atau uji pemahaman di Simulator Skenario Kasus.`,
+      type: "sukses",
+      link: "/belajar?tab=simulator",
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Top Bar Navigasi Khusus Modul */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#9DB2BF]/40 pb-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526D82] hover:text-[#27374D] cursor-pointer"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Kembali ke Modul Pembelajaran</span>
+        </button>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onToggleRead}
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${isRead
+                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                : "bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200"
+              }`}
+          >
+            {isRead ? (
+              <>
+                <Check className="h-3.5 w-3.5" />
+                <span>Sudah Dibaca</span>
+              </>
+            ) : (
+              <span>Tandai Selesai Dibaca</span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Container Pembelajaran Khusus */}
+      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-8">
+        {/* Header Bab Modul */}
+        <div className="space-y-3">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#27374D] leading-tight">
+            {m.title}
+          </h1>
+          <p className="text-sm text-[#526D82] leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            {m.summary}
+          </p>
+        </div>
+
+        {/* Bagian 1: Konsep & Prinsip Utama */}
+        <div className="space-y-3">
+          <h2 className="text-base font-bold text-[#27374D] flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#27374D] text-white text-xs">
+              1
+            </span>
+            <span>Konsep & Prinsip Utama</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-[#27374D] leading-relaxed pl-8">
+            {m.concept}
+          </p>
+        </div>
+
+        {/* Bagian 2: Pembedahan Anatomi Serangan */}
+        <div className="space-y-3">
+          <h2 className="text-base font-bold text-[#27374D] flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#27374D] text-white text-xs">
+              2
+            </span>
+            <span>Tahapan Alur / Anatomi Penipuan</span>
+          </h2>
+          <div className="pl-8 space-y-2">
+            {m.anatomy.map((stepItem, idx) => (
+              <div
+                key={idx}
+                className="rounded-xl bg-[#DDE6ED]/40 p-3.5 border border-[#9DB2BF]/40 text-xs text-[#27374D] leading-relaxed flex items-start gap-2.5"
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#27374D] text-white text-[10px] font-bold mt-0.5">
+                  {idx + 1}
+                </span>
+                <span>{stepItem}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bagian 3: Ciri & Red Flag yang Wajib Diwaspadai */}
+        <div className="space-y-3">
+          <h2 className="text-base font-bold text-[#27374D] flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#27374D] text-white text-xs">
+              3
+            </span>
+            <span>Tanda Kejanggalan (Red Flags)</span>
+          </h2>
+          <ul className="pl-8 space-y-2 text-xs sm:text-sm text-[#27374D]">
+            {m.redFlags.map((flag, idx) => (
+              <li key={idx} className="rounded-xl bg-amber-50/70 p-3.5 border border-amber-200">
+                <span className="leading-relaxed">{flag}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Bagian 4: Checklist Tindakan Mandiri */}
+        <div className="space-y-3">
+          <h2 className="text-base font-bold text-[#27374D] flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#27374D] text-white text-xs">
+              4
+            </span>
+            <span>Checklist Praktis Tindakan Mandiri</span>
+          </h2>
+          <p className="text-xs text-[#526D82] pl-8">
+            Centang setiap poin setelah kamu mempraktikkan langkah perlindungan berikut:
+          </p>
+          <div className="pl-8 space-y-2">
+            {m.checklistItems.map((chk, idx) => {
+              const checkKey = `${m.id}_chk_${idx}`;
+              const isChecked = !!checkedItems[checkKey];
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => toggleCheck(idx)}
+                  className={`w-full text-left rounded-xl p-3 text-xs border transition-all cursor-pointer flex items-start gap-3 ${isChecked
+                      ? "bg-emerald-50/80 border-emerald-300 text-emerald-950 font-medium line-through opacity-85"
+                      : "bg-white border-[#9DB2BF]/60 text-[#27374D] hover:border-[#526D82]"
+                    }`}
+                >
+                  <div
+                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border text-[10px] mt-0.5 ${isChecked
+                        ? "bg-emerald-600 border-emerald-600 text-white"
+                        : "border-[#9DB2BF]"
+                      }`}
+                  >
+                    {isChecked && <Check className="h-2.5 w-2.5 stroke-[3]" />}
+                  </div>
+                  <span className="flex-1 leading-relaxed">{chk}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bagian 5: Intisari Keamanan Utama */}
+        <div className="rounded-2xl bg-[#27374D] text-white p-5 space-y-2 shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-300">
+            <ShieldCheck className="h-4 w-4" />
+            <span>Intisari Perlindungan</span>
+          </div>
+          <p className="text-xs sm:text-sm leading-relaxed text-[#DDE6ED]">
+            {m.takeaway}
+          </p>
+        </div>
+
+        {/* Action Footer */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#DDE6ED]">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onBack}
+            className="w-full sm:w-auto text-xs"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+            Kembali ke Daftar Modul
+          </Button>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => onNavigateTab("simulator")}
+              className="flex-1 sm:flex-none text-xs"
+            >
+              Uji Kasus di Simulator
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleFinishAndNotify}
+              className="flex-1 sm:flex-none text-xs font-bold"
+            >
+              Selesai & Catat Progres
+            </Button>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+// =============================================================================
+// SUB-KOMPONEN 3: COVER & PAGE KILAT 2 MENIT (BAGIAN 3)
+// =============================================================================
+
+interface KilatDifficulty {
+  id: string;
+  name: string;
+  duration: number;
+  timeLabel: string;
+  badge: string;
+  badgeClass: string;
+  pace: string;
+  desc: string;
+}
+
+const KILAT_DIFFICULTIES: KilatDifficulty[] = [
+  {
+    id: "santai",
+    name: "Santai",
+    duration: 180,
+    timeLabel: "180 Detik",
+    badge: "Pemula",
+    badgeClass: "text-emerald-400",
+    pace: "18 dtk / soal",
+    desc: "Waktu longgar untuk membaca detail pesan dan mencermati tanda manipulasi.",
+  },
+  {
+    id: "standar",
+    name: "Standar",
+    duration: 120,
+    timeLabel: "120 Detik",
+    badge: "Rekomendasi",
+    badgeClass: "text-white",
+    pace: "12 dtk / soal",
+    desc: "Waktu seimbang menguji refleks insting alami menghadapi pesan harian.",
+  },
+  {
+    id: "kilat",
+    name: "Ekstrem",
+    duration: 60,
+    timeLabel: "60 Detik",
+    badge: "Tantangan Kilat",
+    badgeClass: "text-rose-400",
+    pace: "6 dtk / soal",
+    desc: "Uji kecepatan tinggi! Pacu insting mengambil keputusan seketika tanpa ragu.",
+  },
+];
+
+function KilatCover({
+  duration,
+  onSelectDuration,
+  onStart,
+}: {
+  duration: number;
+  onSelectDuration: (duration: number) => void;
+  onStart: () => void;
+}) {
+  const currentDiff =
+    KILAT_DIFFICULTIES.find((d) => d.duration === duration) ||
+    KILAT_DIFFICULTIES[1];
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      {/* Kolom Kiri: Tantangan Kilat Card */}
+      <div className="lg:col-span-6 flex flex-col">
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-[#27374D] text-white p-6 sm:p-7 shadow-lg flex flex-col justify-between h-full space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#9DB2BF]">
+                Tantangan Kilat
+              </span>
+              <span
+                className={`text-xs font-bold tracking-wide ${currentDiff.badgeClass}`}
+              >
+                Mode {currentDiff.name}
+              </span>
+            </div>
+
+            <div className="space-y-1">
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+                {currentDiff.timeLabel}
+              </h2>
+              <p className="text-xs sm:text-sm text-[#DDE6ED]/90 leading-relaxed">
+                Asah refleks insting membedakan pesan biasa vs manipulasi sebelum kamu tertipu!
+              </p>
+            </div>
+          </div>
+
+          {/* Pratinjau Visual Soal + Header Viral "QUIZ KILAT" - Ukuran Diperbesar Sesuai Referensi */}
+          <div className="relative my-auto py-7 sm:py-9 px-4 sm:px-6 rounded-3xl bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-transparent border border-white/15 overflow-hidden flex flex-col items-center justify-center min-h-[250px] sm:min-h-[280px] shadow-inner group">
+            {/* Ambient Radial Lights */}
+            <div className="absolute -top-12 -left-12 w-44 h-44 bg-sky-400/25 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-12 -right-12 w-44 h-44 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-28 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Background Layer: Kartu Visual Tangkapan Layar Soal (SMS & WhatsApp Phishing) */}
+            <div className="w-full relative flex items-center justify-center -space-x-8 sm:-space-x-6 opacity-85 group-hover:opacity-100 transition-all duration-500">
+              {/* Kartu Soal 1: SMS Phishing Bank Mandiri */}
+              <div className="w-48 sm:w-56 rounded-2xl bg-white text-[#27374D] p-3 shadow-2xl border border-slate-200 transform -rotate-6 -translate-y-3 group-hover:-rotate-3 group-hover:-translate-y-4 transition-all duration-300 shrink-0 pointer-events-none select-none">
+                <div className="flex items-center justify-between text-[10px] pb-1 border-b border-slate-100">
+                  <span className="font-bold text-sky-800 flex items-center gap-1">
+                    <Mail className="h-3 w-3" /> SMS Bank
+                  </span>
+                  <span className="text-[9px] font-mono text-slate-400">10:14</span>
+                </div>
+                <div className="mt-1.5 space-y-0.5 text-[9.5px] text-slate-700 leading-tight">
+                  <p className="line-clamp-2 italic">"Akun Anda diblokir sementara. Verifikasi PIN:"</p>
+                  <span className="text-[9px] text-blue-600 font-mono underline block truncate">
+                    http://mandiri-verifikasi.xyz
+                  </span>
+                </div>
+                <div className="mt-2 pt-1 border-t border-slate-100 flex items-center justify-between text-[8.5px]">
+                  <span className="text-slate-400">Soal #1</span>
+                  <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold flex items-center gap-0.5">
+                    <AlertTriangle className="h-2.5 w-2.5" /> YES (SCAM)
+                  </span>
+                </div>
+              </div>
+
+              {/* Kartu Soal 2: WhatsApp Malware APK Kurir Paket */}
+              <div className="w-48 sm:w-56 rounded-2xl bg-white text-[#27374D] p-3 shadow-2xl border border-slate-200 transform rotate-6 translate-y-4 group-hover:rotate-3 group-hover:translate-y-5 transition-all duration-300 shrink-0 pointer-events-none select-none">
+                <div className="flex items-center justify-between text-[10px] pb-1 border-b border-slate-100">
+                  <span className="font-bold text-emerald-800 flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> WA Kurir
+                  </span>
+                  <span className="text-[9px] font-mono text-slate-400">11:05</span>
+                </div>
+                <div className="mt-1.5 rounded-md bg-rose-50 border border-rose-200 p-1.5 flex items-center gap-1.5 text-[9.5px]">
+                  <FileCode className="h-3.5 w-3.5 text-rose-600 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="font-bold text-rose-950 truncate block text-[9px]">Cek_Paket_JNE.apk</span>
+                    <span className="text-[8px] text-rose-600">5.2 MB</span>
+                  </div>
+                </div>
+                <div className="mt-2 pt-1 border-t border-slate-100 flex items-center justify-between text-[8.5px]">
+                  <span className="text-slate-400">Soal #4</span>
+                  <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold flex items-center gap-0.5">
+                    <AlertTriangle className="h-2.5 w-2.5" /> YES (SCAM)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Foreground Centerpiece: Viral Styled Typography "QUIZ KILAT" */}
+            <div className="relative z-10 -mt-10 sm:-mt-12 text-center flex flex-col items-center">
+              {/* Header Utama "QUIZ KILAT" dengan Model Font Viral */}
+              <div className="relative group/title">
+                {/* Dynamic Back-Glow Aura */}
+                <div className="absolute -inset-x-8 -inset-y-3 blur-2xl bg-gradient-to-r from-sky-400/40 via-amber-300/50 to-orange-400/40 -z-10 rounded-full opacity-75 group-hover/title:opacity-100 transition-opacity" />
+
+                <h3 className="text-5xl sm:text-6xl font-black uppercase italic tracking-tighter leading-none select-none drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-sky-200">
+                    QUIZ
+                  </span>{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-amber-300 via-yellow-200 to-orange-400 drop-shadow-[0_0_24px_rgba(251,191,36,0.7)]">
+                    KILAT
+                  </span>
+                </h3>
+              </div>
+
+              {/* Tagline Viral di Bawah Header */}
+              <div className="mt-3 flex items-center gap-2 text-[10.5px] sm:text-xs font-extrabold uppercase tracking-widest text-[#DDE6ED] bg-[#1E2B3D]/90 px-3.5 py-1 rounded-full border border-white/15 shadow-md backdrop-blur-xs">
+                <span>10 Soal Cepat</span>
+                <span className="text-amber-400">&bull;</span>
+                <span>Yes / No</span>
+                <span className="text-amber-400">&bull;</span>
+                <span className="text-sky-300">Uji Refleksmu</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-white/10 space-y-2">
+            <button
+              type="button"
+              onClick={onStart}
+              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#DDE6ED] px-6 py-3.5 text-sm font-black text-[#27374D] hover:bg-white active:scale-[0.99] transition-all shadow-md cursor-pointer group"
+            >
+              <span>Mulai Sekarang</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </button>
+            <p className="text-center text-[11px] text-[#9DB2BF]">
+              Estimasi: {currentDiff.pace} · Siap uji refleksmu?
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Kolom Kanan: Aturan Main + Pengaturan Tingkat Kesulitan */}
+      <div className="lg:col-span-6 flex flex-col justify-between space-y-4 h-full">
+        {/* Card 1: Aturan Main Tantangan */}
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4">
+          <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
+            <ListChecks className="h-4 w-4 text-[#526D82]" />
+            <span>Aturan Main Tantangan:</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#526D82]">
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  1
+                </span>
+                <span>10 Tangkapan Layar</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Kamu akan mengamati 10 tangkapan layar simulasi (SMS, WhatsApp, Email, Panggilan, dan Notifikasi).
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  2
+                </span>
+                <span>Pilihan Yes atau No</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Tentukan dengan cepat: pilih <strong>Yes</strong> bila terindikasi penipuan, atau <strong>No</strong> bila aman/resmi.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  3
+                </span>
+                <span>Waktu Berjalan Mundur</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Timer terus berjalan sesuai durasi yang dipilih ({currentDiff.timeLabel}). Asah intuisi tanpa overthinking!
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[#DDE6ED] bg-[#DDE6ED]/20 p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#27374D]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#27374D] text-[10px] text-white font-black">
+                  4
+                </span>
+                <span>Evaluasi & Bedah Kasus</span>
+              </div>
+              <p className="text-[11px] leading-relaxed pl-7">
+                Dapatkan skor akurasi insting serta ulasan red flag mendalam di akhir sesi uji.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Pengaturan Tingkat Kesulitan */}
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-4 flex-1 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div>
+              <span className="text-sm font-bold text-[#27374D]">
+                Pilih Tingkat Kesulitan:
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {KILAT_DIFFICULTIES.map((diff) => {
+                const isSelected = diff.duration === duration;
+                return (
+                  <button
+                    key={diff.id}
+                    type="button"
+                    onClick={() => onSelectDuration(diff.duration)}
+                    className={`text-left rounded-2xl p-4 border transition-all cursor-pointer relative flex flex-col justify-between space-y-3 h-full ${isSelected
+                        ? "border-[#27374D] bg-[#27374D]/5 ring-2 ring-[#27374D] shadow-sm"
+                        : "border-[#9DB2BF]/40 bg-white hover:border-[#526D82] hover:bg-[#DDE6ED]/20"
+                      }`}
+                  >
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#27374D]">
+                          {diff.name}
+                        </span>
+                        {isSelected ? (
+                          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#27374D] text-white">
+                            <Check className="h-2.5 w-2.5 stroke-[3]" />
+                          </span>
+                        ) : (
+                          <span className="h-4 w-4 rounded-full border border-[#9DB2BF]" />
+                        )}
+                      </div>
+                      <div className="text-lg font-black text-[#27374D]">
+                        {diff.timeLabel}
+                      </div>
+                      <span className="inline-block text-[10px] font-semibold text-[#526D82] bg-white px-2 py-0.5 rounded-md border border-[#9DB2BF]/40">
+                        {diff.pace}
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-[#DDE6ED]">
+                      {diff.desc}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// SUB-KOMPONEN BANTU: PRATINJAU VISUAL TANGKAPAN LAYAR SOAL DRILL KILAT
+// =============================================================================
+
+function DrillVisualMockup({ item }: { item: TriageDrillItem }) {
+  if (item.channel === "sms") {
+    return (
+      <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+        {/* SMS Phone Header */}
+        <div className="bg-[#27374D] text-white px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Mail className="h-3.5 w-3.5 text-sky-300" />
+            <span className="text-xs font-bold text-[#DDE6ED]">SMS Pesan Masuk</span>
+          </div>
+          <span className="text-[10px] text-[#9DB2BF] font-mono">{item.timeString}</span>
+        </div>
+
+        {/* Sender Info Bar */}
+        <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded-full bg-[#526D82]/20 flex items-center justify-center text-[#27374D] font-bold text-xs">
+              {item.senderName.slice(0, 1)}
+            </div>
+            <div>
+              <div className="font-bold text-[#27374D] text-xs leading-none">
+                {item.senderName}
+              </div>
+              <div className="text-[10px] text-[#526D82] mt-0.5">
+                {item.senderAddress}
+              </div>
+            </div>
+          </div>
+          <span className="text-[10px] bg-slate-200 text-[#27374D] font-semibold px-2 py-0.5 rounded-full">
+            SIM 1
+          </span>
+        </div>
+
+        {/* SMS Bubble */}
+        <div className="p-4 bg-slate-50/50 space-y-2">
+          <div className="rounded-2xl bg-white border border-slate-200 p-3.5 shadow-2xs space-y-2 text-xs text-[#27374D] leading-relaxed">
+            <p className="whitespace-pre-wrap">{item.text}</p>
+            {item.linkText && (
+              <div className="pt-2 border-t border-slate-100 text-[11px] text-blue-600 font-mono font-medium underline flex items-center gap-1">
+                <ExternalLink className="h-3 w-3 shrink-0" />
+                <span className="break-all">{item.linkText}</span>
+              </div>
+            )}
+          </div>
+          <div className="text-[10px] text-slate-400 text-right pr-1">
+            Diterima {item.timeString}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (item.channel === "whatsapp") {
+    return (
+      <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+        {/* WhatsApp Top Bar */}
+        <div className="bg-[#1E2B3D] text-white px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">
+              {item.senderName.slice(0, 1)}
+            </div>
+            <div>
+              <div className="font-bold text-xs leading-none text-white">
+                {item.senderName}
+              </div>
+              <div className="text-[10px] text-emerald-300 mt-0.5">
+                {item.senderAddress}
+              </div>
+            </div>
+          </div>
+          <Smartphone className="h-4 w-4 text-slate-300" />
+        </div>
+
+        {/* WhatsApp Chat Area */}
+        <div className="p-4 bg-[#EFEAE2]/60 space-y-2">
+          <div className="flex justify-center">
+            <span className="text-[10px] bg-white/80 text-slate-500 font-medium px-2.5 py-0.5 rounded-md shadow-2xs">
+              HARI INI
+            </span>
+          </div>
+
+          <div className="rounded-2xl rounded-tl-xs bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-2 text-xs text-[#27374D] max-w-[90%]">
+            <p className="whitespace-pre-wrap leading-relaxed">{item.text}</p>
+
+            {item.attachmentName && (
+              <div className="rounded-xl border border-rose-200 bg-rose-50/80 p-2.5 flex items-center gap-2.5 mt-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500 text-white shrink-0">
+                  <FileCode className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold text-rose-950 text-xs truncate">
+                    {item.attachmentName}
+                  </div>
+                  <div className="text-[10px] text-rose-700">
+                    {item.attachmentSize || "Installer Android"}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {item.linkText && (
+              <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-2.5 space-y-1 mt-2">
+                <div className="text-[10px] font-bold text-sky-800 uppercase tracking-wide">
+                  Pratinjau Tautan Web
+                </div>
+                <div className="text-[11px] text-blue-600 font-mono underline break-all">
+                  {item.linkText}
+                </div>
+              </div>
+            )}
+
+            <div className="text-[10px] text-slate-400 text-right mt-1">
+              {item.timeString}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (item.channel === "email") {
+    return (
+      <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+        {/* Email Header */}
+        <div className="bg-[#27374D] text-white px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Mail className="h-4 w-4 text-amber-300" />
+            <span className="font-bold text-xs">Pesan Email Masuk</span>
+          </div>
+          <span className="text-[10px] text-[#9DB2BF] font-mono">{item.timeString}</span>
+        </div>
+
+        {/* Sender details */}
+        <div className="p-3.5 bg-slate-50 border-b border-slate-100 space-y-1 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-[#27374D]">{item.senderName}</span>
+            <span className="text-[10px] text-slate-400">Pukul {item.timeString}</span>
+          </div>
+          <div className="text-[11px] text-slate-500">
+            Dari: &lt;{item.senderAddress}&gt;
+          </div>
+          <div className="text-[11px] text-slate-500">Kepada: saya</div>
+        </div>
+
+        {/* Body */}
+        <div className="p-4 bg-white space-y-3 text-xs text-[#27374D]">
+          <div className="flex items-center gap-2 font-bold text-sm text-[#27374D] border-b border-slate-100 pb-2">
+            <ShieldAlert className="h-4 w-4 text-amber-500" />
+            <span>Pemberitahuan Sistem Akun</span>
+          </div>
+          <p className="leading-relaxed whitespace-pre-wrap">{item.text}</p>
+          {item.linkText && (
+            <div className="pt-2">
+              <span className="inline-block rounded-lg bg-[#27374D] text-white text-[11px] font-bold px-3 py-1.5 shadow-2xs">
+                Tinjau Aktivitas &rarr;
+              </span>
+              <div className="text-[10px] text-slate-400 mt-1 font-mono break-all">
+                URL: {item.linkText}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (item.channel === "call") {
+    return (
+      <div className="w-full max-w-xs mx-auto rounded-3xl bg-[#0F172A] text-white p-5 shadow-lg text-center space-y-4">
+        <div className="space-y-1">
+          <div className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400">
+            Panggilan Masuk
+          </div>
+          <div className="h-14 w-14 rounded-full bg-slate-700/80 mx-auto flex items-center justify-center text-white my-2 border-2 border-slate-600">
+            <PhoneCall className="h-6 w-6 text-white" />
+          </div>
+          <div className="text-base font-black text-white">{item.senderName}</div>
+          <div className="text-xs text-slate-400">{item.senderAddress}</div>
+        </div>
+
+        <div className="rounded-xl bg-white/10 p-3 text-left text-xs text-slate-200 border border-white/10">
+          <div className="text-[10px] font-bold uppercase text-amber-300 mb-1">
+            Percakapan Penelepon:
+          </div>
+          <p className="text-[11px] leading-relaxed italic">{item.text}</p>
+        </div>
+
+        <div className="flex items-center justify-center gap-8 pt-1">
+          <div className="flex flex-col items-center gap-1">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-600 text-white shadow-md">
+              <PhoneCall className="h-4 w-4 rotate-[135deg]" />
+            </span>
+            <span className="text-[10px] text-slate-400">Tolak</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-md">
+              <PhoneCall className="h-4 w-4" />
+            </span>
+            <span className="text-[10px] text-slate-400">Terima</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // App notification / receipt
+  return (
+    <div className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden text-left">
+      <div className="bg-[#27374D] text-white px-4 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Bell className="h-3.5 w-3.5 text-amber-300" />
+          <span className="font-bold text-xs">{item.senderName}</span>
+        </div>
+        <span className="text-[10px] text-[#9DB2BF] font-mono">{item.timeString}</span>
+      </div>
+
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+            <CheckCircle2 className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-[#27374D]">
+              Mutasi Rekening Berhasil
+            </div>
+            <div className="text-[11px] text-[#526D82]">
+              {item.senderAddress}
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-1 text-xs text-[#27374D]">
+          <p className="leading-relaxed">{item.text}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function KilatPage({
+  initialTime = 120,
+  onExit,
+  onNavigateTab,
+}: {
+  initialTime?: number;
+  onExit: () => void;
+  onNavigateTab: (tab: TabType) => void;
+}) {
+  const [timeLeft, setTimeLeft] = useState(initialTime);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, "yes" | "no">>({});
+  const [isFinished, setIsFinished] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
+
+  const toggleQuestionExpand = (id: string) => {
+    setExpandedQuestions((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // Timer Countdown
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>;
+    if (!isFinished && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            setIsFinished(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isFinished, timeLeft]);
+
+  const handleAnswer = (choice: "yes" | "no") => {
+    const currentItem = TRIAGE_DRILL_ITEMS[currentIndex];
+    const newAnswers = { ...answers, [currentItem.id]: choice };
+    setAnswers(newAnswers);
+
+    if (currentIndex + 1 < TRIAGE_DRILL_ITEMS.length) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      setIsFinished(true);
+    }
+  };
+
+  // Hitung Skor
+  const scoreResult = useMemo(() => {
+    let correct = 0;
+    TRIAGE_DRILL_ITEMS.forEach((item) => {
+      const userChoice = answers[item.id];
+      if (userChoice) {
+        const isUserCorrect =
+          (userChoice === "yes" && item.isScam) ||
+          (userChoice === "no" && !item.isScam);
+        if (isUserCorrect) correct++;
+      }
+    });
+    return {
+      correct,
+      total: TRIAGE_DRILL_ITEMS.length,
+      percentage: Math.round((correct / TRIAGE_DRILL_ITEMS.length) * 100),
+    };
+  }, [answers]);
+
+  // Notifikasi hasil & rekomendasi ketika tantangan selesai
+  useEffect(() => {
+    if (isFinished) {
+      const correct = scoreResult.correct;
+      const total = scoreResult.total;
+      const pct = scoreResult.percentage;
+      addNotification({
+        title: `Hasil Tantangan Kilat: Skor ${correct}/${total} (${pct}%)`,
+        message:
+          pct >= 80
+            ? `Refleks keamananmu sangat tanggap! Rekomendasi: Pertahankan kewaspadaan dan uji kasus di Simulator Skenario Kasus.`
+            : `Tantangan selesai! Masih ada beberapa pesan manipulasi yang lolos deteksi. Rekomendasi: Buka Kamus Jebakan atau pelajari Modul Pembelajaran.`,
+        type: pct >= 80 ? "sukses" : "waspada",
+        link: pct >= 80 ? "/belajar?tab=simulator" : "/belajar?tab=kamus",
+      });
+    }
+  }, [isFinished]);
+
+  const currentItem = TRIAGE_DRILL_ITEMS[currentIndex];
+
+  const handleRestart = () => {
+    setTimeLeft(initialTime);
+    setCurrentIndex(0);
+    setAnswers({});
+    setIsFinished(false);
+    setIsZoomed(false);
+    setExpandedQuestions({});
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Top Bar Header Drill (Hanya Tampil Saat Sesi Soal Aktif) */}
+      {!isFinished && (
+        <div className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-3.5 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={onExit}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#9DB2BF]/60 bg-white hover:bg-slate-50 text-xs font-bold text-[#27374D] transition-all shadow-2xs cursor-pointer group"
+          >
+            <ArrowLeft className="h-4 w-4 text-[#526D82] group-hover:-translate-x-0.5 transition-transform" />
+            <span>Keluar dari Tantangan</span>
+          </button>
+
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Indikator Jumlah Soal */}
+            <div className="text-xs sm:text-sm font-bold text-[#27374D]">
+              Soal{" "}
+              <span className="text-sky-700 font-black text-sm">
+                {currentIndex + 1}
+              </span>{" "}
+              <span className="text-[#9DB2BF]">/</span> {TRIAGE_DRILL_ITEMS.length}
+            </div>
+
+            {/* Tombol & Indikator Timer yang Jelas dan Kontras */}
+            <div
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors ${timeLeft <= 20
+                  ? "bg-rose-600 text-white animate-pulse ring-2 ring-rose-400"
+                  : "bg-[#27374D] text-white"
+                }`}
+            >
+              <Clock className="h-4 w-4 text-amber-300" />
+              <span>
+                Sisa Waktu:{" "}
+                <span className="text-sm sm:text-base font-extrabold tracking-wider">
+                  {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tampilan Pertanyaan Aktif (2 Kolom Berdampingan Persis Sketsa User) */}
+      {!isFinished && currentItem && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Kolom Kiri: Tangkapan Layar Soal (Mockup Gambar) */}
+          <div className="lg:col-span-7 xl:col-span-7 flex flex-col">
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-slate-50/70 p-5 sm:p-7 shadow-xs relative flex flex-col justify-center h-full min-h-[400px]">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                <span className="text-xs font-bold text-[#526D82] flex items-center gap-1.5">
+                  <Smartphone className="h-3.5 w-3.5" />
+                  <span>Tangkapan Layar Pesan #{currentIndex + 1}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsZoomed(true)}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#526D82] hover:text-[#27374D] bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-2xs hover:bg-slate-50 transition-all cursor-pointer"
+                  title="Perbesar Tampilan"
+                >
+                  <Maximize2 className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Perbesar</span>
+                </button>
+              </div>
+
+              {/* Visual Mockup Tangkapan Layar */}
+              <div className="py-2 flex-1 flex items-center justify-center">
+                <DrillVisualMockup item={currentItem} />
+              </div>
+            </div>
+          </div>
+
+          {/* Kolom Kanan: Soal, Yes, No (Tersusun Vertikal Sesuai Sketsa User) */}
+          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-between gap-4">
+            {/* Box 1: Soal */}
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-7 shadow-xs space-y-3">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#526D82]">
+                  Pertanyaan #{currentIndex + 1}
+                </span>
+              </div>
+
+              <h3 className="text-base sm:text-lg font-black text-[#27374D] leading-snug pt-1">
+                {currentItem.question}
+              </h3>
+
+              <p className="text-xs text-[#526D82] leading-relaxed pt-1 border-t border-slate-100">
+                Amati tanda kejanggalan pengirim, ekstensi berkas, atau tautan pada gambar di sebelah kiri.
+              </p>
+            </div>
+
+            {/* Box 2: Tombol Yes */}
+            <button
+              type="button"
+              onClick={() => handleAnswer("yes")}
+              className="w-full text-left rounded-3xl border-2 border-slate-200 bg-white p-5 sm:p-6 flex items-center gap-4 transition-all hover:border-[#27374D] hover:bg-slate-50/80 active:scale-[0.99] cursor-pointer group shadow-xs"
+            >
+              <span className="h-6 w-6 rounded-full border-2 border-slate-300 group-hover:border-[#27374D] flex items-center justify-center shrink-0 transition-colors">
+                {answers[currentItem.id] === "yes" && (
+                  <span className="h-3 w-3 rounded-full bg-[#27374D]" />
+                )}
+              </span>
+              <div className="space-y-0.5">
+                <div className="text-xl font-black text-[#27374D]">Yes</div>
+                <div className="text-xs text-[#526D82]">
+                  Pesan ini mencurigakan / terindikasi penipuan
+                </div>
+              </div>
+            </button>
+
+            {/* Box 3: Tombol No */}
+            <button
+              type="button"
+              onClick={() => handleAnswer("no")}
+              className="w-full text-left rounded-3xl border-2 border-slate-200 bg-white p-5 sm:p-6 flex items-center gap-4 transition-all hover:border-[#27374D] hover:bg-slate-50/80 active:scale-[0.99] cursor-pointer group shadow-xs"
+            >
+              <span className="h-6 w-6 rounded-full border-2 border-slate-300 group-hover:border-[#27374D] flex items-center justify-center shrink-0 transition-colors">
+                {answers[currentItem.id] === "no" && (
+                  <span className="h-3 w-3 rounded-full bg-[#27374D]" />
+                )}
+              </span>
+              <div className="space-y-0.5">
+                <div className="text-xl font-black text-[#27374D]">No</div>
+                <div className="text-xs text-[#526D82]">
+                  Pesan ini resmi / aman / wajar
+                </div>
+              </div>
+            </button>
+
+            {/* Box 4: Tombol Navigasi Soal Sebelumnya & Setelahnya */}
+            <div className="flex items-center justify-between gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+                disabled={currentIndex === 0}
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border text-xs font-bold transition-all shadow-2xs ${currentIndex === 0
+                    ? "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-50"
+                    : "border-[#9DB2BF]/60 bg-white text-[#27374D] hover:bg-slate-50 hover:border-[#27374D] cursor-pointer active:scale-98"
+                  }`}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span>Soal Sebelumnya</span>
+              </button>
+
+              {currentIndex < TRIAGE_DRILL_ITEMS.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      Math.min(TRIAGE_DRILL_ITEMS.length - 1, prev + 1)
+                    )
+                  }
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#27374D] text-white text-xs font-bold hover:bg-[#1e2b3d] transition-all shadow-xs active:scale-98 cursor-pointer"
+                >
+                  <span>Soal Setelahnya</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsFinished(true)}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-all shadow-xs active:scale-98 cursor-pointer"
+                >
+                  <span>Selesai & Evaluasi</span>
+                  <Check className="h-4 w-4 stroke-[3]" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Zoom Tangkapan Layar */}
+      {isZoomed && currentItem && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="relative max-w-xl w-full bg-white rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span className="text-xs font-bold text-[#27374D]">
+                Detail Tangkapan Layar Soal #{currentIndex + 1}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsZoomed(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-[#27374D] hover:bg-slate-100 transition-all cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="py-2">
+              <DrillVisualMockup item={currentItem} />
+            </div>
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={() => setIsZoomed(false)}
+                className="text-xs font-bold text-[#526D82] hover:text-[#27374D] underline cursor-pointer"
+              >
+                Tutup Pratinjau
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tampilan Selesai & Hasil Evaluasi (Dijabarkan Penuh, Bukan Kotak Sempit di Tengah) */}
+      {isFinished && (
+        <div className="w-full space-y-6">
+          {/* Top Bar Kembali & Navigasi */}
+          <div className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-3.5 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={onExit}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#9DB2BF]/60 bg-white hover:bg-slate-50 text-xs font-bold text-[#27374D] transition-all shadow-2xs cursor-pointer group"
+            >
+              <ArrowLeft className="h-4 w-4 text-[#526D82] group-hover:-translate-x-0.5 transition-transform" />
+              <span>Kembali ke Beranda Belajar</span>
+            </button>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRestart}
+                className="text-xs font-bold"
+              >
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                Ulangi Tantangan
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => onNavigateTab("kamus")}
+                className="text-xs"
+              >
+                Pelajari di Kamus
+              </Button>
+            </div>
+          </div>
+
+          {/* Hero Card Hasil Evaluasi Skor */}
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
+              {/* Indikator Persentase Donut Circular Gauge */}
+              <div className="relative flex h-20 w-20 sm:h-22 sm:w-22 shrink-0 items-center justify-center">
+                <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    stroke="#E2E8F0"
+                    strokeWidth="8"
+                    fill="none"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    stroke={
+                      scoreResult.percentage >= 80
+                        ? "#059669"
+                        : scoreResult.percentage >= 50
+                          ? "#D97706"
+                          : "#E11D48"
+                    }
+                    strokeWidth="8"
+                    strokeDasharray={2 * Math.PI * 38}
+                    strokeDashoffset={
+                      2 * Math.PI * 38 - (scoreResult.percentage / 100) * (2 * Math.PI * 38)
+                    }
+                    strokeLinecap="round"
+                    fill="none"
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center text-center">
+                  <span
+                    className={`text-lg sm:text-xl font-black tracking-tight ${
+                      scoreResult.percentage >= 80
+                        ? "text-emerald-700"
+                        : scoreResult.percentage >= 50
+                          ? "text-amber-700"
+                          : "text-rose-700"
+                    }`}
+                  >
+                    {scoreResult.percentage}%
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#526D82]">
+                    Hasil Evaluasi Tantangan Kilat
+                  </span>
+                </div>
+
+                <h2 className="text-2xl sm:text-3xl font-black text-[#27374D]">
+                  Skor: {scoreResult.correct} dari {scoreResult.total} Tepat
+                </h2>
+
+                <p className="text-xs sm:text-sm text-[#526D82] max-w-2xl leading-relaxed">
+                  {scoreResult.percentage >= 80
+                    ? "Refleks keamananmu sangat tanggap dan tajam! Kamu mampu membedakan pesan biasa dengan pola rekayasa sosial manipulatif secara cepat."
+                    : scoreResult.percentage >= 50
+                      ? "Refleks keamananmu cukup baik. Namun masih ada beberapa pesan jebakan yang lolos verifikasi. Cermati ulasan red flags tiap soal di bawah."
+                      : "Kamu masih sering terjebak pesan manipulatif. Sangat disarankan meninjau ulasan tanda peringatan di bawah dan membuka Modul Belajar."}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bagian Ulasan 10 Soal (Akordion Kompak Dengan Border Stroke Hijau/Merah) */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#27374D]">
+              <ListChecks className="h-4 w-4 text-[#526D82]" />
+              <span>Ulasan Detail Refleks Keputusanmu (10 Soal):</span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 items-start">
+              {TRIAGE_DRILL_ITEMS.map((item, idx) => {
+                const userChoice = answers[item.id];
+                const isCorrect =
+                  (userChoice === "yes" && item.isScam) ||
+                  (userChoice === "no" && !item.isScam);
+                const isExpanded = !!expandedQuestions[item.id];
+
+                return (
+                  <div
+                    key={item.id}
+                    className={`rounded-2xl border-2 transition-all overflow-hidden h-fit ${
+                      isCorrect
+                        ? "bg-white border-emerald-500 shadow-2xs hover:shadow-xs"
+                        : "bg-white border-rose-500 shadow-2xs hover:shadow-xs"
+                    }`}
+                  >
+                    {/* Header Soal (Bisa Diklik Untuk Expand / Collapse) */}
+                    <button
+                      type="button"
+                      onClick={() => toggleQuestionExpand(item.id)}
+                      className="w-full p-4 sm:p-4.5 flex items-center justify-between gap-3 text-left hover:bg-slate-50/70 transition-colors cursor-pointer select-none"
+                    >
+                      <div className="flex-1 min-w-0 pr-1">
+                        <h4 className="font-bold text-[#27374D] text-xs sm:text-sm leading-snug">
+                          <span className="font-extrabold text-[#27374D] mr-1.5">
+                            Soal {idx + 1}.
+                          </span>
+                          {item.question}
+                        </h4>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                            isCorrect
+                              ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                              : "bg-rose-100 text-rose-800 border border-rose-300"
+                          }`}
+                        >
+                          {isCorrect ? (
+                            <>
+                              <Check className="h-2.5 w-2.5 stroke-[3]" />
+                              <span>Tepat</span>
+                            </>
+                          ) : (
+                            <>
+                              <X className="h-2.5 w-2.5 stroke-[3]" />
+                              <span>Kurang Tepat</span>
+                            </>
+                          )}
+                        </span>
+
+                        <div
+                          className={`flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-[#526D82] transition-transform duration-200 ${
+                            isExpanded ? "rotate-180" : ""
+                          }`}
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Konten Penjelasan Yang Muncul Saat Diklik */}
+                    {isExpanded && (
+                      <div className="p-4 sm:p-4.5 pt-0 border-t border-slate-100 space-y-3 mt-1">
+                        {/* Pratinjau Teks Pesan Asli */}
+                        <div className="mt-3 space-y-1.5">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#526D82]">
+                            Pratinjau Pesan ({item.source}):
+                          </span>
+                          <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] text-[#27374D] leading-relaxed italic">
+                            "{item.text}"
+                          </div>
+                        </div>
+
+                        {/* Perbandingan Pilihan Jawaban */}
+                        <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] border-t border-slate-100">
+                          <span className="text-[#526D82]">
+                            Pilihanmu:{" "}
+                            <strong
+                              className={`uppercase font-bold ${
+                                isCorrect ? "text-emerald-700" : "text-rose-700"
+                              }`}
+                            >
+                              {userChoice || "-"}
+                            </strong>
+                          </span>
+                          <span className="text-[#9DB2BF]">&bull;</span>
+                          <span className="text-[#526D82]">
+                            Kunci:{" "}
+                            <strong className="text-[#27374D] font-bold">
+                              {item.isScam ? "Yes (Penipuan)" : "No (Bukan Penipuan)"}
+                            </strong>
+                          </span>
+                        </div>
+
+                        {/* Pembahasan & Red Flags */}
+                        <div className="text-[11px] text-[#526D82] leading-relaxed pt-2 border-t border-slate-100">
+                          <strong className="text-[#27374D] block mb-0.5">
+                            Penjelasan & Red Flags:
+                          </strong>
+                          {item.explanation}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Tombol Aksi Bawah */}
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={handleRestart}
+              className="w-full sm:w-auto text-xs font-bold"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Ulangi Tantangan
+            </Button>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => onNavigateTab("kamus")}
+                className="flex-1 sm:flex-none text-xs"
+              >
+                Pelajari Istilah di Kamus
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={onExit}
+                className="flex-1 sm:flex-none text-xs font-black"
+              >
+                Kembali ke Menu Utama
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
+// SUB-KOMPONEN 4: COVER & PAGE KAMUS JEBAKAN (BAGIAN 4)
+// =============================================================================
+
+function renderStyledTermTitle(term: GlossaryTerm) {
+  switch (term.id) {
+    case "sniffing-apk":
+      return (
+        <>
+          <span>Sniffing </span>
+          <span className="text-blue-600">APK</span>
+        </>
+      );
+    case "social-engineering":
+      return (
+        <>
+          <span>Social </span>
+          <span className="text-amber-600">Engineering</span>
+        </>
+      );
+    case "sim-swap":
+      return (
+        <>
+          <span>SIM Swap </span>
+          <span className="text-rose-600">Fraud</span>
+        </>
+      );
+    case "phishing":
+      return (
+        <>
+          <span className="text-blue-600">Phishing </span>
+          <span>Website</span>
+        </>
+      );
+    case "quishing":
+      return (
+        <>
+          <span className="text-purple-600">Quishing </span>
+          <span className="text-[#526D82] text-xl sm:text-2xl font-bold">(QR Phishing)</span>
+        </>
+      );
+    case "smishing":
+      return (
+        <>
+          <span className="text-sky-600">Smishing </span>
+          <span className="text-[#526D82] text-xl sm:text-2xl font-bold">(SMS Phishing)</span>
+        </>
+      );
+    case "typosquatting":
+      return (
+        <>
+          <span className="text-indigo-600">Typo</span>
+          <span>squatting</span>
+        </>
+      );
+    case "account-takeover":
+      return (
+        <>
+          <span>Account </span>
+          <span className="text-rose-600">Takeover </span>
+          <span className="text-[#526D82] text-xl sm:text-2xl font-bold">(ATO)</span>
+        </>
+      );
+    case "ransomware":
+      return (
+        <>
+          <span className="text-rose-600">Ransom</span>
+          <span>ware</span>
+        </>
+      );
+    case "loker-deposit":
+      return (
+        <>
+          <span className="text-amber-600">Deposit Loker </span>
+          <span>Palsu</span>
+        </>
+      );
+    default:
+      return <span>{term.name}</span>;
+  }
+}
+
+function KamusCover({ onSelectTerm }: { onSelectTerm: (id: string) => void }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
+
+  const categories = [
+    "Semua",
+    "Malware Android",
+    "Manipulasi Sosial",
+    "Identitas",
+    "Penipuan Web",
+  ];
+
+  const filteredTerms = useMemo(() => {
+    return GLOSSARY_TERMS.filter((term) => {
+      const matchCat = selectedCategory === "Semua" || term.category === selectedCategory;
+      const matchSearch =
+        term.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        term.meaning.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }, [searchTerm, selectedCategory]);
+
+  return (
+    <div className="space-y-6">
+      {/* Header Kamus Cover */}
+      <div className="bg-white p-5 rounded-2xl border border-[#9DB2BF]/40 space-y-1">
+        <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
+          Kamus Istilah Jebakan & Modus Digital
+        </h2>
+        <p className="text-xs sm:text-sm text-[#526D82]">
+          Pahami 10 istilah ancaman, cara kerja manipulasi, dan respons pertolongan pertama saat terlanjur terpapar.
+        </p>
+      </div>
+
+      {/* Kontrol Pencarian & Kategori Filter */}
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#526D82]" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Cari istilah, singkatan, atau nama modus..."
+            className="w-full rounded-2xl border border-[#9DB2BF]/60 bg-white py-2.5 pl-10 pr-4 text-xs text-[#27374D] placeholder:text-[#9DB2BF] focus:outline-none focus:ring-2 focus:ring-[#526D82]"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setSelectedCategory(cat)}
+              className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${selectedCategory === cat
+                  ? "bg-[#27374D] text-white shadow-xs"
+                  : "bg-white border border-[#9DB2BF]/50 text-[#526D82] hover:bg-[#DDE6ED]/60 hover:text-[#27374D]"
+                }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid Kartu Istilah Kamus (Kembali ke Tata Letak Grid Responsif) */}
+      {filteredTerms.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {filteredTerms.map((term) => (
+            <div
+              key={term.id}
+              onClick={() => onSelectTerm(term.id)}
+              className="rounded-2xl border border-[#9DB2BF]/50 bg-white p-5 shadow-xs hover:border-[#526D82] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-3"
+            >
+              <div className="space-y-2">
+                <h3 className="text-base font-bold text-[#27374D] group-hover:text-blue-900 transition-colors">
+                  {term.name}
+                </h3>
+                <p className="text-xs text-[#526D82] leading-relaxed line-clamp-3">
+                  {term.meaning}
+                </p>
+              </div>
+
+              <div className="pt-2 border-t border-[#DDE6ED] flex items-center justify-between text-[11px] text-[#526D82]">
+                <span className="truncate max-w-[200px] sm:max-w-[240px]">
+                  Titik Masuk: {term.entryPoint}
+                </span>
+                <span className="text-[#27374D] font-bold shrink-0 flex items-center gap-1 group-hover:underline">
+                  Buka Detail →
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-[#9DB2BF]/40 bg-white p-12 text-center space-y-2">
+          <p className="text-sm font-bold text-[#27374D]">
+            Tidak ada istilah yang cocok dengan "{searchTerm}"
+          </p>
+          <p className="text-xs text-[#526D82]">
+            Coba cari dengan kata kunci lain atau pilih kategori "Semua".
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function KamusPage({
+  termId,
+  onBack,
+  onNavigateTab,
+}: {
+  termId: string;
+  onBack: () => void;
+  onNavigateTab: (tab: TabType) => void;
+}) {
+  const term = GLOSSARY_TERMS.find((t) => t.id === termId) || GLOSSARY_TERMS[0];
+  const navigate = useNavigate();
+
+  return (
+    <div className="space-y-6">
+      {/* Top Bar Navigasi Khusus Kamus */}
+      <div className="flex items-center justify-between border-b border-[#9DB2BF]/40 pb-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526D82] hover:text-[#27374D] cursor-pointer"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Kembali ke Kamus Istilah</span>
+        </button>
+      </div>
+
+      {/* Main Container Halaman Khusus Istilah: 1 Section Terpadu Tanpa Pembagian Kotak Terpisah */}
+      <article className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-10 lg:p-12 shadow-xs space-y-8 sm:space-y-10">
+        {/* Baris Atas: Judul Font Besar (Kiri) & Cara Kerja serta Titik Masuk (Kanan) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Sisi Atas Kiri: Judul Font Besar, Watermark, & Definisi Inti */}
+          <div className="relative flex flex-col justify-between space-y-5">
+            {/* Watermark Monogram Besar di Pojok Kiri Atas */}
+            <span
+              aria-hidden="true"
+              className="absolute -top-10 -left-4 text-9xl sm:text-[140px] font-black text-[#526D82]/10 select-none pointer-events-none"
+            >
+              {term.name.charAt(0).toUpperCase()}
+            </span>
+
+            <div className="relative z-1 space-y-3.5">
+              {/* Judul Font Besar */}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#27374D] leading-[1.15] tracking-tight">
+                {renderStyledTermTitle(term)}
+                <span className="text-blue-600 ml-1">.</span>
+              </h1>
+            </div>
+
+            {/* Paragraf Definisi Inti */}
+            <div className="relative z-1 pt-2">
+              <p className="text-sm sm:text-base text-[#526D82] leading-relaxed font-normal">
+                {term.meaning}
+              </p>
+            </div>
+          </div>
+
+          {/* Sisi Atas Kanan: Cara Kerja Modus & Titik Masuk Utama */}
+          <div className="space-y-4 lg:border-l lg:border-slate-100 lg:pl-10">
+            <div className="pb-2.5 border-b border-slate-100">
+              <h2 className="text-sm sm:text-base font-bold text-[#27374D]">
+                Cara Kerja &amp; Titik Masuk
+              </h2>
+            </div>
+
+            {/* Cara Kerja */}
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82]">
+                Tahapan Cara Kerja:
+              </span>
+              <p className="text-xs sm:text-sm text-[#27374D] leading-relaxed">
+                {term.howItWorks}
+              </p>
+            </div>
+
+            {/* Titik Masuk Utama */}
+            <div className="space-y-1 pt-2 border-t border-slate-100">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                <span>Titik Masuk Utama (Entry Point):</span>
+              </span>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                {term.entryPoint}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Garis Pembatas Halus Horizontal Antara Bagian Atas dan Bawah */}
+        <div className="border-t border-slate-100" />
+
+        {/* Baris Bawah: Pertolongan Pertama (Kiri) & Langkah Pencegahan (Kanan) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Sisi Bawah Kiri: Pertolongan Pertama Terpapar */}
+          <div className="space-y-3">
+            <div className="pb-2.5 border-b border-rose-100">
+              <h2 className="text-sm sm:text-base font-bold text-rose-950">
+                Pertolongan Pertama Terpapar
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              {term.firstResponse}
+            </p>
+
+            <div className="text-xs font-semibold text-rose-700 pt-1">
+              <span>Lakukan tindakan mitigasi segera dalam 15 menit pertama.</span>
+            </div>
+          </div>
+
+          {/* Sisi Bawah Kanan: Langkah Pencegahan Utama */}
+          <div className="space-y-3 lg:border-l lg:border-slate-100 lg:pl-10">
+            <div className="pb-2.5 border-b border-emerald-100">
+              <h2 className="text-sm sm:text-base font-bold text-emerald-950">
+                Langkah Pencegahan Utama
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              {term.prevention}
+            </p>
+          </div>
+        </div>
+
+        {/* Action Footer di Dalam Satu Container Section yang Sama */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-[#DDE6ED]">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onBack}
+            className="w-full sm:w-auto text-xs"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+            Kembali ke Daftar Kamus
+          </Button>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate("/cek")}
+              className="flex-1 sm:flex-none text-xs"
+            >
+              Uji Cek Pesan &amp; Berkas
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => onNavigateTab("simulator")}
+              className="flex-1 sm:flex-none text-xs font-bold"
+            >
+              Latihan di Simulator
+            </Button>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
