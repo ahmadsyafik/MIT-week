@@ -1,12 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
-  ArrowLeft,
-  ArrowRight,
   ShieldAlert,
   AlertTriangle,
   AlertOctagon,
   CheckCircle2,
-  Clock,
   Sparkles,
   RotateCcw,
   BookOpen,
@@ -18,9 +15,14 @@ import {
   Lock,
   ChevronDown,
   ChevronUp,
+  Search,
+  MessageSquare,
+  UserCheck,
+  Zap,
 } from "lucide-react";
-import { Button } from "../ui";
+import { ModernProcessFlow } from "./ModernProcessFlow";
 import { addNotification } from "../../lib/notificationService";
+import { ModulDetailLayout, type ModulSectionItem } from "./ModulDetailLayout";
 import {
   MODUL_ANATOMI_PENIPUAN,
   type InterventionPoint,
@@ -33,6 +35,7 @@ interface ModulAnatomiPenipuanPageProps {
   onBack: () => void;
   onToggleRead: () => void;
   onNavigateTab: (tab: "simulator" | "modul" | "kilat" | "kamus") => void;
+  onSelectModule?: (moduleId: string) => void;
 }
 
 export function ModulAnatomiPenipuanPage({
@@ -40,6 +43,7 @@ export function ModulAnatomiPenipuanPage({
   onBack,
   onToggleRead,
   onNavigateTab,
+  onSelectModule,
 }: ModulAnatomiPenipuanPageProps) {
   const data = MODUL_ANATOMI_PENIPUAN;
 
@@ -69,21 +73,31 @@ export function ModulAnatomiPenipuanPage({
   // 6. Accordion toggle for phases
   const [expandedPhase, setExpandedPhase] = useState<number>(1);
 
-  // 7. Scroll Progress
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // 7. Dropdown toggle Titik Henti pada Variasi Pola Alur Singkat
+  const [expandedTitikHenti, setExpandedTitikHenti] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
-      const windowHeight =
-        document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      if (windowHeight > 0) {
-        setScrollProgress(Math.min(100, Math.round((totalScroll / windowHeight) * 100)));
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const toggleTitikHenti = (key: string) => {
+    setExpandedTitikHenti((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  // Sections config for Table of Contents
+  const SECTIONS: ModulSectionItem[] = useMemo(
+    () => [
+      { id: "fase-alur", label: "1. 5 Fase Alur Penipuan" },
+      { id: "studi-kasus", label: "2. Kronologi Kasus Nyata" },
+      { id: "alur-alternatif", label: "3. Alur Ragam Skenario" },
+      { id: "kamus-istilah", label: "4. Kamus Istilah Taktik" },
+      { id: "red-flags", label: "5. 6 Tanda Kejanggalan" },
+      { id: "pertolongan-pertama", label: "6. Pertolongan Pertama" },
+      { id: "mini-kuis", label: "7. Mini Kuis Anatomi" },
+      { id: "checklist", label: "8. Checklist Pencegahan" },
+      { id: "intisari", label: "9. Intisari & Sumber Resmi" },
+    ],
+    []
+  );
 
   const toggleCheck = (itemIdx: number) => {
     const key = `m2_chk_${itemIdx}`;
@@ -128,98 +142,80 @@ export function ModulAnatomiPenipuanPage({
   }, [checkedItems, data.checklist]);
 
   return (
-    <div className="relative min-h-screen bg-[#F8FAFC] pb-24 text-[#27374D]">
-      {/* Top Floating Progress Bar */}
-      <div className="sticky top-0 z-40 h-1.5 w-full bg-slate-200">
-        <div
-          className="h-full bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 transition-all duration-150"
-          style={{ width: `${scrollProgress}%` }}
-        />
+    <ModulDetailLayout
+      moduleId="m2"
+      title={data.title}
+      category="Dasar Keamanan"
+      terakhirDiperbaruiLabel={data.lastUpdated}
+      readingTime={data.readingTime}
+      summary={data.opener.highlight}
+      isRead={isRead}
+      onBack={onBack}
+      onToggleRead={onToggleRead}
+      onNavigateTab={onNavigateTab}
+      onSelectModule={onSelectModule}
+      sections={SECTIONS}
+      nextModule={{
+        id: "m3",
+        moduleNumber: 3,
+        title: "Keamanan di WhatsApp & Per Kanal",
+        desc: "Pelajari cara cek centang hijau resmi, broadcast, dan mitigasi pembajakan akun WhatsApp.",
+      }}
+    >
+      {/* Box Penegasan Fokus Modul */}
+      <div className="rounded-2xl bg-amber-50/80 border border-amber-200/80 p-4 text-xs sm:text-sm text-amber-900 leading-relaxed flex items-start gap-3 shadow-2xs">
+        <Info className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
+        <div>
+          <strong className="font-bold">Fokus Modul: </strong>
+          Modul ini membedah <em className="italic">bagaimana alur penipuan dijalankan dan di mana kamu bisa menghentikannya</em>.
+          Untuk memahami sisi psikologi mengapa manusia mudah tertipu, pelajari modul rekanannya di{" "}
+          <button
+            onClick={() => onSelectModule ? onSelectModule("m1") : onNavigateTab("modul")}
+            className="font-bold text-amber-950 underline hover:text-amber-800 cursor-pointer"
+          >
+            Apa Itu Rekayasa Sosial?
+          </button>
+          .
+        </div>
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 pt-6 sm:px-6">
-        {/* Navigation Bar */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-[#526D82] shadow-2xs hover:bg-slate-50 hover:text-[#27374D] transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Kembali ke Hub Belajar</span>
-          </button>
-
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-800">
-              <Clock className="h-3.5 w-3.5" />
-              {data.readingTime}
+      {/* Section 1: Alur 5 Fase dengan Titik Intervensi Konkret */}
+      <section id="fase-alur" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 1 · Anatomi Alur
             </span>
-            <button
-              onClick={onToggleRead}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all shadow-2xs ${
-                isRead
-                  ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <CheckCircle2
-                className={`h-4 w-4 ${isRead ? "text-emerald-600 fill-emerald-100" : "text-slate-400"}`}
-              />
-              <span>{isRead ? "Tuntas Dibaca" : "Tandai Selesai"}</span>
-            </button>
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
+              5 Fase Alur Penipuan & Titik Intervensi
+            </h2>
+            <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
+              Kenali posisimu di setiap fase dan temukan cara berhenti sebelum eksekusi terjadi.
+            </p>
           </div>
         </div>
 
-        {/* Header Hero */}
-        <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-sky-700">
-            <BookOpen className="h-4 w-4" />
-            <span>Modul Seri Keamanan Digital #2</span>
-          </div>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#27374D]">
-            {data.title}
-          </h1>
-          <p className="mt-3 text-sm sm:text-base leading-relaxed text-[#526D82]">
-            {data.opener.highlight}
-          </p>
-          <div className="mt-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 p-4 text-xs sm:text-sm text-amber-900 leading-relaxed flex items-start gap-3">
-            <Info className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
-            <div>
-              <strong className="font-bold">Fokus Modul: </strong>
-              Modul ini membedah <em className="italic">bagaimana alur penipuan dijalankan dan di mana kamu bisa menghentikannya</em>.
-              Untuk memahami sisi psikologi mengapa manusia mudah tertipu, pelajari modul rekanannya di{" "}
-              <button
-                onClick={() => onNavigateTab("modul")}
-                className="font-bold text-amber-950 underline hover:text-amber-800"
-              >
-                Apa Itu Rekayasa Sosial?
-              </button>
-              .
-            </div>
-          </div>
-        </div>
+        {/* Roadmap Visual 5 Fase Bergaya Zigzag Modern */}
+        <ModernProcessFlow
+          steps={data.phases.map((phase, idx) => {
+            const icons = [
+              <Search key={0} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <MessageSquare key={1} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <UserCheck key={2} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <Zap key={3} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <Lock key={4} className="h-6 w-6 sm:h-7 sm:w-7" />,
+            ];
+            return {
+              number: phase.phaseNumber,
+              title: phase.phaseName,
+              subtitle: phase.technicalTerm,
+              description: phase.summary,
+              icon: icons[idx],
+            };
+          })}
+        />
 
-        {/* Section 1: Alur 5 Fase dengan Titik Intervensi Konkret */}
-        <section className="mt-8 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
-            <div>
-              <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
-                5 Fase Alur Penipuan & Titik Intervensi
-              </h2>
-              <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
-                Kenali posisimu di setiap fase dan temukan cara berhenti sebelum eksekusi terjadi.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] font-bold">
-              <span className="rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-0.5">
-                Fase 1–3: Masih Mudah Berhenti
-              </span>
-              <span className="rounded-full bg-rose-100 text-rose-800 px-2.5 py-0.5">
-                Fase 4–5: Kritis
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-3.5">
+        <div className="space-y-3.5">
             {data.phases.map((phase: InterventionPoint) => {
               const isExpanded = expandedPhase === phase.phaseNumber;
               const isCritical = phase.difficulty === "kritis";
@@ -251,20 +247,9 @@ export function ModulAnatomiPenipuanPage({
                         {phase.phaseNumber}
                       </div>
                       <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="font-bold text-base sm:text-lg text-[#27374D]">
-                            Fase {phase.phaseNumber}: {phase.phaseName}
-                          </h3>
-                          <span
-                            className={`rounded-md px-2 py-0.5 text-[10px] sm:text-xs font-bold ${
-                              isCritical
-                                ? "bg-rose-100 text-rose-800"
-                                : "bg-emerald-100 text-emerald-800"
-                            }`}
-                          >
-                            {phase.difficultyLabel}
-                          </span>
-                        </div>
+                        <h3 className="font-bold text-base sm:text-lg text-[#27374D]">
+                          Fase {phase.phaseNumber}: {phase.phaseName}
+                        </h3>
                         <p className="text-xs text-[#526D82] mt-0.5 italic">
                           Istilah teknis: {phase.technicalTerm}
                         </p>
@@ -327,13 +312,12 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 2: Satu Studi Kasus Utuh (Dissected Step by Step) */}
-        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="studi-kasus" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-4">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">
-              <Sparkles className="h-3.5 w-3.5" />
-              Studi Kasus Fiktif Interaktif
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 2 · Rekonstruksi Kasus
             </span>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D] mt-2">
               {data.caseStudy.caseName}
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-1 leading-relaxed">
@@ -412,9 +396,12 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 3: Dua Alur Lain yang Berbeda (Tabbed) */}
-        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="alur-alternatif" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 3 · Variasi Pola
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
               Alur Singkat Lainnya: Tidak Semua Penipuan 5 Fase Penuh
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-1">
@@ -446,34 +433,57 @@ export function ModulAnatomiPenipuanPage({
               data.alternativeFlows[0];
             return (
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-sky-100 text-sky-800 text-[11px] font-extrabold px-3 py-1">
-                    {flow.badge}
-                  </span>
-                  <p className="text-xs text-[#526D82]">{flow.summary}</p>
+                <div>
+                  <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">{flow.summary}</p>
                 </div>
 
                 <div className="space-y-3">
-                  {flow.steps.map((st, i) => (
-                    <div
-                      key={i}
-                      className="rounded-2xl border border-slate-200/90 bg-[#FAF9F5] p-4 sm:p-5 space-y-2"
-                    >
-                      <h4 className="font-extrabold text-sm sm:text-base text-[#27374D]">
-                        {st.title}
-                      </h4>
-                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-mono">
-                        {st.description}
-                      </p>
-                      <div className="rounded-xl bg-white border border-emerald-200 p-2.5 text-xs text-emerald-950 flex items-start gap-2">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                        <div>
-                          <strong className="font-bold">Titik Henti: </strong>
-                          <span>{st.intervention}</span>
+                  {flow.steps.map((st, i) => {
+                    const stepKey = `${flow.id}_${i}`;
+                    const isOpen = !!expandedTitikHenti[stepKey];
+
+                    return (
+                      <div
+                        key={i}
+                        className="rounded-2xl border border-slate-200/90 bg-[#FAF9F5] p-4 sm:p-5 space-y-2.5 transition-all"
+                      >
+                        <h4 className="font-extrabold text-sm sm:text-base text-[#27374D]">
+                          {st.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-mono">
+                          {st.description}
+                        </p>
+
+                        {/* Tombol Dropdown Titik Henti */}
+                        <div className="pt-0.5">
+                          <button
+                            type="button"
+                            onClick={() => toggleTitikHenti(stepKey)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-[#27374D] text-xs font-bold transition-all shadow-2xs cursor-pointer group"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                            <span>{isOpen ? "Tutup titik henti" : "Titik henti"}</span>
+                            <ChevronDown
+                              className={`h-3.5 w-3.5 text-[#526D82] transition-transform duration-200 ${
+                                isOpen ? "rotate-180" : ""
+                              }`}
+                            />
+                          </button>
+
+                          {/* Konten Dropdown Titik Henti */}
+                          {isOpen && (
+                            <div className="mt-2.5 rounded-xl bg-white border border-emerald-200 p-3 text-xs text-emerald-950 flex items-start gap-2.5 shadow-xs animate-in fade-in slide-in-from-top-1 duration-150">
+                              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                              <div className="leading-relaxed">
+                                <strong className="font-bold text-emerald-900">Titik Henti: </strong>
+                                <span>{st.intervention}</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -481,9 +491,12 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 4: Kamus Istilah Inline Popover */}
-        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="kamus-istilah" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 4 · Terminologi
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
               Kamus Istilah Awam (Sentuh Istilah untuk Penjelasan)
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
@@ -499,15 +512,6 @@ export function ModulAnatomiPenipuanPage({
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-extrabold text-sm text-[#27374D]">{item.term}</h3>
-                  <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      item.dangerLevel === "bahaya"
-                        ? "bg-rose-100 text-rose-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
-                  >
-                    {item.dangerLevel === "bahaya" ? "Tingkat Bahaya" : "Tingkat Waspada"}
-                  </span>
                 </div>
                 <p className="text-xs text-[#526D82] leading-relaxed">
                   {item.simpleExplanation}
@@ -521,9 +525,12 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 5: Tanda Kejanggalan (Red Flags 6 Poin) */}
-        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="red-flags" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 5 · Deteksi Dini
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
               6 Tanda Kejanggalan Universal (Red Flags)
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
@@ -535,19 +542,8 @@ export function ModulAnatomiPenipuanPage({
             {data.redFlags.map((flag) => (
               <div
                 key={flag.id}
-                className="rounded-2xl border border-slate-200 bg-[#FFFDF9] p-4 sm:p-5 space-y-2.5 shadow-2xs"
+                className="rounded-2xl border border-slate-200 bg-[#FFFDF9] p-4 sm:p-5 space-y-2 shadow-2xs"
               >
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ${
-                      flag.severity === "merah"
-                        ? "bg-rose-100 text-rose-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
-                  >
-                    {flag.severityLabel}
-                  </span>
-                </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-[#27374D]">
                   {flag.title}
                 </h3>
@@ -567,13 +563,12 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 6: Langkah Jika Sudah Terlanjur Jadi Korban (Emergency SOP) */}
-        <section className="mt-10 rounded-3xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="pertolongan-pertama" className="rounded-3xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-rose-200/80 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">
-              <ShieldAlert className="h-3.5 w-3.5 text-rose-700" />
-              Protokol Darurat
+            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-800 block mb-1">
+              Bagian 6 · Respons Darurat
             </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-rose-950 mt-2">
+            <h2 className="text-xl sm:text-2xl font-black text-rose-950 mt-1">
               Jika Sudah Terlanjur Mentransfer atau Memasang File (.apk)
             </h2>
             <p className="text-xs sm:text-sm text-rose-900/80 mt-0.5">
@@ -587,19 +582,9 @@ export function ModulAnatomiPenipuanPage({
                 key={step.order}
                 className="rounded-2xl border border-rose-200 bg-white p-4 sm:p-5 space-y-2 shadow-2xs"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-white font-extrabold text-xs">
-                      {step.order}
-                    </span>
-                    <h3 className="font-extrabold text-sm sm:text-base text-rose-950">
-                      {step.title}
-                    </h3>
-                  </div>
-                  <span className="rounded-md bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5">
-                    {step.timeline}
-                  </span>
-                </div>
+                <h3 className="font-extrabold text-sm sm:text-base text-rose-950">
+                  {step.order}. {step.title}
+                </h3>
                 <p className="text-xs sm:text-sm text-slate-700 leading-relaxed pl-8">
                   {step.action}
                 </p>
@@ -614,13 +599,12 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 7: Mini Kuis Interaktif (Ini Fase Berapa?) */}
-        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="mini-kuis" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">
-              <HelpCircle className="h-3.5 w-3.5" />
-              Latihan Refleks Cepat (3 Soal)
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 7 · Evaluasi Pemahaman
             </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D] mt-1">
               Tebak: Berada di Fase Manakah Situasi Ini?
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
@@ -685,17 +669,20 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 8: Checklist Tindakan Nyata */}
-        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-5">
+        <section id="checklist" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
-              <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
-                Checklist 4 Tindakan Nyata & Aman
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+                Bagian 8 · Panduan Mandiri
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
+                Checklist 4 Tindakan Nyata &amp; Aman
               </h2>
               <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
                 Semua tindakan di bawah dapat kamu lakukan secara mandiri tanpa berinteraksi dengan pelaku.
               </p>
             </div>
-            <span className="text-xs font-bold text-sky-800 bg-sky-50 px-3 py-1 rounded-full border border-sky-200 self-start sm:self-auto">
+            <span className="text-xs font-bold text-sky-800 self-start sm:self-auto">
               Progress: {completedChecksCount} / {data.checklist.length} Selesai
             </span>
           </div>
@@ -745,7 +732,7 @@ export function ModulAnatomiPenipuanPage({
         </section>
 
         {/* Section 9: Intisari Modul & Rujukan Sumber */}
-        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="intisari" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="rounded-2xl bg-gradient-to-r from-sky-900 to-[#27374D] p-5 sm:p-6 text-white space-y-2">
             <span className="text-[10px] font-black uppercase tracking-wider text-sky-300 block">
               INTISARI PERLINDUNGAN
@@ -756,9 +743,8 @@ export function ModulAnatomiPenipuanPage({
           </div>
 
           <div className="space-y-3 pt-2 text-xs text-slate-500 border-t border-slate-100">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
               <span className="font-bold text-slate-700">Sumber Rujukan Literasi:</span>
-              <span>Terakhir Diperbarui: {data.lastUpdated}</span>
             </div>
             <ul className="space-y-1.5 list-disc pl-4 text-[11px]">
               {data.sources.map((src, i) => (
@@ -772,28 +758,8 @@ export function ModulAnatomiPenipuanPage({
               {data.disclaimer}
             </p>
           </div>
-
-          {/* Bottom Action Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
-            <button
-              onClick={onBack}
-              className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] hover:text-[#27374D]"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Kembali ke Daftar Modul</span>
-            </button>
-
-            <button
-              onClick={() => onNavigateTab("modul")}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#27374D] px-4 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-[#1E293B] transition-colors"
-            >
-              <span>Lanjut ke Modul WhatsApp & Per Kanal</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
         </section>
-      </div>
-    </div>
+    </ModulDetailLayout>
   );
 }
 

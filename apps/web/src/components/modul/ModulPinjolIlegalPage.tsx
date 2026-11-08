@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   ShieldAlert,
   ShieldCheck,
   AlertTriangle,
-  Smartphone,
   Copy,
   Check,
   PhoneCall,
@@ -14,18 +13,20 @@ import {
   ExternalLink,
   BookOpen,
   ArrowRight,
-  HelpCircle,
   Camera,
   Mic,
   MapPin,
   Users,
   Image as ImageIcon,
   MessageSquare,
-  Sparkles,
   Info,
-  Scale,
   RefreshCw,
+  Lightbulb,
+  BarChart3,
+  Brain,
+  QrCode,
 } from "lucide-react";
+import { ModulDetailLayout, type ModulSectionItem } from "./ModulDetailLayout";
 import {
   MODUL_PINJOL_ILEGAL_DATA,
   validatePinjolData,
@@ -42,6 +43,7 @@ interface ModulPinjolIlegalPageProps {
   onComplete?: () => void;
   isCompleted?: boolean;
   onNavigateTab?: (tab: "simulator" | "modul" | "kilat" | "kamus") => void;
+  onSelectModule?: (moduleId: string) => void;
 }
 
 export function ModulPinjolIlegalPage({
@@ -51,6 +53,7 @@ export function ModulPinjolIlegalPage({
   onComplete,
   isCompleted = false,
   onNavigateTab,
+  onSelectModule,
 }: ModulPinjolIlegalPageProps) {
   const effectiveIsCompleted = isRead ?? isCompleted;
   const handleComplete = onToggleRead || onComplete || (() => {});
@@ -58,6 +61,29 @@ export function ModulPinjolIlegalPage({
 
   // Tab utama: "Aku mau pinjam" (Edukasi & Pencegahan) vs "Aku sedang diteror" (Panel Darurat)
   const [activeTab, setActiveTab] = useState<"preventive" | "terror">("preventive");
+
+  // Sections config for Table of Contents
+  const SECTIONS: ModulSectionItem[] = useMemo(() => {
+    if (activeTab === "terror") {
+      return [
+        { id: "langkah-teror", label: "1. 5 Langkah Hadapi Teror" },
+        { id: "templat-pesan", label: "2. Templat Balasan Siap Salin" },
+        { id: "kontak-ojk", label: "3. Kanal Pengaduan OJK" },
+        { id: "checklist", label: "4. Checklist Kewaspadaan" },
+        { id: "modul-terkait", label: "5. Modul Terkait & Rujukan" },
+      ];
+    }
+    return [
+      { id: "camilan", label: "1. Batasan Izin CAMILAN" },
+      { id: "legal-vs-ilegal", label: "2. Bedah Legal vs Ilegal" },
+      { id: "titik-keluar", label: "3. Titik Keluar Aman" },
+      { id: "cek-sebelum-pinjam", label: "4. Cek Sebelum Pinjam" },
+      { id: "slik-ojk", label: "5. Cek SLIK & KTP" },
+      { id: "kuis", label: "6. Kuis Evaluasi Pinjol" },
+      { id: "checklist", label: "7. Checklist Kewaspadaan" },
+      { id: "modul-terkait", label: "8. Modul Terkait & Rujukan" },
+    ];
+  }, [activeTab]);
 
   // State Simulasi Izin Aplikasi
   const [selectedPermission, setSelectedPermission] = useState<PermissionItem>(
@@ -127,64 +153,54 @@ export function ModulPinjolIlegalPage({
   const checkerResult = getCheckerResult();
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 pb-16">
-      {/* Tombol Kembali & Breadcrumb */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onBack}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#526D82] hover:text-[#27374D] transition-colors"
-        >
-          ← Kembali ke Daftar Modul
-        </button>
-        <span className="text-xs font-medium text-[#526D82] bg-white px-3 py-1 rounded-full border border-[#9DB2BF]/40">
-          Modul {data.id.toUpperCase()} · {data.readingTimeMinutes} Menit Baca
-        </span>
+    <ModulDetailLayout
+      moduleId="m10"
+      title={data.title}
+      category="Pola Pinjaman Ilegal"
+      terakhirDiperbaruiLabel={data.lastUpdated}
+      readingTime={`${data.readingTimeMinutes} Menit Baca`}
+      summary={data.subtitle}
+      isRead={effectiveIsCompleted}
+      onBack={onBack}
+      onToggleRead={handleComplete}
+      onNavigateTab={onNavigateTab || (() => {})}
+      onSelectModule={onSelectModule}
+      sections={SECTIONS}
+      nextModule={{
+        id: "m11",
+        moduleNumber: 11,
+        title: "Cara Lapor Jika Sudah Jadi Korban",
+        desc: "Pusat darurat panduan pelaporan cepat ke bank, portal resmi IASC/OJK, dan kepolisian.",
+      }}
+    >
+      {/* Statistik Resmi Satgas PASTI */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-amber-300/80 bg-amber-50/70 p-4 space-y-1 shadow-2xs">
+          <span className="block text-slate-600 text-xs font-semibold">Entitas Ditutup Satgas PASTI</span>
+          <span className="text-xl font-black text-amber-700">
+            {data.officialStats.blockedEntitiesCount.toLocaleString("id-ID")}
+          </span>
+          <span className="text-[10px] text-slate-500 block">
+            s.d. {data.officialStats.asOf} (Sumber: {data.officialStats.source})
+          </span>
+        </div>
+        <div className="rounded-2xl border border-rose-300/80 bg-rose-50/70 p-4 space-y-1 shadow-2xs">
+          <span className="block text-slate-600 text-xs font-semibold">Aduan Masyarakat Terkait Pinjol</span>
+          <span className="text-xl font-black text-rose-700">
+            {data.officialStats.complaintsCount.toLocaleString("id-ID")}
+          </span>
+          <span className="text-[10px] text-slate-500 block">
+            s.d. {data.officialStats.asOf} (Sumber: {data.officialStats.source})
+          </span>
+        </div>
       </div>
 
-      {/* Header Banner */}
-      <header className="rounded-3xl border border-[#9DB2BF]/50 bg-gradient-to-br from-[#27374D] to-[#1E293B] p-6 sm:p-10 text-white shadow-md relative overflow-hidden">
-        <div className="relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold tracking-wide uppercase">
-            <Scale className="h-3.5 w-3.5" />
-            Literasi Perlindungan Konsumen
-          </div>
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-snug">
-            {data.title}
-          </h1>
-          <p className="text-sm sm:text-base text-slate-200 max-w-2xl leading-relaxed">
-            {data.subtitle}
-          </p>
-
-          {/* Statistik Resmi Satgas PASTI */}
-          <div className="pt-2 flex flex-wrap gap-4 text-xs">
-            <div className="bg-white/10 backdrop-blur-xs rounded-xl px-4 py-2 border border-white/10">
-              <span className="block text-slate-300 text-[11px]">Entitas Ditutup Satgas PASTI</span>
-              <span className="text-lg font-black text-amber-300">
-                {data.officialStats.blockedEntitiesCount.toLocaleString("id-ID")}
-              </span>
-              <span className="text-[10px] text-slate-400 block">
-                s.d. {data.officialStats.asOf} (Sumber: {data.officialStats.source})
-              </span>
-            </div>
-            <div className="bg-white/10 backdrop-blur-xs rounded-xl px-4 py-2 border border-white/10">
-              <span className="block text-slate-300 text-[11px]">Aduan Masyarakat</span>
-              <span className="text-lg font-black text-rose-300">
-                {data.officialStats.complaintsCount.toLocaleString("id-ID")}
-              </span>
-              <span className="text-[10px] text-slate-400 block">
-                s.d. {data.officialStats.asOf} (Sumber: {data.officialStats.source})
-              </span>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Tab Navigasi Kebutuhan Pengguna */}
-      <nav aria-label="Pilihan Situasi Pengguna" className="sticky top-4 z-30">
-        <div className="grid grid-cols-2 p-1.5 bg-white/95 backdrop-blur-md rounded-2xl border-2 border-[#9DB2BF]/60 shadow-md">
+      <nav aria-label="Pilihan Situasi Pengguna" className="sticky top-28 z-20">
+        <div className="grid grid-cols-2 p-1.5 bg-white/95 backdrop-blur-md rounded-2xl border border-[#9DB2BF]/60 shadow-sm">
           <button
             onClick={() => setActiveTab("preventive")}
-            className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
               activeTab === "preventive"
                 ? "bg-[#27374D] text-white shadow-sm"
                 : "text-[#526D82] hover:text-[#27374D]"
@@ -195,7 +211,7 @@ export function ModulPinjolIlegalPage({
           </button>
           <button
             onClick={() => setActiveTab("terror")}
-            className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
               activeTab === "terror"
                 ? "bg-rose-700 text-white shadow-sm animate-pulse"
                 : "text-rose-700 hover:bg-rose-50"
@@ -210,25 +226,26 @@ export function ModulPinjolIlegalPage({
       {/* KONTEN TAB 1: AKU MAU PINJAM (PENCEGAHAN & EDUKASI) */}
       {activeTab === "preventive" && (
         <div className="space-y-8 animate-fadeIn">
-          {/* Card Intisari Golden Rule */}
-          <section className="rounded-3xl border border-emerald-300/80 bg-emerald-50/70 p-6 sm:p-8 space-y-3 shadow-xs">
-            <div className="flex items-center gap-2 text-emerald-800 text-xs font-black tracking-wide uppercase">
-              <ShieldCheck className="h-4 w-4 text-emerald-700" />
-              <span>Prinsip Utama Perlindungan Data Peminjam</span>
+          {/* SEKSI 1: BATASAN IZIN CAMILAN */}
+          <section id="camilan" className="space-y-6 scroll-mt-32">
+            {/* Card Intisari Golden Rule */}
+            <div className="rounded-3xl border border-emerald-300/80 bg-emerald-50/70 p-6 sm:p-8 space-y-3 shadow-xs">
+              <div className="flex items-center gap-2 text-emerald-800 text-xs font-black tracking-wide uppercase">
+                <ShieldCheck className="h-4 w-4 text-emerald-700" />
+                <span>Prinsip Utama Perlindungan Data Peminjam</span>
+              </div>
+              <p className="text-base sm:text-lg font-bold text-emerald-950 leading-relaxed">
+                &ldquo;{data.keyTakeaway}&rdquo;
+              </p>
+              <p className="text-xs text-emerald-800 leading-relaxed">
+                Aturan OJK membatasi akses aplikasi pinjaman berizin hanya pada <strong>CAMILAN</strong> (Camera, Microphone, Location). Permintaan akses ke kontak atau galeri ponsel adalah sinyal bahaya utama pinjol ilegal.
+              </p>
             </div>
-            <p className="text-base sm:text-lg font-bold text-emerald-950 leading-relaxed">
-              &ldquo;{data.keyTakeaway}&rdquo;
-            </p>
-            <p className="text-xs text-emerald-800 leading-relaxed">
-              Aturan OJK membatasi akses aplikasi pinjaman berizin hanya pada <strong>CAMILAN</strong> (Camera, Microphone, Location). Permintaan akses ke kontak atau galeri ponsel adalah sinyal bahaya utama pinjol ilegal.
-            </p>
-          </section>
 
-          {/* SEKSI 1: SIMULATOR POP-UP IZIN PONSEL */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+            {/* SIMULATOR POP-UP IZIN PONSEL */}
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                <Smartphone className="h-3.5 w-3.5 text-[#27374D]" />
                 Simulasi Interaktif
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
@@ -251,9 +268,7 @@ export function ModulPinjolIlegalPage({
                   className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border cursor-pointer ${
                     selectedPermission.id === perm.id
                       ? "bg-[#27374D] text-white border-[#27374D] shadow-xs"
-                      : perm.status === "forbidden"
-                      ? "bg-rose-50 text-rose-800 border-rose-200 hover:bg-rose-100"
-                      : "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
+                      : "bg-white text-[#27374D] border-slate-200 hover:bg-slate-50 hover:border-slate-300"
                   }`}
                 >
                   {perm.id === "contacts" && <Users className="h-3.5 w-3.5" />}
@@ -332,13 +347,13 @@ export function ModulPinjolIlegalPage({
                 </div>
               )}
             </div>
-          </section>
+          </div>
+        </section>
 
           {/* SEKSI 2: PERBANDINGAN LEGAL VS ILEGAL */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+          <section id="legal-vs-ilegal" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                <Scale className="h-3.5 w-3.5 text-[#27374D]" />
                 Pedoman Komparasi
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
@@ -380,10 +395,9 @@ export function ModulPinjolIlegalPage({
           </section>
 
           {/* SEKSI 3: DUA POLA PERJALANAN KORBAN & TITIK KELUAR AMAN */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+          <section id="titik-keluar" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                <AlertTriangle className="h-3.5 w-3.5 text-[#27374D]" />
                 Dua Pola Kejadian Nyata
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
@@ -401,11 +415,8 @@ export function ModulPinjolIlegalPage({
                   className="rounded-2xl border border-slate-200 bg-slate-50/50 p-5 sm:p-6 space-y-4"
                 >
                   <div className="space-y-1">
-                    <h3 className="text-base font-bold text-[#27374D] flex items-center gap-2">
-                      <span className="h-6 w-6 rounded-full bg-[#27374D] text-white text-xs flex items-center justify-center font-black">
-                        {scen.id === "pola_a" ? "A" : "B"}
-                      </span>
-                      {scen.title}
+                    <h3 className="text-base font-bold text-[#27374D]">
+                      {scen.id === "pola_a" ? "Pola A" : "Pola B"}: {scen.title}
                     </h3>
                     <p className="text-xs text-[#526D82]">{scen.description}</p>
                   </div>
@@ -422,8 +433,9 @@ export function ModulPinjolIlegalPage({
                           </span>
                         </div>
                         <p className="text-xs text-[#526D82] leading-relaxed">{st.description}</p>
-                        <div className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 p-2 rounded-lg leading-relaxed">
-                          🛡️ {st.safeExitPoint}
+                        <div className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 p-2 rounded-lg leading-relaxed flex items-start gap-1.5">
+                          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{st.safeExitPoint}</span>
                         </div>
                       </div>
                     ))}
@@ -434,10 +446,9 @@ export function ModulPinjolIlegalPage({
           </section>
 
           {/* SEKSI 4: CEK SEBELUM PINJAM (OFFLINE CHECKER 100% LOKAL) */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+          <section id="cek-sebelum-pinjam" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                <Sparkles className="h-3.5 w-3.5 text-[#27374D]" />
                 Alat Mandiri
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
@@ -560,9 +571,8 @@ export function ModulPinjolIlegalPage({
           </section>
 
           {/* SEKSI 5: WASPADA PENCURIAN IDENTITAS (SLIK OJK) */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4">
-            <h2 className="text-xl font-bold text-[#27374D] flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-amber-600" />
+          <section id="slik-ojk" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
+            <h2 className="text-xl font-bold text-[#27374D]">
               {data.whyTargetPersonalData.slikGuide.title}
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">
@@ -571,9 +581,7 @@ export function ModulPinjolIlegalPage({
             <div className="space-y-2 pt-2">
               {data.whyTargetPersonalData.slikGuide.steps.map((st, i) => (
                 <div key={i} className="flex items-start gap-2 text-xs text-[#27374D]">
-                  <span className="h-5 w-5 rounded-full bg-[#DDE6ED] font-bold text-[11px] flex items-center justify-center shrink-0">
-                    {i + 1}
-                  </span>
+                  <span className="font-bold shrink-0">{i + 1}.</span>
                   <span className="leading-relaxed">{st}</span>
                 </div>
               ))}
@@ -584,10 +592,9 @@ export function ModulPinjolIlegalPage({
           </section>
 
           {/* SEKSI 6: KUIS "PINJOL LEGAL ATAU MENCURIGAKAN?" */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+          <section id="kuis" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                <HelpCircle className="h-3.5 w-3.5 text-[#27374D]" />
                 Latihan Refleks
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
@@ -631,8 +638,9 @@ export function ModulPinjolIlegalPage({
                     })}
                   </div>
                   {quizSubmitted && (
-                    <div className="text-xs p-3 rounded-xl bg-white border border-slate-200 text-[#526D82] leading-relaxed">
-                      💡 <strong>Penjelasan:</strong> {q.options[q.correctAnswerIndex].explanation}
+                    <div className="text-xs p-3 rounded-xl bg-white border border-slate-200 text-[#526D82] leading-relaxed flex items-start gap-1.5">
+                      <Lightbulb className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                      <div><strong>Penjelasan:</strong> {q.options[q.correctAnswerIndex].explanation}</div>
                     </div>
                   )}
                 </div>
@@ -667,51 +675,51 @@ export function ModulPinjolIlegalPage({
       {/* KONTEN TAB 2: AKU SEDANG DITEROR (PANEL DARURAT TERSTRUKTUR) */}
       {activeTab === "terror" && (
         <div className="space-y-8 animate-fadeIn">
-          {/* Empati & Ketenangan */}
-          <section className="rounded-3xl border border-rose-300/80 bg-rose-50/70 p-6 sm:p-8 space-y-3 shadow-xs">
-            <div className="flex items-center gap-2 text-rose-800 text-xs font-black tracking-wide uppercase">
-              <ShieldAlert className="h-4 w-4 text-rose-700" />
-              <span>{data.emergencyTerrorPanel.headline}</span>
+          {/* SEKSI 1: 5 LANGKAH HADAPI TEROR */}
+          <section id="langkah-teror" className="space-y-6 scroll-mt-32">
+            {/* Empati & Ketenangan */}
+            <div className="rounded-3xl border border-rose-300/80 bg-rose-50/70 p-6 sm:p-8 space-y-3 shadow-xs">
+              <div className="flex items-center gap-2 text-rose-800 text-xs font-black tracking-wide uppercase">
+                <ShieldAlert className="h-4 w-4 text-rose-700" />
+                <span>{data.emergencyTerrorPanel.headline}</span>
+              </div>
+              <p className="text-sm sm:text-base font-bold text-rose-950 leading-relaxed">
+                {data.emergencyTerrorPanel.calmMessage}
+              </p>
             </div>
-            <p className="text-sm sm:text-base font-bold text-rose-950 leading-relaxed">
-              {data.emergencyTerrorPanel.calmMessage}
-            </p>
-          </section>
 
-          {/* 5 Langkah Tenang Menghadapi Teror */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
-              5 Langkah Proteksi Menghadapi Penagihan Ilegal
-            </h2>
+            {/* 5 Langkah Tenang Menghadapi Teror */}
+            <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
+                5 Langkah Proteksi Menghadapi Penagihan Ilegal
+              </h2>
 
-            <div className="space-y-4">
-              {data.emergencyTerrorPanel.steps.map((st) => (
-                <div
-                  key={st.order}
-                  className="rounded-2xl border border-slate-200 p-4 sm:p-5 space-y-2 bg-slate-50/40"
-                >
-                  <div className="flex items-center gap-2 font-bold text-sm text-[#27374D]">
-                    <span className="h-6 w-6 rounded-full bg-rose-700 text-white text-xs flex items-center justify-center font-black">
-                      {st.order}
-                    </span>
-                    <span>{st.title}</span>
+              <div className="space-y-4">
+                {data.emergencyTerrorPanel.steps.map((st) => (
+                  <div
+                    key={st.order}
+                    className="rounded-2xl border border-slate-200 p-4 sm:p-5 space-y-2 bg-slate-50/40"
+                  >
+                    <h3 className="font-bold text-sm text-[#27374D]">
+                      {st.order}. {st.title}
+                    </h3>
+                    <p className="text-xs text-[#526D82] leading-relaxed">{st.desc}</p>
+                    {st.caution && (
+                      <div className="text-[11px] font-semibold text-rose-800 bg-rose-50 p-2 rounded-lg flex items-start gap-1.5">
+                        <AlertTriangle className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
+                        <span>{st.caution}</span>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-[#526D82] leading-relaxed pl-8">{st.desc}</p>
-                  {st.caution && (
-                    <div className="ml-8 text-[11px] font-semibold text-rose-800 bg-rose-50 p-2 rounded-lg">
-                      ⚠️ {st.caution}
-                    </div>
-                  )}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </section>
 
           {/* TEMPLAT PESAN SIAP SALIN */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+          <section id="templat-pesan" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
-                <Copy className="h-3.5 w-3.5 text-[#27374D]" />
                 Templat Siap Salin
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
@@ -757,7 +765,7 @@ export function ModulPinjolIlegalPage({
           </section>
 
           {/* KONTAK RESMI SATGAS PASTI & OJK */}
-          <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+          <section id="kontak-ojk" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
             <h2 className="text-xl font-bold text-[#27374D]">Kanal Pengaduan Resmi (Satgas PASTI / OJK)</h2>
             <p className="text-xs text-[#526D82]">
               Hubungi kanal resmi di bawah. Hindari mencari kontak call center lewat mesin pencari yang rentan iklan palsu.
@@ -785,7 +793,7 @@ export function ModulPinjolIlegalPage({
       )}
 
       {/* CHECKLIST PRAKTIS & PENYELESAIAN MODUL */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      <section id="checklist" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-xl font-bold text-[#27374D]">Checklist Praktis Tindakan Nyata</h2>
@@ -793,7 +801,7 @@ export function ModulPinjolIlegalPage({
               Centang langkah perlindungan yang siap atau sudah kamu terapkan ({allChecklistDone}/4 langkah)
             </p>
           </div>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-[#27374D]">
+          <span className="text-xs font-bold text-[#27374D]">
             {Math.round((allChecklistDone / 4) * 100)}%
           </span>
         </div>
@@ -819,82 +827,58 @@ export function ModulPinjolIlegalPage({
             </label>
           ))}
         </div>
-
-        {/* CTA Utama & Selesai Modul */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Link
-            to="/simulasi?skenario=pinjol"
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#27374D] text-white text-xs font-bold hover:bg-[#1E293B] transition-all text-center flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-          >
-            <span>Uji Kasus di Simulator</span>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-
-          <button
-            onClick={handleComplete}
-            disabled={effectiveIsCompleted}
-            className={`w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              effectiveIsCompleted
-                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm"
-            }`}
-          >
-            <Check className="h-4 w-4" />
-            <span>{effectiveIsCompleted ? "Modul Selesai Dibaca" : "Tandai Modul Selesai"}</span>
-          </button>
-        </div>
       </section>
 
       {/* TAUTAN ANTARMODUL & PUSAT DARURAT */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+      <section id="modul-terkait" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <h3 className="text-sm font-bold text-[#27374D] uppercase tracking-wider">Modul Terkait Lainnya</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <Link
-            to="/belajar?modul=m11&jalur=pinjol"
-            className="p-3.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-950 font-bold transition-all flex items-center justify-between"
+          <button
+            onClick={() => onSelectModule ? onSelectModule("m11") : onNavigateTab ? onNavigateTab("modul") : null}
+            className="p-3.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-950 font-bold transition-all flex items-center justify-between text-left cursor-pointer"
           >
-            <span>🚨 Butuh Bantuan Darurat? Buka Pusat Darurat (m11)</span>
-            <ArrowRight className="h-4 w-4 text-rose-600" />
-          </Link>
-          <Link
-            to="/belajar?modul=m8"
-            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between"
+            <span className="flex items-center gap-2"><ShieldAlert className="h-4 w-4 text-rose-600 shrink-0" /> Pusat Darurat (m11)</span>
+            <ArrowRight className="h-4 w-4 text-rose-600 shrink-0" />
+          </button>
+          <button
+            onClick={() => onSelectModule ? onSelectModule("m8") : onNavigateTab ? onNavigateTab("modul") : null}
+            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between text-left cursor-pointer"
           >
-            <span>📊 Pola Modus Penipuan Terbanyak di Indonesia (m8)</span>
-            <ChevronRight className="h-4 w-4 text-[#526D82]" />
-          </Link>
-          <Link
-            to="/belajar?modul=m2"
-            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between"
+            <span className="flex items-center gap-2"><BarChart3 className="h-4 w-4 text-[#526D82] shrink-0" /> Pola Modus Nasional (m8)</span>
+            <ChevronRight className="h-4 w-4 text-[#526D82] shrink-0" />
+          </button>
+          <button
+            onClick={() => onSelectModule ? onSelectModule("m2") : onNavigateTab ? onNavigateTab("modul") : null}
+            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between text-left cursor-pointer"
           >
-            <span>🧠 Anatomi Sebuah Penipuan (m2)</span>
-            <ChevronRight className="h-4 w-4 text-[#526D82]" />
-          </Link>
-          <Link
-            to="/belajar?modul=m9"
-            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between"
+            <span className="flex items-center gap-2"><Brain className="h-4 w-4 text-[#526D82] shrink-0" /> Anatomi Sebuah Penipuan (m2)</span>
+            <ChevronRight className="h-4 w-4 text-[#526D82] shrink-0" />
+          </button>
+          <button
+            onClick={() => onSelectModule ? onSelectModule("m9") : onNavigateTab ? onNavigateTab("modul") : null}
+            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between text-left cursor-pointer"
           >
-            <span>📱 Pola Penipuan QRIS & E-Wallet (m9)</span>
-            <ChevronRight className="h-4 w-4 text-[#526D82]" />
-          </Link>
+            <span className="flex items-center gap-2"><QrCode className="h-4 w-4 text-[#526D82] shrink-0" /> Pola Penipuan QRIS (m9)</span>
+            <ChevronRight className="h-4 w-4 text-[#526D82] shrink-0" />
+          </button>
+        </div>
+
+        {/* FOOTER SUMBER & DISCLAIMER */}
+        <div className="text-xs text-[#526D82] space-y-3 pt-4 border-t border-[#9DB2BF]/30">
+          <p className="leading-relaxed">{data.disclaimer}</p>
+          <div className="space-y-1">
+            <span className="font-bold text-[#27374D]">Sumber Resmi:</span>
+            {data.sources.map((src, i) => (
+              <p key={i} className="text-[11px]">
+                • {src.agency} — <em>{src.title}</em> (Periode: {src.asOf})
+              </p>
+            ))}
+            <p className="text-[11px] text-slate-400">
+              JagaRuang Literasi Keuangan Digital
+            </p>
+          </div>
         </div>
       </section>
-
-      {/* FOOTER SUMBER & DISCLAIMER */}
-      <footer className="text-xs text-[#526D82] space-y-3 pt-4 border-t border-[#9DB2BF]/30">
-        <p className="leading-relaxed">{data.disclaimer}</p>
-        <div className="space-y-1">
-          <span className="font-bold text-[#27374D]">Sumber Resmi:</span>
-          {data.sources.map((src, i) => (
-            <p key={i} className="text-[11px]">
-              • {src.agency} — <em>{src.title}</em> (Periode: {src.asOf})
-            </p>
-          ))}
-          <p className="text-[11px] text-slate-400">
-            Terakhir diperbarui: {data.lastUpdated} · JagaRuang Literasi Keuangan Digital
-          </p>
-        </div>
-      </footer>
-    </div>
+    </ModulDetailLayout>
   );
 }

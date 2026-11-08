@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ShieldAlert,
@@ -24,14 +24,25 @@ import {
   Info,
   Scale,
   FileText,
+  BarChart3,
+  Lightbulb,
+  X,
+  Search,
 } from "lucide-react";
+import { ModernProcessFlow } from "./ModernProcessFlow";
+import { addNotification } from "../../lib/notificationService";
+import { ModulDetailLayout, type ModulSectionItem } from "./ModulDetailLayout";
 import {
   MODUL_PUSAT_DARURAT_DATA,
   validatePusatDaruratData,
 } from "../../data/modulPusatDarurat";
 
-// Validasi integritas build
-validatePusatDaruratData();
+// Validasi integritas build (aman dari fatal unhandled throw)
+try {
+  validatePusatDaruratData();
+} catch (err) {
+  console.error("Validasi Modul Pusat Darurat Gagal:", err);
+}
 
 interface ModulPusatDaruratPageProps {
   isRead?: boolean;
@@ -40,6 +51,7 @@ interface ModulPusatDaruratPageProps {
   onComplete?: () => void;
   isCompleted?: boolean;
   onNavigateTab?: (tab: "simulator" | "modul" | "kilat" | "kamus") => void;
+  onSelectModule?: (moduleId: string) => void;
 }
 
 export function ModulPusatDaruratPage({
@@ -49,6 +61,7 @@ export function ModulPusatDaruratPage({
   onComplete,
   isCompleted = false,
   onNavigateTab,
+  onSelectModule,
 }: ModulPusatDaruratPageProps) {
   const effectiveIsCompleted = isRead ?? isCompleted;
   const handleComplete = onToggleRead || onComplete || (() => {});
@@ -57,6 +70,20 @@ export function ModulPusatDaruratPage({
 
   // Mode Tampilan: "victim" (Aku korban sendiri) vs "supporter" (Aku membantu orang lain)
   const [viewRole, setViewRole] = useState<"victim" | "supporter">("victim");
+
+  // Sections config for Table of Contents
+  const SECTIONS: ModulSectionItem[] = useMemo(
+    () => [
+      { id: "prioritas-utama", label: "1. Tindakan Prioritas Utama" },
+      { id: "panduan-kanal", label: "2. Panduan Sesuai Kanal" },
+      { id: "langkah-universal", label: "3. 5 Langkah Universal Lapor" },
+      { id: "generator-kronologi", label: "4. Generator Kronologi" },
+      { id: "pasca-lapor", label: "5. Alur Setelah Melapor" },
+      { id: "recovery-scam", label: "6. Waspada Recovery Scam" },
+      { id: "pendampingan", label: "7. Panduan Pendamping & Rujukan" },
+    ],
+    []
+  );
 
   // State Wizard (Pertanyaan 1, 2, 3)
   const initialJalur = searchParams.get("jalur");
@@ -108,48 +135,40 @@ export function ModulPusatDaruratPage({
   const currentChannelConfig = data.channelConfigs[selectedChannel] || data.channelConfigs.bank;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 pb-16">
-      {/* Tombol Navigasi Kembali */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onBack}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#526D82] hover:text-[#27374D] transition-colors"
-        >
-          ← Kembali ke Pembelajaran
-        </button>
-        <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
-          🚨 Pusat Bantuan Darurat
-        </span>
-      </div>
-
-      {/* Header Banner - Menenangkan & Jelas */}
-      <header className="rounded-3xl border border-rose-300/60 bg-gradient-to-br from-[#27374D] to-[#1E293B] p-6 sm:p-10 text-white shadow-md space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400/40 text-rose-300 text-xs font-bold tracking-wide uppercase">
-          <Clock className="h-3.5 w-3.5" />
-          Tindakan Cepat Tanggap
+    <ModulDetailLayout
+      moduleId="m11"
+      title={data.title}
+      category="Setelah Kejadian & Bantuan"
+      terakhirDiperbaruiLabel={data.lastUpdated}
+      readingTime="8 Menit Baca & Aksi"
+      summary={data.subtitle}
+      isRead={effectiveIsCompleted}
+      onBack={onBack}
+      onToggleRead={handleComplete}
+      onNavigateTab={onNavigateTab || (() => {})}
+      onSelectModule={onSelectModule}
+      sections={SECTIONS}
+      nextModule={{
+        id: "m12",
+        moduleNumber: 12,
+        title: "Cara Mendampingi Keluarga yang Kena Tipu",
+        desc: "Panduan empati, pemulihan psikologis, dan urutan tindakan teknis mendampingi keluarga korban.",
+      }}
+    >
+      {/* Informasi Waktu & Prinsip Utama */}
+      <div className="rounded-2xl bg-amber-50/80 border border-amber-200/80 p-4 sm:p-5 space-y-2 text-xs sm:text-sm text-amber-950 shadow-2xs">
+        <div className="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase">
+          <Info className="h-4 w-4" />
+          <span>Fakta Kecepatan Pelaporan (Sumber: {data.timeContext.source})</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-snug">
-          {data.title}
-        </h1>
-        <p className="text-sm sm:text-base text-slate-200 max-w-2xl leading-relaxed">
-          {data.subtitle}
+        <p className="leading-relaxed font-medium">
+          {data.timeContext.goldenRule}
         </p>
-
-        {/* Informasi Waktu & Prinsip Utama */}
-        <div className="pt-2 p-4 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/10 space-y-2 text-xs">
-          <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase">
-            <Info className="h-4 w-4" />
-            <span>Fakta Kecepatan Pelaporan (Sumber: {data.timeContext.source})</span>
-          </div>
-          <p className="text-slate-100 leading-relaxed">
-            {data.timeContext.goldenRule}
-          </p>
-          <div className="flex flex-wrap gap-4 pt-1 text-[11px] text-slate-300">
-            <span>⏱️ Waktu Ideal OJK: <strong>{data.timeContext.idealReportingWindow}</strong></span>
-            <span>📊 Rerata Korban Lapor: <strong>{data.timeContext.averageNationalReportTime}</strong></span>
-          </div>
+        <div className="flex flex-wrap gap-4 pt-1 text-xs text-amber-900">
+          <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-amber-700 shrink-0" /> Waktu Ideal OJK: <strong>{data.timeContext.idealReportingWindow}</strong></span>
+          <span className="flex items-center gap-1.5"><BarChart3 className="h-3.5 w-3.5 text-amber-700 shrink-0" /> Rerata Korban Lapor: <strong>{data.timeContext.averageNationalReportTime}</strong></span>
         </div>
-      </header>
+      </div>
 
       {/* Tab Role: Korban Sendiri vs Pendamping */}
       <nav aria-label="Peran Pelapor" className="flex border-b border-[#9DB2BF]/40">
@@ -177,8 +196,9 @@ export function ModulPusatDaruratPage({
         </button>
       </nav>
 
-      {/* DUA TOMBOL AKSI UTAMA PALING ATAS (PRIORITAS NOMOR SATU) */}
-      <section className="rounded-3xl border-2 border-rose-300 bg-rose-50/40 p-6 sm:p-8 space-y-4 shadow-sm">
+      {/* SEKSI 1: DUA TOMBOL AKSI UTAMA PALING ATAS (PRIORITAS NOMOR SATU) */}
+      <section id="prioritas-utama" className="space-y-4 scroll-mt-32">
+        <div className="rounded-3xl border-2 border-rose-300 bg-rose-50/40 p-6 sm:p-8 space-y-4 shadow-sm">
         <div className="space-y-1">
           <span className="text-xs font-black text-rose-800 uppercase tracking-wider block">
             Langkah Terpenting Saat Ini
@@ -202,8 +222,9 @@ export function ModulPusatDaruratPage({
                 Telepon nomor resmi call center yang tertera di balik kartu debit/ATM fisikmu atau di aplikasi m-banking resmi.
               </p>
             </div>
-            <div className="text-[11px] font-semibold text-rose-800 bg-rose-50 p-2.5 rounded-lg">
-              ⚠️ Jangan cari nomor call center di Google / medsos karena rawan nomor penipu tiruan.
+            <div className="text-[11px] font-semibold text-rose-800 bg-rose-50 p-2.5 rounded-lg flex items-start gap-1.5">
+              <AlertTriangle className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
+              <span>Jangan cari nomor call center di Google / medsos karena rawan nomor penipu tiruan.</span>
             </div>
           </div>
 
@@ -231,33 +252,36 @@ export function ModulPusatDaruratPage({
             </div>
           </div>
         </div>
-      </section>
 
-      {/* PERINGATAN SITUS TIRUAN (ANTI-PHISHING IASC) */}
-      <section className="rounded-2xl border border-amber-300/80 bg-amber-50/70 p-4 sm:p-5 flex items-start gap-3 text-xs text-amber-950">
-        <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
-        <div className="space-y-1 leading-relaxed">
-          <strong className="block font-bold">Peringatan Satgas PASTI: Waspada Situs Web IASC Tiruan!</strong>
-          <p>
-            Pelaporan resmi IASC <strong>hanya beralamat di {data.iascOfficialDomain}</strong>. Jangan pernah mengeklik tautan IASC dari pesan WhatsApp/SMS atau akun media sosial yang menawarkan "jasa pengembalian uang".
-          </p>
+        {/* PERINGATAN SITUS TIRUAN (ANTI-PHISHING IASC) */}
+        <div className="rounded-2xl border border-amber-300/80 bg-amber-50/70 p-4 sm:p-5 flex items-start gap-3 text-xs text-amber-950">
+          <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
+          <div className="space-y-1 leading-relaxed">
+            <strong className="block font-bold">Peringatan Satgas PASTI: Waspada Situs Web IASC Tiruan!</strong>
+            <p>
+              Pelaporan resmi IASC <strong>hanya beralamat di {data.iascOfficialDomain}</strong>. Jangan pernah mengeklik tautan IASC dari pesan WhatsApp/SMS atau akun media sosial yang menawarkan "jasa pengembalian uang".
+            </p>
+          </div>
+        </div>
         </div>
       </section>
 
-      {/* WIZARD 3 LANGKAH (JIKA BELUM SELESAI / MEMILIH JALUR) */}
-      {!wizardFinished ? (
-        <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <span className="text-xs font-bold text-[#526D82] uppercase">
-              Wizard Panduan Cepat (Langkah {wizardStep} dari 3)
-            </span>
-            <button
-              onClick={() => setWizardFinished(true)}
-              className="text-xs text-blue-600 hover:underline cursor-pointer"
-            >
-              Lewati wizard, tampilkan semua langkah
-            </button>
-          </div>
+      {/* SEKSI 2: PANDUAN SESUAI KANAL */}
+      <section id="panduan-kanal" className="space-y-4 scroll-mt-32">
+        {/* WIZARD 3 LANGKAH (JIKA BELUM SELESAI / MEMILIH JALUR) */}
+        {!wizardFinished ? (
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span className="text-xs font-bold text-[#526D82] uppercase">
+                Wizard Panduan Cepat (Langkah {wizardStep} dari 3)
+              </span>
+              <button
+                onClick={() => setWizardFinished(true)}
+                className="text-xs text-blue-600 hover:underline cursor-pointer"
+              >
+                Lewati wizard, tampilkan semua langkah
+              </button>
+            </div>
 
           {/* Wizard Pertanyaan 1: Kanal Transaksi */}
           {wizardStep === 1 && (
@@ -347,10 +371,10 @@ export function ModulPusatDaruratPage({
               </div>
             </div>
           )}
-        </section>
+        </div>
       ) : (
         /* KANAL KHUSUS YANG TERPILIH */
-        <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="p-2 rounded-xl bg-slate-100 text-[#27374D]">
@@ -382,19 +406,18 @@ export function ModulPusatDaruratPage({
             <div className="space-y-1.5 pt-1 text-xs text-[#526D82]">
               {currentChannelConfig.specificInstructions.map((ins, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="h-4 w-4 rounded-full bg-slate-200 text-[#27374D] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    {i + 1}
-                  </span>
+                  <span className="font-bold shrink-0">{i + 1}.</span>
                   <span className="leading-relaxed">{ins}</span>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </div>
       )}
+      </section>
 
-      {/* 5 LANGKAH UNIVERSAL PELAPORAN DARURAT */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      {/* SEKSI 3: 5 LANGKAH UNIVERSAL PELAPORAN DARURAT */}
+      <section id="langkah-universal" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="space-y-1">
           <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
             SOP Standar Nasional
@@ -410,15 +433,13 @@ export function ModulPusatDaruratPage({
               key={step.order}
               className="rounded-2xl border border-slate-200 p-4 sm:p-5 space-y-2 bg-slate-50/50"
             >
-              <div className="flex items-center gap-2 font-bold text-sm text-[#27374D]">
-                <span className="h-6 w-6 rounded-full bg-[#27374D] text-white text-xs flex items-center justify-center font-black">
-                  {step.order}
-                </span>
-                <span>{step.title}</span>
-              </div>
-              <p className="text-xs text-[#526D82] leading-relaxed pl-8">{step.desc}</p>
-              <div className="ml-8 text-[11px] font-semibold text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200">
-                💡 {step.keyDetail}
+              <h3 className="font-bold text-sm text-[#27374D]">
+                {step.order}. {step.title}
+              </h3>
+              <p className="text-xs text-[#526D82] leading-relaxed">{step.desc}</p>
+              <div className="text-[11px] font-semibold text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200 flex items-start gap-1.5">
+                <Lightbulb className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                <span>{step.keyDetail}</span>
               </div>
             </div>
           ))}
@@ -428,10 +449,6 @@ export function ModulPusatDaruratPage({
       {/* GENERATOR KRONOLOGI LOKAL (100% DI BROWSER, TANPA JARINGAN) */}
       <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full uppercase">
-            <FileText className="h-3.5 w-3.5 text-emerald-700" />
-            100% Lokal & Privasi Aman
-          </div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#27374D]">
             Generator Kronologi Laporan (Siap Salin)
           </h2>
@@ -538,7 +555,7 @@ export function ModulPusatDaruratPage({
       </section>
 
       {/* ALUR SETELAH MELAPOR & DATA EKSPEKTASI REALISTIS */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      <section id="pasca-lapor" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="space-y-1">
           <span className="text-xs font-bold text-[#526D82] uppercase tracking-wider">
             Transparansi Proses
@@ -551,18 +568,28 @@ export function ModulPusatDaruratPage({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-          {data.postReportWorkflow.map((wf) => (
-            <div key={wf.order} className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-              <span className="h-6 w-6 rounded-full bg-[#27374D] text-white text-xs font-bold flex items-center justify-center">
-                {wf.order}
-              </span>
-              <h4 className="text-xs font-bold text-[#27374D]">{wf.phase}</h4>
-              <p className="text-[11px] text-[#526D82] leading-relaxed">{wf.description}</p>
-              <span className="text-[10px] text-slate-400 italic block">{wf.realisticNote}</span>
-            </div>
-          ))}
-        </div>
+        {/* Visual Roadmap Pasca Lapor Modern (Zigzag Stepped) */}
+        <ModernProcessFlow
+          steps={data.postReportWorkflow.map((wf, idx) => {
+            const icons = [
+              <FileText key={0} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <Search key={1} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <Users key={2} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <ShieldCheck key={3} className="h-6 w-6 sm:h-7 sm:w-7" />,
+            ];
+            return {
+              number: wf.order,
+              title: wf.phase,
+              description: wf.description,
+              icon: icons[idx],
+              extraDetail: (
+                <span className="text-[10px] text-slate-400 italic block">
+                  {wf.realisticNote}
+                </span>
+              ),
+            };
+          })}
+        />
 
         {/* Data Realistis IASC */}
         <div className="rounded-2xl bg-blue-50/60 border border-blue-200 p-5 space-y-2 text-xs">
@@ -588,7 +615,7 @@ export function ModulPusatDaruratPage({
       </section>
 
       {/* WASPADA PENIPUAN LAPIS KEDUA (RECOVERY SCAM) */}
-      <section className="rounded-3xl border border-rose-300/80 bg-rose-50/60 p-6 sm:p-8 space-y-4 shadow-xs">
+      <section id="recovery-scam" className="rounded-3xl border border-rose-300/80 bg-rose-50/60 p-6 sm:p-8 space-y-4 shadow-xs scroll-mt-32">
         <div className="flex items-center gap-2 text-rose-800 text-xs font-black tracking-wide uppercase">
           <ShieldAlert className="h-4 w-4 text-rose-700" />
           <span>Waspada Penipuan Lapis Kedua (Recovery Scam)</span>
@@ -605,7 +632,7 @@ export function ModulPusatDaruratPage({
               <div className="space-y-1 pt-1">
                 {scam.redFlags.map((rf, rIdx) => (
                   <div key={rIdx} className="text-[11px] text-rose-800 flex items-start gap-1.5 font-medium">
-                    <span>❌</span>
+                    <X className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
                     <span>{rf}</span>
                   </div>
                 ))}
@@ -615,29 +642,28 @@ export function ModulPusatDaruratPage({
         </div>
       </section>
 
-      {/* TAB PENDAMPING (JIKA MEMILIH ROLE SUPPORTER) */}
-      {viewRole === "supporter" && (
-        <section className="rounded-3xl border border-blue-300/80 bg-blue-50/60 p-6 sm:p-8 space-y-4 shadow-xs animate-fadeIn">
-          <div className="flex items-center gap-2 text-blue-800 text-xs font-black tracking-wide uppercase">
-            <Users className="h-4 w-4 text-blue-700" />
-            <span>{data.supporterGuide.title}</span>
-          </div>
-          <p className="text-xs sm:text-sm text-blue-950 leading-relaxed">
-            {data.supporterGuide.description}
-          </p>
-          <div className="p-3.5 rounded-xl bg-white border border-blue-200 text-xs text-blue-900 font-semibold leading-relaxed">
-            ⚖️ <strong>Syarat Formal:</strong> {data.supporterGuide.legalPrerequisite}
-          </div>
-          <div className="space-y-2 pt-2">
-            {data.supporterGuide.actionChecklist.map((item, idx) => (
-              <div key={idx} className="flex items-start gap-2 text-xs text-[#27374D]">
-                <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span className="leading-relaxed">{item}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* TAB PENDAMPING & RUJUKAN */}
+      <section id="pendampingan" className="rounded-3xl border border-blue-300/80 bg-blue-50/60 p-6 sm:p-8 space-y-4 shadow-xs scroll-mt-32">
+        <div className="flex items-center gap-2 text-blue-800 text-xs font-black tracking-wide uppercase">
+          <Users className="h-4 w-4 text-blue-700" />
+          <span>{data.supporterGuide.title}</span>
+        </div>
+        <p className="text-xs sm:text-sm text-blue-950 leading-relaxed">
+          {data.supporterGuide.description}
+        </p>
+        <div className="p-3.5 rounded-xl bg-white border border-blue-200 text-xs text-blue-900 font-semibold leading-relaxed flex items-start gap-1.5">
+          <Scale className="h-3.5 w-3.5 text-blue-700 shrink-0 mt-0.5" />
+          <div><strong>Syarat Formal:</strong> {data.supporterGuide.legalPrerequisite}</div>
+        </div>
+        <div className="space-y-2 pt-2">
+          {data.supporterGuide.actionChecklist.map((item, idx) => (
+            <div key={idx} className="flex items-start gap-2 text-xs text-[#27374D]">
+              <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+              <span className="leading-relaxed">{item}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* CETAK / BAGIKAN RINGKASAN */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -646,20 +672,7 @@ export function ModulPusatDaruratPage({
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-bold text-[#27374D] hover:bg-slate-100 cursor-pointer shadow-xs"
         >
           <Printer className="h-4 w-4" />
-          <span>Cetak Panduan Darurat Ini</span>
-        </button>
-
-        <button
-          onClick={handleComplete}
-          disabled={effectiveIsCompleted}
-          className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-            effectiveIsCompleted
-              ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-              : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm"
-          }`}
-        >
-          <Check className="h-4 w-4" />
-          <span>{effectiveIsCompleted ? "Panduan Selesai Dibaca" : "Tandai Selesai Dibaca"}</span>
+          <span>Cetak Dokumen Panduan Darurat Ini</span>
         </button>
       </div>
 
@@ -667,9 +680,9 @@ export function ModulPusatDaruratPage({
       <footer className="text-xs text-[#526D82] space-y-3 pt-4 border-t border-[#9DB2BF]/30">
         <p className="leading-relaxed">{data.disclaimer}</p>
         <p className="text-[11px] text-slate-400">
-          Terakhir diperbarui: {data.lastUpdated} · JagaRuang Pusat Darurat Anti-Penipuan Digital
+          JagaRuang Pusat Darurat Anti-Penipuan Digital
         </p>
       </footer>
-    </div>
+    </ModulDetailLayout>
   );
 }

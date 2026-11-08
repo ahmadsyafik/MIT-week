@@ -74,7 +74,7 @@ export default function LoginModal() {
           <img
             src="/logo-blue.png"
             alt="Logo JagaRuang"
-            className="h-11 w-11 object-contain shrink-0"
+            className="h-8 w-8 object-contain shrink-0"
           />
           <div>
             <h2 id="login-modal-title" className="text-xl font-bold text-[#27374D]">

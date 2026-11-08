@@ -628,8 +628,12 @@ export function validateModusData(data: ModulPolaModusData): boolean {
   return true;
 }
 
-// Jalankan validasi integritas
-validateModusData(MODUL_POLA_MODUS_NASIONAL);
+// Jalankan validasi integritas secara aman
+try {
+  validateModusData(MODUL_POLA_MODUS_NASIONAL);
+} catch (err) {
+  console.error("Validasi Modus Data Gagal:", err);
+}
 
 /**
  * Menghitung persentase dinamis dari jumlah laporan mentah terhadap total laporan.

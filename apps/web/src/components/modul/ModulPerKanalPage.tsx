@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
-  ArrowLeft,
-  ArrowRight,
   ShieldAlert,
   AlertTriangle,
   AlertOctagon,
   CheckCircle2,
-  Clock,
-  Sparkles,
-  RotateCcw,
   BookOpen,
   Info,
   CheckSquare,
@@ -23,8 +18,8 @@ import {
   ShieldCheck,
   Check,
 } from "lucide-react";
-import { Button } from "../ui";
 import { addNotification } from "../../lib/notificationService";
+import { ModulDetailLayout, type ModulSectionItem } from "./ModulDetailLayout";
 import type {
   ChannelModuleData,
   ModusChannelItem,
@@ -38,6 +33,7 @@ interface ModulPerKanalPageProps {
   onBack: () => void;
   onToggleRead: () => void;
   onNavigateTab: (tab: "simulator" | "modul" | "kilat" | "kamus") => void;
+  onSelectModule?: (moduleId: string) => void;
 }
 
 export function ModulPerKanalPage({
@@ -46,6 +42,7 @@ export function ModulPerKanalPage({
   onBack,
   onToggleRead,
   onNavigateTab,
+  onSelectModule,
 }: ModulPerKanalPageProps) {
   // 1. Modus Tab State
   const [activeModusId, setActiveModusId] = useState<string>(data.modi[0]?.id || "");
@@ -64,21 +61,19 @@ export function ModulPerKanalPage({
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
   const [showQuizFeedback, setShowQuizFeedback] = useState<Record<number, boolean>>({});
 
-  // 4. Scroll progress
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
-      const windowHeight =
-        document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      if (windowHeight > 0) {
-        setScrollProgress(Math.min(100, Math.round((totalScroll / windowHeight) * 100)));
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const SECTIONS: ModulSectionItem[] = useMemo(
+    () => [
+      { id: "kenapa-whatsapp", label: "1. Mengapa WhatsApp Jadi Sasaran" },
+      { id: "beda-dua-kode", label: "2. Perbedaan Kritis Dua Kode" },
+      { id: "bedah-tiga-fitur", label: "3. 3 Fitur yang Dimanipulasi" },
+      { id: "tiga-modus-utama", label: "4. 3 Modus Terbanyak" },
+      { id: "audit-keamanan", label: "5. Audit Keamanan 5 Langkah" },
+      { id: "pertolongan-pertama", label: "6. Respons Akun Terbajak" },
+      { id: "mini-kuis", label: "7. Mini Kuis WhatsApp" },
+      { id: "intisari", label: "8. Intisari & Sumber Resmi" },
+    ],
+    []
+  );
 
   const toggleAuditCheck = (stepId: string) => {
     setCheckedAuditItems((prev) => {
@@ -119,71 +114,39 @@ export function ModulPerKanalPage({
   }, [activeModusId, data.modi]);
 
   return (
-    <div className="relative min-h-screen bg-[#F8FAFC] pb-24 text-[#27374D]">
-      {/* Top Floating Progress Bar */}
-      <div className="sticky top-0 z-40 h-1.5 w-full bg-slate-200">
-        <div
-          className="h-full bg-gradient-to-r from-emerald-500 via-teal-600 to-sky-600 transition-all duration-150"
-          style={{ width: `${scrollProgress}%` }}
-        />
-      </div>
-
-      <div className="mx-auto max-w-4xl px-4 pt-6 sm:px-6">
-        {/* Navigation Bar */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-[#526D82] shadow-2xs hover:bg-slate-50 hover:text-[#27374D] transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Kembali ke Hub Belajar</span>
-          </button>
-
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
-              <Clock className="h-3.5 w-3.5" />
-              {data.readingTime}
-            </span>
-            <button
-              onClick={onToggleRead}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all shadow-2xs ${
-                isRead
-                  ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <CheckCircle2
-                className={`h-4 w-4 ${isRead ? "text-emerald-600 fill-emerald-100" : "text-slate-400"}`}
-              />
-              <span>{isRead ? "Tuntas Dibaca" : "Tandai Selesai"}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Hero Card */}
-        <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-700">
-            <Smartphone className="h-4 w-4" />
-            <span>Modul Seri Keamanan Kanal #{data.id}</span>
-          </div>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#27374D]">
-            {data.title}
-          </h1>
-          <p className="mt-3 text-sm sm:text-base leading-relaxed text-[#526D82]">
-            Panduan praktis melindungi akun dari pembajakan kode, file APK berbahaya, hingga modus penyamaran kontak di platform percakapan.
+    <ModulDetailLayout
+      moduleId="m3"
+      title={data.title}
+      category="Per Kanal"
+      terakhirDiperbaruiLabel={data.lastUpdated}
+      readingTime={data.readingTime}
+      summary="Panduan praktis melindungi akun dari pembajakan kode, file APK berbahaya, hingga modus penyamaran kontak di platform percakapan."
+      isRead={isRead}
+      onBack={onBack}
+      onToggleRead={onToggleRead}
+      onNavigateTab={onNavigateTab}
+      onSelectModule={onSelectModule}
+      sections={SECTIONS}
+      nextModule={{
+        id: "m4",
+        moduleNumber: 4,
+        title: "Keamanan Email & Phishing",
+        desc: "Membaca header asli, verifikasi domain pengirim, dan cara aman menganalisa lampiran mencurigakan.",
+      }}
+    >
+      {/* Section 1: Kenapa Penipu Suka WhatsApp? */}
+      <section id="kenapa-whatsapp" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
+        <div className="border-b border-slate-100 pb-3">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+            Bagian 1 · Karakteristik Kanal
+          </span>
+          <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
+            {data.openerWhyChannel.question}
+          </h2>
+          <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
+            Tiga alasan utama kenapa ruang pesan instan menjadi sasaran empuk kejahatan rekayasa sosial.
           </p>
         </div>
-
-        {/* Section 1: Kenapa Penipu Suka WhatsApp? */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
-          <div className="border-b border-slate-100 pb-3">
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
-              {data.openerWhyChannel.question}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
-              Tiga alasan utama kenapa ruang pesan instan menjadi sasaran empuk kejahatan rekayasa sosial.
-            </p>
-          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             {data.openerWhyChannel.points.map((pt, i) => (
@@ -202,13 +165,12 @@ export function ModulPerKanalPage({
         </section>
 
         {/* Section 2: Bedah Dua Kode Rahasia (Side-by-Side Comparison) */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-5">
+        <section id="beda-dua-kode" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">
-              <KeyRound className="h-3.5 w-3.5 text-rose-700" />
-              Perbedaan Kritis Dua Kode
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 2 · Otentikasi
             </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D] mt-1">
               {data.comparisonCards.title}
             </h2>
           </div>
@@ -217,7 +179,7 @@ export function ModulPerKanalPage({
             {/* Card 1: Kode SMS Registrasi */}
             <div className="rounded-2xl border-2 border-amber-300 bg-amber-50/40 p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="rounded-md bg-amber-200 px-2 py-0.5 text-[10px] font-black uppercase text-amber-950">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-950">
                   Kode Jenis A
                 </span>
                 <span className="text-xs font-bold text-amber-900">6 Digit SMS</span>
@@ -241,7 +203,7 @@ export function ModulPerKanalPage({
             {/* Card 2: PIN Verifikasi Dua Langkah */}
             <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50/40 p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="rounded-md bg-emerald-200 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-950">
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-950">
                   Kode Jenis B
                 </span>
                 <span className="text-xs font-bold text-emerald-900">6 Digit PIN Rahasia</span>
@@ -272,9 +234,12 @@ export function ModulPerKanalPage({
         </section>
 
         {/* Section 3: Nuansa Centang Hijau Resmi vs Emoji */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="bedah-tiga-fitur" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 3 · Verifikasi Profil
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
               {data.badgeVerificationGuide.title}
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
@@ -316,9 +281,12 @@ export function ModulPerKanalPage({
         </section>
 
         {/* Section 4: 6 Modus WhatsApp Terbanyak (Tabs) */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="tiga-modus-utama" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 4 · Anatomi Modus
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
               6 Modus Penipuan Utama di WhatsApp
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
@@ -347,16 +315,7 @@ export function ModulPerKanalPage({
           <div className="rounded-2xl border border-slate-200/90 bg-[#FFFDF9] p-5 sm:p-6 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/60 pb-3">
               <div>
-                <span
-                  className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
-                    activeModus.riskLevel === "kritis"
-                      ? "bg-rose-100 text-rose-800"
-                      : "bg-amber-100 text-amber-800"
-                  }`}
-                >
-                  {activeModus.riskLevel === "kritis" ? "Risiko Kritis" : "Risiko Waspada"}
-                </span>
-                <h3 className="text-base sm:text-lg font-extrabold text-[#27374D] mt-1">
+                <h3 className="text-base sm:text-lg font-extrabold text-[#27374D]">
                   {activeModus.name}
                 </h3>
               </div>
@@ -403,17 +362,20 @@ export function ModulPerKanalPage({
         </section>
 
         {/* Section 5: Audit Keamanan WhatsApp 2 Menit */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-5">
+        <section id="audit-keamanan" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
-              <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+                Bagian 5 · Checklist Mandiri
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
                 Audit Keamanan WhatsApp 2 Menit
               </h2>
               <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
                 Buka WhatsApp di ponselmu sekarang dan ikuti 4 langkah audit mandiri ini.
               </p>
             </div>
-            <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 self-start sm:self-auto">
+            <span className="text-xs font-bold text-emerald-800 self-start sm:self-auto">
               Progress: {completedAuditCount} / {data.auditChecklist.length} Langkah Selesai
             </span>
           </div>
@@ -470,13 +432,12 @@ export function ModulPerKanalPage({
         </section>
 
         {/* Section 6: Protokol Darurat Akun Dibajak */}
-        <section className="mt-8 rounded-3xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="pertolongan-pertama" className="rounded-3xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-rose-200/80 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">
-              <ShieldAlert className="h-3.5 w-3.5 text-rose-700" />
-              SOP Darurat
+            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-800 block mb-1">
+              Bagian 6 · Pemulihan Insiden
             </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-rose-950 mt-2">
+            <h2 className="text-xl sm:text-2xl font-black text-rose-950 mt-1">
               {data.emergencyTakeover.title}
             </h2>
             <p className="text-xs sm:text-sm text-rose-900/80 mt-0.5">
@@ -490,24 +451,14 @@ export function ModulPerKanalPage({
                 key={st.order}
                 className="rounded-2xl border border-rose-200 bg-white p-4 sm:p-5 space-y-1.5 shadow-2xs"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-white font-extrabold text-xs">
-                      {st.order}
-                    </span>
-                    <h3 className="font-extrabold text-sm sm:text-base text-rose-950">
-                      {st.title}
-                    </h3>
-                  </div>
-                  <span className="rounded-md bg-rose-100 text-rose-900 text-[10px] font-bold px-2 py-0.5">
-                    {st.urgency}
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed pl-8">
+                <h3 className="font-extrabold text-sm sm:text-base text-rose-950">
+                  {st.order}. {st.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                   {st.action}
                 </p>
                 {st.note && (
-                  <p className="text-[10px] text-slate-400 pl-8 italic">{st.note}</p>
+                  <p className="text-[10px] text-slate-400 italic">{st.note}</p>
                 )}
               </div>
             ))}
@@ -515,13 +466,12 @@ export function ModulPerKanalPage({
         </section>
 
         {/* Section 7: Kuis Asli atau Palsu? */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="mini-kuis" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">
-              <HelpCircle className="h-3.5 w-3.5" />
-              Uji Cepat Refleks WhatsApp (2 Soal)
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82] block mb-1">
+              Bagian 7 · Evaluasi Cepat
             </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-xl sm:text-2xl font-black text-[#27374D] mt-1">
               Kuis: Asli atau Palsu?
             </h2>
           </div>
@@ -586,7 +536,7 @@ export function ModulPerKanalPage({
         </section>
 
         {/* Section 8: Intisari & Footer Rujukan */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="intisari" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="rounded-2xl bg-gradient-to-r from-emerald-900 to-[#27374D] p-5 sm:p-6 text-white space-y-2">
             <span className="text-[10px] font-black uppercase tracking-wider text-emerald-300 block">
               INTISARI PERLINDUNGAN WHATSAPP
@@ -597,9 +547,8 @@ export function ModulPerKanalPage({
           </div>
 
           <div className="space-y-3 pt-2 text-xs text-slate-500 border-t border-slate-100">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
               <span className="font-bold text-slate-700">Sumber Rujukan Literasi:</span>
-              <span>Terakhir Diperbarui: {data.lastUpdated}</span>
             </div>
             <ul className="space-y-1.5 list-disc pl-4 text-[11px]">
               {data.sources.map((src, i) => (
@@ -613,28 +562,8 @@ export function ModulPerKanalPage({
               {data.disclaimer}
             </p>
           </div>
-
-          {/* Bottom Action Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
-            <button
-              onClick={onBack}
-              className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] hover:text-[#27374D]"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Kembali ke Daftar Modul</span>
-            </button>
-
-            <button
-              onClick={() => onNavigateTab("modul")}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#27374D] px-4 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-[#1E293B] transition-colors"
-            >
-              <span>Lanjut ke Modul Email Phishing</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
         </section>
-      </div>
-    </div>
+    </ModulDetailLayout>
   );
 }
 

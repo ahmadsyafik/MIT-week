@@ -12,7 +12,6 @@ import {
   RefreshCw,
   Smartphone,
   HelpCircle,
-  Globe,
   ArrowRight,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -169,19 +168,16 @@ export default function Layout() {
             {/* Logo Brand JagaRuang (Posisi Cerah: Logo Biru) */}
             <NavLink
               to="/"
-              className="flex items-center gap-2.5 font-bold text-[#27374D] text-lg hover:text-[#526D82] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] rounded-md transition-colors"
+              className="flex items-center gap-2 font-bold text-[#27374D] hover:text-[#526D82] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526D82] rounded-md transition-colors"
             >
               <img
                 src="/logo-blue.png"
                 alt="Logo JagaRuang"
-                className="h-9 w-9 object-contain shrink-0"
+                className="h-7 w-7 object-contain shrink-0"
               />
-              <div className="flex items-baseline gap-0.5">
-                <span className="leading-tight font-black text-xl tracking-tight text-[#27374D]">
-                  JagaRuang
-                </span>
-                <span className="font-extrabold text-[#526D82] text-xl">.</span>
-              </div>
+              <span className="leading-tight font-extrabold text-lg tracking-tight text-[#27374D]">
+                JagaRuang
+              </span>
             </NavLink>
 
             {/* Nav Links Tengah (seperti Home, About, Pricing, Contact, Blog di video) */}
@@ -288,22 +284,19 @@ export default function Layout() {
         className="hidden md:flex md:w-64 md:flex-col justify-between bg-[#526D82] text-white md:sticky md:top-0 md:h-screen border-r border-[#9DB2BF]/30 shrink-0"
       >
         <div className="flex flex-col h-full overflow-y-auto">
-          {/* Header Sidebar Brand: Logo & Title (Posisi Gelap: Logo Putih) */}
+          {/* Header Sidebar Brand: Logo & Title (Hiasan Non-Clickable) */}
           <div className="flex h-16 items-center justify-between border-b border-[#9DB2BF]/30 px-5 shrink-0 bg-[#526D82]">
-            <NavLink
-              to="/"
-              className="flex items-center gap-3 font-bold text-white hover:text-[#DDE6ED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-lg transition-colors"
-            >
+            <div className="flex items-center gap-2.5 font-bold text-white select-none cursor-default">
               <img
                 src="/logo-white.png"
                 alt="Logo JagaRuang"
-                className="h-9 w-9 object-contain shrink-0 drop-shadow-sm"
+                className="h-7 w-7 object-contain shrink-0 drop-shadow-sm"
               />
               <div className="flex flex-col">
                 <span className="leading-tight font-extrabold text-base tracking-tight text-white">JagaRuang</span>
                 <span className="text-[10px] font-medium text-[#DDE6ED]/80">Guardians of Digital</span>
               </div>
-            </NavLink>
+            </div>
           </div>
 
           {/* Menu Navigasi Utama di Sidebar */}
@@ -348,19 +341,12 @@ export default function Layout() {
           {/* Spacer */}
           <div className="flex-1 min-h-4" />
 
-          {/* Bagian Footer Sidebar: Halaman Depan & Logout */}
-          <div className="p-3 border-t border-[#9DB2BF]/30 shrink-0 space-y-1">
-            <NavLink
-              to="/"
-              className="flex min-h-[38px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-[#27374D]/40 hover:text-white transition-colors"
-            >
-              <Globe className="h-4 w-4 text-[#DDE6ED]/70 shrink-0" />
-              <span>Halaman Depan (Landing)</span>
-            </NavLink>
+          {/* Bagian Footer Sidebar: Logout */}
+          <div className="p-3 border-t border-[#9DB2BF]/30 shrink-0">
             <button
               type="button"
               onClick={handleLogout}
-              className="flex min-h-[38px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-red-950/40 hover:text-red-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 cursor-pointer"
+              className="flex min-h-[42px] w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#DDE6ED]/80 hover:bg-red-950/40 hover:text-red-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 cursor-pointer"
             >
               <LogOut className="h-4 w-4 text-[#DDE6ED]/70 group-hover:text-red-300 shrink-0" />
               <span>Keluar dari Sesi</span>
@@ -375,16 +361,16 @@ export default function Layout() {
       <div className="flex flex-1 flex-col min-w-0 min-h-screen bg-[#DDE6ED]">
         {/* Top Header Bar di atas Dashboard */}
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#9DB2BF]/40 bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-2xs">
-          {/* Mobile Brand / Logo (Hamburger menu dihilangkan, navigasi mobile menggunakan bottom bar) */}
+          {/* Mobile Brand / Logo (Hiasan Non-Clickable) */}
           <div className="flex items-center gap-2 md:hidden">
-            <NavLink to="/" className="flex items-center gap-2 font-bold text-[#27374D] text-base">
+            <div className="flex items-center gap-2 font-bold text-[#27374D] text-base select-none cursor-default">
               <img
                 src="/logo-blue.png"
                 alt="Logo JagaRuang"
                 className="h-7 w-7 object-contain shrink-0"
               />
               <span className="tracking-tight">JagaRuang</span>
-            </NavLink>
+            </div>
           </div>
 
           {/* Search Input Bar & Dropdown Rekomendasi (di Desktop dan Tablet) */}
@@ -496,7 +482,7 @@ export default function Layout() {
 
         {/* Konten Dashboard Utama (Background: DDE6ED, Font: 27374D) */}
         {/* pb-24 di mobile agar konten tidak tertutup bottom bar navigasi */}
-        <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 pb-24 md:pb-7">
+        <main id="main-content" className="flex-1 w-full pb-24 md:pb-7">
           <Outlet />
         </main>
 

@@ -16,6 +16,7 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  ChevronRight,
   Award,
   BarChart3,
   TrendingUp,
@@ -35,6 +36,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui";
 import { addNotification } from "../../lib/notificationService";
+import { ModulDetailLayout, type ModulSectionItem } from "./ModulDetailLayout";
 import {
   MODUL_POLA_MODUS_NASIONAL,
   type TopModusItem,
@@ -48,6 +50,7 @@ interface ModulPolaModusNasionalPageProps {
   onBack: () => void;
   onToggleRead: () => void;
   onNavigateTab: (tab: "simulator" | "modul" | "kilat" | "kamus") => void;
+  onSelectModule?: (moduleId: string) => void;
 }
 
 export function ModulPolaModusNasionalPage({
@@ -55,6 +58,7 @@ export function ModulPolaModusNasionalPage({
   onBack,
   onToggleRead,
   onNavigateTab,
+  onSelectModule,
 }: ModulPolaModusNasionalPageProps) {
   const data = MODUL_POLA_MODUS_NASIONAL;
 
@@ -90,26 +94,29 @@ export function ModulPolaModusNasionalPage({
     }
   });
 
-  // 7. Scroll Progress
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Sections config for Table of Contents
+  const SECTIONS: ModulSectionItem[] = useMemo(
+    () => [
+      { id: "hero-stats", label: "1. Statistik Laporan Nasional" },
+      { id: "kuis-personal", label: "2. Deteksi Kerentanan Diri" },
+      { id: "diagram-modus", label: "3. Peringkat Modus Terbanyak" },
+      { id: "kartu-modus", label: "4. Bedah 4 Modus Utama" },
+      { id: "bahaya-apk", label: "5. Modus File APK Undangan" },
+      { id: "modus-ai", label: "6. Tren Modus Berbasis AI" },
+      { id: "pinjol-ilegal", label: "7. Entitas Keuangan Ilegal" },
+      { id: "red-flags", label: "8. Red Flags Lintas Modus" },
+      { id: "latihan-refleks", label: "9. Latihan 'Modus yang Mana?'" },
+      { id: "checklist", label: "10. Checklist Tindakan Nyata" },
+      { id: "sop-darurat", label: "11. SOP Darurat Korban" },
+      { id: "intisari", label: "12. Intisari & Sumber Resmi" },
+    ],
+    []
+  );
 
-  // 8. Animated Counters for Hero Stats (Respects prefers-reduced-motion)
+  // 7. Animated Counters for Hero Stats (Respects prefers-reduced-motion)
   const [animatedTotalLaporan, setAnimatedTotalLaporan] = useState(0);
   const latestIascReport = data.iascOverviewEntries[data.iascOverviewEntries.length - 2]; // 702342
   const targetTotal = latestIascReport.totalLaporan || 702342;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
-      const windowHeight =
-        document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      if (windowHeight > 0) {
-        setScrollProgress(Math.min(100, Math.round((totalScroll / windowHeight) * 100)));
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Animasi hitung naik (Counter animation)
   useEffect(() => {
@@ -194,87 +201,51 @@ export function ModulPolaModusNasionalPage({
   const isDataStale = isDataOlderThan90Days(data.modusDataset.meta.asOf);
 
   return (
-    <div className="relative min-h-screen bg-[#F8FAFC] pb-24 text-[#27374D]">
-      {/* Top Floating Progress Bar */}
-      <div className="sticky top-0 z-40 h-1.5 w-full bg-slate-200">
-        <div
-          className="h-full bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 transition-all duration-150"
-          style={{ width: `${scrollProgress}%` }}
-        />
+    <ModulDetailLayout
+      moduleId="m8"
+      title={data.title}
+      category="Pola Kejadian Nyata"
+      terakhirDiperbaruiLabel={data.lastUpdated}
+      readingTime={data.readingTime}
+      summary="Dasbor edukasi data laporan kejahatan keuangan digital IASC / Satgas PASTI dan pola modus penipuan terbanyak di Indonesia."
+      isRead={isRead}
+      onBack={onBack}
+      onToggleRead={onToggleRead}
+      onNavigateTab={onNavigateTab}
+      onSelectModule={onSelectModule}
+      sections={SECTIONS}
+      nextModule={{
+        id: "m9",
+        moduleNumber: 9,
+        title: "Pola Penipuan QRIS & E-Wallet",
+        desc: "Pola penipuan kode QR, manipulasi transfer e-wallet, dan keamanan transaksi penjual & pembeli.",
+      }}
+    >
+      {/* Hero Quote Card */}
+      <div className="rounded-2xl bg-gradient-to-r from-blue-900 to-[#27374D] p-5 sm:p-6 text-white space-y-2 shadow-xs">
+        <p className="text-sm sm:text-base font-semibold leading-relaxed">
+          "{data.opener.quote}"
+        </p>
+        <p className="text-xs text-blue-200 leading-relaxed pt-1">
+          {data.opener.explanation}
+        </p>
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 pt-6 sm:px-6">
-        {/* Navigation Bar */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-[#526D82] shadow-2xs hover:bg-slate-50 hover:text-[#27374D] transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Kembali ke Hub Belajar</span>
-          </button>
-
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800">
-              <Clock className="h-3.5 w-3.5" />
-              {data.readingTime}
-            </span>
-            <button
-              onClick={onToggleRead}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all shadow-2xs ${
-                isRead
-                  ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <CheckCircle2
-                className={`h-4 w-4 ${isRead ? "text-emerald-600 fill-emerald-100" : "text-slate-400"}`}
-              />
-              <span>{isRead ? "Tuntas Dibaca" : "Tandai Selesai"}</span>
-            </button>
+      {isDataStale && (
+        <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900 flex items-start gap-2">
+          <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
+          <div>
+            <strong>Catatan Kesegaran Data: </strong>
+            Data per 31 Mei 2026 mungkin sudah bergerak. Tinjau pembaruan kuartal ketiga di bawah ini.
           </div>
         </div>
+      )}
 
-        {/* Hero Banner Dasbor Edukasi */}
-        <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-700">
-              <BarChart3 className="h-4 w-4" />
-              <span>Dasbor Edukasi Kejahatan Keuangan Digital #{data.id}</span>
-            </div>
-            <span className="rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold px-3 py-1 border border-slate-200">
-              Terakhir Diperbarui: {data.lastUpdated}
-            </span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#27374D]">
-            {data.title}
-          </h1>
-
-          <div className="rounded-2xl bg-gradient-to-r from-blue-900 to-[#27374D] p-5 sm:p-6 text-white space-y-2">
-            <p className="text-sm sm:text-base font-semibold leading-relaxed">
-              "{data.opener.quote}"
-            </p>
-            <p className="text-xs text-blue-200 leading-relaxed pt-1">
-              {data.opener.explanation}
-            </p>
-          </div>
-
-          {isDataStale && (
-            <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900 flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
-              <div>
-                <strong>Catatan Kesegaran Data: </strong>
-                Data per 31 Mei 2026 mungkin sudah bergerak. Tinjau pembaruan kuartal ketiga di bawah ini.
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Hero Stats Angka Besar */}
-        <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Section 1: Hero Stats Angka Besar & Accordion */}
+      <section id="hero-stats" className="space-y-4 scroll-mt-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Card 1: Total Laporan */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-2">
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span className="font-bold uppercase tracking-wider text-blue-800">
                 TOTAL LAPORAN MASYARAKAT
@@ -287,16 +258,10 @@ export function ModulPolaModusNasionalPage({
             <p className="text-xs text-[#526D82] leading-relaxed">
               Total laporan yang masuk ke Indonesia Anti-Scam Centre sejak 22 November 2024.
             </p>
-            <div className="pt-2 text-[10px] text-slate-400 border-t border-slate-100 flex items-center justify-between">
-              <span>Sumber: Satgas PASTI / IASC OJK</span>
-              <span className="font-semibold text-slate-500">
-                // TODO: verifikasi manual publikasi resmi
-              </span>
-            </div>
           </div>
 
           {/* Card 2: Dana Diamankan */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-2">
+          <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 shadow-xs space-y-2">
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span className="font-bold uppercase tracking-wider text-emerald-800">
                 DANA KORBAN BERHASIL DIAMANKAN
@@ -309,20 +274,14 @@ export function ModulPolaModusNasionalPage({
             <p className="text-xs text-[#526D82] leading-relaxed">
               Dana kejahatan di rekening penampung yang berhasil dibekukan atas koordinasi perbankan.
             </p>
-            <div className="pt-2 text-[10px] text-slate-400 border-t border-slate-100 flex items-center justify-between">
-              <span>Sumber: Satgas PASTI / IASC OJK</span>
-              <span className="font-semibold text-slate-500">
-                // TODO: verifikasi manual publikasi resmi
-              </span>
-            </div>
           </div>
-        </section>
+        </div>
 
-        {/* Section 1: Cara Membaca Angka Ini (Accordion) */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs">
+        {/* Cara Membaca Angka Ini (Accordion) */}
+        <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-5 sm:p-6 shadow-xs">
           <button
             onClick={() => setIsHowToReadOpen(!isHowToReadOpen)}
-            className="w-full flex items-center justify-between text-left focus:outline-hidden"
+            className="w-full flex items-center justify-between text-left focus:outline-hidden cursor-pointer"
           >
             <div className="flex items-center gap-2.5">
               <Info className="h-5 w-5 text-blue-700 shrink-0" />
@@ -359,16 +318,13 @@ export function ModulPolaModusNasionalPage({
               ))}
             </div>
           )}
-        </section>
+        </div>
+      </section>
 
         {/* Section 2: Kuis Pembuka Personal "Pernah Menerima yang Mana?" */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="kuis-personal" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold text-indigo-800">
-              <HelpCircle className="h-3.5 w-3.5" />
-              Refleksi Pengalaman Pribadi
-            </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
               {data.personalDiagnosticQuiz.question}
             </h2>
             <p className="text-xs text-[#526D82] mt-0.5">
@@ -390,7 +346,7 @@ export function ModulPolaModusNasionalPage({
                   }`}
                 >
                   <div className="flex items-start gap-2.5">
-                    <span className="text-base mt-0.5">👉</span>
+                    <ChevronRight className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
                     <span>{opt.label}</span>
                   </div>
                 </button>
@@ -417,7 +373,7 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 3: Diagram Batang Horizontal Interaktif */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="diagram-modus" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -428,12 +384,14 @@ export function ModulPolaModusNasionalPage({
                   Klik pada batang grafik untuk langsung membuka rincian kartu modusnya.
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-[10px] font-bold">
-                <span className="rounded-full bg-blue-100 text-blue-800 px-2.5 py-0.5">
-                  ■ Alasan/Cerita
+              <div className="flex items-center gap-3 text-[11px] font-semibold text-[#526D82]">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-blue-600" />
+                  Alasan / Cerita
                 </span>
-                <span className="rounded-full bg-amber-100 text-amber-800 px-2.5 py-0.5">
-                  ■ Cara/Teknik
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-amber-500" />
+                  Cara / Teknik
                 </span>
               </div>
             </div>
@@ -516,15 +474,6 @@ export function ModulPolaModusNasionalPage({
                       <span className="font-extrabold text-slate-900 text-xs sm:text-sm">
                         {item.name}
                       </span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                          item.categoryType === "alasan"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-amber-100 text-amber-800"
-                        }`}
-                      >
-                        {item.categoryTypeLabel}
-                      </span>
                     </div>
                     <div className="text-right">
                       <strong className="font-black text-sm text-[#27374D]">
@@ -566,13 +515,13 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 4: Kartu Penjelasan per Modus (4 Modus) */}
-        <section className="mt-8 space-y-6">
+        <section id="kartu-modus" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-200 pb-3">
             <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
               Bedah Detail 4 Modus Teratas & Cara Berhenti
             </h2>
             <p className="text-xs sm:text-sm text-[#526D82] mt-0.5">
-              Pelajari anatomi pesan, red flags khusus, dan studi kasus realistis pada tiap modus.
+              Pelajari anatomi pesan, red flags khusus, dan langkah pencegahan pada tiap modus.
             </p>
           </div>
 
@@ -674,19 +623,6 @@ export function ModulPolaModusNasionalPage({
                       <span>{modus.howToStop}</span>
                     </div>
                   </div>
-
-                  {/* Studi Kasus Fiktif */}
-                  <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4 space-y-2 text-xs">
-                    <span className="font-black text-slate-700 uppercase tracking-wide block text-[10px]">
-                      {modus.fictionalCase.title}
-                    </span>
-                    <p className="text-slate-700 leading-relaxed italic">
-                      "{modus.fictionalCase.story}"
-                    </p>
-                    <div className="pt-1 text-slate-600 font-semibold">
-                      💡 Pelajaran Utama: {modus.fictionalCase.lesson}
-                    </div>
-                  </div>
                 </div>
               );
             })}
@@ -694,16 +630,12 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 5: Teknik Khusus File APK Berbahaya */}
-        <section className="mt-8 rounded-3xl border-2 border-red-300 bg-red-50/30 p-6 sm:p-8 shadow-xs space-y-4">
-          <div className="border-b border-red-200 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800">
-              <FileCode className="h-3.5 w-3.5 text-red-700" />
-              Bukan Modus Tersendiri — Melainkan Alat Eksekusi
-            </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-red-950 mt-2">
+        <section id="bahaya-apk" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
+          <div className="border-b border-slate-100 pb-3">
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
               {data.specialApkTechnique.title}
             </h2>
-            <p className="text-xs sm:text-sm text-red-900 font-medium mt-0.5">
+            <p className="text-xs sm:text-sm text-rose-700 font-semibold mt-0.5">
               {data.specialApkTechnique.subtitle}
             </p>
           </div>
@@ -720,9 +652,9 @@ export function ModulPolaModusNasionalPage({
               {data.specialApkTechnique.realRisks.map((risk, idx) => (
                 <div
                   key={idx}
-                  className="rounded-2xl border border-red-200 bg-white p-3.5 text-xs text-slate-800 space-y-1 shadow-2xs"
+                  className="rounded-2xl border border-rose-100 bg-rose-50/40 p-3.5 text-xs text-slate-800 space-y-1 shadow-2xs"
                 >
-                  <span className="font-black text-red-700">#{idx + 1}</span>
+                  <span className="font-black text-rose-700">#{idx + 1}</span>
                   <p className="leading-relaxed">{risk}</p>
                 </div>
               ))}
@@ -739,18 +671,9 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 6: Modus Berbasis AI (1.379 Laporan) */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="modus-ai" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-800">
-                <Cpu className="h-3.5 w-3.5 text-purple-700" />
-                Tren Kejahatan Berbasis AI
-              </span>
-              <span className="text-[11px] font-bold text-slate-500 font-mono">
-                {data.aiScams.totalLaporan.toLocaleString("id-ID")} Laporan (s.d. Akhir Juni 2026)
-              </span>
-            </div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
               Deepfake & Kloning Suara pada Penipuan Digital
             </h2>
             <p className="text-xs text-[#526D82] mt-0.5">
@@ -789,18 +712,9 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 7: Pinjaman Ilegal & Satgas PASTI (25.875 Pengaduan) */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="pinjol-ilegal" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-800">
-                <Building2 className="h-3.5 w-3.5 text-slate-700" />
-                Penanganan Entitas Keuangan Ilegal
-              </span>
-              <span className="text-[11px] font-bold text-slate-500 font-mono">
-                {data.illegalEntities.totalPengaduan.toLocaleString("id-ID")} Aduan (1 Jan – 31 Jul 2026)
-              </span>
-            </div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
               Satgas PASTI & Pemisahan dari Data IASC
             </h2>
           </div>
@@ -816,7 +730,7 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 8: Red Flags Umum & Tanda Sinyal Lemah */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="red-flags" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
             <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
               Tanda Bahaya Umum (Red Flags) Lintas Modus
@@ -836,17 +750,6 @@ export function ModulPolaModusNasionalPage({
                     : "border-amber-200 bg-amber-50/30"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ${
-                      rf.severity === "merah"
-                        ? "bg-rose-100 text-rose-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
-                  >
-                    {rf.severityLabel}
-                  </span>
-                </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-[#27374D]">
                   {rf.title}
                 </h3>
@@ -864,13 +767,9 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 9: Latihan Refleks "Modus yang Mana?" */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="latihan-refleks" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="border-b border-slate-100 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
-              <HelpCircle className="h-3.5 w-3.5" />
-              Latihan Refleks Cepat (2 Kasus)
-            </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D] mt-2">
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
               Tebak: Pesan Ini Masuk Modus Apa?
             </h2>
           </div>
@@ -936,7 +835,7 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 10: Interactive Checklist Tindakan Nyata */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-5">
+        <section id="checklist" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-5 scroll-mt-32">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
               <h2 className="text-lg sm:text-xl font-extrabold text-[#27374D]">
@@ -946,7 +845,7 @@ export function ModulPolaModusNasionalPage({
                 Langkah konkret membentengi diri dan keluarga dari modus teratas.
               </p>
             </div>
-            <span className="text-xs font-bold text-blue-800 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 self-start sm:self-auto">
+            <span className="text-xs font-bold text-blue-800 self-start sm:self-auto">
               {completedChecksCount} / {data.interactiveChecklist.length} Langkah Selesai
             </span>
           </div>
@@ -1006,13 +905,9 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 11: Langkah Jika Terlanjur Jadi Korban (SOP Darurat) */}
-        <section className="mt-8 rounded-3xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8 shadow-xs space-y-4">
+        <section id="sop-darurat" className="rounded-3xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8 shadow-xs space-y-4 scroll-mt-32">
           <div className="border-b border-rose-200/80 pb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">
-              <ShieldAlert className="h-3.5 w-3.5 text-rose-700" />
-              SOP Darurat Pelaporan
-            </span>
-            <h2 className="text-lg sm:text-xl font-extrabold text-rose-950 mt-2">
+            <h2 className="text-lg sm:text-xl font-extrabold text-rose-950">
               Jika Sudah Terlanjur Jadi Korban Penipuan Digital
             </h2>
             <p className="text-xs sm:text-sm text-rose-900/80 mt-0.5">
@@ -1026,27 +921,18 @@ export function ModulPolaModusNasionalPage({
                 key={st.order}
                 className="rounded-2xl border border-rose-200 bg-white p-4 sm:p-5 space-y-1.5 shadow-2xs"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-white font-extrabold text-xs">
-                      {st.order}
-                    </span>
-                    <h3 className="font-extrabold text-sm sm:text-base text-rose-950">
-                      {st.title}
-                    </h3>
-                  </div>
-                  <span className="rounded-md bg-rose-100 text-rose-900 text-[10px] font-bold px-2 py-0.5">
-                    {st.urgency}
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed pl-8">
+                <h3 className="font-extrabold text-sm sm:text-base text-rose-950">
+                  {st.order}. {st.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                   {st.action}
                 </p>
-                <p className="text-[11px] text-blue-900 bg-blue-50/60 p-2 rounded-lg border border-blue-200 pl-3 ml-8 leading-relaxed">
-                  ℹ️ {st.twoReportingChannels}
+                <p className="text-[11px] text-blue-900 bg-blue-50/60 p-2 rounded-lg border border-blue-200 pl-3 leading-relaxed flex items-start gap-1.5">
+                  <Info className="h-3.5 w-3.5 text-blue-600 shrink-0 mt-0.5" />
+                  <span>{st.twoReportingChannels}</span>
                 </p>
                 {st.verificationNote && (
-                  <p className="text-[10px] text-slate-400 pl-8 italic">
+                  <p className="text-[10px] text-slate-400 italic">
                     {st.verificationNote}
                   </p>
                 )}
@@ -1056,7 +942,7 @@ export function ModulPolaModusNasionalPage({
         </section>
 
         {/* Section 12: Intisari & Tautan Antarmodul */}
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <section id="intisari" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
           <div className="rounded-2xl bg-gradient-to-r from-blue-900 to-[#27374D] p-5 sm:p-6 text-white space-y-2">
             <span className="text-[10px] font-black uppercase tracking-wider text-blue-300 block">
               INTISARI POLA NASIONAL
@@ -1073,12 +959,9 @@ export function ModulPolaModusNasionalPage({
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <button
-                onClick={() => onNavigateTab("modul")}
-                className="rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-3 text-left transition-colors space-y-1"
+                onClick={() => onSelectModule ? onSelectModule("m2") : onNavigateTab("modul")}
+                className="rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-3 text-left transition-colors space-y-1 cursor-pointer"
               >
-                <span className="text-[10px] font-black text-blue-700 uppercase block">
-                  Modul #2
-                </span>
                 <strong className="text-xs text-slate-900 block truncate">
                   Anatomi Sebuah Penipuan
                 </strong>
@@ -1088,12 +971,9 @@ export function ModulPolaModusNasionalPage({
               </button>
 
               <button
-                onClick={() => onNavigateTab("modul")}
-                className="rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-3 text-left transition-colors space-y-1"
+                onClick={() => onSelectModule ? onSelectModule("m3") : onNavigateTab("modul")}
+                className="rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-3 text-left transition-colors space-y-1 cursor-pointer"
               >
-                <span className="text-[10px] font-black text-emerald-700 uppercase block">
-                  Modul #3
-                </span>
                 <strong className="text-xs text-slate-900 block truncate">
                   Keamanan di WhatsApp
                 </strong>
@@ -1103,12 +983,9 @@ export function ModulPolaModusNasionalPage({
               </button>
 
               <button
-                onClick={() => onNavigateTab("modul")}
-                className="rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-3 text-left transition-colors space-y-1"
+                onClick={() => onSelectModule ? onSelectModule("m1") : onNavigateTab("modul")}
+                className="rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-3 text-left transition-colors space-y-1 cursor-pointer"
               >
-                <span className="text-[10px] font-black text-purple-700 uppercase block">
-                  Modul #1
-                </span>
                 <strong className="text-xs text-slate-900 block truncate">
                   Apa Itu Rekayasa Sosial?
                 </strong>
@@ -1121,16 +998,15 @@ export function ModulPolaModusNasionalPage({
 
           {/* Rujukan Sumber Resmi & Disclaimer */}
           <div className="space-y-3 pt-3 text-xs text-slate-500 border-t border-slate-100">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
               <span className="font-bold text-slate-700">Sumber Rujukan Data Publik:</span>
-              <span>Terakhir Diperbarui: {data.lastUpdated}</span>
             </div>
             <ul className="space-y-1.5 list-disc pl-4 text-[11px]">
               {data.sourcesList.map((src, i) => (
                 <li key={i}>
                   <strong className="text-slate-700">{src.title}</strong> — {src.organization} ({src.period})
                   <span className="block text-slate-400 font-mono text-[10px]">
-                    {src.url} // TODO: verifikasi manual terhadap publikasi resmi OJK/IASC
+                    {src.url}
                   </span>
                 </li>
               ))}
@@ -1139,37 +1015,8 @@ export function ModulPolaModusNasionalPage({
               {data.disclaimer}
             </p>
           </div>
-
-          {/* Bottom Action Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
-            <button
-              onClick={onBack}
-              className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] hover:text-[#27374D]"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Kembali ke Daftar Modul</span>
-            </button>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={onToggleRead}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-              >
-                {isRead ? "Batalkan Selesai" : "Selesai & Catat Progres"}
-              </button>
-
-              <button
-                onClick={() => onNavigateTab("simulator")}
-                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-bold text-white shadow-2xs transition-colors"
-              >
-                <span>Uji Kasus di Simulator</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
         </section>
-      </div>
-    </div>
+    </ModulDetailLayout>
   );
 }
 

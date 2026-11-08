@@ -280,7 +280,7 @@ export const MODUL_PUSAT_DARURAT_DATA: ModulPusatDaruratData = {
       order: 3,
       phase: "Pemblokiran Rekening Penampung",
       description: "Bila bukti kuat dan terindikasi kejahatan, bank penerima melakukan pembatasan dan pemblokiran terhadap rekening tujuan.",
-      realisticNote: "Istilah resmi adalah pemblokiran/penahanan transaksi berdasarkan laporan tindak pidana, bukan 'pembekuan permanen'.",
+      realisticNote: "Istilah resmi perbankan adalah pemblokiran atau penahanan transaksi sementara berdasarkan laporan tindak pidana tindak lanjut.",
     },
     {
       order: 4,

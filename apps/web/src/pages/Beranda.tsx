@@ -84,7 +84,7 @@ export default function Beranda() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   return (
-    <div className="space-y-20 py-4" id="beranda">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-7 space-y-20 py-4" id="beranda">
       {/* ================================================================= */}
       {/* HERO SECTION DENGAN THREE.JS                                     */}
       {/* ================================================================= */}

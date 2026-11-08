@@ -1469,8 +1469,36 @@ export default function Belajar() {
     });
   };
 
+  // Jika sedang membaca modul detail, tampilkan ModulPage secara langsung edge-to-edge
+  // agar sticky reading progress bar menyatu mulus di bawah top navbar tanpa jeda atau kotak terisolasi
+  if (activeTab === "modul" && activeModuleId) {
+    return (
+      <ModulPage
+        moduleId={activeModuleId}
+        isRead={readModules.includes(activeModuleId)}
+        onBack={() => {
+          setActiveModuleId(null);
+          if (searchParams.has("module")) {
+            const next = new URLSearchParams(searchParams);
+            next.delete("module");
+            setSearchParams(next);
+          }
+        }}
+        onToggleRead={() => handleMarkModuleRead(activeModuleId)}
+        onNavigateTab={handleTabChange}
+        onSelectModule={(id) => {
+          setActiveModuleId(id);
+          const next = new URLSearchParams(searchParams);
+          next.set("module", id);
+          setSearchParams(next);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="space-y-6 w-full">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 space-y-6 w-full">
       {/* ===================================================================== */}
       {/* HEADER UTAMA HALAMAN BELAJAR (KOTAK PUTIH PERSIS REFERENSI)           */}
       {/* ===================================================================== */}
@@ -1575,28 +1603,11 @@ export default function Belajar() {
         {/* PILAR 2: MODUL PEMBELAJARAN (PERSIS SEPERTI GAMBAR USER) */}
         {activeTab === "modul" && (
           <div>
-            {!activeModuleId ? (
-              <ModulCover
-                readModules={readModules}
-                onSelectModule={(id) => setActiveModuleId(id)}
-                onGoToKilat={() => handleTabChange("kilat")}
-              />
-            ) : (
-              <ModulPage
-                moduleId={activeModuleId}
-                isRead={readModules.includes(activeModuleId)}
-                onBack={() => {
-                  setActiveModuleId(null);
-                  if (searchParams.has("module")) {
-                    const next = new URLSearchParams(searchParams);
-                    next.delete("module");
-                    setSearchParams(next);
-                  }
-                }}
-                onToggleRead={() => handleMarkModuleRead(activeModuleId)}
-                onNavigateTab={handleTabChange}
-              />
-            )}
+            <ModulCover
+              readModules={readModules}
+              onSelectModule={(id) => setActiveModuleId(id)}
+              onGoToKilat={() => handleTabChange("kilat")}
+            />
           </div>
         )}
 
@@ -2592,12 +2603,14 @@ function ModulPage({
   onBack,
   onToggleRead,
   onNavigateTab,
+  onSelectModule,
 }: {
   moduleId: string;
   isRead: boolean;
   onBack: () => void;
   onToggleRead: () => void;
   onNavigateTab: (tab: TabType) => void;
+  onSelectModule?: (moduleId: string) => void;
 }) {
   if (moduleId === "m1") {
     return (
@@ -2606,6 +2619,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2616,6 +2630,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2627,6 +2642,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2637,6 +2653,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2647,6 +2664,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2657,6 +2675,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2667,6 +2686,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2677,6 +2697,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2687,6 +2708,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2697,6 +2719,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2707,6 +2730,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -2717,6 +2741,7 @@ function ModulPage({
         onBack={onBack}
         onToggleRead={onToggleRead}
         onNavigateTab={onNavigateTab}
+        onSelectModule={onSelectModule}
       />
     );
   }
@@ -3626,42 +3651,13 @@ function KilatPage({
           </button>
 
           <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Indikator Jumlah Soal & Navigasi Cepat */}
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-[#9DB2BF]/60 text-xs font-bold text-[#27374D] shadow-2xs">
-              <ListChecks className="h-4 w-4 text-[#526D82]" />
-              <span>
-                Soal{" "}
-                <span className="text-sky-700 font-black text-sm">
-                  {currentIndex + 1}
-                </span>{" "}
-                <span className="text-[#9DB2BF]">/</span> {TRIAGE_DRILL_ITEMS.length}
-              </span>
-
-              {/* Tombol Mini Navigasi Soal Sebelumnya & Setelahnya */}
-              <div className="flex items-center gap-0.5 pl-1.5 border-l border-slate-200 ml-1">
-                <button
-                  type="button"
-                  onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-                  disabled={currentIndex === 0}
-                  className="p-1 rounded-lg text-slate-500 hover:text-[#27374D] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all"
-                  title="Soal Sebelumnya"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCurrentIndex((prev) =>
-                      Math.min(TRIAGE_DRILL_ITEMS.length - 1, prev + 1)
-                    )
-                  }
-                  disabled={currentIndex === TRIAGE_DRILL_ITEMS.length - 1}
-                  className="p-1 rounded-lg text-slate-500 hover:text-[#27374D] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all"
-                  title="Soal Setelahnya"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
+            {/* Indikator Jumlah Soal */}
+            <div className="text-xs sm:text-sm font-bold text-[#27374D]">
+              Soal{" "}
+              <span className="text-sky-700 font-black text-sm">
+                {currentIndex + 1}
+              </span>{" "}
+              <span className="text-[#9DB2BF]">/</span> {TRIAGE_DRILL_ITEMS.length}
             </div>
 
             {/* Tombol & Indikator Timer yang Jelas dan Kontras */}

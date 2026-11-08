@@ -31,7 +31,9 @@ import {
   Info,
   CheckSquare,
   Share2,
+  X,
 } from "lucide-react";
+import { ModernProcessFlow } from "./ModernProcessFlow";
 import { Button } from "../ui";
 import { addNotification } from "../../lib/notificationService";
 import {
@@ -44,6 +46,7 @@ interface ModulRekayasaSosialPageProps {
   onBack: () => void;
   onToggleRead: () => void;
   onNavigateTab: (tab: "simulator" | "modul" | "kilat" | "kamus") => void;
+  onSelectModule?: (moduleId: string) => void;
 }
 
 export function ModulRekayasaSosialPage({
@@ -51,6 +54,7 @@ export function ModulRekayasaSosialPage({
   onBack,
   onToggleRead,
   onNavigateTab,
+  onSelectModule,
 }: ModulRekayasaSosialPageProps) {
   const data = MODUL_REKAYASA_SOSIAL;
 
@@ -64,14 +68,6 @@ export function ModulRekayasaSosialPage({
   // 2. Accordion State untuk Prinsip & Jenis Serangan
   const [openPrincipleId, setOpenPrincipleId] = useState<string>("otoritas");
   const [openAttackTypeId, setOpenAttackTypeId] = useState<string>("phishing");
-
-  // 3. Interactive Red Flag Spotter
-  const [spottedRedFlags, setSpottedRedFlags] = useState<string[]>([]);
-  const [activeRedFlagDetail, setActiveRedFlagDetail] = useState<{
-    id: string;
-    text: string;
-    reason: string;
-  } | null>(null);
 
   // 4. Checklist Interaktif Tersimpan Lokal
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
@@ -187,20 +183,6 @@ export function ModulRekayasaSosialPage({
   }, [data.checklist, checkedItems, data.id]);
 
   // ---------------------------------------------------------------------------
-  // HANDLERS RED FLAG SPOTTER
-  // ---------------------------------------------------------------------------
-  const handleSpotRedFlag = (rf: { id: string; textSnippet: string; reason: string }) => {
-    if (!spottedRedFlags.includes(rf.id)) {
-      setSpottedRedFlags((prev) => [...prev, rf.id]);
-    }
-    setActiveRedFlagDetail({
-      id: rf.id,
-      text: rf.textSnippet,
-      reason: rf.reason,
-    });
-  };
-
-  // ---------------------------------------------------------------------------
   // HANDLERS QUIZ
   // ---------------------------------------------------------------------------
   const handleSelectQuizOption = (questionId: number, key: "A" | "B" | "C") => {
@@ -255,35 +237,39 @@ export function ModulRekayasaSosialPage({
   }, [SECTIONS, activeSectionId]);
 
   return (
-    <div className="relative w-full space-y-6">
+    <div className="relative w-full">
       {/* ===================================================================== */}
-      {/* 1. STICKY TOP READING PROGRESS BAR                                   */}
+      {/* 1. STICKY TOP READING PROGRESS BAR (FULL-WIDTH SEAMLESS LIKE TOP NAVBAR) */}
       {/* ===================================================================== */}
-      <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 bg-white/95 backdrop-blur-md border-b border-[#9DB2BF]/40 shadow-xs flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 min-w-0">
-          <BookOpen className="h-4 w-4 text-[#526D82] shrink-0" />
-          <span className="text-xs font-bold text-[#27374D] truncate">
-            {data.title}
-          </span>
-          <span className="hidden sm:inline-block text-[11px] font-semibold text-[#526D82] bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-            Bagian {currentSectionIndex} dari {SECTIONS.length}
-          </span>
-        </div>
+      <div className="sticky top-16 z-30 w-full bg-white/95 backdrop-blur-md border-b border-[#9DB2BF]/40 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-7 py-2.5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 min-w-0">
+            <BookOpen className="h-4 w-4 text-[#526D82] shrink-0" />
+            <span className="text-xs font-bold text-[#27374D] truncate">
+              {data.title}
+            </span>
+            <span className="hidden sm:inline-block text-[11px] font-semibold text-[#526D82]">
+              • Bagian {currentSectionIndex} dari {SECTIONS.length}
+            </span>
+          </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[11px] font-black text-[#27374D] min-w-[36px] text-right">
-            {Math.round(scrollProgress)}%
-          </span>
-          <div className="w-20 sm:w-28 h-2 bg-[#DDE6ED] rounded-full overflow-hidden border border-[#9DB2BF]/40">
-            <div
-              className="h-full bg-gradient-to-r from-[#526D82] to-[#27374D] transition-all duration-150"
-              style={{ width: `${scrollProgress}%` }}
-            />
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-[11px] font-black text-[#27374D] min-w-[36px] text-right">
+              {Math.round(scrollProgress)}%
+            </span>
+            <div className="w-20 sm:w-28 h-2 bg-[#DDE6ED] rounded-full overflow-hidden border border-[#9DB2BF]/40">
+              <div
+                className="h-full bg-gradient-to-r from-[#526D82] to-[#27374D] transition-all duration-150"
+                style={{ width: `${scrollProgress}%` }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Top Bar Navigasi Sederhana */}
+      {/* CONTENT WRAPPER */}
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 space-y-6">
+        {/* Top Bar Navigasi Sederhana */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#9DB2BF]/40 pb-3">
         <button
           type="button"
@@ -302,7 +288,7 @@ export function ModulRekayasaSosialPage({
           <button
             type="button"
             onClick={onToggleRead}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${isRead
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${isRead
                 ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                 : "bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200"
               }`}
@@ -327,15 +313,6 @@ export function ModulRekayasaSosialPage({
         <article className="lg:col-span-8 xl:col-span-9 space-y-10 min-w-0">
           {/* Header Modul Utama */}
           <div className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="rounded-full bg-slate-100 text-[#526D82] border border-slate-200 px-3 py-0.5 text-xs font-bold">
-                {data.category}
-              </span>
-              <span className="text-xs text-[#526D82]">
-                Diperbarui: {data.terakhirDiperbaruiLabel}
-              </span>
-            </div>
-
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#27374D] leading-tight tracking-tight">
               {data.title}
             </h1>
@@ -375,7 +352,7 @@ export function ModulRekayasaSosialPage({
             {/* Pertanyaan Keputusan */}
             <div className="space-y-3 pt-2">
               <p className="text-sm font-bold text-[#27374D]">
-                👉 {data.scenarioHook.question}
+                {data.scenarioHook.question}
               </p>
 
               <div className="space-y-2.5">
@@ -658,56 +635,24 @@ export function ModulRekayasaSosialPage({
               </p>
             </div>
 
-            {/* Timeline Visual (Grid / Flex Horizontal di Desktop, Vertikal di Mobile) */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative pt-2">
-              {data.anatomy.map((step, idx) => {
-                const badgeColor =
-                  step.dangerLevel === "Kritis"
-                    ? "bg-rose-100 text-rose-800 border-rose-300"
-                    : step.dangerLevel === "Tinggi"
-                      ? "bg-amber-100 text-amber-800 border-amber-300"
-                      : step.dangerLevel === "Sedang"
-                        ? "bg-sky-100 text-sky-800 border-sky-300"
-                        : "bg-slate-100 text-slate-700 border-slate-300";
-
-                return (
-                  <div
-                    key={step.step}
-                    className="relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5 space-y-3 shadow-2xs hover:border-[#526D82] transition-colors"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#27374D] text-white text-xs font-black shadow-xs">
-                          {step.step}
-                        </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}`}>
-                          {step.dangerLevel}
-                        </span>
-                      </div>
-
-                      <div>
-                        <h3 className="text-sm font-bold text-[#27374D] leading-snug">
-                          {step.title}
-                        </h3>
-                        <p className="text-[11px] font-semibold text-[#526D82] mt-0.5">
-                          {step.subtitle}
-                        </p>
-                      </div>
-
-                      <p className="text-xs text-slate-700 leading-relaxed font-normal">
-                        {step.description}
-                      </p>
-                    </div>
-
-                    {idx < data.anatomy.length - 1 && (
-                      <div className="hidden md:block absolute -right-2.5 top-1/2 -translate-y-1/2 z-10 text-slate-400">
-                        <ArrowRight className="h-4 w-4" />
-                      </div>
-                    )}
-                  </div>
-                );
+            {/* Timeline Visual Bergaya Modern Stepped / Zigzag Infographic */}
+            <ModernProcessFlow
+              steps={data.anatomy.map((step, idx) => {
+                const icons = [
+                  <MessageSquare key={0} className="h-6 w-6 sm:h-7 sm:w-7" />,
+                  <UserCheck key={1} className="h-6 w-6 sm:h-7 sm:w-7" />,
+                  <Zap key={2} className="h-6 w-6 sm:h-7 sm:w-7" />,
+                  <Lock key={3} className="h-6 w-6 sm:h-7 sm:w-7" />,
+                ];
+                return {
+                  number: step.step,
+                  title: step.title,
+                  subtitle: step.subtitle,
+                  description: step.description,
+                  icon: icons[idx],
+                };
               })}
-            </div>
+            />
 
             {/* Callout Intisari Bagian 5 */}
             <div className="rounded-2xl bg-[#DDE6ED]/60 border border-[#9DB2BF]/40 p-4 flex items-start gap-3 text-xs text-[#27374D]">
@@ -724,28 +669,17 @@ export function ModulRekayasaSosialPage({
           <section id="komparasi-pesan" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
             <div className="space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#526D82]">
-                Bagian 6 · Spotter Interaktif
+                Bagian 6 · Perbandingan Pesan
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-[#27374D]">
                 Pembedahan Pesan: Asli vs Rekayasa Sosial
               </h2>
               <p className="text-xs sm:text-sm text-[#526D82]">
-                Ketuk bagian teks yang bergaris putus-putus pada pesan penipu untuk meneliti red flag yang tersembunyi.
+                Perbandingan berdampingan antara pesan resmi institusi perbankan dan pesan penipuan rekayasa sosial.
               </p>
             </div>
 
-            {/* Counter Kejelian */}
-            <div className="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
-              <span className="text-xs font-bold text-[#27374D] flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-amber-500" />
-                <span>Kejelianmu Menemukan Red Flag:</span>
-              </span>
-              <span className="text-xs font-black text-[#526D82]">
-                {spottedRedFlags.length} dari {data.comparison.fake.redFlags?.length || 4} Terungkap
-              </span>
-            </div>
-
-            {/* Dua Mockup Chat Berdampingan */}
+            {/* Dua Mockup Chat Berdampingan (Pajangan / Non-clickable) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Sisi Kiri: Pesan Asli Institusi */}
               <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50/40 p-4 sm:p-5 space-y-3 flex flex-col justify-between">
@@ -755,8 +689,8 @@ export function ModulRekayasaSosialPage({
                       <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
                       {data.comparison.official.title}
                     </span>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                      RESMI
+                    <span className="text-[11px] font-bold text-emerald-800">
+                      Resmi
                     </span>
                   </div>
 
@@ -769,8 +703,9 @@ export function ModulRekayasaSosialPage({
                   </div>
                 </div>
 
-                <div className="pt-2 text-[11px] font-semibold text-emerald-800 flex items-center gap-1">
-                  <span>✓ {data.comparison.official.ctaText}</span>
+                <div className="pt-2 text-[11px] font-semibold text-emerald-800 flex items-center gap-1.5">
+                  <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                  <span>{data.comparison.official.ctaText}</span>
                 </div>
               </div>
 
@@ -782,91 +717,39 @@ export function ModulRekayasaSosialPage({
                       <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0" />
                       {data.comparison.fake.title}
                     </span>
-                    <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">
-                      PALSU
+                    <span className="text-[11px] font-bold text-rose-800">
+                      Palsu
                     </span>
                   </div>
 
-                  <div className="text-[11px] text-rose-800 font-mono">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const rf = data.comparison.fake.redFlags?.find((r) => r.id === "rf-sender");
-                        if (rf) handleSpotRedFlag(rf);
-                      }}
-                      className="border-b-2 border-dashed border-rose-500 hover:bg-rose-100 px-1 rounded transition-colors text-left cursor-pointer font-bold"
-                      title="Klik untuk meneliti kejanggalan pengirim"
-                    >
-                      {data.comparison.fake.senderAddress}
-                    </button>
+                  <div className="text-[11px] text-rose-800 font-mono font-bold">
+                    {data.comparison.fake.senderAddress}
                   </div>
 
                   <div className="bg-white p-3.5 rounded-xl border border-rose-200/80 text-xs sm:text-[13px] text-slate-800 leading-relaxed font-sans shadow-2xs space-y-2">
                     <p>
                       PERINGATAN: Rekening Anda{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const rf = data.comparison.fake.redFlags?.find((r) => r.id === "rf-urgency");
-                          if (rf) handleSpotRedFlag(rf);
-                        }}
-                        className="bg-rose-100 text-rose-900 font-bold px-1 py-0.5 rounded border border-rose-300 hover:bg-rose-200 cursor-pointer underline decoration-dotted"
-                      >
+                      <span className="bg-rose-100 text-rose-900 font-bold px-1 py-0.5 rounded border border-rose-200">
                         terancam ditutup hari ini!
-                      </button>{" "}
+                      </span>{" "}
                       Klik{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const rf = data.comparison.fake.redFlags?.find((r) => r.id === "rf-link");
-                          if (rf) handleSpotRedFlag(rf);
-                        }}
-                        className="bg-amber-100 text-amber-900 font-mono text-[11px] px-1 py-0.5 rounded border border-amber-300 hover:bg-amber-200 cursor-pointer underline decoration-dotted"
-                      >
+                      <span className="bg-amber-100 text-amber-900 font-mono text-[11px] px-1 py-0.5 rounded border border-amber-200">
                         https://bca-pembaruan-tarif.com/login
-                      </button>{" "}
+                      </span>{" "}
                       untuk pembatalan kenaikan biaya transaksi. Hubungi segera{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const rf = data.comparison.fake.redFlags?.find((r) => r.id === "rf-pressure");
-                          if (rf) handleSpotRedFlag(rf);
-                        }}
-                        className="bg-rose-100 text-rose-900 font-bold px-1 py-0.5 rounded border border-rose-300 hover:bg-rose-200 cursor-pointer underline decoration-dotted"
-                      >
+                      <span className="bg-rose-100 text-rose-900 font-bold px-1 py-0.5 rounded border border-rose-200">
                         sebelum saldo terpotong otomatis.
-                      </button>
+                      </span>
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-2 text-[11px] font-semibold text-rose-800 flex items-center gap-1">
-                  <span>⚠ {data.comparison.fake.ctaText}</span>
+                <div className="pt-2 text-[11px] font-semibold text-rose-800 flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5 text-rose-600 shrink-0" />
+                  <span>{data.comparison.fake.ctaText}</span>
                 </div>
               </div>
             </div>
-
-            {/* Popover / Detail Red Flag yang Terpilih */}
-            {activeRedFlagDetail && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white animate-fadeIn space-y-2 border border-slate-700">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <ShieldAlert className="h-4 w-4" />
-                    Penjelasan Red Flag: "{activeRedFlagDetail.text}"
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setActiveRedFlagDetail(null)}
-                    className="text-slate-400 hover:text-white text-xs font-bold"
-                  >
-                    Tutup ✕
-                  </button>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
-                  {activeRedFlagDetail.reason}
-                </p>
-              </div>
-            )}
           </section>
 
           {/* ================================================================= */}
@@ -883,21 +766,12 @@ export function ModulRekayasaSosialPage({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {data.redFlags.map((rf, idx) => (
+              {data.redFlags.map((rf) => (
                 <div
                   key={rf.id}
-                  className="rounded-2xl border border-amber-200/90 bg-amber-50/50 p-4 sm:p-5 space-y-2.5 shadow-2xs hover:border-amber-400 transition-colors"
+                  className="rounded-2xl border border-amber-200/90 bg-amber-50/50 p-4 sm:p-5 space-y-2 shadow-2xs hover:border-amber-400 transition-colors"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-500 text-white text-xs font-black">
-                      {idx + 1}
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-amber-800 border border-amber-300">
-                      {rf.tag}
-                    </span>
-                  </div>
-
-                  <h3 className="text-sm font-bold text-[#27374D] leading-snug">
+                  <h3 className="text-sm sm:text-base font-bold text-[#27374D] leading-snug">
                     {rf.label}
                   </h3>
 
@@ -1023,30 +897,21 @@ export function ModulRekayasaSosialPage({
                   key={em.step}
                   className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-3 shadow-2xs"
                 >
-                  <div className="flex items-start gap-3 min-w-0">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-rose-600 text-white text-xs font-black mt-0.5">
-                      {em.step}
-                    </span>
-                    <div className="space-y-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-sm sm:text-base font-bold text-[#27374D]">
-                          {em.title}
-                        </h3>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
-                          {em.urgency}
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
-                        {em.actionText}
-                      </p>
+                  <div className="space-y-1 min-w-0">
+                    <h3 className="text-sm sm:text-base font-bold text-[#27374D]">
+                      {em.step}. {em.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
+                      {em.actionText}
+                    </p>
                       {em.contactHelper && (
-                        <p className="text-[11px] font-bold text-[#526D82] pt-1">
-                          📌 {em.contactHelper}
+                        <p className="text-[11px] font-bold text-[#526D82] pt-1 flex items-center gap-1.5">
+                          <Info className="h-3.5 w-3.5 text-[#526D82] shrink-0" />
+                          <span>{em.contactHelper}</span>
                         </p>
                       )}
                     </div>
                   </div>
-                </div>
               ))}
             </div>
           </section>
@@ -1236,10 +1101,6 @@ export function ModulRekayasaSosialPage({
                 </div>
               ))}
             </div>
-
-            <div className="pt-2 text-center text-xs text-[#526D82] border-t border-slate-100">
-              Terakhir diperbarui: <strong>{data.terakhirDiperbaruiLabel}</strong>
-            </div>
           </section>
 
           {/* ================================================================= */}
@@ -1296,8 +1157,11 @@ export function ModulRekayasaSosialPage({
               <button
                 type="button"
                 onClick={() => {
-                  // Berpindah ke modul 2
-                  window.location.href = "/belajar?tab=modul&module=m2";
+                  if (onSelectModule) {
+                    onSelectModule("m2");
+                  } else {
+                    window.location.href = "/belajar?tab=modul&module=m2";
+                  }
                 }}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#27374D] text-white text-xs font-bold hover:bg-[#1e2a3a] transition-all shrink-0 cursor-pointer shadow-xs"
               >
@@ -1352,6 +1216,7 @@ export function ModulRekayasaSosialPage({
             </div>
           </div>
         </aside>
+      </div>
       </div>
     </div>
   );

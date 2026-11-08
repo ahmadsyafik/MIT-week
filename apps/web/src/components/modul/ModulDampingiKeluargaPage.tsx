@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   Heart,
@@ -18,7 +18,15 @@ import {
   WifiOff,
   CreditCard,
   Lock,
+  AlertTriangle,
+  Lightbulb,
+  X,
+  ShieldAlert,
+  PhoneCall,
+  Brain,
 } from "lucide-react";
+import { ModernProcessFlow } from "./ModernProcessFlow";
+import { ModulDetailLayout, type ModulSectionItem } from "./ModulDetailLayout";
 import {
   MODUL_DAMPINGI_KELUARGA_DATA,
   SimulationChallenge,
@@ -31,6 +39,7 @@ interface ModulDampingiKeluargaPageProps {
   onComplete?: () => void;
   isCompleted?: boolean;
   onNavigateTab?: (tab: "simulator" | "modul" | "kilat" | "kamus") => void;
+  onSelectModule?: (moduleId: string) => void;
 }
 
 export function ModulDampingiKeluargaPage({
@@ -40,6 +49,7 @@ export function ModulDampingiKeluargaPage({
   onComplete,
   isCompleted = false,
   onNavigateTab,
+  onSelectModule,
 }: ModulDampingiKeluargaPageProps) {
   const effectiveIsCompleted = isRead ?? isCompleted;
   const handleComplete = onToggleRead || onComplete || (() => {});
@@ -60,61 +70,66 @@ export function ModulDampingiKeluargaPage({
   const allChecklistDone = Object.values(checkedItems).filter(Boolean).length;
   const currentSim = data.simulationChallenges[0];
 
+  const SECTIONS: ModulSectionItem[] = useMemo(
+    () => [
+      { id: "fase-psikologis", label: "1. 3 Fase Emosi Korban" },
+      { id: "script-komunikasi", label: "2. Script Kalimat Terlarang vs Penguat" },
+      { id: "simulasi-respons", label: "3. Latihan Refleks Empati" },
+      { id: "prioritas-teknis", label: "4. Urutan Pengamanan Perangkat" },
+      { id: "sandi-keluarga", label: "5. Integrasi Sandi Keluarga" },
+      { id: "checklist", label: "6. Checklist & Rujukan Modul" },
+    ],
+    []
+  );
+
   return (
-    <div className="mx-auto max-w-4xl space-y-8 pb-16">
-      {/* Tombol Kembali & Breadcrumb */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onBack}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#526D82] hover:text-[#27374D] transition-colors"
-        >
-          ← Kembali ke Pembelajaran
-        </button>
-        <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-          Modul {data.id.toUpperCase()} · {data.readingTimeMinutes} Menit Baca
-        </span>
-      </div>
-
-      {/* Header Banner - Warna Hangat & Empatik (Soft Blue/Sage Green) */}
-      <header className="rounded-3xl border border-emerald-200/80 bg-gradient-to-br from-[#1E293B] via-[#243348] to-[#1E3A4B] p-6 sm:p-10 text-white shadow-md relative overflow-hidden space-y-5">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold tracking-wide uppercase">
-          <HeartHandshake className="h-3.5 w-3.5" />
-          Dukungan Emosional & Pemulihan Keluarga
+    <ModulDetailLayout
+      moduleId="m12"
+      title={data.title}
+      category="Setelah Kejadian & Pendampingan"
+      terakhirDiperbaruiLabel={data.lastUpdated}
+      readingTime={`${data.readingTimeMinutes} Menit Baca`}
+      summary={data.subtitle}
+      isRead={effectiveIsCompleted}
+      onBack={onBack}
+      onToggleRead={handleComplete}
+      onNavigateTab={onNavigateTab || (() => {})}
+      onSelectModule={onSelectModule}
+      sections={SECTIONS}
+      nextModule={{
+        id: "m1",
+        moduleNumber: 1,
+        title: "Apa Itu Rekayasa Sosial?",
+        desc: "Mulai kembali dari dasar: pelajari psikologi eksploitasi emosi manusia dan cara membangun jeda berpikir kritis.",
+      }}
+    >
+      {/* Kutipan Korban & Prinsip Utama */}
+      <div className="space-y-4">
+        <div className="rounded-2xl bg-slate-900 border border-slate-700/60 p-5 sm:p-6 text-white shadow-2xs relative overflow-hidden">
+          <Quote className="h-8 w-8 text-emerald-400/20 absolute top-4 right-4" />
+          <p className="text-xs sm:text-sm text-slate-200 italic leading-relaxed pr-8">
+            &ldquo;{data.anonymousQuote.quote}&rdquo;
+          </p>
+          <span className="block text-[11px] text-emerald-400 font-semibold pt-2">
+            — {data.anonymousQuote.author}
+          </span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-snug">
-          {data.title}
-        </h1>
-        <p className="text-sm sm:text-base text-slate-200 max-w-2xl leading-relaxed">
-          {data.subtitle}
-        </p>
 
-        {/* Kutipan Anonim Korban */}
-        <div className="pt-2">
-          <div className="rounded-2xl bg-white/10 backdrop-blur-xs border border-white/10 p-5 space-y-2 relative">
-            <Quote className="h-6 w-6 text-emerald-300/40 absolute top-4 right-4" />
-            <p className="text-xs sm:text-sm text-slate-100 italic leading-relaxed">
-              &ldquo;{data.anonymousQuote.quote}&rdquo;
+        <div className="rounded-2xl border border-emerald-300/80 bg-emerald-50/70 p-4 sm:p-5 flex items-start gap-3 text-xs sm:text-sm text-emerald-950">
+          <Heart className="h-5 w-5 text-emerald-600 fill-emerald-600 shrink-0 mt-0.5" />
+          <div className="space-y-1 leading-relaxed">
+            <strong className="block font-bold text-emerald-900 text-xs uppercase tracking-wider">
+              Prinsip Emas Pendamping Keluarga
+            </strong>
+            <p className="font-semibold text-emerald-950">
+              &ldquo;{data.keyTakeaway}&rdquo;
             </p>
-            <span className="block text-[11px] text-emerald-300 font-semibold">
-              — {data.anonymousQuote.author}
-            </span>
           </div>
         </div>
-      </header>
-
-      {/* Card Intisari Emas */}
-      <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6 sm:p-8 space-y-2 shadow-xs">
-        <div className="flex items-center gap-2 text-emerald-800 text-xs font-black tracking-wide uppercase">
-          <Heart className="h-4 w-4 text-emerald-600 fill-emerald-600" />
-          <span>Prinsip Utama Pendamping</span>
-        </div>
-        <p className="text-base sm:text-lg font-bold text-emerald-950 leading-relaxed">
-          &ldquo;{data.keyTakeaway}&rdquo;
-        </p>
-      </section>
+      </div>
 
       {/* SEKSI 1: 3 FASE PSIKOLOGIS KORBAN PENIPUAN */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      <section id="fase-psikologis" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
             <Users className="h-3.5 w-3.5 text-blue-600" />
@@ -128,39 +143,39 @@ export function ModulDampingiKeluargaPage({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {data.psychologicalPhases.map((phase) => (
-            <div
-              key={phase.order}
-              className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 space-y-3 flex flex-col justify-between"
-            >
-              <div className="space-y-2">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-blue-800 text-xs font-black">
-                  {phase.order}
-                </span>
-                <h3 className="text-sm font-bold text-[#27374D] leading-snug">
-                  {phase.phaseName}
-                </h3>
-                <p className="text-xs text-[#526D82] leading-relaxed">
-                  <strong>Tanda yang tampak:</strong> {phase.symptoms}
-                </p>
-              </div>
-
-              <div className="space-y-2 pt-2 border-t border-slate-200">
-                <div className="text-[11px] text-emerald-900 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 leading-relaxed">
-                  💚 <strong>Sikap terbaik:</strong> {phase.bestSupporterAttitude}
+        {/* 3 Fase Visual Bergaya Zigzag Modern */}
+        <ModernProcessFlow
+          steps={data.psychologicalPhases.map((phase, idx) => {
+            const icons = [
+              <ShieldAlert key={0} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <Heart key={1} className="h-6 w-6 sm:h-7 sm:w-7" />,
+              <Sparkles key={2} className="h-6 w-6 sm:h-7 sm:w-7" />,
+            ];
+            return {
+              number: phase.order,
+              title: phase.phaseName,
+              subtitle: `Tanda: ${phase.symptoms}`,
+              description: phase.bestSupporterAttitude,
+              icon: icons[idx],
+              extraDetail: (
+                <div className="space-y-1.5 pt-1 text-[11px]">
+                  <div className="text-emerald-900 bg-emerald-50 p-2 rounded-xl border border-emerald-200 leading-relaxed flex items-start gap-1.5">
+                    <Heart className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <div><strong>Sikap Terbaik:</strong> {phase.bestSupporterAttitude}</div>
+                  </div>
+                  <div className="text-rose-800 bg-rose-50 p-1.5 rounded-lg leading-relaxed flex items-start gap-1.5 text-[10px]">
+                    <AlertTriangle className="h-3 w-3 text-rose-600 shrink-0 mt-0.5" />
+                    <span>{phase.caution}</span>
+                  </div>
                 </div>
-                <div className="text-[10px] text-rose-800 bg-rose-50 p-2 rounded-lg leading-relaxed">
-                  ⚠️ {phase.caution}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              ),
+            };
+          })}
+        />
       </section>
 
       {/* SEKSI 2: CHAT BUBBLE DIALOG (KONTRASTIF) */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      <section id="script-komunikasi" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
             <MessageCircle className="h-3.5 w-3.5 text-blue-600" />
@@ -190,21 +205,23 @@ export function ModulDampingiKeluargaPage({
                   <div className="rounded-2xl rounded-tl-xs bg-emerald-50 border border-emerald-200 p-4 text-xs font-medium text-emerald-950 shadow-2xs leading-relaxed">
                     {item.supportiveSpeech.bubble}
                   </div>
-                  <p className="text-[11px] text-emerald-700 leading-relaxed pl-1">
-                    💡 <em>Kenapa tepat:</em> {item.supportiveSpeech.reason}
+                  <p className="text-[11px] text-emerald-700 leading-relaxed pl-1 flex items-start gap-1.5">
+                    <Lightbulb className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <span><em>Kenapa tepat:</em> {item.supportiveSpeech.reason}</span>
                   </p>
                 </div>
 
                 {/* Harmful Speech */}
                 <div className="space-y-2">
                   <span className="text-[11px] font-bold text-rose-800 flex items-center gap-1.5 uppercase">
-                    <span className="text-xs">✕</span> Kalimat yang Menghakimi (Hindari)
+                    <X className="h-3.5 w-3.5 text-rose-600 shrink-0" /> Kalimat yang Menghakimi (Hindari)
                   </span>
                   <div className="rounded-2xl rounded-tl-xs bg-rose-50 border border-rose-200 p-4 text-xs font-medium text-rose-950 shadow-2xs leading-relaxed">
                     {item.harmfulSpeech.bubble}
                   </div>
-                  <p className="text-[11px] text-rose-700 leading-relaxed pl-1">
-                    ⚠️ <em>Dampak buruk:</em> {item.harmfulSpeech.impact}
+                  <p className="text-[11px] text-rose-700 leading-relaxed pl-1 flex items-start gap-1.5">
+                    <AlertTriangle className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
+                    <span><em>Dampak buruk:</em> {item.harmfulSpeech.impact}</span>
                   </p>
                 </div>
               </div>
@@ -214,7 +231,7 @@ export function ModulDampingiKeluargaPage({
       </section>
 
       {/* SEKSI 3: SIMULASI RESPONS PENDAMPING (PICOCTF-STYLE) */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      <section id="simulasi-respons" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
             <Sparkles className="h-3.5 w-3.5 text-blue-600" />
@@ -304,7 +321,7 @@ export function ModulDampingiKeluargaPage({
       </section>
 
       {/* SEKSI 4: PRIORITAS LANGKAH PENGAMANAN PERANGKAT (TEKNIS BERURUTAN) */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      <section id="prioritas-teknis" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[#526D82] uppercase tracking-wider">
             <Smartphone className="h-3.5 w-3.5 text-blue-600" />
@@ -324,16 +341,13 @@ export function ModulDampingiKeluargaPage({
               key={step.priority}
               className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 sm:p-5 space-y-2"
             >
-              <div className="flex items-center gap-2">
-                <span className="h-6 w-6 rounded-full bg-[#27374D] text-white text-xs font-black flex items-center justify-center shrink-0">
-                  {step.priority}
-                </span>
-                <h3 className="text-sm font-bold text-[#27374D]">{step.action}</h3>
-              </div>
-              <div className="pl-8 space-y-1 text-xs">
-                <span className="inline-block px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-900 font-bold text-[11px]">
+              <h3 className="text-sm font-bold text-[#27374D]">
+                {step.priority}. {step.action}
+              </h3>
+              <div className="space-y-1 text-xs">
+                <p className="text-blue-900 font-bold text-[11px]">
                   Tujuan: {step.goal}
-                </span>
+                </p>
                 <p className="text-[#526D82] leading-relaxed">{step.reason}</p>
               </div>
             </div>
@@ -342,7 +356,7 @@ export function ModulDampingiKeluargaPage({
       </section>
 
       {/* SEKSI 5: INTEGRASI SANDI KELUARGA (CEGAH AI VOICE CLONING) */}
-      <section className="rounded-3xl border border-emerald-300/80 bg-gradient-to-br from-emerald-50 to-blue-50/50 p-6 sm:p-8 space-y-4 shadow-xs">
+      <section id="sandi-keluarga" className="rounded-3xl border border-emerald-300/80 bg-gradient-to-br from-emerald-50 to-blue-50/50 p-6 sm:p-8 space-y-4 shadow-xs scroll-mt-32">
         <div className="flex items-center gap-2 text-emerald-800 text-xs font-black tracking-wide uppercase">
           <KeyRound className="h-4 w-4 text-emerald-700" />
           <span>Proteksi Masa Depan</span>
@@ -353,8 +367,9 @@ export function ModulDampingiKeluargaPage({
         <p className="text-xs sm:text-sm text-[#526D82] leading-relaxed">
           {data.sandiKeluargaConnection.voiceCloneContext}
         </p>
-        <p className="text-xs sm:text-sm text-emerald-950 font-medium bg-white/80 p-4 rounded-2xl border border-emerald-200 leading-relaxed">
-          💡 <strong>Bagaimana Sandi Keluarga Melindungi:</strong> {data.sandiKeluargaConnection.whySandiHelps}
+        <p className="text-xs sm:text-sm text-emerald-950 font-medium bg-white/80 p-4 rounded-2xl border border-emerald-200 leading-relaxed flex items-start gap-2">
+          <ShieldCheck className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+          <span><strong>Bagaimana Sandi Keluarga Melindungi:</strong> {data.sandiKeluargaConnection.whySandiHelps}</span>
         </p>
         <div className="pt-2">
           <Link
@@ -367,8 +382,8 @@ export function ModulDampingiKeluargaPage({
         </div>
       </section>
 
-      {/* CHECKLIST PRAKTIS PENDAMPING & SELESAI */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+      {/* SEKSI 6: CHECKLIST PRAKTIS PENDAMPING & RUJUKAN MODUL */}
+      <section id="checklist" className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-32">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-xl font-bold text-[#27374D]">Checklist Praktis Pendamping</h2>
@@ -376,8 +391,8 @@ export function ModulDampingiKeluargaPage({
               Langkah nyata untuk mendampingi keluarga ({allChecklistDone}/4 tindakan selesai)
             </p>
           </div>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-[#27374D]">
-            {Math.round((allChecklistDone / 4) * 100)}%
+          <span className="text-xs font-bold text-[#27374D]">
+            {Math.round((allChecklistDone / 4) * 100)}% Selesai
           </span>
         </div>
 
@@ -403,56 +418,32 @@ export function ModulDampingiKeluargaPage({
           ))}
         </div>
 
-        {/* CTA Selesai Modul */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Link
-            to="/sandi"
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-700 text-white text-xs font-bold hover:bg-emerald-800 transition-all text-center flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-          >
-            <span>Praktik Buat Sandi Keluarga</span>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-
-          <button
-            onClick={handleComplete}
-            disabled={effectiveIsCompleted}
-            className={`w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              effectiveIsCompleted
-                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                : "bg-[#27374D] text-white hover:bg-[#1E293B] shadow-sm"
-            }`}
-          >
-            <Check className="h-4 w-4" />
-            <span>{effectiveIsCompleted ? "Modul Selesai Dibaca" : "Tandai Modul Selesai"}</span>
-          </button>
-        </div>
-      </section>
-
-      {/* TAUTAN ANTARMODUL */}
-      <section className="rounded-3xl border border-[#9DB2BF]/50 bg-white p-6 sm:p-8 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-[#27374D] uppercase tracking-wider">Modul Pendukung Terkait</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <Link
-            to="/belajar?modul=m11"
-            className="p-3.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-950 font-bold transition-all flex items-center justify-between"
-          >
-            <span>🚨 Pusat Darurat: Cara Lapor (m11)</span>
-            <ArrowRight className="h-4 w-4 text-rose-600" />
-          </Link>
-          <Link
-            to="/belajar?modul=m5"
-            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between"
-          >
-            <span>📞 Waspada Telepon Bank (m5)</span>
-            <ChevronRight className="h-4 w-4 text-[#526D82]" />
-          </Link>
-          <Link
-            to="/belajar?modul=m2"
-            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between"
-          >
-            <span>🧠 Anatomi Sebuah Penipuan (m2)</span>
-            <ChevronRight className="h-4 w-4 text-[#526D82]" />
-          </Link>
+        {/* Rujukan Antarmodul */}
+        <div className="pt-4 border-t border-slate-100 space-y-3">
+          <h3 className="text-xs font-bold text-[#27374D] uppercase tracking-wider">Modul Pendukung Terkait</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <button
+              onClick={() => onSelectModule ? onSelectModule("m11") : onBack()}
+              className="p-3.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-950 font-bold transition-all flex items-center justify-between text-left cursor-pointer"
+            >
+              <span className="flex items-center gap-2"><ShieldAlert className="h-4 w-4 text-rose-600 shrink-0" /> Cara Lapor (m11)</span>
+              <ArrowRight className="h-4 w-4 text-rose-600 shrink-0" />
+            </button>
+            <button
+              onClick={() => onSelectModule ? onSelectModule("m5") : onBack()}
+              className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between text-left cursor-pointer"
+            >
+              <span className="flex items-center gap-2"><PhoneCall className="h-4 w-4 text-[#526D82] shrink-0" /> Telepon Bank (m5)</span>
+              <ChevronRight className="h-4 w-4 text-[#526D82] shrink-0" />
+            </button>
+            <button
+              onClick={() => onSelectModule ? onSelectModule("m2") : onBack()}
+              className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#27374D] font-bold transition-all flex items-center justify-between text-left cursor-pointer"
+            >
+              <span className="flex items-center gap-2"><Brain className="h-4 w-4 text-[#526D82] shrink-0" /> Anatomi Penipuan (m2)</span>
+              <ChevronRight className="h-4 w-4 text-[#526D82] shrink-0" />
+            </button>
+          </div>
         </div>
       </section>
 
@@ -462,9 +453,9 @@ export function ModulDampingiKeluargaPage({
           Modul ini dikembangkan untuk membangun kesadaran empati di lingkungan keluarga. Penipuan digital dapat menimpa siapa saja, dan dukungan keluarga adalah benteng pertahanan terbaik.
         </p>
         <p className="text-[11px] text-slate-400">
-          Terakhir diperbarui: {data.lastUpdated} · JagaRuang Modul Literasi & Pemulihan Keluarga
+          JagaRuang Modul Literasi & Pemulihan Keluarga
         </p>
       </footer>
-    </div>
+    </ModulDetailLayout>
   );
 }

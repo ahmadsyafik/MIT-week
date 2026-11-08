@@ -549,7 +549,7 @@ export function FakeChatSimulator({
       id: `msg-open-greet-${Date.now()}`,
       sender: "attacker",
       timestamp: "09:39",
-      text: addl[0] || `Hai kamu! Gimana harinya? Sibuk banget ya belakangan ini?`,
+      text: addl[0] || `Hai! Salam kenal yaa 😊 Senang bisa match sama kamu.`,
     };
 
     const mainMessage: ChatMessage = {
@@ -579,15 +579,15 @@ export function FakeChatSimulator({
       ? {
         id: `msg-open-follow-${Date.now()}`,
         sender: "attacker",
-        timestamp: "09:41",
+        timestamp: "09:42",
         text: addl[1],
       }
       : null;
 
     fastForwardActionRef.current = () => {
       const allMsgs = [initialSystemMsg, openingGreetingMsg];
-      if (supportingImageMsg) allMsgs.push(supportingImageMsg);
       allMsgs.push(mainMessage);
+      if (supportingImageMsg) allMsgs.push(supportingImageMsg);
       if (followUpMsg) allMsgs.push(followUpMsg);
       setMessages(allMsgs);
       setIsTyping(false);
@@ -597,7 +597,7 @@ export function FakeChatSimulator({
 
     addTimeout(() => {
       setIsTyping(true);
-      setTypingText(`Siska sedang mengetik...`);
+      setTypingText(`${currentScenario.senderName} sedang mengetik...`);
     }, 400);
 
     addTimeout(() => {
@@ -607,15 +607,15 @@ export function FakeChatSimulator({
 
     addTimeout(() => {
       setIsTyping(true);
-      setTypingText(`Siska mengirim foto profit kripto...`);
+      setTypingText(`${currentScenario.senderName} sedang mengetik...`);
     }, 2400);
 
     addTimeout(() => {
       setIsTyping(false);
       setMessages((prev) => {
         const msgs = [...prev];
-        if (supportingImageMsg) msgs.push(supportingImageMsg);
         msgs.push(mainMessage);
+        if (supportingImageMsg) msgs.push(supportingImageMsg);
         return msgs;
       });
     }, 3900);
@@ -1282,22 +1282,9 @@ export function FakeChatSimulator({
           /* ===================================================================== */
           /* LAYAR DATING APP: "FIND A MATCH" POLOSAN (SESUAI PERMINTAAN USER)     */
           /* ===================================================================== */
-          <div className="relative w-full min-h-[620px] sm:min-h-[700px] bg-gradient-to-b from-[#220c10] via-[#16080a] to-[#0d0406] text-white flex flex-col justify-between overflow-hidden font-sans select-none animate-fadeIn p-4 sm:p-6">
-            {/* Top Bar Minimalis */}
-            <div className="flex items-center justify-between text-xs pb-3 shrink-0">
-              <button
-                type="button"
-                onClick={onBack}
-                className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors cursor-pointer text-xs font-semibold"
-                title="Kembali ke Daftar Skenario"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Daftar Skenario</span>
-              </button>
-            </div>
-
+          <div className="relative w-full min-h-[620px] sm:min-h-[700px] bg-gradient-to-b from-[#220c10] via-[#16080a] to-[#0d0406] text-white flex flex-col items-center justify-center overflow-hidden font-sans select-none animate-fadeIn p-4 sm:p-6">
             {/* Area Tengah Polosan: Teks "Find a match" dan Tombol X & Love */}
-            <div className="flex-1 flex flex-col items-center justify-center text-center space-y-10 sm:space-y-14 my-auto">
+            <div className="flex flex-col items-center justify-center text-center space-y-10 sm:space-y-14 my-auto">
               {/* Teks "Find a match" Bersih & Polosan (Tanpa Foto & Tanpa Nama) */}
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight font-sans drop-shadow-md">
                 Find a match
@@ -1328,9 +1315,6 @@ export function FakeChatSimulator({
                 </button>
               </div>
             </div>
-
-            {/* Ruang Bawah Kosong Simetris */}
-            <div className="pb-4" />
 
             {/* Modal Perayaan Match Sesaat */}
             {isDatingMatchCelebrating && (
@@ -2059,6 +2043,93 @@ export function FakeChatSimulator({
                                     </span>
                                     <span className="block text-[10px] text-rose-600 font-semibold">
                                       {msg.attachment.size || "Berkas"} · Tanda Bahaya
+                                    </span>
+                                  </div>
+                                  <div className="h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 shrink-0">
+                                    <Download className="h-4 w-4" />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-medium pl-1 select-none font-sans">
+                            {msg.timestamp}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (isDatingApp) {
+                    return (
+                      <div key={msg.id} className="flex items-end gap-2 max-w-[86%] sm:max-w-[78%] animate-fadeIn">
+                        {/* Mini Avatar Siska dengan Rose Ring */}
+                        <div className="relative shrink-0 mb-1">
+                          <div className="h-7 w-7 rounded-full p-[1.5px] bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 shadow-2xs">
+                            <div className="h-full w-full rounded-full overflow-hidden bg-slate-100 flex items-center justify-center">
+                              <img
+                                src="/simulator/covers/dating-apps.jpg"
+                                alt={currentScenario.senderName}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1 max-w-full">
+                          {/* Bubble Lembut Khas Dating App */}
+                          <div className="rounded-[20px] rounded-bl-xs bg-white border border-rose-100 px-4 py-2.5 text-slate-800 text-xs sm:text-[13px] leading-relaxed shadow-xs">
+                            {msg.text && (
+                              <p className="leading-relaxed font-normal">
+                                {msg.text}
+                              </p>
+                            )}
+
+                            {/* Gambar / Foto Bukti Pendukung */}
+                            {msg.image && (
+                              <div className="rounded-2xl overflow-hidden border border-rose-100 bg-white mt-2 shadow-xs">
+                                <div
+                                  className="relative cursor-pointer group/img overflow-hidden"
+                                  onClick={() => setActiveLightboxImage(msg.image!)}
+                                >
+                                  <img
+                                    src={msg.image.src}
+                                    alt={msg.image.alt || "Gambar Pendukung"}
+                                    className="w-full max-h-[240px] object-cover object-top transition-transform duration-300 group-hover/img:scale-105"
+                                    loading="lazy"
+                                  />
+                                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                                    <span className="bg-black/75 text-white text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-xs shadow-md">
+                                      <Eye className="h-3.5 w-3.5 text-white" />
+                                      <span>Perbesar Foto</span>
+                                    </span>
+                                  </div>
+                                </div>
+                                {msg.image.caption && (
+                                  <div className="px-3 py-2 bg-rose-50/50 flex items-center justify-between text-[11px] text-slate-600 border-t border-rose-100 font-sans">
+                                    <span className="font-medium truncate">{msg.image.caption}</span>
+                                    <span className="text-[10px] text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full font-bold ml-2 shrink-0">
+                                      Bukti Skenario
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Lampiran Dokumen/File */}
+                            {msg.attachment && (
+                              <div className="rounded-2xl border border-rose-200 bg-rose-50/50 p-3 space-y-2 mt-2 shadow-xs">
+                                <div className="flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-rose-500 to-rose-600 text-white flex flex-col items-center justify-center font-black text-[9px] shadow-xs shrink-0 font-sans">
+                                    <FileCode className="h-4.5 w-4.5" />
+                                    <span>{msg.attachment.type.toUpperCase()}</span>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <span className="block font-bold text-xs text-slate-900 truncate">
+                                      {msg.attachment.name}
+                                    </span>
+                                    <span className="block text-[10px] text-rose-600 font-semibold">
+                                      {msg.attachment.size || "Berkas"} · Lampiran Skenario
                                     </span>
                                   </div>
                                   <div className="h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 shrink-0">

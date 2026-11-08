@@ -105,14 +105,6 @@ export default function UserProfileDropdown() {
           {/* Opsi Menu Tambahan */}
           <div className="py-1 space-y-0.5">
             <NavLink
-              to="/"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-[#27374D] hover:bg-slate-50 transition-colors"
-            >
-              <span>Halaman Depan (Landing)</span>
-              <ExternalLink className="h-3 w-3 text-[#526D82]" />
-            </NavLink>
-            <NavLink
               to="/keterbatasan"
               onClick={() => setIsOpen(false)}
               className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-[#27374D] hover:bg-slate-50 transition-colors"
