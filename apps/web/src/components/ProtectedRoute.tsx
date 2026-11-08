@@ -32,14 +32,15 @@ export default function ProtectedRoute({ children, featureName = "fitur ini" }: 
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          <button
-            type="button"
-            onClick={openLoginModal}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#526D82] px-6 py-2.5 text-sm font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm w-full sm:w-auto min-w-[150px] cursor-pointer"
-          >
-            <span>Masuk Sekarang</span>
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          <Link to="/login" className="w-full sm:w-auto">
+            <button
+              type="button"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#163172] px-6 py-2.5 text-sm font-bold text-white hover:bg-[#1E56A0] active:scale-98 transition-all shadow-sm w-full sm:w-auto min-w-[150px] cursor-pointer"
+            >
+              <span>Masuk Sekarang</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </Link>
 
           <Link to="/" className="w-full sm:w-auto">
             <button

@@ -39,6 +39,54 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ========================================================================= */
+/* TRANSISI HALAMAN HALUS (SMOOTH PAGE FADE-IN & SLIDE ANIMATION)             */
+/* ========================================================================= */
+@keyframes page-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes auth-card-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bubble-float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) rotate(3deg) scale(1.02);
+  }
+}
+
+.page-transition-enter {
+  animation: page-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.auth-card-enter {
+  animation: auth-card-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.animate-bubble-float {
+  animation: bubble-float-slow 6s ease-in-out infinite;
+}
+
 /* Red flag text marker */
 mark.flag-mark {
   background-color: #fef08a;

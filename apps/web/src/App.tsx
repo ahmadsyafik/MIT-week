@@ -9,6 +9,8 @@ import Lindungi from "./pages/Lindungi";
 import Sandi from "./pages/Sandi";
 import Keterbatasan from "./pages/Keterbatasan";
 import Placeholder from "./pages/Placeholder";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 /**
  * Komponen pembantu untuk mengarahkan (redirect) rute lama ke /belajar
@@ -31,6 +33,8 @@ export default function App() {
           {/* Halaman Publik (Dapat Diakses Tanpa Login) */}
           <Route index element={<Beranda />} />
           <Route path="keterbatasan" element={<Keterbatasan />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
 
           {/* Halaman Aplikasi yang Terproteksi (Hanya Ditampilkan untuk User yang Sudah Login) */}
           <Route

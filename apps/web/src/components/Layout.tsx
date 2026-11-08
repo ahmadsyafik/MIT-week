@@ -199,28 +199,26 @@ export default function Layout() {
               </a>
             </nav>
 
-            {/* Tombol Kanan (Login & Register / Mulai Sekarang seperti di video) */}
+            {/* Tombol Kanan (Login & Register / Mulai Sekarang) */}
             <div className="flex items-center gap-2.5 sm:gap-3">
-              <button
-                type="button"
-                onClick={openLoginModal}
+              <NavLink
+                to="/login"
                 className="inline-flex min-h-[40px] items-center justify-center px-4 py-2 text-xs font-bold text-[#27374D] hover:text-[#526D82] transition-colors cursor-pointer"
               >
                 <span>Login</span>
-              </button>
-              <button
-                type="button"
-                onClick={openLoginModal}
+              </NavLink>
+              <NavLink
+                to="/register"
                 className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-[#526D82] px-5 py-2 text-xs font-bold text-white hover:bg-[#27374D] active:scale-98 transition-all shadow-sm cursor-pointer"
               >
                 <span>Register</span>
-              </button>
+              </NavLink>
             </div>
           </div>
         </header>
 
-        {/* Konten Landing Page */}
-        <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        {/* Konten Landing Page dengan Animasi Transisi Halus */}
+        <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 page-transition-enter" key={location.pathname}>
           <Outlet />
         </main>
 
@@ -471,7 +469,7 @@ export default function Layout() {
 
         {/* Konten Dashboard Utama (Background: DDE6ED, Font: 27374D) */}
         {/* pb-24 di mobile agar konten tidak tertutup bottom bar navigasi */}
-        <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 pb-24 md:pb-7">
+        <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-7 pb-24 md:pb-7 page-transition-enter" key={location.pathname}>
           <Outlet />
         </main>
 
